@@ -12,7 +12,7 @@
 
 namespace mana {
     /**
-     * The basic building block of the scene (Entity).
+     * The basic building block of the renderCommand (Entity).
      * A node contains components.
      *
      * Only a single instance per component type may be attached to a node.

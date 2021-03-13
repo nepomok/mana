@@ -2,7 +2,7 @@
 #define MANA_RENDERAPI_HPP
 
 #include "engine/io/imagebuffer.hpp"
-#include "engine/render/renderscene.hpp"
+#include "engine/render/rendercommand.hpp"
 #include "engine/render/framebufferobject.hpp"
 #include "engine/render/meshobject.hpp"
 #include "engine/render/textureobject.hpp"
@@ -10,7 +10,7 @@
 
 namespace mana {
     /**
-     * The stateless render api specific logic abstraction.
+     * The (preferably stateless) graphics api specific logic abstraction.
      */
     class RenderAPI {
     public:
@@ -21,11 +21,11 @@ namespace mana {
          * */
 
         /**
-         * Render the scene to the framebuffer.
-         * The scene is rendered using the specified offset and size.
+         * Render the renderCommand to the framebuffer.
+         * The renderCommand is rendered using the specified offset and size.
          *
-         * @param scene The scene to render.
-         * @param fb The framebuffer to render the scene to.
+         * @param command The renderCommand to render.
+         * @param fb The framebuffer to render the renderCommand to.
          * @param viewportOffset The offset of the viewport into the target framebuffer.
          * @param viewportSize The size of the viewport in the target framebuffer.
          * @param clearColorValue The clear color.
@@ -34,7 +34,7 @@ namespace mana {
          * @param clearStencil Set to true to clear the stencil data in the framebuffer before rendering.
          * @param multiSample Set to true to enable multi sampling for this render operation.
          */
-        virtual void render(const RenderScene &scene,
+        virtual void render(const RenderCommand &command,
                             const FrameBufferObject &fb,
                             Vec2i viewportOffset,
                             Vec2i viewportSize,
@@ -45,10 +45,10 @@ namespace mana {
                             bool multiSample) = 0;
 
         /**
-         * Render the scene to the framebuffer.
-         * The scene is rendered with a offset of 0 and the size of the framebuffer.
+         * Render the renderCommand to the framebuffer.
+         * The renderCommand is rendered with a offset of 0 and the size of the framebuffer.
          *
-         * @param scene
+         * @param command
          * @param fb
          * @param clearColorValue
          * @param clearColor
@@ -56,7 +56,7 @@ namespace mana {
          * @param clearStencil
          * @param multiSample
          */
-        virtual void render(const RenderScene &scene,
+        virtual void render(const RenderCommand &command,
                             const FrameBufferObject &fb,
                             ColorRGBA32 clearColorValue = ColorRGBA32(0),
                             bool clearColor = true,
@@ -219,7 +219,7 @@ namespace mana {
          * @param mesh The mesh data to copy into the api mesh.
          * @return A handle to the api dependent mesh.
          */
-        virtual MeshObject *allocateMesh(const RenderMesh &mesh) = 0;
+        virtual MeshObject *allocateMesh(const Mesh &mesh) = 0;
 
         /**
          * Allocate a mesh object copying the data in the mesh argument.
@@ -235,7 +235,7 @@ namespace mana {
          * @param offsets
          * @return A handle to the api dependent mesh.
          */
-        virtual MeshObject *allocateMeshInstanced(const RenderMesh &mesh, std::vector<RenderTransform> offsets) = 0;
+        virtual MeshObject *allocateMeshInstanced(const Mesh &mesh, std::vector<Transform> offsets) = 0;
 
         /**
          *

@@ -3,14 +3,14 @@
 
 #include <string>
 
-#include "engine/render/rendermesh.hpp"
+#include "engine/render/mesh.hpp"
 
 namespace mana {
     class MeshLoader {
     public:
-        static RenderMesh load(std::string filepath);
+        static Mesh load(std::string filepath);
 
-        static std::vector<RenderMesh> loadMultiple(std::string filepath);
+        static std::vector<Mesh> loadMultiple(std::string filepath);
     };
 }
 

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "engine/render/rendertransform.hpp"
+#include "engine/render/transform.hpp"
 #include "engine/render/meshobject.hpp"
 #include "engine/render/shaderprogram.hpp"
 #include "engine/render/textureobject.hpp"
@@ -65,11 +65,10 @@ namespace mana {
     };
 
     /**
-     * The smallest data unit for a scene.
      * Describes a model with transform, mesh, shader, textures and render properties.
      */
     struct RenderUnit {
-        RenderTransform transform;
+        Transform transform;
 
         std::vector<MeshObject *> meshData;
 

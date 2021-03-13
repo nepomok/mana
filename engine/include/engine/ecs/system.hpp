@@ -7,7 +7,7 @@ namespace mana {
     /**
      * Systems provide logic.
      *
-     * Only systems and scripts invoked by a script system invoke logic on the scene data.
+     * Only systems and scripts invoked by a script system invoke logic on the renderCommand data.
      *
      * Examples are invoking script lifecycle, handle render, manage memory allocation etc.
      */

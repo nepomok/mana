@@ -45,7 +45,7 @@ protected:
      * @param input
      */
     virtual void update(float deltaTime, Window &window, RenderAPI &renderApi, Input &input) {
-        renderApi.render(scene, window.getFrameBuffer());
+        renderApi.render(renderCommand, window.getFrameBuffer());
         window.swapBuffers();
     }
 
@@ -59,7 +59,7 @@ protected:
 
     virtual void destroyScene() {}
 
-    RenderScene scene;
+    RenderCommand renderCommand;
 };
 
 #endif //MANA_GAME_HPP

@@ -1,10 +1,9 @@
+#include <stdexcept>
+
+#include "engine/render/vertex.hpp"
 #include "engine/io/meshloader.hpp"
 
-#include <stdexcept>
-#include <cstring>
-
-#include "../extern/OBJ_Loader.h"
-#include "engine/render/vertex.hpp"
+#include "extern/OBJ_Loader.h"
 
 namespace mana {
     Vec3f toMana(objl::Vector3 vec) {
@@ -15,10 +14,10 @@ namespace mana {
         return {vec.X, vec.Y};
     }
 
-    RenderMesh MeshLoader::load(std::string filepath) {
+    Mesh MeshLoader::load(std::string filepath) {
         objl::Loader loader;
         if (loader.LoadFile(filepath)) {
-            RenderMesh ret;
+            Mesh ret;
             objl::Mesh objMesh = loader.LoadedMeshes[0];
             ret.indexed = !objMesh.Indices.empty();
             ret.indices = objMesh.Indices;
@@ -37,12 +36,12 @@ namespace mana {
         }
     }
 
-    std::vector<RenderMesh> MeshLoader::loadMultiple(std::string filepath) {
+    std::vector<Mesh> MeshLoader::loadMultiple(std::string filepath) {
         objl::Loader loader;
         if (loader.LoadFile(filepath)) {
-            std::vector<RenderMesh> ret;
+            std::vector<Mesh> ret;
             for (auto mesh : loader.LoadedMeshes) {
-                RenderMesh r;
+                Mesh r;
                 r.indexed = !mesh.Indices.empty();
                 r.indices = mesh.Indices;
                 for (auto vert : mesh.Vertices) {

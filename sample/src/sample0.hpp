@@ -8,7 +8,7 @@
 class Sample0 : public Game {
 public:
     void onFramebufferResize(Vec2i size) override {
-        scene.camera.cameraData.perspective.aspectRatio = (float) size.x / (float) size.y;
+        renderCommand.camera.cameraData.perspective.aspectRatio = (float) size.x / (float) size.y;
     }
 
 protected:
@@ -20,20 +20,20 @@ protected:
         double rotationSpeed = cameraRotationSpeed * deltaTime;
 
         if (mouse.leftButtonDown && (mouseDiff.x != 0 || mouseDiff.y != 0)) {
-            scene.units.at(1).transform.rotation.x += mouseDiff.y * rotationSpeed;
-            scene.units.at(1).transform.rotation.y += mouseDiff.x * rotationSpeed;
+            renderCommand.units.at(1).transform.rotation.x += mouseDiff.y * rotationSpeed;
+            renderCommand.units.at(1).transform.rotation.y += mouseDiff.x * rotationSpeed;
         }
 
         if (input.getKeyDown(KEY_UP)) {
-            scene.camera.transform.rotation.x += rotationSpeed;
+            renderCommand.camera.transform.rotation.x += rotationSpeed;
         } else if (input.getKeyDown(KEY_DOWN)) {
-            scene.camera.transform.rotation.x -= rotationSpeed;
+            renderCommand.camera.transform.rotation.x -= rotationSpeed;
         }
 
         if (input.getKeyDown(KEY_LEFT)) {
-            scene.camera.transform.rotation.y -= rotationSpeed;
+            renderCommand.camera.transform.rotation.y -= rotationSpeed;
         } else if (input.getKeyDown(KEY_RIGHT)) {
-            scene.camera.transform.rotation.y += rotationSpeed;
+            renderCommand.camera.transform.rotation.y += rotationSpeed;
         }
 
         Vec3f inputMovement = Vec3f(0);
@@ -57,10 +57,10 @@ protected:
 
         //Translate direction vectors with desired length into world space and add them to the current camera position.
         Mat4f view = MatrixMath::identity();
-        view = view * MatrixMath::translate(scene.camera.transform.position);
-        view = view * MatrixMath::rotate(Vec3f(scene.camera.transform.rotation.x,
-                                               scene.camera.transform.rotation.y,
-                                               scene.camera.transform.rotation.z));
+        view = view * MatrixMath::translate(renderCommand.camera.transform.position);
+        view = view * MatrixMath::rotate(Vec3f(renderCommand.camera.transform.rotation.x,
+                                               renderCommand.camera.transform.rotation.y,
+                                               renderCommand.camera.transform.rotation.z));
 
         view = MatrixMath::inverse(view);
 
@@ -70,11 +70,11 @@ protected:
         Vec4f up = (view) * Vec4f(0, inputMovement.y * movementSpeed, 0, 0);
         Vec4f forward = (view) * Vec4f(0, 0, inputMovement.z * movementSpeed, 0);
 
-        scene.camera.transform.position += (Vec3f(forward.x, forward.y, forward.z))
-                                           + (Vec3f(left.x, left.y, left.z))
-                                           + (Vec3f(up.x, up.y, up.z));
+        renderCommand.camera.transform.position += (Vec3f(forward.x, forward.y, forward.z))
+                                                   + (Vec3f(left.x, left.y, left.z))
+                                                   + (Vec3f(up.x, up.y, up.z));
 
-        Vec3f lightPos = scene.pointLights.at(0).transform.position;
+        Vec3f lightPos = renderCommand.pointLights.at(0).transform.position;
 
         Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
         Vec4f pos4 = rot * Vec4f(lightPos.x, lightPos.y, lightPos.z, 1);
@@ -97,18 +97,18 @@ protected:
             }
         }
 
-        scene.pointLights.at(0).transform.position = lightPos;
-        scene.units.at(2).transform.position = lightPos;
+        renderCommand.pointLights.at(0).transform.position = lightPos;
+        renderCommand.units.at(2).transform.position = lightPos;
 
-        scene.units.at(2).transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
+        renderCommand.units.at(2).transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
 
-        scene.units.at(0).transform.position = scene.camera.transform.position;
+        renderCommand.units.at(0).transform.position = renderCommand.camera.transform.position;
 
         forward = view * Vec4f(0, 0, -1, 0);
 
-        scene.spotLights.at(0).direction = Vec3f(forward.x, forward.y, forward.z);
-        scene.spotLights.at(0).transform.position = scene.camera.transform.position;
-        renderApi.render(scene, window.getFrameBuffer(), clearColor, true, true, true, false);
+        renderCommand.spotLights.at(0).direction = Vec3f(forward.x, forward.y, forward.z);
+        renderCommand.spotLights.at(0).transform.position = renderCommand.camera.transform.position;
+        renderApi.render(renderCommand, window.getFrameBuffer(), clearColor, true, true, true, false);
 
         window.swapBuffers();
         window.update();
@@ -123,19 +123,19 @@ protected:
         light.linear = 1.0f;
         light.quadratic = 1.0f;
         light.ambient = Vec3f(0);
-        scene.pointLights.emplace_back(light);
+        renderCommand.pointLights.emplace_back(light);
 
         Vec3f lightPos0 = Vec3f(-4, 0.73, 0);
         SpotLight light0 = SpotLight();
         light0.transform.position = lightPos0;
         light0.cutOff = 15;
         light0.outerCutOff = 25;
-        scene.spotLights.emplace_back(light0);
+        renderCommand.spotLights.emplace_back(light0);
 
-        RenderMesh planeMesh = MeshLoader::load("./assets/plane.obj");
-        RenderMesh curveCubeMesh = MeshLoader::load("./assets/curvecube.obj");
-        RenderMesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
-        RenderMesh cubeMesh = MeshLoader::load("./assets/cube.obj");
+        Mesh planeMesh = MeshLoader::load("./assets/plane.obj");
+        Mesh curveCubeMesh = MeshLoader::load("./assets/curvecube.obj");
+        Mesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
+        Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
         ShaderProgram *skyboxShader = renderApi.compileShaderProgram(skyboxVertexShader, skyboxFragmentShader);
         res.shaders.emplace_back(skyboxShader);
@@ -192,7 +192,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(1);
 
-        scene.units.emplace_back(unit);
+        renderCommand.units.emplace_back(unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = true;
@@ -207,7 +207,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(0.1f);
 
-        scene.units.emplace_back(unit);
+        renderCommand.units.emplace_back(unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = true;
@@ -222,7 +222,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(10.0f);
 
-        scene.units.emplace_back(unit);
+        renderCommand.units.emplace_back(unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = false;
@@ -232,10 +232,10 @@ protected:
 
         unit.textures.emplace_back(skyboxTexture);
 
-        scene.units.emplace(scene.units.begin(), unit);
+        renderCommand.units.emplace(renderCommand.units.begin(), unit);
 
-        scene.camera.transform.position = Vec3f(0, 3, 3);
-        scene.camera.transform.rotation = Vec3f(1, 0, 0);
+        renderCommand.camera.transform.position = Vec3f(0, 3, 3);
+        renderCommand.camera.transform.rotation = Vec3f(1, 0, 0);
     }
 
     void destroyScene() override {
