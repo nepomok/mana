@@ -9,8 +9,8 @@ using namespace mana;
 
 class Game : public InputListener, public WindowListener {
 public:
-    virtual int loop(DisplayAPI &displayApi, GraphicsApi api) {
-        Window *wnd = displayApi.createWindow(api);
+    virtual int loop(GraphicsApi api) {
+        Window *wnd = DisplayAPI::createWindow(api);
         RenderAPI &renderApi = wnd->getRenderAPI();
         Input &input = wnd->getInput();
 

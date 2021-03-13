@@ -9,25 +9,21 @@
 
 namespace mana {
     /**
-     * The polymorphic abstraction around a display api such as glfw or a custom implementation.
-     *
      * The Display api is responsible for instantiating windows for a specific graphics api
      * and retrieving display related information such as monitors.
      */
     class DisplayAPI {
     public:
-        virtual ~DisplayAPI() = default;
+        static Monitor *getPrimaryMonitor();
 
-        virtual Monitor *getPrimaryMonitor() = 0;
-
-        virtual std::set<Monitor *> getMonitors() = 0;
+        static std::set<Monitor *> getMonitors();
 
         /**
          * Create a window with default attributes.
          *
          * @return
          */
-        virtual Window *createWindow(GraphicsApi api) = 0;
+        static Window *createWindow(GraphicsApi api);
 
         /**
          * Create a window using the supplied attributes.
@@ -37,7 +33,7 @@ namespace mana {
          * @param attributes
          * @return
          */
-        virtual Window *createWindow(GraphicsApi api, std::string title, Vec2i size, WindowAttributes attributes) = 0;
+        static Window *createWindow(GraphicsApi api, std::string title, Vec2i size, WindowAttributes attributes);
 
         /**
          * Create a fullscreen window using the supplied attributes and monitor.
@@ -48,12 +44,12 @@ namespace mana {
          * @param mode
          * @return
          */
-        virtual Window *createWindow(GraphicsApi api,
-                                     std::string title,
-                                     Vec2i size,
-                                     WindowAttributes attributes,
-                                     Monitor &monitor,
-                                     VideoMode mode) = 0;
+        static Window *createWindow(GraphicsApi api,
+                             std::string title,
+                             Vec2i size,
+                             WindowAttributes attributes,
+                             Monitor &monitor,
+                             VideoMode mode);
     };
 }
 

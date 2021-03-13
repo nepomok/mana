@@ -1,16 +1,16 @@
-#include "engine/display/glfwdisplayapi.hpp"
+#include "engine/display/displayapi.hpp"
 
 #include "display/glfw/glfwwindow.hpp"
 #include "display/glfw/glfwmonitor.hpp" //Has to come after glfwwindow because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
 
 namespace mana {
-    Monitor *GLFWDisplayAPI::getPrimaryMonitor() {
+    Monitor *DisplayAPI::getPrimaryMonitor() {
         auto *mon = new GLFWMonitor();
         mon->monH = glfwGetPrimaryMonitor();
         return dynamic_cast<Monitor *>(mon);
     }
 
-    std::set<Monitor *> GLFWDisplayAPI::getMonitors() {
+    std::set<Monitor *> DisplayAPI::getMonitors() {
         std::set<Monitor *> ret;
 
         int count;
@@ -24,7 +24,7 @@ namespace mana {
         return ret;
     }
 
-    Window *GLFWDisplayAPI::createWindow(GraphicsApi api) {
+    Window *DisplayAPI::createWindow(GraphicsApi api) {
         Window *ret;
         switch (api) {
             case OPENGL:
@@ -37,7 +37,7 @@ namespace mana {
         return ret;
     }
 
-    Window *GLFWDisplayAPI::createWindow(GraphicsApi api,
+    Window *DisplayAPI::createWindow(GraphicsApi api,
                                          std::string title,
                                          Vec2i size,
                                          WindowAttributes attributes) {
@@ -52,7 +52,7 @@ namespace mana {
         return ret;
     }
 
-    Window *GLFWDisplayAPI::createWindow(GraphicsApi api,
+    Window *DisplayAPI::createWindow(GraphicsApi api,
                                          std::string title,
                                          Vec2i size,
                                          WindowAttributes attributes,

@@ -20,7 +20,7 @@ namespace mana {
     public:
         GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes);
 
-        GLFWWindow(std::string title,
+        GLFWWindow(const std::string& title,
                    Vec2i size,
                    WindowAttributes attributes,
                    GLFWMonitor &monitor);

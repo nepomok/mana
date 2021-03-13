@@ -44,7 +44,6 @@
 #include "engine/sound/audioplayer.hpp"
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/displayapi.hpp"
-#include "engine/display/glfwdisplayapi.hpp"
 #include "engine/display/videomode.hpp"
 #include "engine/display/windowattributes.hpp"
 #include "engine/display/monitor.hpp"

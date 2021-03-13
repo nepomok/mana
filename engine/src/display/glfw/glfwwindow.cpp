@@ -163,7 +163,7 @@ namespace mana {
         setCallbacks(wndH);
     }
 
-    GLFWWindow::GLFWWindow(std::string title,
+    GLFWWindow::GLFWWindow(const std::string& title,
                            Vec2i size,
                            WindowAttributes attributes,
                            GLFWMonitor &monitor) {
