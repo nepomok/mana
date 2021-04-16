@@ -73,6 +73,7 @@
 #include "engine/math/rotation.hpp"
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
+#include "engine/math/vectorconversion.hpp"
 #include "engine/lang/python/pythoninterpreter.hpp"
 #include "engine/lang/mono/monointerpreter.hpp"
 

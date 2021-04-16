@@ -58,9 +58,7 @@ protected:
         //Translate direction vectors with desired length into world space and add them to the current camera position.
         Mat4f view = MatrixMath::identity();
         view = view * MatrixMath::translate(renderCommand.camera.transform.position);
-        view = view * MatrixMath::rotate(Vec3f(renderCommand.camera.transform.rotation.x,
-                                               renderCommand.camera.transform.rotation.y,
-                                               renderCommand.camera.transform.rotation.z));
+        view = view * MatrixMath::rotate(Vec3f(renderCommand.camera.transform.rotation));
 
         view = MatrixMath::inverse(view);
 
@@ -70,16 +68,13 @@ protected:
         Vec4f up = (view) * Vec4f(0, inputMovement.y * movementSpeed, 0, 0);
         Vec4f forward = (view) * Vec4f(0, 0, inputMovement.z * movementSpeed, 0);
 
-        renderCommand.camera.transform.position += (Vec3f(forward.x, forward.y, forward.z))
-                                                   + (Vec3f(left.x, left.y, left.z))
-                                                   + (Vec3f(up.x, up.y, up.z));
+        renderCommand.camera.transform.position += toVec3(left + up + forward);
 
         Vec3f lightPos = renderCommand.pointLights.at(0).transform.position;
 
         Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
-        Vec4f pos4 = rot * Vec4f(lightPos.x, lightPos.y, lightPos.z, 1);
 
-        lightPos = Vec3f(pos4.x, pos4.y, pos4.z);
+        lightPos = toVec3(rot * toVec4(lightPos, 1));
 
         if (incrementLight) {
             if (lightPos.y < 2) {
@@ -106,7 +101,7 @@ protected:
 
         forward = view * Vec4f(0, 0, -1, 0);
 
-        renderCommand.spotLights.at(0).direction = Vec3f(forward.x, forward.y, forward.z);
+        renderCommand.spotLights.at(0).direction = toVec3(forward);
         renderCommand.spotLights.at(0).transform.position = renderCommand.camera.transform.position;
         renderApi.render(renderCommand, window.getFrameBuffer(), clearColor, true, true, true, false);
 
@@ -262,6 +257,7 @@ private:
     float lightMovementSpeed = 1.0f;
 
     Mouse mouseLastFrame;
+    
     ColorRGBA32 clearColor = ColorRGBA32(30, 30, 30, 255);
 };
 
