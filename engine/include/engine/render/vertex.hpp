@@ -5,18 +5,28 @@
 #include "engine/math/vector3.hpp"
 
 namespace mana {
+    /**
+     * Stores in memory [position , normal, uv] contiguously, address of vertex instance = position[0]
+     */
     struct Vertex {
-        Vec3f position;
-        Vec3f normal;
-        Vec2f uv;
+        float data[8]; // Public member ensures that address of vertex instance = position[0], array to ensure contiguous memory.
 
-        Vertex() : position(), normal(), uv() {}
+        Vertex(Vec3f position, Vec3f normal, Vec2f uv) : data() {
+            data[0] = position.x;
+            data[1] = position.y;
+            data[2] = position.z;
+            data[3] = normal.x;
+            data[4] = normal.y;
+            data[5] = normal.z;
+            data[6] = uv.x;
+            data[7] = uv.y;
+        }
 
-        Vertex(Vec3f position, Vec3f normal, Vec2f uv) : position(position), normal(normal), uv(uv) {}
+        Vertex(Vec3f position, Vec2f uv) : Vertex(position, {}, uv) {}
 
-        Vertex(Vec3f position, Vec2f uv) : position(position), normal(), uv(uv) {}
+        explicit Vertex(Vec3f position) : Vertex(position, {}, {}) {}
 
-        explicit Vertex(Vec3f position) : position(position), uv() {}
+        Vertex() = default;
     };
 }
 

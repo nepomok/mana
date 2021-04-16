@@ -8,9 +8,9 @@
 namespace mana {
     class MeshLoader {
     public:
-        static Mesh load(std::string filepath);
+        static Mesh load(const std::string &filepath);
 
-        static std::vector<Mesh> loadMultiple(std::string filepath);
+        static std::vector<Mesh> loadMultiple(const std::string &filepath);
     };
 }
 
