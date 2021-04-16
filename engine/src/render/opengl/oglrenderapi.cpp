@@ -75,7 +75,7 @@ namespace mana {
 
             glClear(clearMask);
 
-            Mat4f model, view, projection = MatrixMath::identity();
+            Mat4f model, view, projection;
 
             view = command.camera->view();
             projection = command.camera->perspective();
@@ -849,8 +849,7 @@ namespace mana {
             for (int i = 0; i < offsets.size(); i++) {
                 off[i] = OGLTypeConverter::convert(MatrixMath::translate(offsets.at(i).position)
                                                    * MatrixMath::scale(offsets.at(i).scale)
-                                                   * MatrixMath::rotate(offsets.at(i).rotation)
-                );
+                                                   * MatrixMath::rotate(offsets.at(i).rotation));
             }
 
             if (mesh.indexed) {
