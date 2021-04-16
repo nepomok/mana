@@ -70,10 +70,10 @@ namespace mana {
     struct RenderUnit {
         Transform transform;
 
-        std::vector<MeshObject *> meshData;
+        std::vector<MeshObject *> meshObjects;
+        std::vector<TextureObject *> textureObjects;
 
         ShaderProgram *shader;
-        std::vector<TextureObject *> textures;
 
         bool enableDepthTest = false;
         bool depthTestWrite = true;

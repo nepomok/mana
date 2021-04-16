@@ -3,6 +3,8 @@
 #include "render/opengl/oglshaderprogram.hpp"
 #include "render/opengl/ogltypeconverter.hpp"
 
+#include <glm/glm.hpp>
+
 #define SHADER_INCLUDE std::string("#include \"mana.glsl\"\n")
 
 /**
@@ -297,8 +299,7 @@ namespace mana {
         }
 
         void OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
-            glm::mat4 mat = OGLTypeConverter::convert(value);
-            glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, &mat[0][0]);
+            glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, (GLfloat *)&value);
         }
     }
 }

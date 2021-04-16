@@ -7,15 +7,26 @@
 #include "engine/math/vector4.hpp"
 
 namespace mana {
+    /**
+     * Data is stored in ROW MAJOR.
+     *
+     * @tparam T The type of the elements in the matrix.
+     * @tparam W The column count of the matrix.
+     * @tparam H The row count of the matrix.
+     */
     template<typename T, int W, int H>
     class Matrix {
     public:
-        Matrix() {
-            data.resize(W * H);
-        }
+        //Public to ensure address of instance = first element of data, Array to ensure contiguous memory.
+        T data[W * H];
+
+        Matrix() = default;
 
         explicit Matrix(T v) {
-            data.resize(W * H, v);
+            set(0, 0, v);
+            set(1, 1, v);
+            set(2, 2, v);
+            set(3, 3, v);
         }
 
         int width() const {
@@ -27,21 +38,21 @@ namespace mana {
         }
 
         void set(int col, int row, T v) {
-            data.at(W * row + col) = v;
+            assert(col >= 0 && col < W);
+            assert(row >= 0 && row < H);
+            data[H * col + row] = v;
         }
 
         T get(int col, int row) const {
-            return data.at(W * row + col);
-        }
-
-        std::vector<T> getData() const {
-            return data;
+            assert(col >= 0 && col < W);
+            assert(row >= 0 && row < H);
+            return data[H * col + row];
         }
 
         Matrix<T, W, H> &operator+=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data.at(W * row + col) += other.get(col, row);
+                    data[H * col + row] += other.get(col, row);
                 }
             }
             return *this;
@@ -50,7 +61,7 @@ namespace mana {
         Matrix<T, W, H> &operator-=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data.at(W * row + col) -= other.get(col, row);
+                    data[H * col + row] -= other.get(col, row);
                 }
             }
             return *this;
@@ -75,9 +86,6 @@ namespace mana {
             }
             return ret;
         }
-
-    private:
-        std::vector<T> data;
     };
 
     //4 by 4 matrix multiplication with a 4d vector as described here http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/

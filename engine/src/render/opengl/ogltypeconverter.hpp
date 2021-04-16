@@ -1,7 +1,7 @@
 #ifndef MANA_OGLTYPECONVERTER_HPP
 #define MANA_OGLTYPECONVERTER_HPP
 
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm/glm.hpp>
 
 #include "engine/math/vector3.hpp"
 #include "engine/render/textureattributes.hpp"

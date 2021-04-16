@@ -2,8 +2,7 @@
 #include <set>
 
 #include "engine/math/matrixmath.hpp"
-
-#include "extern/glad.h"
+#include "engine/math/rotation.hpp"
 
 #include "render/opengl/oglrenderapi.hpp"
 #include "render/opengl/oglshaderprogram.hpp"
@@ -13,9 +12,11 @@
 #include "render/opengl/oglframebufferobject.hpp"
 #include "render/opengl/ogluserframebuffer.hpp"
 
+#include "extern/glad.h"
+
 namespace mana {
     namespace opengl {
-        void checkGLError(std::string source) {
+        void checkGLError(const std::string &source) {
             GLenum er = glGetError();
             if (er != GL_NO_ERROR) {
                 std::string error = source + " GLERROR: ";
@@ -46,15 +47,15 @@ namespace mana {
                     return GL_TEXTURE8;
                 case 9:
                     return GL_TEXTURE9;
+                default:
+                    throw std::runtime_error("Maximum 10 texture slots");
             }
-            throw std::runtime_error("Unsupported slot");
         }
 
         /**
          * This function performs the drawing of a render renderCommand to the bound FBO.
          */
         void processCommand(const RenderCommand &command, bool clearColor, bool clearDepth, bool clearStencil) {
-            //Check renderCommand
             if (command.directionalLights.size() > 10) {
                 throw std::runtime_error("Too many lights in renderCommand.");
             }
@@ -76,46 +77,19 @@ namespace mana {
 
             Mat4f model, view, projection = MatrixMath::identity();
 
-            //Calculate view matrix
-            //The engines move the universe
-            view = MatrixMath::rotate(
-                    Vec3f(command.camera.transform.rotation.x,
-                          command.camera.transform.rotation.y,
-                          command.camera.transform.rotation.z));
-            view = view * MatrixMath::translate(
-                    Vec3f(-command.camera.transform.position.x,
-                          -command.camera.transform.position.y,
-                          -command.camera.transform.position.z));
-
-            //Calculate projection matrix
-            if (command.camera.cameraType == Camera::PERSPECTIVE) {
-                Camera::PerspectiveData data = command.camera.cameraData.perspective;
-                projection = MatrixMath::perspective(glm::radians(data.fov), data.aspectRatio,
-                                                     data.nearClip, data.farClip);
-            } else {
-                Camera::OrthographicData data = command.camera.cameraData.orthographic;
-                projection = MatrixMath::ortho(data.left, data.right, data.bottom, data.top,
-                                               data.nearClip, data.farClip);
-            }
+            view = command.camera->view();
+            projection = command.camera->perspective();
 
             std::set<OGLShaderProgram *> shaders;
 
             for (auto &renderUnit : command.units) {
-                model = MatrixMath::translate(
-                        Vec3f(renderUnit.transform.position.x,
-                              renderUnit.transform.position.y,
-                              renderUnit.transform.position.z));
-                model = model * MatrixMath::scale(
-                        Vec3f(renderUnit.transform.scale.x,
-                              renderUnit.transform.scale.y,
-                              renderUnit.transform.scale.z));
-                model = model * MatrixMath::rotate(Vec3f(renderUnit.transform.rotation.x,
-                                                         renderUnit.transform.rotation.y,
-                                                         renderUnit.transform.rotation.z));
+                model = MatrixMath::translate(renderUnit.transform.position);
+                model = model * MatrixMath::scale(renderUnit.transform.scale);
+                model = model * MatrixMath::rotate(renderUnit.transform.rotation);
 
                 //Bind textures
-                for (int i = 0; i < renderUnit.textures.size(); i++) {
-                    auto *textureObject = renderUnit.textures.at(i);
+                for (int i = 0; i < renderUnit.textureObjects.size(); i++) {
+                    auto *textureObject = renderUnit.textureObjects.at(i);
                     if (textureObject == nullptr) {
                         throw std::runtime_error("nullptr texture");
                     }
@@ -161,10 +135,8 @@ namespace mana {
                     std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
                     shader.setVec3(name + "position", light.transform.position);
                     shader.setVec3(name + "direction", light.direction);
-                    shader.setFloat(name + "cutOff",
-                                    glm::cos(glm::radians(light.cutOff)));
-                    shader.setFloat(name + "outerCutOff",
-                                    glm::cos(glm::radians(light.outerCutOff)));
+                    shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
+                    shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
                     shader.setFloat(name + "constant", light.constant);
                     shader.setFloat(name + "linear", light.linear);
                     shader.setFloat(name + "quadratic", light.quadratic);
@@ -185,8 +157,7 @@ namespace mana {
                 shader.setInt("MANA_LIGHT_COUNT_POINT", command.pointLights.size());
                 shader.setInt("MANA_LIGHT_COUNT_SPOT", command.spotLights.size());
 
-                //Viewport
-                shader.setVec3("MANA_VIEWPOS", command.camera.transform.position);
+                shader.setVec3("MANA_VIEWPOS", command.camera->transform.position);
 
                 //Setup per model depth, stencil, culling and blend states
                 if (renderUnit.enableDepthTest) {
@@ -233,9 +204,9 @@ namespace mana {
                 }
 
                 //Bind VAOs and draw.
-                for (auto meshPtr : renderUnit.meshData) {
+                for (auto meshPtr : renderUnit.meshObjects) {
                     if (meshPtr == nullptr) {
-                        throw std::runtime_error("nullptr meshData");
+                        throw std::runtime_error("nullptr mesh");
                     }
                     auto &mesh = dynamic_cast<const OGLMeshObject &>(*meshPtr);
 
@@ -747,7 +718,7 @@ namespace mana {
                 glBindVertexArray(ret->VAO);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->VBO);
-                glBufferData(GL_ARRAY_BUFFER, Vertex::BYTES * mesh.vertices.size(), mesh.vertices.data(),
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mesh.vertices.size(), mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->EBO);
@@ -755,13 +726,13 @@ namespace mana {
                              GL_STATIC_DRAW);
 
                 // position attribute
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) 0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
                 glEnableVertexAttribArray(0);
                 // normal attribute
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (3 * sizeof(float)));
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
                 glEnableVertexAttribArray(1);
                 // uv attribute
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (6 * sizeof(float)));
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
@@ -773,10 +744,18 @@ namespace mana {
                 glEnableVertexAttribArray(4);
                 glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
                 glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(5,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (2 * sizeof(glm::vec4)));
                 glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(6,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (3 * sizeof(glm::vec4)));
 
                 glVertexAttribDivisor(3, 1);
@@ -799,17 +778,19 @@ namespace mana {
                 glBindVertexArray(ret->VAO);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->VBO);
-                glBufferData(GL_ARRAY_BUFFER, Vertex::BYTES * mesh.vertices.size(), mesh.vertices.data(),
+                glBufferData(GL_ARRAY_BUFFER,
+                             sizeof(Vertex) * mesh.vertices.size(),
+                             mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
                 // position attribute
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) 0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
                 glEnableVertexAttribArray(0);
                 // normal attribute
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (3 * sizeof(float)));
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
                 glEnableVertexAttribArray(1);
                 // uv attribute
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (6 * sizeof(float)));
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
@@ -821,10 +802,18 @@ namespace mana {
                 glEnableVertexAttribArray(4);
                 glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
                 glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(5,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (2 * sizeof(glm::vec4)));
                 glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(6,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (3 * sizeof(glm::vec4)));
 
                 glVertexAttribDivisor(3, 1);
@@ -875,21 +864,23 @@ namespace mana {
                 glBindVertexArray(ret->VAO);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->VBO);
-                glBufferData(GL_ARRAY_BUFFER, Vertex::BYTES * mesh.vertices.size(), mesh.vertices.data(),
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mesh.vertices.size(), mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->EBO);
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh.indices.size(), mesh.indices.data(),
+                glBufferData(GL_ELEMENT_ARRAY_BUFFER,
+                             sizeof(uint) * mesh.indices.size(),
+                             mesh.indices.data(),
                              GL_STATIC_DRAW);
 
                 // position attribute
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) 0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
                 glEnableVertexAttribArray(0);
                 // normal attribute
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (3 * sizeof(float)));
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
                 glEnableVertexAttribArray(1);
                 // uv attribute
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (6 * sizeof(float)));
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
@@ -901,10 +892,18 @@ namespace mana {
                 glEnableVertexAttribArray(4);
                 glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
                 glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(5,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (2 * sizeof(glm::vec4)));
                 glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(6,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (3 * sizeof(glm::vec4)));
 
                 glVertexAttribDivisor(3, 1);
@@ -927,17 +926,19 @@ namespace mana {
                 glBindVertexArray(ret->VAO);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->VBO);
-                glBufferData(GL_ARRAY_BUFFER, Vertex::BYTES * mesh.vertices.size(), mesh.vertices.data(),
+                glBufferData(GL_ARRAY_BUFFER,
+                             sizeof(Vertex) * mesh.vertices.size(),
+                             mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
                 // position attribute
-                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) 0);
+                glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
                 glEnableVertexAttribArray(0);
                 // normal attribute
-                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (3 * sizeof(float)));
+                glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
                 glEnableVertexAttribArray(1);
                 // uv attribute
-                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, Vertex::BYTES, (void *) (6 * sizeof(float)));
+                glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
@@ -949,10 +950,18 @@ namespace mana {
                 glEnableVertexAttribArray(4);
                 glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
                 glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(5,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (2 * sizeof(glm::vec4)));
                 glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4),
+                glVertexAttribPointer(6,
+                                      4,
+                                      GL_FLOAT,
+                                      GL_FALSE,
+                                      sizeof(glm::mat4),
                                       (void *) (3 * sizeof(glm::vec4)));
 
                 glVertexAttribDivisor(3, 1);

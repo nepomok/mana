@@ -27,7 +27,7 @@ namespace mana {
     }
 
     Mat4f MatrixMath::perspective(float fovy, float aspect, float zNear, float zFar) {
-        return convert(glm::perspective(fovy, aspect, zNear, zFar));
+        return convert(glm::perspective(glm::radians(fovy), aspect, zNear, zFar));
     }
 
     Mat4f MatrixMath::ortho(float left, float right, float bottom, float top, float zNear,
@@ -40,24 +40,18 @@ namespace mana {
     }
 
     Mat4f MatrixMath::identity() {
-        return convert(glm::mat4(1));
-        /* Mat4f ret(0);
-         ret.set(0, 0, 1);
-         ret.set(1, 1, 1);
-         ret.set(2, 2, 1);
-         ret.set(3, 3, 1);
-         return ret;*/
+        return Mat4f(1);
     }
 
     Mat4f MatrixMath::translate(const Vec3f &translationValue) {
         return convert(glm::translate(glm::mat4(1),
                                       glm::vec3(translationValue.x, translationValue.y, translationValue.z)));
-        /*Mat4f ret(0);
+        /*Mat4f ret = identity();
         ret.set(3, 0, translationValue.x);
         ret.set(3, 1, translationValue.y);
         ret.set(3, 2, translationValue.z);
-        ret.set(3, 3, translationValue.w);
-        return ret;*/
+        ret.set(3, 3, 1);
+        return inverse(ret);*/
     }
 
     Mat4f MatrixMath::scale(const Vec3f &scaleValue) {

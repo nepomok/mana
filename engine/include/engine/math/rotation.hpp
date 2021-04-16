@@ -16,6 +16,14 @@ namespace mana {
         return degrees * PI / 180.0;
     }
 
+    inline float radiansToDegrees(float radians) {
+        return (float) (radians * (180.0 / PI));
+    }
+
+    inline float degreesToRadians(float degrees) {
+        return (float) (degrees * PI / 180.0);
+    }
+
     //Rotate the vector around the point clockwise by angleDegrees
     inline Vec2f rotateVectorAroundPoint(Vec2f vector, Vec2f point, double angleDegrees) {
         double radians = degreesToRadians(angleDegrees);

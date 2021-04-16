@@ -8,7 +8,7 @@
 class Sample0 : public Game {
 public:
     void onFramebufferResize(Vec2i size) override {
-        renderCommand.camera.cameraData.perspective.aspectRatio = (float) size.x / (float) size.y;
+        camera.aspectRatio = (float) size.x / (float) size.y;
     }
 
 protected:
@@ -25,15 +25,15 @@ protected:
         }
 
         if (input.getKeyDown(KEY_UP)) {
-            renderCommand.camera.transform.rotation.x += rotationSpeed;
+            camera.transform.rotation.x += rotationSpeed;
         } else if (input.getKeyDown(KEY_DOWN)) {
-            renderCommand.camera.transform.rotation.x -= rotationSpeed;
+            camera.transform.rotation.x -= rotationSpeed;
         }
 
         if (input.getKeyDown(KEY_LEFT)) {
-            renderCommand.camera.transform.rotation.y -= rotationSpeed;
+            camera.transform.rotation.y -= rotationSpeed;
         } else if (input.getKeyDown(KEY_RIGHT)) {
-            renderCommand.camera.transform.rotation.y += rotationSpeed;
+            camera.transform.rotation.y += rotationSpeed;
         }
 
         Vec3f inputMovement = Vec3f(0);
@@ -56,9 +56,7 @@ protected:
         }
 
         //Translate direction vectors with desired length into world space and add them to the current camera position.
-        Mat4f view = MatrixMath::identity();
-        view = view * MatrixMath::translate(renderCommand.camera.transform.position);
-        view = view * MatrixMath::rotate(Vec3f(renderCommand.camera.transform.rotation));
+        Mat4f view = camera.view();
 
         view = MatrixMath::inverse(view);
 
@@ -68,7 +66,7 @@ protected:
         Vec4f up = (view) * Vec4f(0, inputMovement.y * movementSpeed, 0, 0);
         Vec4f forward = (view) * Vec4f(0, 0, inputMovement.z * movementSpeed, 0);
 
-        renderCommand.camera.transform.position += toVec3(left + up + forward);
+        camera.transform.position += toVec3(left + up + forward);
 
         Vec3f lightPos = renderCommand.pointLights.at(0).transform.position;
 
@@ -97,12 +95,13 @@ protected:
 
         renderCommand.units.at(2).transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
 
-        renderCommand.units.at(0).transform.position = renderCommand.camera.transform.position;
+        renderCommand.units.at(0).transform.position = camera.transform.position;
 
         forward = view * Vec4f(0, 0, -1, 0);
 
         renderCommand.spotLights.at(0).direction = toVec3(forward);
-        renderCommand.spotLights.at(0).transform.position = renderCommand.camera.transform.position;
+        renderCommand.spotLights.at(0).transform.position = camera.transform.position;
+
         renderApi.render(renderCommand, window.getFrameBuffer(), clearColor, true, true, true, false);
 
         window.swapBuffers();
@@ -167,7 +166,15 @@ protected:
         MeshObject *cubePtr = renderApi.allocateMesh(cubeMesh);
         MeshObject *curveCubePtr = renderApi.allocateMesh(curveCubeMesh);
         MeshObject *planePtr = renderApi.allocateMesh(planeMesh);
-        MeshObject *spherePtr = renderApi.allocateMesh(sphereMesh);
+        MeshObject *spherePtr = renderApi.allocateMeshInstanced(sphereMesh, {
+                Transform({0, 0, 0}, {}, {1, 1, 1}),
+                Transform({0, 1, 0}, {}, {1, 1, 1}),
+                Transform({0, -1, 0}, {}, {1, 1, 1}),
+                Transform({1, 0, 0}, {}, {1, 1, 1}),
+                Transform({-1, 0, 0}, {}, {1, 1, 1}),
+                Transform({0, 0, 1}, {}, {1, 1, 1}),
+                Transform({0, 0, -1}, {}, {1, 1, 1})
+        });
 
         res.meshes.emplace_back(cubePtr);
         res.meshes.emplace_back(curveCubePtr);
@@ -177,11 +184,11 @@ protected:
         RenderUnit unit;
         unit.enableDepthTest = true;
 
-        unit.meshData.emplace_back(curveCubePtr);
+        unit.meshObjects.emplace_back(curveCubePtr);
 
         unit.shader = shader;
 
-        unit.textures.emplace_back(colorMap);
+        unit.textureObjects.emplace_back(colorMap);
 
         unit.transform.position = Vec3f(0, 1, 0);
         unit.transform.rotation = Vec3f(0);
@@ -192,11 +199,11 @@ protected:
         unit = RenderUnit();
         unit.enableDepthTest = true;
 
-        unit.meshData.emplace_back(spherePtr);
+        unit.meshObjects.emplace_back(spherePtr);
 
         unit.shader = shader;
 
-        unit.textures.emplace_back(colorMap);
+        unit.textureObjects.emplace_back(colorMap);
 
         unit.transform.position = lightPos;
         unit.transform.rotation = Vec3f(0);
@@ -207,11 +214,11 @@ protected:
         unit = RenderUnit();
         unit.enableDepthTest = true;
 
-        unit.meshData.emplace_back(planePtr);
+        unit.meshObjects.emplace_back(planePtr);
 
         unit.shader = shader;
 
-        unit.textures.emplace_back(colorMap);
+        unit.textureObjects.emplace_back(colorMap);
 
         unit.transform.position = Vec3f(0);
         unit.transform.rotation = Vec3f(0);
@@ -221,16 +228,18 @@ protected:
 
         unit = RenderUnit();
         unit.enableDepthTest = false;
-        unit.meshData.emplace_back(cubePtr);
+        unit.meshObjects.emplace_back(cubePtr);
 
         unit.shader = skyboxShader;
 
-        unit.textures.emplace_back(skyboxTexture);
+        unit.textureObjects.emplace_back(skyboxTexture);
 
         renderCommand.units.emplace(renderCommand.units.begin(), unit);
 
-        renderCommand.camera.transform.position = Vec3f(0, 3, 3);
-        renderCommand.camera.transform.rotation = Vec3f(1, 0, 0);
+        renderCommand.camera = &camera;
+
+        camera.transform.position = Vec3f(0, 3, 3);
+        camera.transform.rotation = Vec3f(1, 0, 0);
     }
 
     void destroyScene() override {
@@ -249,7 +258,7 @@ private:
         std::vector<MeshObject *> meshes;
     } res;
 
-    float cameraRotationSpeed = 30.0f;
+    float cameraRotationSpeed = 45.0f;
     float cameraMovementSpeed = 5.0f;
 
     bool incrementLight = false;
@@ -257,8 +266,10 @@ private:
     float lightMovementSpeed = 1.0f;
 
     Mouse mouseLastFrame;
-    
+
     ColorRGBA32 clearColor = ColorRGBA32(30, 30, 30, 255);
+
+    PerspectiveCamera camera;
 };
 
 #endif //MANA_SAMPLE0_HPP

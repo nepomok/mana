@@ -16,7 +16,7 @@ namespace mana {
      *  The render api interprets render commands and translates them into the graphics api specific instructions.
      */
     struct RenderCommand {
-        Camera camera;
+        Camera* camera;
 
         std::vector<RenderUnit> units;
 

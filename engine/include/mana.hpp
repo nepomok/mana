@@ -64,6 +64,8 @@
 #include "engine/render/textureattributes.hpp"
 #include "engine/render/textureobject.hpp"
 #include "engine/render/rendercommand.hpp"
+#include "engine/render/perspectivecamera.hpp"
+#include "engine/render/orthographiccamera.hpp"
 #include "engine/physics/physicsengine.hpp"
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector4.hpp"

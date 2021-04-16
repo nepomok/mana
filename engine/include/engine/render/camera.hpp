@@ -2,42 +2,25 @@
 #define MANA_CAMERA_HPP
 
 #include "engine/render/transform.hpp"
+#include "engine/math/matrix.hpp"
+#include "engine/math/matrixmath.hpp"
 
 namespace mana {
-    //TODO: Refactor camera definition
-    struct Camera {
-        struct PerspectiveData {
-            float fov = 60;
-            float aspectRatio = 4.0f / 3.0f;
-            float nearClip = 0.1f;
-            float farClip = 100.0f;
-        };
+    class Camera {
+    public:
+        virtual Mat4f view() const {
+            Mat4f ret = MatrixMath::rotate(transform.rotation);
 
-        struct OrthographicData {
-            float left;
-            float right;
-            float top;
-            float bottom;
-            float nearClip = 0.1f;
-            float farClip = 1000.0f;
-        };
+            //The engines move the universe (Negate camera position)
+            return ret * MatrixMath::translate(transform.position * -1);
+        }
 
-        enum Type {
-            PERSPECTIVE,
-            ORTHOGRAPHIC
-        } cameraType = PERSPECTIVE;
-
-        union Data {
-            PerspectiveData perspective;
-            OrthographicData orthographic;
-
-            Data() : perspective(PerspectiveData()) {
-            }
-        } cameraData;
+        virtual Mat4f perspective() = 0;
 
         Transform transform;
 
-        Camera() = default;
+        float nearClip = 0.1f;
+        float farClip = 1000.0f;
     };
 }
 

@@ -55,9 +55,9 @@ protected:
         destroyScene();
     }
 
-    virtual void loadScene(RenderAPI &renderApi) {}
+    virtual void loadScene(RenderAPI &renderApi) = 0;
 
-    virtual void destroyScene() {}
+    virtual void destroyScene() = 0;
 
     RenderCommand renderCommand;
 };

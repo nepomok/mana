@@ -6,8 +6,6 @@
 
 namespace mana {
     struct Vertex {
-        static const int BYTES = sizeof(float) * 8;
-
         Vec3f position;
         Vec3f normal;
         Vec2f uv;
