@@ -65,26 +65,30 @@ namespace mana {
                             bool multiSample = true) = 0;
 
         /**
-         * Perform a hardware blit of the two framebuffers.
+         * Perform a hardware blit of the color buffers in the specified framebuffers.
          *
          * @param fbSource The source framebuffer to sample from.
          * @param fbTarget The target framebuffer to blit into.
-         * @param sourceOffset
-         * @param targetOffset
-         * @param rect
-         * @param targetRect
+         * @param sourceOffset The offset of the blit rect into the source buffer.
+         * @param targetOffset The offset of the blit rect into the target buffer.
+         * @param sourceRect The size of the blit rect for the source buffer.
+         * @param targetRect The size of the blit rect for the target buffer.
+         * @param filter If the source rect does not match the target rect this is the filter used for interpolation.
          */
         virtual void blitFramebuffer(const FrameBufferObject &fbSource,
                                      const FrameBufferObject &fbTarget,
                                      Vec2i sourceOffset,
                                      Vec2i targetOffset,
-                                     Vec2i rect) = 0;
+                                     Vec2i sourceRect,
+                                     Vec2i targetRect,
+                                     TextureFiltering filter) = 0;
 
         /**
-         * Perform a hardware blit of the two framebuffers.
+         * Perform a hardware blit of the color buffers in the specified framebuffers,
+         * using offsets of 0, the framebuffer sizes as rects and TextureFiltering::Nearest as filter.
          *
-         * @param fbSource
-         * @param fbTarget
+         * @param fbSource The source framebuffer to sample from.
+         * @param fbTarget The target framebuffer to blit into.
          */
         virtual void blitFramebuffer(const FrameBufferObject &fbSource, const FrameBufferObject &fbTarget) = 0;
 
@@ -187,6 +191,7 @@ namespace mana {
 
         /**
          * Allocate a cubemap texture from 6 image buffers.
+         *
          * @param imageBuffer
          * @param props
          * @return

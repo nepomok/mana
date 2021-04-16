@@ -322,26 +322,45 @@ namespace mana {
                                            const FrameBufferObject &fbTarget,
                                            Vec2i sourceOffset,
                                            Vec2i targetOffset,
-                                           Vec2i rect) {
+                                           Vec2i sourceRect,
+                                           Vec2i targetRect,
+                                           TextureFiltering filter) {
+            if (sourceRect.x < 0 || sourceRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (sourceOffset.x < 0 || sourceOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+            if (targetRect.x < 0 || targetRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (targetOffset.x < 0 || targetOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+
             auto &fbS = dynamic_cast<const OGLFrameBufferObject &>(fbSource);
             auto &fbT = dynamic_cast<const OGLFrameBufferObject &>(fbTarget);
 
+            Vec2i sourceSize = fbS.getSize();
+            if (sourceSize.x < sourceRect.x + sourceOffset.x || sourceSize.y < sourceRect.y + sourceOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for source framebuffer");
+
             Vec2i targetSize = fbT.getSize();
-            if (targetSize.x < rect.x + targetOffset.x || targetSize.y < rect.y + targetOffset.y)
-                throw std::runtime_error("Invalid blit rect.");
+            if (targetSize.x < targetRect.x + targetOffset.x || targetSize.y < targetRect.y + targetOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for target framebuffer.");
 
             glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
             glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fbT.getFBO());
             glBlitFramebuffer(sourceOffset.x,
                               sourceOffset.y,
-                              rect.x,
-                              rect.y,
+                              sourceRect.x,
+                              sourceRect.y,
                               targetOffset.x,
                               targetOffset.y,
-                              rect.x,
-                              rect.y,
+                              targetRect.x,
+                              targetRect.y,
                               GL_COLOR_BUFFER_BIT,
-                              GL_NEAREST);
+                              OGLTypeConverter::convert(filter));
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             checkGLError("OGLRenderAPI::blitFramebuffer");
@@ -350,7 +369,13 @@ namespace mana {
         void OGLRenderAPI::blitFramebuffer(const FrameBufferObject &fbSource, const FrameBufferObject &fbTarget) {
             auto &fbS = dynamic_cast<const OGLFrameBufferObject &>(fbSource);
             auto &fbT = dynamic_cast<const OGLFrameBufferObject &>(fbTarget);
-            blitFramebuffer(fbSource, fbTarget, Vec2i(0), Vec2i(0), fbT.getSize());
+            blitFramebuffer(fbSource,
+                            fbTarget,
+                            Vec2i(0),
+                            Vec2i(0),
+                            fbS.getSize(),
+                            fbT.getSize(),
+                            TextureFiltering::NEAREST);
         }
 
         void OGLRenderAPI::readTextureRGB(const TextureObject &texture, ImageBuffer<ColorRGB24> &output) {

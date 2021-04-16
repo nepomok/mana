@@ -29,7 +29,9 @@ namespace mana {
                                  const FrameBufferObject &fbTarget,
                                  Vec2i sourceOffset,
                                  Vec2i targetOffset,
-                                 Vec2i rect) override;
+                                 Vec2i sourceRect,
+                                 Vec2i targetRect,
+                                 TextureFiltering filter) override;
 
             void blitFramebuffer(const FrameBufferObject &fbSource, const FrameBufferObject &fbTarget) override;
 
