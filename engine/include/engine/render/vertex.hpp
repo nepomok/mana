@@ -5,9 +5,6 @@
 #include "engine/math/vector3.hpp"
 
 namespace mana {
-    /**
-     * Stores in memory [position , normal, uv] contiguously, address of vertex instance = position[0]
-     */
     struct Vertex {
         float data[8]; // Public member ensures that address of vertex instance = position[0], array to ensure contiguous memory.
 

@@ -30,17 +30,16 @@ namespace mana {
          * layout (location = 3) in mat4 instanceMatrix;
          */
         class OGLShaderProgram : public ShaderProgram {
-        protected:
-            OGLShaderProgram(const OGLShaderProgram &copy) = default;
-
-            OGLShaderProgram &operator=(const OGLShaderProgram &) = default;
-
         public:
             OGLShaderProgram();
 
             OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader);
 
             ~OGLShaderProgram() override;
+
+            OGLShaderProgram(const OGLShaderProgram &copy) = delete;
+
+            OGLShaderProgram &operator=(const OGLShaderProgram &) = delete;
 
             void activate() override;
 

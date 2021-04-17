@@ -10,7 +10,6 @@ namespace mana {
     public:
         virtual Mat4f view() const {
             Mat4f ret = MatrixMath::rotate(transform.rotation);
-
             //The engines move the universe (Negate camera position)
             return ret * MatrixMath::translate(transform.position * -1);
         }

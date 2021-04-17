@@ -11,7 +11,7 @@
 
 namespace mana {
     /**
-     *  A RenderCommand object describes a render operation in the form of data.
+     *  A RenderCommand object describes a render operation.
      *
      *  The render api interprets render commands and translates them into the graphics api specific instructions.
      *

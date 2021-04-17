@@ -4,10 +4,8 @@
 namespace mana {
     /**
      * The geometric primitives supported by the graphics api abstraction.
-     * Note that individual faces in a the meshes have to consist of the identical primitive (Triangulate, etc.).
-     *
-     * In the future the engine api will contain a triangulation algorithm for the mesh objects, so that users may convert
-     * arbitrary mesh objects to triangulated render meshes.
+     * Note that individual faces in the meshes have to consist of the identical primitive (Triangulate, etc.).
+     * Triangulation is the responsibility of the mesh loader.
      */
     enum Primitive {
         POINT,

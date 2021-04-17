@@ -8,14 +8,7 @@
 namespace mana {
     namespace opengl {
         class OGLFrameBufferObject : public FrameBufferObject {
-        protected:
-            OGLFrameBufferObject() = default;
-
         public:
-            OGLFrameBufferObject(const OGLFrameBufferObject &copy) = delete;
-
-            OGLFrameBufferObject &operator=(const OGLFrameBufferObject &copy) = delete;
-
             ~OGLFrameBufferObject() override = default;
 
             virtual Vec2i getSize() const = 0;

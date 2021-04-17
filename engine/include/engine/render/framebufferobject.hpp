@@ -1,17 +1,12 @@
 #ifndef MANA_FRAMEBUFFEROBJECT_HPP
 #define MANA_FRAMEBUFFEROBJECT_HPP
 
+#include "engine/render/renderobject.hpp"
+
 namespace mana {
-    class FrameBufferObject {
-    protected:
-        FrameBufferObject() = default;
-
-        FrameBufferObject(const FrameBufferObject &copy) = default;
-
-        FrameBufferObject &operator=(const FrameBufferObject &) = default;
-
+    class FrameBufferObject : public RenderObject {
     public:
-        virtual ~FrameBufferObject() = default;
+        ~FrameBufferObject() override = default;
     };
 }
 

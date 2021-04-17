@@ -1,17 +1,12 @@
 #ifndef MANA_MESHOBJECT_HPP
 #define MANA_MESHOBJECT_HPP
 
+#include "engine/render/renderobject.hpp"
+
 namespace mana {
-    class MeshObject {
-    protected:
-        MeshObject() = default;
-
-        MeshObject(const MeshObject &copy) = default;
-
-        MeshObject &operator=(const MeshObject &) = default;
-
+    class MeshObject : public RenderObject {
     public:
-        virtual ~MeshObject() = default;
+        ~MeshObject() override = default;
     };
 }
 

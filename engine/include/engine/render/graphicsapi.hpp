@@ -4,8 +4,8 @@
 namespace mana {
     enum GraphicsApi {
         OPENGL,
-        VULKAN,
-        DIRECTX
+        DIRECTX,
+        VULKAN
     };
 }
 

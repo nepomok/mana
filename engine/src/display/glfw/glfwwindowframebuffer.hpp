@@ -9,7 +9,7 @@ namespace mana {
         GLFWwindow *wndH;
 
         explicit GLFWWindowFrameBuffer(GLFWwindow *wndH) : wndH(wndH) {}
-
+        
         Vec2i getSize() const override {
             Vec2i ret;
             glfwGetWindowSize(wndH, &ret.x, &ret.y);
