@@ -14,6 +14,8 @@ namespace mana {
      *  A RenderCommand object describes a render operation in the form of data.
      *
      *  The render api interprets render commands and translates them into the graphics api specific instructions.
+     *
+     *  The render units are drawn in order.
      */
     struct RenderCommand {
         Camera* camera;

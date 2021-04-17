@@ -20,8 +20,8 @@ protected:
         double rotationSpeed = cameraRotationSpeed * deltaTime;
 
         if (mouse.leftButtonDown && (mouseDiff.x != 0 || mouseDiff.y != 0)) {
-            renderCommand.units.at(1).transform.rotation.x += mouseDiff.y * rotationSpeed;
-            renderCommand.units.at(1).transform.rotation.y += mouseDiff.x * rotationSpeed;
+            cube->transform.rotation.x += mouseDiff.y * rotationSpeed;
+            cube->transform.rotation.y += mouseDiff.x * rotationSpeed;
         }
 
         if (input.getKeyDown(KEY_UP)) {
@@ -91,11 +91,11 @@ protected:
         }
 
         renderCommand.pointLights.at(0).transform.position = lightPos;
-        renderCommand.units.at(2).transform.position = lightPos;
+        sphere->transform.position = lightPos;
 
-        renderCommand.units.at(2).transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
+        sphere->transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
 
-        renderCommand.units.at(0).transform.position = camera.transform.position;
+        skybox->transform.position = camera.transform.position;
 
         forward = view * Vec4f(0, 0, -1, 0);
 
@@ -194,7 +194,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(1);
 
-        renderCommand.units.emplace_back(unit);
+        renderCommand.units.emplace(renderCommand.units.end(), unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = true;
@@ -209,7 +209,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(0.1f);
 
-        renderCommand.units.emplace_back(unit);
+        renderCommand.units.emplace(renderCommand.units.end(), unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = true;
@@ -224,7 +224,7 @@ protected:
         unit.transform.rotation = Vec3f(0);
         unit.transform.scale = Vec3f(10.0f);
 
-        renderCommand.units.emplace_back(unit);
+        renderCommand.units.emplace(renderCommand.units.end(), unit);
 
         unit = RenderUnit();
         unit.enableDepthTest = false;
@@ -240,6 +240,10 @@ protected:
 
         camera.transform.position = Vec3f(0, 3, 3);
         camera.transform.rotation = Vec3f(1, 0, 0);
+
+        skybox = &*(renderCommand.units.begin());
+        sphere = &*(renderCommand.units.begin() + 2);
+        cube = &*(renderCommand.units.begin() + 1);
     }
 
     void destroyScene() override {
@@ -270,6 +274,10 @@ private:
     ColorRGBA32 clearColor = ColorRGBA32(30, 30, 30, 255);
 
     PerspectiveCamera camera;
+
+    RenderUnit *skybox;
+    RenderUnit *sphere;
+    RenderUnit *cube;
 };
 
 #endif //MANA_SAMPLE0_HPP
