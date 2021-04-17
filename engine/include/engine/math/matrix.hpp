@@ -20,9 +20,9 @@ namespace mana {
         //Public to ensure address of instance = first element of data, Array to ensure contiguous memory.
         T data[W * H];
 
-        Matrix() = default;
+        Matrix() : data({}) {};
 
-        explicit Matrix(T v) {
+        explicit Matrix(T v) : data({}) {
             set(0, 0, v);
             set(1, 1, v);
             set(2, 2, v);
@@ -40,19 +40,19 @@ namespace mana {
         void set(int col, int row, T v) {
             assert(col >= 0 && col < W);
             assert(row >= 0 && row < H);
-            data[H * col + row] = v;
+            data[W * row + col] = v;
         }
 
         T get(int col, int row) const {
             assert(col >= 0 && col < W);
             assert(row >= 0 && row < H);
-            return data[H * col + row];
+            return data[W * row + col];
         }
 
         Matrix<T, W, H> &operator+=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data[H * col + row] += other.get(col, row);
+                    data[W * row + col] += other.get(col, row);
                 }
             }
             return *this;
@@ -61,7 +61,7 @@ namespace mana {
         Matrix<T, W, H> &operator-=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data[H * col + row] -= other.get(col, row);
+                    data[W * row + col] -= other.get(col, row);
                 }
             }
             return *this;
