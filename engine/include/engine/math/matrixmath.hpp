@@ -6,22 +6,63 @@
 #include "engine/math/matrix.hpp"
 
 namespace mana {
-    class MatrixMath {
-    public:
-        static Mat4f perspective(float fovy, float aspect, float zNear, float zFar);
+    namespace MatrixMath {
+        Mat4f inverse(const Mat4f &mat);
 
-        static Mat4f ortho(float left, float right, float bottom, float top, float zNear, float zFar);
+        Mat4f transpose(const Mat4f &mat);
 
-        static Mat4f identity();
+        /**
+         * Returns a matrix which can be used for multiplying with a column vector.
+         *
+         * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
+         *
+         * @param fovy
+         * @param aspect
+         * @param zNear
+         * @param zFar
+         * @return
+         */
+        Mat4f perspective(float fovy, float aspect, float zNear, float zFar);
 
-        static Mat4f inverse(const Mat4f &mat);
+        /**
+         * Returns a matrix which can be used for multiplying with a column vector.
+         *
+         * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
+         *
+         * @param left
+         * @param right
+         * @param bottom
+         * @param top
+         * @param zNear
+         * @param zFar
+         * @return
+         */
+        Mat4f ortho(float left, float right, float bottom, float top, float zNear, float zFar);
 
-        static Mat4f translate(const Vec3f &translationValue);
+        /**
+         * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
+         *
+         * @param translationValue
+         * @return
+         */
+        Mat4f translate(const Vec3f &translationValue);
 
-        static Mat4f scale(const Vec3f &scaleValue);
+        /**
+         * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
+         *
+         * @param scaleValue
+         * @return
+         */
+        Mat4f scale(const Vec3f &scaleValue);
 
-        static Mat4f rotate(const Vec3f &rotationValue);
-    };
+        /**
+         * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
+         *
+         * @param rotationValue
+         * @return
+         */
+        Mat4f rotate(const Vec3f &rotationValue);
+    }
 }
 
 #endif //MANA_GRAPHICSMATH_HPP

@@ -8,7 +8,7 @@
 
 namespace mana {
     /**
-     * Data is stored in ROW MAJOR.
+     * Data is stored in COLUMN MAJOR layout.
      *
      * @tparam T The type of the elements in the matrix.
      * @tparam W The column count of the matrix.
@@ -17,12 +17,14 @@ namespace mana {
     template<typename T, int W, int H>
     class Matrix {
     public:
+        static const size_t ROW_SIZE = 4 * sizeof(T);
+
         //Public to ensure address of instance = first element of data, Array to ensure contiguous memory.
         T data[W * H];
 
-        Matrix() : data({}) {};
+        Matrix() : data() {};
 
-        explicit Matrix(T v) : data({}) {
+        explicit Matrix(T v) : data() {
             set(0, 0, v);
             set(1, 1, v);
             set(2, 2, v);
@@ -40,19 +42,19 @@ namespace mana {
         void set(int col, int row, T v) {
             assert(col >= 0 && col < W);
             assert(row >= 0 && row < H);
-            data[W * row + col] = v;
+            data[H * col + row] = v;
         }
 
         T get(int col, int row) const {
             assert(col >= 0 && col < W);
             assert(row >= 0 && row < H);
-            return data[W * row + col];
+            return data[H * col + row];
         }
 
         Matrix<T, W, H> &operator+=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data[W * row + col] += other.get(col, row);
+                    data[H * col + row] += other.get(col, row);
                 }
             }
             return *this;
@@ -61,7 +63,7 @@ namespace mana {
         Matrix<T, W, H> &operator-=(const Matrix<T, W, H> &other) {
             for (int col = 0; col < W; col++) {
                 for (int row = 0; row < H; row++) {
-                    data[W * row + col] -= other.get(col, row);
+                    data[H * col + row] -= other.get(col, row);
                 }
             }
             return *this;
@@ -88,14 +90,13 @@ namespace mana {
         }
     };
 
-    //4 by 4 matrix multiplication with a 4d vector as described here http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
+    // Multiply matrix by column vector
     Vector4<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector4<float> &rhs);
 
     Vector4<double> operator*(const Matrix<double, 4, 4> &lhs, const Vector4<double> &rhs);
 
-    //4 by 4 matrix multiplication with a 4 by 4 matrix
+    // Multiply matrix by another matrix
     Matrix<float, 4, 4> operator*(const Matrix<float, 4, 4> &lhs, const Matrix<float, 4, 4> &rhs);
-
 
     typedef Matrix<float, 2, 2> Mat2x2f;
     typedef Matrix<float, 2, 2> Mat2f;

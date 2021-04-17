@@ -1,5 +1,3 @@
-#include <glm/gtc/matrix_transform.hpp>
-
 #include <stdexcept>
 
 #include "engine/math/vector3.hpp"
@@ -17,34 +15,6 @@ namespace mana {
 
             GLuint convertPrimitive(uint value) {
                 return (GLuint) value;
-            }
-
-            glm::vec3 convert(const Vec3f &vec) {
-                return glm::vec3(vec.x, vec.y, vec.z);
-            }
-
-            Vec3f convert(const glm::vec3 &vec) {
-                return {vec.x, vec.y, vec.z};
-            }
-
-            glm::mat4 convert(const Mat4f &mat) {
-                glm::mat4 ret;
-                for (int x = 0; x < mat.width(); x++) {
-                    for (int y = 0; y < mat.height(); y++) {
-                        ret[x][y] = mat.get(x, y);
-                    }
-                }
-                return ret;
-            }
-
-            Mat4f convert(const glm::mat4 &mat) {
-                Mat4f ret;
-                for (int x = 0; x < 4; x++) {
-                    for (int y = 0; y < 4; y++) {
-                        ret.set(x, y, mat[x][y]);
-                    }
-                }
-                return ret;
             }
 
             GLint convert(TextureWrapping wrapping) {

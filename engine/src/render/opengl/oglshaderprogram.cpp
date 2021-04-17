@@ -3,7 +3,7 @@
 #include "render/opengl/oglshaderprogram.hpp"
 #include "render/opengl/ogltypeconverter.hpp"
 
-#include <glm/glm.hpp>
+#include "engine/math/matrixmath.hpp"
 
 #define SHADER_INCLUDE std::string("#include \"mana.glsl\"\n")
 

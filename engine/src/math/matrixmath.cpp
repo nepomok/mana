@@ -3,8 +3,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include <cmath>
-
+//TODO: Remove glm dependency from matrixmath.cpp
 namespace mana {
     glm::mat4 convert(const Mat4f &mat) {
         glm::mat4 ret;
@@ -26,6 +25,20 @@ namespace mana {
         return ret;
     }
 
+    Mat4f MatrixMath::inverse(const Mat4f &mat) {
+        return convert(glm::inverse(convert(mat)));
+    }
+
+    Mat4f MatrixMath::transpose(const Mat4f &mat) {
+        Mat4f ret;
+        for (int r = 0; r < mat.height(); r++) {
+            for (int c = 0; c < mat.width(); c++) {
+                ret.set(r, c, mat.get(c, r));
+            }
+        }
+        return ret;
+    }
+
     Mat4f MatrixMath::perspective(float fovy, float aspect, float zNear, float zFar) {
         return convert(glm::perspective(glm::radians(fovy), aspect, zNear, zFar));
     }
@@ -35,33 +48,21 @@ namespace mana {
         return convert(glm::ortho(left, right, bottom, top, zNear, zFar));
     }
 
-    Mat4f MatrixMath::inverse(const Mat4f &mat) {
-        return convert(glm::inverse(convert(mat)));
-    }
-
-    Mat4f MatrixMath::identity() {
-        return Mat4f(1);
-    }
-
     Mat4f MatrixMath::translate(const Vec3f &translationValue) {
-        return convert(glm::translate(glm::mat4(1),
-                                      glm::vec3(translationValue.x, translationValue.y, translationValue.z)));
-        /*Mat4f ret = identity();
+        Mat4f ret(1);
         ret.set(3, 0, translationValue.x);
         ret.set(3, 1, translationValue.y);
         ret.set(3, 2, translationValue.z);
-        ret.set(3, 3, 1);
-        return inverse(ret);*/
+        return ret;
     }
 
     Mat4f MatrixMath::scale(const Vec3f &scaleValue) {
-        return convert(glm::scale(glm::mat4(1), glm::vec3(scaleValue.x, scaleValue.y, scaleValue.z)));
-        /* Mat4f ret(0);
-         ret.set(0, 0, scaleValue.x);
-         ret.set(1, 1, scaleValue.y);
-         ret.set(2, 2, scaleValue.z);
-         ret.set(3, 3, scaleValue.w);
-         return ret;*/
+        Mat4f ret;
+        ret.set(0, 0, scaleValue.x);
+        ret.set(1, 1, scaleValue.y);
+        ret.set(2, 2, scaleValue.z);
+        ret.set(3, 3, 1);
+        return ret;
     }
 
     Mat4f MatrixMath::rotate(const Vec3f &rotationValue) {

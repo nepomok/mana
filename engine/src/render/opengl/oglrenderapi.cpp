@@ -705,7 +705,7 @@ namespace mana {
             ret->indexed = mesh.indexed;
             ret->instanced = false;
 
-            glm::mat4 offset(1);
+            Mat4f offset(1); // Default instancing offset is identity.
 
             if (mesh.indexed) {
                 ret->elementCount = mesh.indices.size() / 3;
@@ -736,27 +736,27 @@ namespace mana {
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4), &offset, GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f), &offset, GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
                 glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) 0);
+                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
                 glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
+                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
                 glEnableVertexAttribArray(5);
                 glVertexAttribPointer(5,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (2 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (2 * Mat4f::ROW_SIZE));
                 glEnableVertexAttribArray(6);
                 glVertexAttribPointer(6,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (3 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (3 * Mat4f::ROW_SIZE));
 
                 glVertexAttribDivisor(3, 1);
                 glVertexAttribDivisor(4, 1);
@@ -794,27 +794,27 @@ namespace mana {
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4), &offset, GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f), &offset, GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
                 glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) 0);
+                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
                 glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
+                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
                 glEnableVertexAttribArray(5);
                 glVertexAttribPointer(5,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (2 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (2 * Mat4f::ROW_SIZE));
                 glEnableVertexAttribArray(6);
                 glVertexAttribPointer(6,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (3 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (3 * Mat4f::ROW_SIZE));
 
                 glVertexAttribDivisor(3, 1);
                 glVertexAttribDivisor(4, 1);
@@ -844,12 +844,12 @@ namespace mana {
             ret->instanced = true;
             ret->instanceCount = offsets.size();
 
-            glm::mat4 off[offsets.size()];
+            Mat4f off[offsets.size()];
 
             for (int i = 0; i < offsets.size(); i++) {
-                off[i] = OGLTypeConverter::convert(MatrixMath::translate(offsets.at(i).position)
-                                                   * MatrixMath::scale(offsets.at(i).scale)
-                                                   * MatrixMath::rotate(offsets.at(i).rotation));
+                off[i] = MatrixMath::translate(offsets.at(i).position)
+                         * MatrixMath::scale(offsets.at(i).scale)
+                         * MatrixMath::rotate(offsets.at(i).rotation);
             }
 
             if (mesh.indexed) {
@@ -883,27 +883,27 @@ namespace mana {
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * offsets.size(), &off[0], GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f) * offsets.size(), &off[0], GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
                 glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) 0);
+                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
                 glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
+                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
                 glEnableVertexAttribArray(5);
                 glVertexAttribPointer(5,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (2 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (2 * Mat4f::ROW_SIZE));
                 glEnableVertexAttribArray(6);
                 glVertexAttribPointer(6,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (3 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (3 * Mat4f::ROW_SIZE));
 
                 glVertexAttribDivisor(3, 1);
                 glVertexAttribDivisor(4, 1);
@@ -941,27 +941,27 @@ namespace mana {
                 glEnableVertexAttribArray(2);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * offsets.size(), &off[0], GL_STATIC_DRAW);
+                glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f) * offsets.size(), &off[0], GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
                 glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) 0);
+                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
                 glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(glm::mat4), (void *) (sizeof(glm::vec4)));
+                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
                 glEnableVertexAttribArray(5);
                 glVertexAttribPointer(5,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (2 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (2 * Mat4f::ROW_SIZE));
                 glEnableVertexAttribArray(6);
                 glVertexAttribPointer(6,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
-                                      sizeof(glm::mat4),
-                                      (void *) (3 * sizeof(glm::vec4)));
+                                      sizeof(Mat4f),
+                                      (void *) (3 * Mat4f::ROW_SIZE));
 
                 glVertexAttribDivisor(3, 1);
                 glVertexAttribDivisor(4, 1);
