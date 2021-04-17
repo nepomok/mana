@@ -17,7 +17,8 @@ namespace mana {
     template<typename T, int W, int H>
     class Matrix {
     public:
-        static const size_t ROW_SIZE = 4 * sizeof(T);
+        static const size_t ROW_SIZE = W * sizeof(T);
+        static const size_t COLUMN_SIZE = H *sizeof(T);
 
         //Public to ensure address of instance = first element of data, Array to ensure contiguous memory.
         T data[W * H];
