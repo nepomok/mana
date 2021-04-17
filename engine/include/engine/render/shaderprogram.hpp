@@ -5,10 +5,12 @@
 #include "engine/math/vector3.hpp"
 #include "engine/math/matrix.hpp"
 
+#include "engine/render/renderobject.hpp"
+
 namespace mana {
-    class ShaderProgram {
+    class ShaderProgram : public RenderObject {
     public:
-        virtual ~ShaderProgram() = default;
+        ~ShaderProgram() override = default;
 
 
         virtual void activate() = 0;

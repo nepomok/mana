@@ -132,19 +132,20 @@ protected:
         Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
         ShaderProgram *skyboxShader = renderApi.compileShaderProgram(skyboxVertexShader, skyboxFragmentShader);
-        res.shaders.emplace_back(skyboxShader);
+        objects.emplace_back(skyboxShader);
+
         skyboxShader->activate();
         skyboxShader->setInt("skybox", 0);
 
         ShaderProgram *shader = renderApi.compileShaderProgram(vertexShader, fragmentShader);
-        res.shaders.emplace_back(shader);
+        objects.emplace_back(shader);
 
         shader->activate();
         shader->setInt("diffuse", 0);
         shader->setInt("specular", 1);
 
         ShaderProgram *lightShader = renderApi.compileShaderProgram(vertexShader, lightFragmentShader);
-        res.shaders.emplace_back(lightShader);
+        objects.emplace_back(lightShader);
 
         auto colorMap = renderApi.allocateTexture(ImageLoader::load("./assets/colormap.png"),
                                                   TextureAttributes());
@@ -160,8 +161,8 @@ protected:
 
         auto skyboxTexture = renderApi.allocateTexture(textures, TextureAttributes());
 
-        res.textures.emplace_back(colorMap);
-        res.textures.emplace_back(skyboxTexture);
+        objects.emplace_back(colorMap);
+        objects.emplace_back(skyboxTexture);
 
         MeshObject *cubePtr = renderApi.allocateMesh(cubeMesh);
         MeshObject *curveCubePtr = renderApi.allocateMesh(curveCubeMesh);
@@ -176,10 +177,10 @@ protected:
                 Transform({0, 0, -1}, {}, {1, 1, 1})
         });
 
-        res.meshes.emplace_back(cubePtr);
-        res.meshes.emplace_back(curveCubePtr);
-        res.meshes.emplace_back(planePtr);
-        res.meshes.emplace_back(spherePtr);
+        objects.emplace_back(cubePtr);
+        objects.emplace_back(curveCubePtr);
+        objects.emplace_back(planePtr);
+        objects.emplace_back(spherePtr);
 
         RenderUnit unit;
         unit.enableDepthTest = true;
@@ -247,20 +248,12 @@ protected:
     }
 
     void destroyScene() override {
-        for (auto *p : res.shaders)
-            delete p;
-        for (auto *p : res.textures)
-            delete p;
-        for (auto *p : res.meshes)
+        for(auto *p : objects)
             delete p;
     }
 
 private:
-    struct Resources {
-        std::vector<ShaderProgram *> shaders;
-        std::vector<TextureObject *> textures;
-        std::vector<MeshObject *> meshes;
-    } res;
+    std::vector<RenderObject*> objects;
 
     float cameraRotationSpeed = 45.0f;
     float cameraMovementSpeed = 5.0f;
