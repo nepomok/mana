@@ -78,7 +78,7 @@ namespace mana {
             Mat4f model, view, projection;
 
             view = command.camera->view();
-            projection = command.camera->perspective();
+            projection = command.camera->projection();
 
             std::set<OGLShaderProgram *> shaders;
 
