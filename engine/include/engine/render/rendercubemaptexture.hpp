@@ -19,13 +19,13 @@ namespace mana {
 
         Vec2i getSize() override = 0;
 
-        void upload(const ImageBuffer <ColorRGBA32> &buffer) override = 0;
+        void upload(ColorFormat internalFormat, const ImageBuffer <ColorRGBA> &buffer) override = 0;
 
-        ImageBuffer <ColorRGBA32> download() override = 0;
+        ImageBuffer <ColorRGBA> download() override = 0;
 
-        virtual void upload(Face face, const ImageBuffer <ColorRGBA32> &buffer) = 0;
+        virtual void upload(Face face, ColorFormat internalFormat, const ImageBuffer <ColorRGBA> &buffer) = 0;
 
-        virtual ImageBuffer <ColorRGBA32> download(Face face) = 0;
+        virtual ImageBuffer <ColorRGBA> download(Face face) = 0;
     };
 }
 

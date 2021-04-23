@@ -12,22 +12,20 @@ namespace mana {
     public:
         virtual FrameBuffer *allocateFrameBuffer(int width,
                                                  int height,
-                                                 ColorFormat colorFormat = ColorFormat::RGBA32,
-                                                 TextureAttributes colorProperties = {}) = 0;
+                                                 TextureAttributes colorBufferProperties = {}) = 0;
 
         virtual RenderTexture *allocateTexture(int width,
                                                int height,
-                                               ColorFormat colorFormat = ColorFormat::RGBA32,
                                                TextureAttributes properties = {}) = 0;
 
         virtual RenderCubeMapTexture *allocateCubeMapTexture(int width,
                                                              int height,
-                                                             ColorFormat colorFormat = ColorFormat::RGBA32,
                                                              TextureAttributes properties = {}) = 0;
 
         virtual RenderMesh *allocateMesh(const Mesh &mesh) = 0;
 
-        virtual RenderInstancedMesh *allocateInstancedMesh(const Mesh &mesh) = 0;
+        virtual RenderInstancedMesh *allocateInstancedMesh(const Mesh &mesh,
+                                                           const std::vector<Transform> &offsets = {}) = 0;
 
         virtual ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) = 0;
     };

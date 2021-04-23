@@ -6,7 +6,7 @@
 #include "engine/render/renderallocator.hpp"
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/monitor.hpp"
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
 
@@ -49,7 +49,7 @@ namespace mana {
 
         virtual void setTitle(std::string title) = 0;
 
-        virtual void setIcon(ImageBuffer<ColorRGBA32> &buffer) = 0;
+        virtual void setIcon(ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual void setWindowPosition(Vec2i position) = 0;
 

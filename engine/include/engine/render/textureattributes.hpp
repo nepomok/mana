@@ -2,6 +2,17 @@
 #define MANA_TEXTUREATTRIBUTES_HPP
 
 namespace mana {
+    enum ColorFormat {
+        RGB,
+        RGBA,
+
+        DEPTH,
+        DEPTH_STENCIL,
+
+        RGB_COMPRESSED,
+        RGBA_COMPRESSED
+    };
+
     enum TextureWrapping {
         REPEAT,
         MIRRORED_REPEAT,
@@ -22,6 +33,8 @@ namespace mana {
     };
 
     struct TextureAttributes {
+        ColorFormat internalFormat = RGBA;
+        
         TextureWrapping texWrapping = REPEAT;
         TextureFiltering texFilterMin = NEAREST;
         TextureFiltering texFilterMag = NEAREST;

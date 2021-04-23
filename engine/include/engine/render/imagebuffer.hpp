@@ -2,7 +2,7 @@
 #define MANA_IMAGEBUFFER_HPP
 
 #include "engine/common/buffer.hpp"
-#include "engine/common/color.hpp"
+#include "engine/render/color.hpp"
 #include "engine/math/rectangle.hpp"
 
 namespace mana {

@@ -79,7 +79,7 @@ namespace mana {
 
         void setTitle(std::string title) override;
 
-        void setIcon(ImageBuffer<ColorRGBA32> &buffer) override;
+        void setIcon(ImageBuffer<ColorRGBA> &buffer) override;
 
         void setWindowPosition(Vec2i position) override;
 

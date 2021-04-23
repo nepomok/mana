@@ -1,8 +1,9 @@
 #ifndef MANA_RENDERTEXTURE_HPP
 #define MANA_RENDERTEXTURE_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 #include "engine/render/renderobject.hpp"
+#include "engine/render/textureattributes.hpp"
 
 namespace mana {
     class RenderTexture : public RenderObject {
@@ -11,9 +12,11 @@ namespace mana {
 
         virtual Vec2i getSize() = 0;
 
-        virtual void upload(const ImageBuffer <ColorRGBA32> &buffer) = 0;
+        virtual void upload(ColorFormat internalFormat, const ImageBuffer<ColorRGB> &buffer) = 0;
 
-        virtual ImageBuffer <ColorRGBA32> download() = 0;
+        virtual void upload(ColorFormat internalFormat, const ImageBuffer<ColorRGBA> &buffer) = 0;
+
+        virtual ImageBuffer<ColorRGBA> download() = 0;
     };
 }
 

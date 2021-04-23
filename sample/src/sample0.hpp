@@ -278,7 +278,7 @@ private:
 
     Mouse mouseLastFrame;
 
-    ColorRGBA32 clearColor = ColorRGBA32(30, 30, 30, 255);
+    ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
     PerspectiveCamera camera;
 

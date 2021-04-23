@@ -3,14 +3,14 @@
 
 #include <string>
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 
 namespace mana {
     class ImageWriter {
     public:
-        static void write(std::string filepath, const ImageBuffer<ColorRGB24> &buffer);
+        static void write(std::string filepath, const ImageBuffer<ColorRGB> &buffer);
 
-        static void write(std::string filepath, const ImageBuffer<ColorRGBA32> &buffer);
+        static void write(std::string filepath, const ImageBuffer<ColorRGBA> &buffer);
     };
 }
 

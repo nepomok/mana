@@ -239,7 +239,7 @@ namespace mana {
                                   const FrameBufferObject &frameBuffer,
                                   Vec2i viewportOffset,
                                   Vec2i viewportSize,
-                                  ColorRGBA32 clearColorValue,
+                                  ColorRGBA clearColorValue,
                                   bool clearColor,
                                   bool clearDepth,
                                   bool clearStencil,
@@ -272,7 +272,7 @@ namespace mana {
 
         void OGLRenderAPI::render(const RenderCommand &command,
                                   const FrameBufferObject &frameBuffer,
-                                  ColorRGBA32 clearColorValue,
+                                  ColorRGBA clearColorValue,
                                   bool clearColor,
                                   bool clearDepth,
                                   bool clearStencil,
@@ -349,25 +349,25 @@ namespace mana {
                             TextureFiltering::NEAREST);
         }
 
-        void OGLRenderAPI::readTextureRGB(const RenderTexture &texture, ImageBuffer<ColorRGB24> &output) {
+        void OGLRenderAPI::readTextureRGB(const RenderTexture &texture, ImageBuffer<ColorRGB> &output) {
             auto &tex = dynamic_cast<const OGLTextureObject &>(texture);
-            output = ImageBuffer<ColorRGB24>(tex.width, tex.height);
+            output = ImageBuffer<ColorRGB>(tex.width, tex.height);
             glBindTexture(GL_TEXTURE_2D, tex.handle);
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGB, GL_UNSIGNED_BYTE, output.buffer.getData());
             glBindTexture(GL_TEXTURE_2D, 0);
             checkGLError("OGLRenderAPI::readTextureRGB");
         }
 
-        void OGLRenderAPI::readTextureRGBA(const RenderTexture &texture, ImageBuffer<ColorRGBA32> &output) {
+        void OGLRenderAPI::readTextureRGBA(const RenderTexture &texture, ImageBuffer<ColorRGBA> &output) {
             auto &tex = dynamic_cast<const OGLTextureObject &>(texture);
-            output = ImageBuffer<ColorRGBA32>(tex.width, tex.height);
+            output = ImageBuffer<ColorRGBA>(tex.width, tex.height);
             glBindTexture(GL_TEXTURE_2D, tex.handle);
             glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, output.buffer.getData());
             glBindTexture(GL_TEXTURE_2D, 0);
             checkGLError("OGLRenderAPI::readTextureRGBA");
         }
 
-        void OGLRenderAPI::writeTextureRGB(const ImageBuffer<ColorRGB24> &input, const RenderTexture &tex) {
+        void OGLRenderAPI::writeTextureRGB(const ImageBuffer<ColorRGB> &input, const RenderTexture &tex) {
             auto &texture = dynamic_cast<const OGLTextureObject &>(tex);
             if (input.getWidth() != texture.width || input.getHeight() != texture.height) {
                 throw std::runtime_error("Attempted to write input buffer with non matching size");
@@ -386,7 +386,7 @@ namespace mana {
             checkGLError("OGLRenderAPI::writeTextureRGB");
         }
 
-        void OGLRenderAPI::writeTextureRGBA(const ImageBuffer<ColorRGBA32> &input, const RenderTexture &tex) {
+        void OGLRenderAPI::writeTextureRGBA(const ImageBuffer<ColorRGBA> &input, const RenderTexture &tex) {
             auto &texture = dynamic_cast<const OGLTextureObject &>(tex);
             if (input.getWidth() != texture.width || input.getHeight() != texture.height) {
                 throw std::runtime_error("Attempted to write input buffer with non matching size");
@@ -426,10 +426,10 @@ namespace mana {
                             OGLTypeConverter::convert(definition.texFilterMag));
 
             switch (colorFormat) {
-                case RGB24:
+                case RGB:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
                     break;
-                case RGBA32:
+                case RGBA:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
                     break;
             }
@@ -511,10 +511,10 @@ namespace mana {
                             OGLTypeConverter::convert(definition.texFilterMag));
 
             switch (colorFormat) {
-                case RGB24:
+                case RGB:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
                     break;
-                case RGBA32:
+                case RGBA:
                     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
                     break;
             }
@@ -534,7 +534,7 @@ namespace mana {
             return ret;
         }
 
-        RenderTexture *OGLRenderAPI::allocateTexture(const ImageBuffer<ColorRGB24> &imageBuffer,
+        RenderTexture *OGLRenderAPI::allocateTexture(const ImageBuffer<ColorRGB> &imageBuffer,
                                                      TextureAttributes definition) {
             auto *ret = new OGLTextureObject(imageBuffer.getWidth(), imageBuffer.getHeight());
 
@@ -567,7 +567,7 @@ namespace mana {
             return ret;
         }
 
-        RenderTexture *OGLRenderAPI::allocateTexture(const ImageBuffer<ColorRGBA32> &imageBuffer,
+        RenderTexture *OGLRenderAPI::allocateTexture(const ImageBuffer<ColorRGBA> &imageBuffer,
                                                      TextureAttributes definition) {
             auto *ret = new OGLTextureObject(imageBuffer.getWidth(), imageBuffer.getHeight());
 
@@ -599,7 +599,7 @@ namespace mana {
             return ret;
         }
 
-        RenderTexture *OGLRenderAPI::allocateTexture(const std::vector<ImageBuffer<ColorRGB24>> &imageBuffers,
+        RenderTexture *OGLRenderAPI::allocateTexture(const std::vector<ImageBuffer<ColorRGB>> &imageBuffers,
                                                      TextureAttributes props) {
             auto *ret = new OGLTextureObject(imageBuffers.at(0).getWidth(), imageBuffers.at(0).getHeight());
 
@@ -647,7 +647,7 @@ namespace mana {
             return ret;
         }
 
-        RenderTexture *OGLRenderAPI::allocateTexture(const std::vector<ImageBuffer<ColorRGBA32>> &imageBuffers,
+        RenderTexture *OGLRenderAPI::allocateTexture(const std::vector<ImageBuffer<ColorRGBA>> &imageBuffers,
                                                      TextureAttributes props) {
             auto *ret = new OGLTextureObject(imageBuffers.at(0).getWidth(), imageBuffers.at(0).getHeight());
 

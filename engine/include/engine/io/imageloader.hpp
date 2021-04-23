@@ -1,12 +1,12 @@
 #ifndef MANA_IMAGELOADER_HPP
 #define MANA_IMAGELOADER_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 
 namespace mana {
     class ImageLoader {
     public:
-        static ImageBuffer<ColorRGBA32> load(std::string filepath);
+        static ImageBuffer<ColorRGBA> load(std::string filepath);
     };
 }
 
