@@ -3,13 +3,14 @@
 
 #include "engine/render/renderobject.hpp"
 #include "engine/render/rendertexture.hpp"
-#include "engine/render/rendercubemaptexture.hpp"
 #include "engine/render/textureattributes.hpp"
 
 namespace mana {
     class FrameBuffer : public RenderObject {
     public:
         ~FrameBuffer() override = default;
+
+        virtual Vec2i getSize() const = 0;
 
         virtual void blitColor(const FrameBuffer &source,
                           Vec2i sourceOffset,
@@ -40,13 +41,13 @@ namespace mana {
 
         virtual void attachDepthStencil(const RenderTexture &texture) = 0;
 
-        virtual void attachColor(RenderCubeMapTexture::Face face, const RenderCubeMapTexture &texture) = 0;
+        virtual void attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
 
-        virtual void attachDepth(RenderCubeMapTexture::Face face, const RenderCubeMapTexture &texture) = 0;
+        virtual void attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
 
-        virtual void attachStencil(RenderCubeMapTexture::Face face, const RenderCubeMapTexture &texture) = 0;
+        virtual void attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
 
-        virtual void attachDepthStencil(RenderCubeMapTexture::Face face, const RenderCubeMapTexture &texture) = 0;
+        virtual void attachDepthStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
     };
 }
 

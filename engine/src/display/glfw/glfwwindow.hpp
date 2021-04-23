@@ -6,8 +6,9 @@
 #include "engine/display/window.hpp"
 #include "engine/display/windowattributes.hpp"
 
-#include "render/opengl/oglrenderapi.hpp"
-#include "render/opengl/oglframebufferobject.hpp"
+#include "render/opengl/oglrenderer.hpp"
+#include "render/opengl/oglrenderallocator.hpp"
+#include "render/opengl/oglframebuffer.hpp"
 
 #include "display/glfw/glfwwindow.hpp"
 #include "display/glfw/glfwmonitor.hpp"
@@ -20,7 +21,7 @@ namespace mana {
     public:
         GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes);
 
-        GLFWWindow(const std::string& title,
+        GLFWWindow(const std::string &title,
                    Vec2i size,
                    WindowAttributes attributes,
                    GLFWMonitor &monitor);
@@ -45,11 +46,13 @@ namespace mana {
 
         void glfwFrameBufferSizeCallback(Vec2i size);
 
-        Renderer &getRenderAPI() override;
+        Renderer &getRenderer() override;
+
+        RenderAllocator &getRenderAllocator() override;
+
+        FrameBuffer &getFrameBuffer() override;
 
         Input &getInput() override;
-
-        FrameBufferObject &getFrameBuffer() override;
 
         void bindContext() override;
 
@@ -122,7 +125,9 @@ namespace mana {
     private:
         GLFWwindow *wndH;
 
-        opengl::OGLRenderAPI *renderApi;
+        opengl::OGLRenderer *renderer;
+        opengl::OGLRenderAllocator *renderAllocator;
+
         GLFWInput *input;
         GLFWWindowFrameBuffer *frameBuffer;
 

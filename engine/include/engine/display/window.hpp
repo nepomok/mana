@@ -23,6 +23,8 @@ namespace mana {
 
         virtual Input &getInput() = 0;
 
+        virtual void bindContext() = 0;
+
         virtual void swapBuffers() = 0;
 
         virtual void update() = 0;

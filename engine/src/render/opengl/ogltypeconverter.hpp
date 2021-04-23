@@ -1,9 +1,10 @@
 #ifndef MANA_OGLTYPECONVERTER_HPP
 #define MANA_OGLTYPECONVERTER_HPP
 
-#include "engine/math/vector3.hpp"
 #include "engine/render/textureattributes.hpp"
-#include "engine/render/renderunit.hpp"
+#include "engine/render/rendercommand.hpp"
+
+#include "extern/glad.h"
 
 namespace mana {
     namespace opengl {

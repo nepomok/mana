@@ -1,8 +1,6 @@
 #include <stdexcept>
 
-#include "engine/math/vector3.hpp"
-#include "engine/render/textureattributes.hpp"
-#include "engine/render/renderunit.hpp"
+#include "render/opengl/ogltypeconverter.hpp"
 
 #include "extern/glad.h"
 

@@ -1,11 +1,11 @@
 #ifndef MANA_OGLUSERFRAMEBUFFER_HPP
 #define MANA_OGLUSERFRAMEBUFFER_HPP
 
-#include "render/opengl/oglframebufferobject.hpp"
+#include "render/opengl/oglframebuffer.hpp"
 
 namespace mana {
     namespace opengl {
-        class OGLUserFrameBuffer : public OGLFrameBufferObject {
+        class OGLUserFrameBuffer : public OGLFrameBuffer {
         public:
             GLuint FBO;
 
@@ -17,36 +17,52 @@ namespace mana {
 
             bool userTexture = false;
 
-            OGLUserFrameBuffer() : FBO(0),
-                                   width(0),
-                                   height(0),
-                                   colorBuffer(0),
-                                   renderBuffer(0),
-                                   userTexture(false) {}
+            OGLUserFrameBuffer();
 
-            OGLUserFrameBuffer(int width, int height)
-                    : width(width),
-                      height(height),
-                      FBO(0),
-                      colorBuffer(0),
-                      renderBuffer(0),
-                      userTexture(false) {}
+            OGLUserFrameBuffer(int width, int height);
 
-            ~OGLUserFrameBuffer() override {
-                glDeleteRenderbuffers(1, &renderBuffer);
-                if (!userTexture) {
-                    glDeleteTextures(1, &colorBuffer);
-                }
-                glDeleteFramebuffers(1, &FBO);
-            }
+            ~OGLUserFrameBuffer() override;
 
-            Vec2i getSize() const override {
-                return {width, height};
-            }
+            Vec2i getSize() const override;
 
-            GLuint getFBO() const override {
-                return FBO;
-            }
+            void blitColor(const FrameBuffer &source,
+                           Vec2i sourceOffset,
+                           Vec2i targetOffset,
+                           Vec2i sourceRect,
+                           Vec2i targetRect,
+                           TextureFiltering filter) override;
+
+            void blitDepth(const FrameBuffer &source,
+                           Vec2i sourceOffset,
+                           Vec2i targetOffset,
+                           Vec2i sourceRect,
+                           Vec2i targetRect,
+                           TextureFiltering filter) override;
+
+            void blitStencil(const FrameBuffer &source,
+                             Vec2i sourceOffset,
+                             Vec2i targetOffset,
+                             Vec2i sourceRect,
+                             Vec2i targetRect,
+                             TextureFiltering filter) override;
+
+            void attachColor(const RenderTexture &texture) override;
+
+            void attachDepth(const RenderTexture &texture) override;
+
+            void attachStencil(const RenderTexture &texture) override;
+
+            void attachDepthStencil(const RenderTexture &texture) override;
+
+            void attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+
+            void attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+
+            void attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+
+            void attachDepthStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+
+            GLuint getFBO() const override;
         };
     }
 }

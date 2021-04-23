@@ -577,7 +577,7 @@ namespace objl
 
                     Normals.push_back(vnor);
                 }
-                // Generate a Face (vertices & indices)
+                // Generate a CubeMapFace (vertices & indices)
                 if (algorithm::firstToken(curline) == "f")
                 {
                     // Generate the vertices

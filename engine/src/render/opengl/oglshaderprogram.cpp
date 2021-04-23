@@ -243,50 +243,62 @@ namespace mana {
         }
 
         void OGLShaderProgram::setBool(const std::string &name, bool value) {
+            activate();
             glUniform1i(glGetUniformLocation(programID, name.c_str()), (int) value);
         }
 
         void OGLShaderProgram::setInt(const std::string &name, int value) {
+            activate();
             glUniform1i(glGetUniformLocation(programID, name.c_str()), value);
         }
 
         void OGLShaderProgram::setFloat(const std::string &name, float value) {
+            activate();
             glUniform1f(glGetUniformLocation(programID, name.c_str()), value);
         }
 
         void OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
+            activate();
             glUniform2i(glGetUniformLocation(programID, name.c_str()), value.x, value.y);
         }
 
         void OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
+            activate();
             glUniform2i(glGetUniformLocation(programID, name.c_str()), value.x, value.y);
         }
 
         void OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
+            activate();
             glUniform2f(glGetUniformLocation(programID, name.c_str()), value.x, value.y);
         }
 
         void OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
+            activate();
             glUniform3i(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z);
         }
 
         void OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
+            activate();
             glUniform3i(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z);
         }
 
         void OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
+            activate();
             glUniform3f(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z);
         }
 
         void OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
+            activate();
             glUniform4i(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z, value.w);
         }
 
         void OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
+            activate();
             glUniform4i(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z, value.w);
         }
 
         void OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
+            activate();
             glUniform4f(glGetUniformLocation(programID, name.c_str()), value.x, value.y, value.z, value.w);
         }
 
@@ -299,6 +311,7 @@ namespace mana {
         }
 
         void OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
+            activate();
             glUniformMatrix4fv(glGetUniformLocation(programID, name.c_str()), 1, GL_FALSE, (GLfloat *)&value);
         }
     }

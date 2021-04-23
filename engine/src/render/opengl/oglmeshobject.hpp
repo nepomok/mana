@@ -42,6 +42,10 @@ namespace mana {
                 }
                 glDeleteBuffers(1, &instanceVBO);
             }
+
+            void setOffsets(const std::vector<Transform> &offsets) override {
+                throw std::runtime_error("Not Implemented");
+            }
         };
     }
 }

@@ -41,7 +41,7 @@ namespace mana {
 
             OGLShaderProgram &operator=(const OGLShaderProgram &) = delete;
 
-            void activate() override;
+            void activate();
 
             void setBool(const std::string &name, bool value) override;
 

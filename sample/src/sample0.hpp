@@ -148,27 +148,27 @@ protected:
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");
         auto colorMapTexture = alloc.allocateTexture(colorMapImage.getWidth(), colorMapImage.getHeight());
 
-        colorMapTexture->upload(colorMapImage);
+        colorMapTexture->upload(colorMapImage, RGB);
 
         auto skyboxImage = ImageLoader::load("./assets/deepbluespace-skybox_maintex.png");
         auto skyboxTexture = alloc.allocateCubeMapTexture(2048, 2048);
 
-        skyboxTexture->upload(RenderCubeMapTexture::RIGHT,
+        skyboxTexture->upload(RenderTexture::RIGHT,
                               skyboxImage.slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderCubeMapTexture::LEFT,
+        skyboxTexture->upload(RenderTexture::LEFT,
                               skyboxImage.slice(Recti(Vec2i(2048 * 1, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderCubeMapTexture::TOP,
+        skyboxTexture->upload(RenderTexture::TOP,
                               skyboxImage.slice(Recti(Vec2i(2048 * 2, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderCubeMapTexture::BOTTOM,
+        skyboxTexture->upload(RenderTexture::BOTTOM,
                               skyboxImage.slice(Recti(Vec2i(2048 * 3, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderCubeMapTexture::FRONT,
+        skyboxTexture->upload(RenderTexture::FRONT,
                               skyboxImage.slice(Recti(Vec2i(2048 * 4, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderCubeMapTexture::BACK,
+        skyboxTexture->upload(RenderTexture::BACK,
                               skyboxImage.slice(Recti(Vec2i(2048 * 5, 0), Vec2i(2048, 2048))));
 
         objects.emplace_back(colorMapTexture);
@@ -177,7 +177,7 @@ protected:
         RenderMesh *cubePtr = alloc.allocateMesh(cubeMesh);
         RenderMesh *curveCubePtr = alloc.allocateMesh(curveCubeMesh);
         RenderMesh *planePtr = alloc.allocateMesh(planeMesh);
-        RenderInstancedMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh);
+        RenderMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh);
 
         spherePtr->setOffsets({Transform({0, 0, 0}, {}, {1, 1, 1}),
                                Transform({0, 1, 0}, {}, {1, 1, 1}),

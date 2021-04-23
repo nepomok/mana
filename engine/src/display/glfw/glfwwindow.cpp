@@ -154,7 +154,9 @@ namespace mana {
             throw std::runtime_error("Failed to initialize glad");
         }
 
-        renderApi = new opengl::OGLRenderAPI();
+        renderer = new opengl::OGLRenderer();
+        renderAllocator = new opengl::OGLRenderAllocator();
+
         input = new GLFWInput(*wndH);
         frameBuffer = new GLFWWindowFrameBuffer(wndH);
 
@@ -163,7 +165,7 @@ namespace mana {
         setCallbacks(wndH);
     }
 
-    GLFWWindow::GLFWWindow(const std::string& title,
+    GLFWWindow::GLFWWindow(const std::string &title,
                            Vec2i size,
                            WindowAttributes attributes,
                            GLFWMonitor &monitor) {
@@ -189,7 +191,9 @@ namespace mana {
             throw std::runtime_error("Failed to initialize glad");
         }
 
-        renderApi = new opengl::OGLRenderAPI();
+        renderer = new opengl::OGLRenderer();
+        renderAllocator = new opengl::OGLRenderAllocator();
+
         input = new GLFWInput(*wndH);
         frameBuffer = new GLFWWindowFrameBuffer(wndH);
 
@@ -198,9 +202,10 @@ namespace mana {
         setCallbacks(wndH);
     }
 
-    GLFWWindow::~GLFWWindow() noexcept {
+    GLFWWindow::~GLFWWindow() {
         _windowMapping.erase(wndH);
-        delete renderApi;
+        delete renderer;
+        delete renderAllocator;
         delete input;
         delete frameBuffer;
         GLFWCounter::leave();
@@ -260,16 +265,20 @@ namespace mana {
         }
     }
 
-    Renderer &GLFWWindow::getRenderAPI() {
-        return dynamic_cast<Renderer&>(*renderApi);
+    Renderer &GLFWWindow::getRenderer() {
+        return dynamic_cast<Renderer &>(*renderer);
+    }
+
+    RenderAllocator &GLFWWindow::getRenderAllocator() {
+        return dynamic_cast<RenderAllocator &>(*renderAllocator);
+    }
+
+    FrameBuffer &GLFWWindow::getFrameBuffer() {
+        return dynamic_cast<FrameBuffer &>(*frameBuffer);
     }
 
     Input &GLFWWindow::getInput() {
-        return dynamic_cast<Input&>(*input);
-    }
-
-    FrameBufferObject &GLFWWindow::getFrameBuffer() {
-        return dynamic_cast<FrameBufferObject&>(*frameBuffer);
+        return dynamic_cast<Input &>(*input);
     }
 
     void GLFWWindow::bindContext() {
@@ -381,8 +390,7 @@ namespace mana {
     }
 
     float GLFWWindow::getWindowOpacity() {
-        float ret;
-        glfwGetWindowOpacity(wndH);
+        float ret = glfwGetWindowOpacity(wndH);
         return ret;
     }
 

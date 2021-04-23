@@ -5,7 +5,8 @@
 #include "engine/render/framebuffer.hpp"
 #include "engine/render/textureattributes.hpp"
 #include "engine/render/rendermesh.hpp"
-#include "engine/render/rendermeshinstanced.hpp"
+#include "engine/render/shaderprogram.hpp"
+#include "engine/math/transform.hpp"
 
 namespace mana {
     class RenderAllocator {
@@ -18,13 +19,13 @@ namespace mana {
                                                int height,
                                                TextureAttributes properties = {}) = 0;
 
-        virtual RenderCubeMapTexture *allocateCubeMapTexture(int width,
-                                                             int height,
-                                                             TextureAttributes properties = {}) = 0;
+        virtual RenderTexture *allocateCubeMapTexture(int width,
+                                                      int height,
+                                                      TextureAttributes properties = {}) = 0;
 
         virtual RenderMesh *allocateMesh(const Mesh &mesh) = 0;
 
-        virtual RenderInstancedMesh *allocateInstancedMesh(const Mesh &mesh,
+        virtual RenderMesh *allocateInstancedMesh(const Mesh &mesh,
                                                            const std::vector<Transform> &offsets = {}) = 0;
 
         virtual ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) = 0;

@@ -65,8 +65,6 @@
 #include "engine/render/camera/orthographiccamera.hpp"
 #include "engine/render/framebuffer.hpp"
 #include "engine/render/renderallocator.hpp"
-#include "engine/render/rendercubemaptexture.hpp"
-#include "engine/render/rendermeshinstanced.hpp"
 #include "engine/physics/physicsengine.hpp"
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector4.hpp"
