@@ -1,5 +1,6 @@
 #include "render/opengl/oglrendertexture.hpp"
 #include "render/opengl/oglcheckerror.hpp"
+#include "render/opengl/ogltypeconverter.hpp"
 
 using namespace mana;
 using namespace mana::opengl;
@@ -20,18 +21,18 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat i
     }
 
     glBindTexture(GL_TEXTURE_2D, handle);
-    glTexSubImage2D(GL_TEXTURE_2D,
-                    0,
-                    0,
-                    0,
-                    width,
-                    height,
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    buffer.buffer.getData());
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(internalFormat),
+                 width,
+                 height,
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 buffer.buffer.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLRenderTexture::upload");
+    checkGLError("OGLRenderTexture::upload(RGB)");
 }
 
 void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
@@ -40,18 +41,18 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat 
     }
 
     glBindTexture(GL_TEXTURE_2D, handle);
-    glTexSubImage2D(GL_TEXTURE_2D,
+    glTexImage2D(GL_TEXTURE_2D,
                     0,
-                    0,
-                    0,
+                    OGLTypeConverter::convert(internalFormat),
                     width,
                     height,
+                    0,
                     GL_RGBA,
                     GL_UNSIGNED_BYTE,
                     buffer.buffer.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLRenderTexture::upload");
+    checkGLError("OGLRenderTexture::upload(RGBA)");
 }
 
 mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
@@ -64,7 +65,23 @@ mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
 }
 
 void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
-    throw std::runtime_error("Not Implemented");
+    if (buffer.getWidth() != width || buffer.getHeight() != height) {
+        throw std::runtime_error("Attempted to write input buffer with non matching size");
+    }
+
+    glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
+    glTexImage2D(OGLTypeConverter::convert(face),
+                 0,
+                 OGLTypeConverter::convert(internalFormat),
+                 width,
+                 height,
+                 0,
+                 GL_RGBA,
+                 GL_UNSIGNED_BYTE,
+                 buffer.buffer.getData());
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    checkGLError("OGLRenderTexture::upload(CUBEMAP)");
 }
 
 ImageBuffer<ColorRGBA> OGLRenderTexture::download(RenderTexture::CubeMapFace face) {

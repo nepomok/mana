@@ -21,9 +21,9 @@ namespace mana {
 
         virtual Vec2i getSize() = 0;
 
-        virtual void upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat internalFormat = RGBA) = 0;
+        virtual void upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat internalFormat = RGB) = 0;
 
-        virtual void upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat = RGBA) = 0;
+        virtual void upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat = RGB) = 0;
 
         virtual ImageBuffer<ColorRGBA> download() = 0;
 

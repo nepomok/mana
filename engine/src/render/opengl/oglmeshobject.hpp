@@ -2,6 +2,9 @@
 #define MANA_OGLMESHOBJECT_HPP
 
 #include "engine/render/rendermesh.hpp"
+#include "engine/math/matrixmath.hpp"
+
+#include "render/opengl/oglcheckerror.hpp"
 
 #include "extern/glad.h"
 
@@ -41,10 +44,6 @@ namespace mana {
                     glDeleteBuffers(1, &EBO);
                 }
                 glDeleteBuffers(1, &instanceVBO);
-            }
-
-            void setOffsets(const std::vector<Transform> &offsets) override {
-                throw std::runtime_error("Not Implemented");
             }
         };
     }

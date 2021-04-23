@@ -28,6 +28,10 @@ namespace mana {
             GLenum convert(StencilMode mode);
 
             GLenum convert(StencilAction action);
+
+            GLenum convert(RenderTexture::CubeMapFace face);
+
+            GLenum convert(ColorFormat format);
         }
     }
 }

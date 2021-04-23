@@ -30,16 +30,14 @@ FrameBuffer *OGLRenderAllocator::allocateFrameBuffer(int width, int height, Text
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                     OGLTypeConverter::convert(colorBufferProperties.texFilterMag));
 
-    switch (colorBufferProperties.internalFormat) {
-        case RGB:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            break;
-        case RGBA:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-            break;
-        default:
-            throw std::runtime_error("Unsupported color format");
-    }
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(colorBufferProperties.internalFormat),
+                 width,
+                 height,
+                 0,
+                 GL_RGB, GL_UNSIGNED_BYTE,
+                 NULL);
 
     if (colorBufferProperties.generateMipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -83,16 +81,14 @@ RenderTexture *OGLRenderAllocator::allocateTexture(int width, int height, Textur
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
                     OGLTypeConverter::convert(properties.texFilterMag));
 
-    switch (properties.internalFormat) {
-        case RGB:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            break;
-        case RGBA:
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-            break;
-        default:
-            throw std::runtime_error("Unsupported color format");
-    }
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(properties.internalFormat),
+                 width,
+                 height,
+                 0,
+                 GL_RGB, GL_UNSIGNED_BYTE,
+                 NULL);
 
     if (properties.generateMipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -120,7 +116,7 @@ RenderTexture *OGLRenderAllocator::allocateCubeMapTexture(int width, int height,
     for (unsigned int i = 0; i < 6; i++) {
         glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
                      0,
-                     GL_RGB,
+                     OGLTypeConverter::convert(properties.internalFormat),
                      width,
                      height,
                      0,

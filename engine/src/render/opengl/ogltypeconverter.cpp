@@ -162,6 +162,44 @@ namespace mana {
                 }
                 throw std::runtime_error("Unsupported stencil action");
             }
+
+            GLenum convert(RenderTexture::CubeMapFace face) {
+                switch (face) {
+                    case RenderTexture::FRONT:
+                        return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+                    case RenderTexture::BACK:
+                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+                    case RenderTexture::LEFT:
+                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+                    case RenderTexture::RIGHT:
+                        return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+                    case RenderTexture::TOP:
+                        return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+                    case RenderTexture::BOTTOM:
+                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+                    default:
+                        throw std::runtime_error("Unrecognized cube map face");
+                }
+            }
+
+            GLenum convert(ColorFormat format) {
+                switch (format) {
+                    case RGB:
+                        return GL_RGB;
+                    case RGBA:
+                        return GL_RGBA;
+                    case DEPTH:
+                        return GL_DEPTH_COMPONENT;
+                    case DEPTH_STENCIL:
+                        return GL_DEPTH_STENCIL;
+                    case RGB_COMPRESSED:
+                        return GL_COMPRESSED_RGB;
+                    case RGBA_COMPRESSED:
+                        return GL_COMPRESSED_RGBA;
+                    default:
+                        throw std::runtime_error("Unrecognized color format");
+                }
+            }
         }
     }
 }

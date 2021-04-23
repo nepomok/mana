@@ -177,15 +177,13 @@ protected:
         RenderMesh *cubePtr = alloc.allocateMesh(cubeMesh);
         RenderMesh *curveCubePtr = alloc.allocateMesh(curveCubeMesh);
         RenderMesh *planePtr = alloc.allocateMesh(planeMesh);
-        RenderMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh);
-
-        spherePtr->setOffsets({Transform({0, 0, 0}, {}, {1, 1, 1}),
-                               Transform({0, 1, 0}, {}, {1, 1, 1}),
-                               Transform({0, -1, 0}, {}, {1, 1, 1}),
-                               Transform({1, 0, 0}, {}, {1, 1, 1}),
-                               Transform({-1, 0, 0}, {}, {1, 1, 1}),
-                               Transform({0, 0, 1}, {}, {1, 1, 1}),
-                               Transform({0, 0, -1}, {}, {1, 1, 1})});
+        RenderMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh, {Transform({0, 0, 0}, {}, {1, 1, 1}),
+                                                                         Transform({0, 1, 0}, {}, {1, 1, 1}),
+                                                                         Transform({0, -1, 0}, {}, {1, 1, 1}),
+                                                                         Transform({1, 0, 0}, {}, {1, 1, 1}),
+                                                                         Transform({-1, 0, 0}, {}, {1, 1, 1}),
+                                                                         Transform({0, 0, 1}, {}, {1, 1, 1}),
+                                                                         Transform({0, 0, -1}, {}, {1, 1, 1})});
 
         objects.emplace_back(cubePtr);
         objects.emplace_back(curveCubePtr);
@@ -251,10 +249,6 @@ protected:
 
         camera.transform.position = Vec3f(0, 3, 3);
         camera.transform.rotation = Vec3f(1, 0, 0);
-
-        camera.fov = 180;
-        camera.aspectRatio = 1;
-        camera.nearClip = 0;
 
         skybox = &*(scene.commands.begin());
         sphere = &*(scene.commands.begin() + 2);

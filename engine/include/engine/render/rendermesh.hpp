@@ -9,8 +9,6 @@ namespace mana {
     class RenderMesh : public RenderObject {
     public:
         ~RenderMesh() override = default;
-
-        virtual void setOffsets(const std::vector<Transform> &offsets) = 0;
     };
 }
 
