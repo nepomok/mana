@@ -1,13 +1,13 @@
 #ifndef MANA_OGLTEXTUREOBJECT_HPP
 #define MANA_OGLTEXTUREOBJECT_HPP
 
-#include "engine/render/textureobject.hpp"
+#include "engine/render/rendertexture.hpp"
 
 #include "extern/glad.h"
 
 namespace mana {
     namespace opengl {
-        class OGLTextureObject : public TextureObject {
+        class OGLTextureObject : public RenderTexture {
         public:
             int width, height;
             GLuint handle;

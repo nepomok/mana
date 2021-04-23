@@ -1,13 +1,13 @@
 #ifndef MANA_OGLMESHOBJECT_HPP
 #define MANA_OGLMESHOBJECT_HPP
 
-#include "engine/render/meshobject.hpp"
+#include "engine/render/rendermesh.hpp"
 
 #include "extern/glad.h"
 
 namespace mana {
     namespace opengl {
-        class OGLMeshObject : public MeshObject {
+        class OGLMeshObject : public RenderMesh {
         public:
             GLuint VAO;
             GLuint VBO;

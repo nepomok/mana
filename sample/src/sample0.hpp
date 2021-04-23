@@ -12,7 +12,7 @@ public:
     }
 
 protected:
-    void update(float deltaTime, Window &window, RenderAPI &renderApi, Input &input) override {
+    void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
         mouseLastFrame = mouse;
@@ -68,7 +68,7 @@ protected:
 
         camera.transform.position += toVec3(left + up + forward);
 
-        Vec3f lightPos = renderCommand.pointLights.at(0).transform.position;
+        Vec3f lightPos = scene.pointLights.at(0).transform.position;
 
         Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
 
@@ -90,7 +90,7 @@ protected:
             }
         }
 
-        renderCommand.pointLights.at(0).transform.position = lightPos;
+        scene.pointLights.at(0).transform.position = lightPos;
         sphere->transform.position = lightPos;
 
         sphere->transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
@@ -99,16 +99,16 @@ protected:
 
         forward = view * Vec4f(0, 0, -1, 0);
 
-        renderCommand.spotLights.at(0).direction = toVec3(forward);
-        renderCommand.spotLights.at(0).transform.position = camera.transform.position;
+        scene.spotLights.at(0).direction = toVec3(forward);
+        scene.spotLights.at(0).transform.position = camera.transform.position;
 
-        renderApi.render(renderCommand, window.getFrameBuffer(), clearColor, true, true, true, false);
+        ren.render(window.getFrameBuffer(), scene, clearColor, true, true, true, false);
 
         window.swapBuffers();
         window.update();
     }
 
-    void loadScene(RenderAPI &renderApi) override {
+    void loadScene(RenderAllocator &alloc) override {
         Vec3f lightPos = Vec3f(2, 1, 0);
 
         PointLight light;
@@ -117,143 +117,157 @@ protected:
         light.linear = 1.0f;
         light.quadratic = 1.0f;
         light.ambient = Vec3f(0);
-        renderCommand.pointLights.emplace_back(light);
+        scene.pointLights.emplace_back(light);
 
         Vec3f lightPos0 = Vec3f(-4, 0.73, 0);
         SpotLight light0 = SpotLight();
         light0.transform.position = lightPos0;
         light0.cutOff = 15;
         light0.outerCutOff = 25;
-        renderCommand.spotLights.emplace_back(light0);
+        scene.spotLights.emplace_back(light0);
 
         Mesh planeMesh = MeshLoader::load("./assets/plane.obj");
         Mesh curveCubeMesh = MeshLoader::load("./assets/curvecube.obj");
         Mesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
         Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
-        ShaderProgram *skyboxShader = renderApi.compileShaderProgram(skyboxVertexShader, skyboxFragmentShader);
+        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(skyboxVertexShader, skyboxFragmentShader);
         objects.emplace_back(skyboxShader);
 
-        skyboxShader->activate();
         skyboxShader->setInt("skybox", 0);
 
-        ShaderProgram *shader = renderApi.compileShaderProgram(vertexShader, fragmentShader);
+        ShaderProgram *shader = alloc.allocateShaderProgram(vertexShader, fragmentShader);
         objects.emplace_back(shader);
 
-        shader->activate();
         shader->setInt("diffuse", 0);
         shader->setInt("specular", 1);
 
-        ShaderProgram *lightShader = renderApi.compileShaderProgram(vertexShader, lightFragmentShader);
+        ShaderProgram *lightShader = alloc.allocateShaderProgram(vertexShader, lightFragmentShader);
         objects.emplace_back(lightShader);
 
-        auto colorMap = renderApi.allocateTexture(ImageLoader::load("./assets/colormap.png"),
-                                                  TextureAttributes());
+        auto colorMapImage = ImageLoader::load("./assets/colormap.png");
+        auto colorMapTexture = alloc.allocateTexture(colorMapImage.getWidth(), colorMapImage.getHeight());
 
-        auto texture = ImageLoader::load("./assets/deepbluespace-skybox_maintex.png");
-        std::vector<ImageBuffer<ColorRGBA32>> textures;
-        textures.push_back(texture.slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
-        textures.push_back(texture.slice(Recti(Vec2i(2048 * 1, 0), Vec2i(2048, 2048))));
-        textures.push_back(texture.slice(Recti(Vec2i(2048 * 2, 0), Vec2i(2048, 2048))));
-        textures.push_back(texture.slice(Recti(Vec2i(2048 * 3, 0), Vec2i(2048, 2048))));
-        textures.push_back(texture.slice(Recti(Vec2i(2048 * 4, 0), Vec2i(2048, 2048))));
-        textures.push_back(texture.slice(Recti(Vec2i(2048 * 5, 0), Vec2i(2048, 2048))));
+        colorMapTexture->upload(colorMapImage);
 
-        auto skyboxTexture = renderApi.allocateTexture(textures, TextureAttributes());
+        auto skyboxImage = ImageLoader::load("./assets/deepbluespace-skybox_maintex.png");
+        auto skyboxTexture = alloc.allocateCubeMapTexture(2048, 2048);
 
-        objects.emplace_back(colorMap);
+        skyboxTexture->upload(RenderCubeMapTexture::RIGHT,
+                              skyboxImage.slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
+
+        skyboxTexture->upload(RenderCubeMapTexture::LEFT,
+                              skyboxImage.slice(Recti(Vec2i(2048 * 1, 0), Vec2i(2048, 2048))));
+
+        skyboxTexture->upload(RenderCubeMapTexture::TOP,
+                              skyboxImage.slice(Recti(Vec2i(2048 * 2, 0), Vec2i(2048, 2048))));
+
+        skyboxTexture->upload(RenderCubeMapTexture::BOTTOM,
+                              skyboxImage.slice(Recti(Vec2i(2048 * 3, 0), Vec2i(2048, 2048))));
+
+        skyboxTexture->upload(RenderCubeMapTexture::FRONT,
+                              skyboxImage.slice(Recti(Vec2i(2048 * 4, 0), Vec2i(2048, 2048))));
+
+        skyboxTexture->upload(RenderCubeMapTexture::BACK,
+                              skyboxImage.slice(Recti(Vec2i(2048 * 5, 0), Vec2i(2048, 2048))));
+
+        objects.emplace_back(colorMapTexture);
         objects.emplace_back(skyboxTexture);
 
-        MeshObject *cubePtr = renderApi.allocateMesh(cubeMesh);
-        MeshObject *curveCubePtr = renderApi.allocateMesh(curveCubeMesh);
-        MeshObject *planePtr = renderApi.allocateMesh(planeMesh);
-        MeshObject *spherePtr = renderApi.allocateMeshInstanced(sphereMesh, {
-                Transform({0, 0, 0}, {}, {1, 1, 1}),
-                Transform({0, 1, 0}, {}, {1, 1, 1}),
-                Transform({0, -1, 0}, {}, {1, 1, 1}),
-                Transform({1, 0, 0}, {}, {1, 1, 1}),
-                Transform({-1, 0, 0}, {}, {1, 1, 1}),
-                Transform({0, 0, 1}, {}, {1, 1, 1}),
-                Transform({0, 0, -1}, {}, {1, 1, 1})
-        });
+        RenderMesh *cubePtr = alloc.allocateMesh(cubeMesh);
+        RenderMesh *curveCubePtr = alloc.allocateMesh(curveCubeMesh);
+        RenderMesh *planePtr = alloc.allocateMesh(planeMesh);
+        RenderInstancedMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh);
+
+        spherePtr->setOffsets({Transform({0, 0, 0}, {}, {1, 1, 1}),
+                               Transform({0, 1, 0}, {}, {1, 1, 1}),
+                               Transform({0, -1, 0}, {}, {1, 1, 1}),
+                               Transform({1, 0, 0}, {}, {1, 1, 1}),
+                               Transform({-1, 0, 0}, {}, {1, 1, 1}),
+                               Transform({0, 0, 1}, {}, {1, 1, 1}),
+                               Transform({0, 0, -1}, {}, {1, 1, 1})});
 
         objects.emplace_back(cubePtr);
         objects.emplace_back(curveCubePtr);
         objects.emplace_back(planePtr);
         objects.emplace_back(spherePtr);
 
-        RenderUnit unit;
-        unit.enableDepthTest = true;
+        RenderCommand command;
+        command.enableDepthTest = true;
 
-        unit.meshObjects.emplace_back(curveCubePtr);
+        command.meshObjects.emplace_back(curveCubePtr);
 
-        unit.shader = shader;
+        command.shader = shader;
 
-        unit.textureObjects.emplace_back(colorMap);
+        command.textureObjects.emplace_back(colorMapTexture);
 
-        unit.transform.position = Vec3f(0, 1, 0);
-        unit.transform.rotation = Vec3f(0);
-        unit.transform.scale = Vec3f(1);
+        command.transform.position = Vec3f(0, 1, 0);
+        command.transform.rotation = Vec3f(0);
+        command.transform.scale = Vec3f(1);
 
-        renderCommand.units.emplace(renderCommand.units.end(), unit);
+        scene.commands.emplace(scene.commands.end(), command);
 
-        unit = RenderUnit();
-        unit.enableDepthTest = true;
+        command = RenderCommand();
+        command.enableDepthTest = true;
 
-        unit.meshObjects.emplace_back(spherePtr);
+        command.meshObjects.emplace_back(spherePtr);
 
-        unit.shader = shader;
+        command.shader = shader;
 
-        unit.textureObjects.emplace_back(colorMap);
+        command.textureObjects.emplace_back(colorMapTexture);
 
-        unit.transform.position = lightPos;
-        unit.transform.rotation = Vec3f(0);
-        unit.transform.scale = Vec3f(0.1f);
+        command.transform.position = lightPos;
+        command.transform.rotation = Vec3f(0);
+        command.transform.scale = Vec3f(0.1f);
 
-        renderCommand.units.emplace(renderCommand.units.end(), unit);
+        scene.commands.emplace(scene.commands.end(), command);
 
-        unit = RenderUnit();
-        unit.enableDepthTest = true;
+        command = RenderCommand();
+        command.enableDepthTest = true;
 
-        unit.meshObjects.emplace_back(planePtr);
+        command.meshObjects.emplace_back(planePtr);
 
-        unit.shader = shader;
+        command.shader = shader;
 
-        unit.textureObjects.emplace_back(colorMap);
+        command.textureObjects.emplace_back(colorMapTexture);
 
-        unit.transform.position = Vec3f(0);
-        unit.transform.rotation = Vec3f(0);
-        unit.transform.scale = Vec3f(10.0f);
+        command.transform.position = Vec3f(0);
+        command.transform.rotation = Vec3f(0);
+        command.transform.scale = Vec3f(10.0f);
 
-        renderCommand.units.emplace(renderCommand.units.end(), unit);
+        scene.commands.emplace(scene.commands.end(), command);
 
-        unit = RenderUnit();
-        unit.enableDepthTest = false;
-        unit.meshObjects.emplace_back(cubePtr);
+        command = RenderCommand();
+        command.enableDepthTest = false;
+        command.meshObjects.emplace_back(cubePtr);
 
-        unit.shader = skyboxShader;
+        command.shader = skyboxShader;
 
-        unit.textureObjects.emplace_back(skyboxTexture);
+        command.textureObjects.emplace_back(skyboxTexture);
 
-        renderCommand.units.emplace(renderCommand.units.begin(), unit);
+        scene.commands.emplace(scene.commands.begin(), command);
 
-        renderCommand.camera = &camera;
+        scene.camera = &camera;
 
         camera.transform.position = Vec3f(0, 3, 3);
         camera.transform.rotation = Vec3f(1, 0, 0);
 
-        skybox = &*(renderCommand.units.begin());
-        sphere = &*(renderCommand.units.begin() + 2);
-        cube = &*(renderCommand.units.begin() + 1);
+        camera.fov = 180;
+        camera.aspectRatio = 1;
+        camera.nearClip = 0;
+
+        skybox = &*(scene.commands.begin());
+        sphere = &*(scene.commands.begin() + 2);
+        cube = &*(scene.commands.begin() + 1);
     }
 
     void destroyScene() override {
-        for(auto *p : objects)
+        for (auto *p : objects)
             delete p;
     }
 
 private:
-    std::vector<RenderObject*> objects;
+    std::vector<RenderObject *> objects;
 
     float cameraRotationSpeed = 45.0f;
     float cameraMovementSpeed = 5.0f;
@@ -268,9 +282,9 @@ private:
 
     PerspectiveCamera camera;
 
-    RenderUnit *skybox;
-    RenderUnit *sphere;
-    RenderUnit *cube;
+    RenderCommand *skybox;
+    RenderCommand *sphere;
+    RenderCommand *cube;
 };
 
 #endif //MANA_SAMPLE0_HPP

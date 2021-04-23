@@ -1,7 +1,7 @@
 #ifndef MANA_ORTHOGRAPHICCAMERA_HPP
 #define MANA_ORTHOGRAPHICCAMERA_HPP
 
-#include "engine/render/camera.hpp"
+#include "engine/render/camera/camera.hpp"
 #include "engine/math/matrixmath.hpp"
 
 namespace mana {

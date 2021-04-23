@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "engine/render/mesh.hpp"
+#include "engine/render/geometry/mesh.hpp"
 
 namespace mana {
     class MeshLoader {

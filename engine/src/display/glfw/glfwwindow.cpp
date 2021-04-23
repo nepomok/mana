@@ -260,8 +260,8 @@ namespace mana {
         }
     }
 
-    RenderAPI &GLFWWindow::getRenderAPI() {
-        return dynamic_cast<RenderAPI&>(*renderApi);
+    Renderer &GLFWWindow::getRenderAPI() {
+        return dynamic_cast<Renderer&>(*renderApi);
     }
 
     Input &GLFWWindow::getInput() {

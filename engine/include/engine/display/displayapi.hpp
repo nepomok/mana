@@ -45,11 +45,11 @@ namespace mana {
          * @return
          */
         static Window *createWindow(GraphicsApi api,
-                             std::string title,
-                             Vec2i size,
-                             WindowAttributes attributes,
-                             Monitor &monitor,
-                             VideoMode mode);
+                                    std::string title,
+                                    Vec2i size,
+                                    WindowAttributes attributes,
+                                    Monitor &monitor,
+                                    VideoMode mode);
     };
 }
 

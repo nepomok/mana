@@ -1,6 +1,6 @@
 #include <stdexcept>
 
-#include "engine/render/vertex.hpp"
+#include "engine/render/geometry/vertex.hpp"
 #include "engine/io/meshloader.hpp"
 
 #include "extern/OBJ_Loader.h"

@@ -1,29 +1,27 @@
 #ifndef MANA_WINDOW_HPP
 #define MANA_WINDOW_HPP
 
-#include "engine/render/framebufferobject.hpp"
-#include "engine/render/renderapi.hpp"
+#include "engine/render/framebuffer.hpp"
+#include "engine/render/renderer.hpp"
+#include "engine/render/renderallocator.hpp"
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/monitor.hpp"
-#include "engine/io/imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
 
 namespace mana {
-    /**
-     * TODO:Design: When using multiple windows before destroying allocated render objects the corresponding window context has to be bound.
-     */
     class Window {
     public:
         virtual ~Window() = default;
 
-        virtual RenderAPI &getRenderAPI() = 0;
+        virtual Renderer &getRenderer() = 0;
+
+        virtual RenderAllocator &getRenderAllocator() = 0;
+
+        virtual FrameBuffer &getFrameBuffer() = 0;
 
         virtual Input &getInput() = 0;
-
-        virtual FrameBufferObject &getFrameBuffer() = 0;
-
-        virtual void bindContext() = 0;
 
         virtual void swapBuffers() = 0;
 

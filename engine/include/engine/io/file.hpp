@@ -3,7 +3,7 @@
 
 #include <fstream>
 
-#include "engine/io/buffer.hpp"
+#include "engine/common/buffer.hpp"
 
 namespace mana {
     class File {

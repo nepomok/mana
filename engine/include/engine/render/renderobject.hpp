@@ -2,13 +2,10 @@
 #define MANA_OBJECT_HPP
 
 /**
- * The common ancestor of all object interfaces which abstract graphics api dependent objects such as framebuffers,
- * mesh objects and shader programs.
- *
- * All render objects have a destructor which cleans up the graphics api dependent resources associated with it.
+ * A render object is a dynamically allocated graphics api dependent object which can be deallocated by
+ * calling the destructor.
  */
-class RenderObject
-{
+class RenderObject {
 public:
     virtual ~RenderObject() = default;
 };

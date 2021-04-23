@@ -3,28 +3,96 @@
 
 #include <vector>
 
-#include "engine/render/mesh.hpp"
-#include "engine/render/renderunit.hpp"
-#include "engine/render/light.hpp"
-#include "engine/render/camera.hpp"
-#include "engine/math/matrix.hpp"
+#include "engine/render/rendermesh.hpp"
+#include "engine/render/rendertexture.hpp"
+#include "engine/render/shaderprogram.hpp"
+
+#include "engine/math/transform.hpp"
 
 namespace mana {
-    /**
-     *  A RenderCommand object describes a render operation.
-     *
-     *  The render api interprets render commands and translates them into the graphics api specific instructions.
-     *
-     *  The render units are drawn in order.
-     */
     struct RenderCommand {
-        Camera* camera;
+        enum DepthTestMode {
+            DEPTH_TEST_ALWAYS,
+            DEPTH_TEST_NEVER,
+            DEPTH_TEST_LESS,
+            DEPTH_TEST_EQUAL,
+            DEPTH_TEST_LEQUAL,
+            DEPTH_TEST_GREATER,
+            DEPTH_TEST_NOTEQUAL,
+            DEPTH_TEST_GEQUAL
+        };
 
-        std::vector<RenderUnit> units;
+        enum StencilMode {
+            STENCIL_NEVER,
+            STENCIL_LESS,
+            STENCIL_LEQUAL,
+            STENCIL_GREATER,
+            STENCIL_GEQUAL,
+            STENCIL_EQUAL,
+            STENCIL_NOTEQUAL,
+            STENCIL_ALWAYS
+        };
 
-        std::vector<DirectionalLight> directionalLights;
-        std::vector<PointLight> pointLights;
-        std::vector<SpotLight> spotLights;
+        enum StencilAction {
+            STENCIL_KEEP,
+            STENCIL_ZERO,
+            STENCIL_REPLACE,
+            STENCIL_INCR,
+            STENCIL_INCR_WRAP,
+            STENCIL_DECR,
+            STENCIL_DECR_WRAP,
+            STENCIL_INVERT
+        };
+
+        enum FaceCullingMode {
+            CULL_NONE,
+            CULL_FRONT,
+            CULL_BACK
+        };
+
+        enum BlendMode {
+            ZERO,
+            ONE,
+            SRC_COLOR,
+            ONE_MINUS_SRC_COLOR,
+            DST_COLOR,
+            SRC_ALPHA,
+            ONE_MINUS_SRC_ALPHA,
+            DST_ALPHA,
+            ONE_MINUS_DST_ALPHA,
+            CONSTANT_COLOR,
+            ONE_MINUS_CONSTANT_COLOR,
+            CONSTANT_ALPHA,
+            ONE_MINUS_CONSTANT_ALPHA
+        };
+
+        Transform transform;
+
+        std::vector<RenderMesh *> meshObjects;
+        std::vector<RenderTexture *> textureObjects;
+
+        ShaderProgram *shader;
+
+        bool enableDepthTest = false;
+        bool depthTestWrite = true;
+        DepthTestMode depthTestMode = DepthTestMode::DEPTH_TEST_LESS;
+
+        bool enableStencilTest = false;
+        uint stencilTestMask = 0xFF;
+        StencilMode stencilMode = StencilMode::STENCIL_ALWAYS;
+        int stencilReference = 1;
+        uint stencilFunctionMask = 0xFF;
+        StencilAction stencilFail = StencilAction::STENCIL_KEEP;
+        StencilAction stencilDepthFail = StencilAction::STENCIL_KEEP;
+        StencilAction stencilPass = StencilAction::STENCIL_KEEP;
+
+        bool enableFaceCulling = false;
+        FaceCullingMode faceCullMode = FaceCullingMode::CULL_FRONT;
+        bool faceCullClockwiseWinding = false;
+
+        bool enableBlending = false;
+        BlendMode blendSourceMode = BlendMode::ONE;
+        BlendMode blendDestinationMode = BlendMode::ZERO;
     };
 }
 

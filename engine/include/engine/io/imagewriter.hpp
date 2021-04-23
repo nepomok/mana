@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 
 namespace mana {
     class ImageWriter {

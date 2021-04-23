@@ -3,8 +3,8 @@
 
 #include <vector>
 
-#include "engine/render/primitive.hpp"
-#include "engine/render/vertex.hpp"
+#include "engine/render/geometry/primitive.hpp"
+#include "engine/render/geometry/vertex.hpp"
 
 namespace mana {
     /**

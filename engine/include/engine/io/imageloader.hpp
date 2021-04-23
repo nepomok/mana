@@ -1,7 +1,7 @@
 #ifndef MANA_IMAGELOADER_HPP
 #define MANA_IMAGELOADER_HPP
 
-#include "imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 
 namespace mana {
     class ImageLoader {

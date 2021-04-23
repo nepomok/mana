@@ -1,8 +1,8 @@
 #ifndef MANA_IMAGEBUFFER_HPP
 #define MANA_IMAGEBUFFER_HPP
 
-#include "engine/io/buffer.hpp"
-#include "engine/render/color.hpp"
+#include "engine/common/buffer.hpp"
+#include "engine/common/color.hpp"
 #include "engine/math/rectangle.hpp"
 
 namespace mana {

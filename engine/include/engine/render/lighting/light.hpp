@@ -1,14 +1,9 @@
 #ifndef MANA_LIGHT_HPP
 #define MANA_LIGHT_HPP
 
-#include "engine/render/transform.hpp"
+#include "engine/math/transform.hpp"
 
 namespace mana {
-    /**
-     * The graphics api independent light definition.
-     *
-     * The data is converted into some graphics api dependent shader input constants by the graphics api implementation.
-     */
     struct DirectionalLight {
         Transform transform;
         Vec3f ambient = Vec3f(0.1f);

@@ -1,7 +1,7 @@
 #ifndef MANA_PERSPECTIVECAMERA_HPP
 #define MANA_PERSPECTIVECAMERA_HPP
 
-#include "engine/render/camera.hpp"
+#include "engine/render/camera/camera.hpp"
 
 #include "engine/math/matrixmath.hpp"
 

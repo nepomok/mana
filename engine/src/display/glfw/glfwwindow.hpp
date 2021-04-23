@@ -45,7 +45,7 @@ namespace mana {
 
         void glfwFrameBufferSizeCallback(Vec2i size);
 
-        RenderAPI &getRenderAPI() override;
+        Renderer &getRenderAPI() override;
 
         Input &getInput() override;
 
