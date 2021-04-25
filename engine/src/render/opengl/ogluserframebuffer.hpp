@@ -31,11 +31,6 @@ namespace mana {
             int width;
             int height;
 
-            GLuint colorBuffer;
-            GLuint renderBuffer;
-
-            bool userTexture = false;
-
             OGLUserFrameBuffer();
 
             OGLUserFrameBuffer(int width, int height);

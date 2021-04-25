@@ -32,54 +32,10 @@
 using namespace mana;
 using namespace mana::opengl;
 
-FrameBuffer *OGLRenderAllocator::allocateFrameBuffer(int width, int height, TextureAttributes colorBufferProperties) {
+FrameBuffer *OGLRenderAllocator::allocateFrameBuffer(int width, int height) {
     auto *ret = new OGLUserFrameBuffer(width, height);
 
     glGenFramebuffers(1, &ret->FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, ret->FBO);
-
-    glGenTextures(1, &ret->colorBuffer);
-    glBindTexture(GL_TEXTURE_2D, ret->colorBuffer);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(colorBufferProperties.texWrapping));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(colorBufferProperties.texWrapping));
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    OGLTypeConverter::convert(colorBufferProperties.texFilterMin));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    OGLTypeConverter::convert(colorBufferProperties.texFilterMag));
-
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 OGLTypeConverter::convert(colorBufferProperties.internalFormat),
-                 width,
-                 height,
-                 0,
-                 GL_RGB, GL_UNSIGNED_BYTE,
-                 NULL);
-
-    if (colorBufferProperties.generateMipmap) {
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        OGLTypeConverter::convert(colorBufferProperties.mipmapFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                        OGLTypeConverter::convert(colorBufferProperties.texFilterMag));
-    }
-
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ret->colorBuffer, 0);
-
-    glGenRenderbuffers(1, &ret->renderBuffer);
-    glBindRenderbuffer(GL_RENDERBUFFER, ret->renderBuffer);
-
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, ret->width, ret->height);
-
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER,
-                              ret->renderBuffer);
-
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-        throw std::runtime_error("Failed to setup framebuffer");
-
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     checkGLError("OGLRenderAllocator::allocateFrameBuffer");
 
@@ -106,7 +62,8 @@ RenderTexture *OGLRenderAllocator::allocateTexture(int width, int height, Textur
                  width,
                  height,
                  0,
-                 GL_RGB, GL_UNSIGNED_BYTE,
+                 OGLTypeConverter::convert(properties.internalFormat),
+                 properties.internalFormat == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
                  NULL);
 
     if (properties.generateMipmap) {
@@ -139,7 +96,7 @@ RenderTexture *OGLRenderAllocator::allocateCubeMapTexture(int width, int height,
                      width,
                      height,
                      0,
-                     GL_RGBA,
+                     OGLTypeConverter::convert(properties.internalFormat),
                      GL_UNSIGNED_BYTE,
                      NULL);
     }

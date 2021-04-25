@@ -35,10 +35,26 @@ Vec2i OGLRenderTexture::getSize() {
 }
 
 void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat internalFormat) {
-    if (buffer.getWidth() != width || buffer.getHeight() != height) {
-        throw std::runtime_error("Attempted to write input buffer with non matching size");
-    }
+    width = buffer.getWidth();
+    height = buffer.getHeight();
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(internalFormat),
+                 width,
+                 height,
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 buffer.buffer.getData());
+    glBindTexture(GL_TEXTURE_2D, 0);
 
+    checkGLError("OGLRenderTexture::upload(RGB)");
+}
+
+void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
+    width = buffer.getWidth();
+    height = buffer.getHeight();
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
                  0,
@@ -49,26 +65,6 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat i
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
                  buffer.buffer.getData());
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    checkGLError("OGLRenderTexture::upload(RGB)");
-}
-
-void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
-    if (buffer.getWidth() != width || buffer.getHeight() != height) {
-        throw std::runtime_error("Attempted to write input buffer with non matching size");
-    }
-
-    glBindTexture(GL_TEXTURE_2D, handle);
-    glTexImage2D(GL_TEXTURE_2D,
-                    0,
-                    OGLTypeConverter::convert(internalFormat),
-                    width,
-                    height,
-                    0,
-                    GL_RGBA,
-                    GL_UNSIGNED_BYTE,
-                    buffer.buffer.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLRenderTexture::upload(RGBA)");
@@ -89,6 +85,8 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
     }
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
+    width = buffer.getWidth();
+    height = buffer.getHeight();
     glTexImage2D(OGLTypeConverter::convert(face),
                  0,
                  OGLTypeConverter::convert(internalFormat),

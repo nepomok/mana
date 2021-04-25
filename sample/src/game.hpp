@@ -28,6 +28,8 @@ using namespace mana;
 
 class Game : public InputListener, public WindowListener {
 public:
+    virtual ~Game() = default;
+
     virtual int loop(GraphicsApi api) {
         Window *wnd = DisplayAPI::createWindow(api);
         Renderer &ren = wnd->getRenderer();

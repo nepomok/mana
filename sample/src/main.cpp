@@ -18,8 +18,32 @@
  */
 
 #include "sample0.hpp"
+#include "sample1.hpp"
 
-int main() {
-    Sample0 sample;
-    return sample.loop(OPENGL);
+void printUsage() {
+    printf("Usage: samples SAMPLE_NUMBER\n");
+}
+
+int main(int argc, char *argv[]) {
+    int n = 1;
+    if (argc == 2) {
+        n = std::stoi(argv[1]);
+    }
+
+    Game *game;
+    switch (n) {
+        case 0:
+            game = new Sample0();
+            break;
+        case 1:
+            game = new Sample1();
+            break;
+        default:
+            printUsage();
+            return 0;
+    }
+
+    int ret = game->loop(OPENGL);
+    delete game;
+    return ret;
 }

@@ -30,9 +30,7 @@
 namespace mana {
     class RenderAllocator {
     public:
-        virtual FrameBuffer *allocateFrameBuffer(int width,
-                                                 int height,
-                                                 TextureAttributes colorBufferProperties = {}) = 0;
+        virtual FrameBuffer *allocateFrameBuffer(int width, int height) = 0;
 
         virtual RenderTexture *allocateTexture(int width,
                                                int height,

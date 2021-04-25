@@ -26,7 +26,7 @@ namespace mana {
     namespace opengl {
         class OGLRenderAllocator : public RenderAllocator {
         public:
-            FrameBuffer *allocateFrameBuffer(int width, int height, TextureAttributes colorBufferProperties) override;
+            FrameBuffer *allocateFrameBuffer(int width, int height) override;
 
             RenderTexture *allocateTexture(int width, int height, TextureAttributes properties) override;
 

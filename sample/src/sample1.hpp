@@ -17,16 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SAMPLE0_HPP
-#define MANA_SAMPLE0_HPP
+#ifndef MANA_SAMPLE1_HPP
+#define MANA_SAMPLE1_HPP
 
 #include "game.hpp"
 
 #include "shadersource.hpp"
 
-class Sample0 : public Game {
+class Sample1 : public Game {
 public:
-    ~Sample0() override = default;
+    ~Sample1() override = default;
 
     void onFramebufferResize(Vec2i size) override {
         camera.aspectRatio = (float) size.x / (float) size.y;
@@ -123,6 +123,11 @@ protected:
         scene.spotLights.at(0).direction = toVec3(forward);
         scene.spotLights.at(0).transform.position = camera.transform.position;
 
+        orthographicCamera.transform = camera.transform;
+
+        scene.camera = &orthographicCamera;
+        ren.render(*frameBuffer, scene, clearColor, true, true, true, false);
+        scene.camera = &camera;
         ren.render(window.getFrameBuffer(), scene, clearColor, true, true, true, false);
 
         window.swapBuffers();
@@ -274,6 +279,34 @@ protected:
         skybox = &*(scene.commands.begin());
         sphere = &*(scene.commands.begin() + 2);
         cube = &*(scene.commands.begin() + 1);
+        plane = &*(scene.commands.begin() + 3);
+
+        frameBuffer = alloc.allocateFrameBuffer(2048, 2048);
+
+        auto props = TextureAttributes();
+        props.internalFormat = ColorFormat::DEPTH;
+        props.generateMipmap = false;
+
+        auto *tex = alloc.allocateTexture(2048, 2048, props);
+
+        objects.emplace_back(tex);
+        plane->textureObjects.clear();
+        plane->textureObjects.emplace_back(tex);
+
+        frameBuffer->attachDepth(*tex);
+
+        tex = alloc.allocateTexture(2048, 2048);
+
+        objects.emplace_back(tex);
+
+        frameBuffer->attachColor(*tex);
+
+        shader = alloc.allocateShaderProgram(vertexShader, depthFragmentShader);
+        plane->shader = shader;
+        objects.emplace_back(shader);
+
+        orthographicCamera.nearClip = 1.0f;
+        orthographicCamera.farClip = 7.5f;
     }
 
     void destroyScene() override {
@@ -297,9 +330,14 @@ private:
 
     PerspectiveCamera camera;
 
+    OrthographicCamera orthographicCamera;
+
     RenderCommand *skybox;
     RenderCommand *sphere;
     RenderCommand *cube;
+    RenderCommand *plane;
+
+    FrameBuffer *frameBuffer;
 };
 
-#endif //MANA_SAMPLE0_HPP
+#endif //MANA_SAMPLE1_HPP

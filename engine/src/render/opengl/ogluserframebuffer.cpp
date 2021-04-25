@@ -20,29 +20,22 @@
 #include "render/opengl/ogluserframebuffer.hpp"
 #include "render/opengl/ogltypeconverter.hpp"
 #include "render/opengl/oglcheckerror.hpp"
+#include "render/opengl/oglrendertexture.hpp"
 
 using namespace mana;
 using namespace mana::opengl;
 
 opengl::OGLUserFrameBuffer::OGLUserFrameBuffer() : FBO(0),
                                                    width(0),
-                                                   height(0),
-                                                   colorBuffer(0),
-                                                   renderBuffer(0),
-                                                   userTexture(false) {}
+                                                   height(0)
+                                                   {}
 
 opengl::OGLUserFrameBuffer::OGLUserFrameBuffer(int width, int height) : width(width),
                                                                         height(height),
-                                                                        FBO(0),
-                                                                        colorBuffer(0),
-                                                                        renderBuffer(0),
-                                                                        userTexture(false) {}
+                                                                        FBO(0)
+                                                                        {}
 
 opengl::OGLUserFrameBuffer::~OGLUserFrameBuffer() {
-    glDeleteRenderbuffers(1, &renderBuffer);
-    if (!userTexture) {
-        glDeleteTextures(1, &colorBuffer);
-    }
     glDeleteFramebuffers(1, &FBO);
 }
 
@@ -177,36 +170,68 @@ void opengl::OGLUserFrameBuffer::blitStencil(const FrameBuffer &source, Vec2i so
 }
 
 void opengl::OGLUserFrameBuffer::attachColor(const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachDepth(const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachStencil(const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachDepthStencil(const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, OGLTypeConverter::convert(face), tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 void opengl::OGLUserFrameBuffer::attachDepthStencil(RenderTexture::CubeMapFace face,
                                                     const RenderTexture &texture) {
-    throw std::runtime_error("Not Implemented");
+    auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkGLError("");
 }
 
 GLuint opengl::OGLUserFrameBuffer::getFBO() const {

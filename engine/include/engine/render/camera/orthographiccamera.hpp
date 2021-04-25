@@ -35,10 +35,10 @@ namespace mana {
                                      farClip);
         }
 
-        float left = 0;
-        float top = 0;
-        float right = 1;
-        float bottom = 1;
+        float left = -10;
+        float top = 10;
+        float right = 10;
+        float bottom = -10;
     };
 }
 

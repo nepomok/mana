@@ -109,4 +109,23 @@ void main()
 }
 )###";
 
+const char *depthFragmentShader = R"###(
+#version 330 core
+
+uniform sampler2D diffuse;
+uniform sampler2D specular;
+
+in vec3 fPos;
+in vec3 fNorm;
+in vec2 fUv;
+
+out vec4 FragColor;
+
+void main()
+{
+    FragColor = vec4(vec3(texture(diffuse, fUv).r), 1.0);
+}
+)###";
+
+
 #endif //MANA_SHADERSOURCE_HPP
