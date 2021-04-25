@@ -22,6 +22,9 @@
 
 #include "render/opengl/oglframebuffer.hpp"
 
+#include "render/opengl/ogltypeconverter.hpp"
+#include "render/opengl/oglcheckerror.hpp"
+
 namespace mana {
     class GLFWWindowFrameBuffer : public opengl::OGLFrameBuffer {
     public:
@@ -35,32 +38,131 @@ namespace mana {
             return ret;
         };
 
-        void blitColor(const FrameBuffer &source,
-                       Vec2i sourceOffset,
-                       Vec2i targetOffset,
-                       Vec2i sourceRect,
-                       Vec2i targetRect,
-                       TextureFiltering filter) override {
-            throw std::runtime_error("Not Implemented");
-        };
+        void blitColor(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                                   Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override{
+            if (sourceRect.x < 0 || sourceRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (sourceOffset.x < 0 || sourceOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+            if (targetRect.x < 0 || targetRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (targetOffset.x < 0 || targetOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
 
-        void blitDepth(const FrameBuffer &source,
-                       Vec2i sourceOffset,
-                       Vec2i targetOffset,
-                       Vec2i sourceRect,
-                       Vec2i targetRect,
-                       TextureFiltering filter) override {
-            throw std::runtime_error("Not Implemented");
-        };
+            auto &fbS = dynamic_cast<const OGLFrameBuffer &>(source);
 
-        void blitStencil(const FrameBuffer &source,
-                         Vec2i sourceOffset,
-                         Vec2i targetOffset,
-                         Vec2i sourceRect,
-                         Vec2i targetRect,
-                         TextureFiltering filter) override {
-            throw std::runtime_error("Not Implemented");
-        };
+            Vec2i sourceSize = fbS.getSize();
+            if (sourceSize.x < sourceRect.x + sourceOffset.x || sourceSize.y < sourceRect.y + sourceOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for source framebuffer");
+
+            Vec2i targetSize = getSize();
+            if (targetSize.x < targetRect.x + targetOffset.x || targetSize.y < targetRect.y + targetOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for target framebuffer.");
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFBO());
+            glBlitFramebuffer(sourceOffset.x,
+                              sourceOffset.y,
+                              sourceRect.x,
+                              sourceRect.y,
+                              targetOffset.x,
+                              targetOffset.y,
+                              targetRect.x,
+                              targetRect.y,
+                              GL_COLOR_BUFFER_BIT,
+                              opengl::OGLTypeConverter::convert(filter));
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            checkGLError("GLFWWindowFrameBuffer::blitFramebuffer");
+        }
+
+        void blitDepth(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                                   Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override {
+            if (sourceRect.x < 0 || sourceRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (sourceOffset.x < 0 || sourceOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+            if (targetRect.x < 0 || targetRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (targetOffset.x < 0 || targetOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+
+            auto &fbS = dynamic_cast<const OGLFrameBuffer &>(source);
+
+            Vec2i sourceSize = fbS.getSize();
+            if (sourceSize.x < sourceRect.x + sourceOffset.x || sourceSize.y < sourceRect.y + sourceOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for source framebuffer");
+
+            Vec2i targetSize = getSize();
+            if (targetSize.x < targetRect.x + targetOffset.x || targetSize.y < targetRect.y + targetOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for target framebuffer.");
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFBO());
+            glBlitFramebuffer(sourceOffset.x,
+                              sourceOffset.y,
+                              sourceRect.x,
+                              sourceRect.y,
+                              targetOffset.x,
+                              targetOffset.y,
+                              targetRect.x,
+                              targetRect.y,
+                              GL_DEPTH_BUFFER_BIT,
+                              opengl::OGLTypeConverter::convert(filter));
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            checkGLError("GLFWWindowFrameBuffer::blitFramebuffer");
+        }
+
+        void blitStencil(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                                     Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override{
+            if (sourceRect.x < 0 || sourceRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (sourceOffset.x < 0 || sourceOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+            if (targetRect.x < 0 || targetRect.y < 0) {
+                throw std::runtime_error("Rect cannot be negative");
+            }
+            if (targetOffset.x < 0 || targetOffset.y < 0) {
+                throw std::runtime_error("Offset cannot be negative");
+            }
+
+            auto &fbS = dynamic_cast<const OGLFrameBuffer &>(source);
+
+            Vec2i sourceSize = fbS.getSize();
+            if (sourceSize.x < sourceRect.x + sourceOffset.x || sourceSize.y < sourceRect.y + sourceOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for source framebuffer");
+
+            Vec2i targetSize = getSize();
+            if (targetSize.x < targetRect.x + targetOffset.x || targetSize.y < targetRect.y + targetOffset.y)
+                throw std::runtime_error("Blit rect out of bounds for target framebuffer.");
+
+            glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
+            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFBO());
+            glBlitFramebuffer(sourceOffset.x,
+                              sourceOffset.y,
+                              sourceRect.x,
+                              sourceRect.y,
+                              targetOffset.x,
+                              targetOffset.y,
+                              targetRect.x,
+                              targetRect.y,
+                              GL_STENCIL_BUFFER_BIT,
+                              opengl::OGLTypeConverter::convert(filter));
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            checkGLError("OGLUserFrameBuffer::blitFramebuffer");
+        }
 
         void attachColor(const RenderTexture &texture) override {
             throw std::runtime_error("Not Implemented");
