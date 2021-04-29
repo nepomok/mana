@@ -26,8 +26,6 @@ namespace mana {
     namespace opengl {
         class OGLRenderer : public Renderer {
         public:
-            void setCamera(const Camera &camera) override;
-
             void setViewport(Vec2i offset, Vec2i size) override;
 
             void setClear(bool clearColor, bool clearDepth, bool clearStencil) override;
@@ -36,18 +34,10 @@ namespace mana {
 
             void setMultiSample(bool multiSample) override;
 
-            void setDirectionalLights(const std::vector<DirectionalLight> &lights) override;
-
-            void setPointLights(const std::vector<PointLight> &lights) override;
-
-            void setSpotLights(const std::vector<SpotLight> &lights) override;
-
             void renderBegin(const RenderTarget &target) override;
 
             void addCommand(const RenderCommand &command) override;
-
-            void addCommands(const std::vector<RenderCommand> &commands) override;
-
+            
             void renderFinish() override;
 
         private:
@@ -55,12 +45,6 @@ namespace mana {
             ColorRGBA clearColorValue = {};
             bool clearColor = true, clearDepth = true, clearStencil = true;
             bool multiSample = false;
-
-            Mat4f view, projection;
-            Transform cameraTransform;
-            std::vector<DirectionalLight> directionalLights;
-            std::vector<PointLight> pointLights;
-            std::vector<SpotLight> spotLights;
         };
     }
 }

@@ -84,6 +84,8 @@
 #include "engine/render/camera/orthographiccamera.hpp"
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/renderallocator.hpp"
+#include "engine/render/renderer2d.hpp"
+#include "engine/render/renderer3d.hpp"
 #include "engine/physics/physicsengine.hpp"
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector4.hpp"

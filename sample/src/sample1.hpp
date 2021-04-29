@@ -29,6 +29,10 @@ public:
     ~Sample1() override = default;
 
 protected:
+    void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
+        Game::start(window, ren, alloc, input);
+    }
+
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
@@ -123,21 +127,17 @@ protected:
 
         camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
-        ren.setDirectionalLights(directionalLights);
-        ren.setPointLights(pointLights);
-        ren.setSpotLights(spotLights);
+        ren3d.setDirectionalLights(directionalLights);
+        ren3d.setPointLights(pointLights);
+        ren3d.setSpotLights(spotLights);
 
         ren.setViewport({}, frameBuffer->getSize());
-        ren.setCamera(orthographicCamera);
-        ren.renderBegin(*frameBuffer);
-        ren.addCommands(commands);
-        ren.renderFinish();
+        ren3d.setCamera(orthographicCamera);
+        ren3d.draw(*frameBuffer, commands);
 
         ren.setViewport({}, window.getFramebufferSize());
-        ren.setCamera(camera);
-        ren.renderBegin(window.getRenderTarget());
-        ren.addCommands(commands);
-        ren.renderFinish();
+        ren3d.setCamera(camera);
+        ren3d.draw(window.getRenderTarget(), commands);
 
         window.swapBuffers();
         window.update();
@@ -166,18 +166,21 @@ protected:
         Mesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
         Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
-        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(skyboxVertexShader, skyboxFragmentShader);
+        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(skyboxVertexShader),
+                                                                  Renderer3D::preprocessGlsl(skyboxFragmentShader));
         objects.emplace_back(skyboxShader);
 
         skyboxShader->setInt("skybox", 0);
 
-        ShaderProgram *shader = alloc.allocateShaderProgram(vertexShader, fragmentShader);
+        ShaderProgram *shader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
+                                                            Renderer3D::preprocessGlsl(fragmentShader));
         objects.emplace_back(shader);
 
         shader->setInt("diffuse", 0);
         shader->setInt("specular", 1);
 
-        ShaderProgram *lightShader = alloc.allocateShaderProgram(vertexShader, lightFragmentShader);
+        ShaderProgram *lightShader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
+                                                                 Renderer3D::preprocessGlsl(lightFragmentShader));
         objects.emplace_back(lightShader);
 
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");
@@ -320,7 +323,8 @@ protected:
 
         frameBuffer->attachColor(*tex);
 
-        shader = alloc.allocateShaderProgram(vertexShader, depthFragmentShader);
+        shader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
+                                             Renderer3D::preprocessGlsl(depthFragmentShader));
         plane->shader = shader;
         objects.emplace_back(shader);
 

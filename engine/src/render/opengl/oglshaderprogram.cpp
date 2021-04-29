@@ -19,190 +19,21 @@
 
 #include <stdexcept>
 
+#include "engine/math/rotation.hpp"
+
 #include "render/opengl/oglshaderprogram.hpp"
 #include "render/opengl/ogltypeconverter.hpp"
 
 #include "engine/math/matrixmath.hpp"
 
-#define SHADER_INCLUDE std::string("#include \"mana.glsl\"\n")
-
-/**
- * The glsl source which is injected when SHADER_INCLUDE is found.
- */
-const char *SHADER_INJECT = R"###(
-#define MANA_MAX_LIGHTS 10
-
-uniform mat4 MANA_M;
-uniform mat4 MANA_V;
-uniform mat4 MANA_P;
-uniform mat4 MANA_MVP;
-
-uniform vec3 MANA_VIEWPOS;
-
-struct MANA_T_LIGHT_DIRECTIONAL {
-    vec3 direction;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
-uniform MANA_T_LIGHT_DIRECTIONAL MANA_LIGHTS_DIRECTIONAL[MANA_MAX_LIGHTS];
-
-uniform int MANA_LIGHT_COUNT_DIRECTIONAL;
-
-struct MANA_T_LIGHT_POINT {
-    vec3 position;
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
-uniform MANA_T_LIGHT_POINT MANA_LIGHTS_POINT[MANA_MAX_LIGHTS];
-
-uniform int MANA_LIGHT_COUNT_POINT;
-
-struct MANA_T_LIGHT_SPOT {
-    vec3 position;
-    vec3 direction;
-    float cutOff;
-    float outerCutOff;
-    float constant;
-    float linear;
-    float quadratic;
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-};
-
-uniform MANA_T_LIGHT_SPOT MANA_LIGHTS_SPOT[MANA_MAX_LIGHTS];
-
-uniform int MANA_LIGHT_COUNT_SPOT;
-
-vec4 MANA_F_CALCULATELIGHT_DIRECTIONAL(vec3 fPos, vec3 fNorm, vec4 diffuseColor, vec4 specularColor, float roughness)
-{
-    vec4 ret;
-    for (int i = 0; i < MANA_LIGHT_COUNT_DIRECTIONAL; i++)
-    {
-        vec3 ambient = MANA_LIGHTS_DIRECTIONAL[i].ambient * vec3(diffuseColor);
-
-        vec3 norm = normalize(fNorm);
-        vec3 lightDir = normalize(-MANA_LIGHTS_DIRECTIONAL[i].direction);
-
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse =  MANA_LIGHTS_DIRECTIONAL[i].diffuse * vec3(diff * diffuseColor);
-
-        vec3 viewDir = normalize(MANA_VIEWPOS - fPos);
-        vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
-        vec3 specular = MANA_LIGHTS_DIRECTIONAL[i].specular * vec3(spec * specularColor);
-
-        ret += vec4(ambient + diffuse + specular, 1);
-    }
-
-    return ret;
-}
-
-vec4 MANA_F_CALCULATELIGHT_POINT(vec3 fPos, vec3 fNorm, vec4 diffuseColor, vec4 specularColor, float roughness)
-{
-    vec4 ret;
-    for (int i = 0; i < MANA_LIGHT_COUNT_POINT; i++)
-    {
-        float distance    = length(MANA_LIGHTS_POINT[i].position - fPos);
-        float attenuation = 1.0 / (MANA_LIGHTS_POINT[i].constant + MANA_LIGHTS_POINT[i].linear * distance + MANA_LIGHTS_POINT[i].quadratic * (distance * distance));
-
-        vec3 ambient = MANA_LIGHTS_POINT[i].ambient * vec3(diffuseColor);
-
-        vec3 norm = normalize(fNorm);
-        vec3 lightDir = normalize(MANA_LIGHTS_POINT[i].position - fPos);
-
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse =  MANA_LIGHTS_POINT[i].diffuse * vec3(diff * diffuseColor);
-
-        vec3 viewDir = normalize(MANA_VIEWPOS - fPos);
-        vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
-        vec3 specular = MANA_LIGHTS_POINT[i].specular * vec3(spec * specularColor);
-        ambient  *= attenuation;
-        diffuse  *= attenuation;
-        specular *= attenuation;
-
-        ret += vec4(ambient + diffuse + specular, 1);
-    }
-
-    return ret;
-}
-
-vec4 MANA_F_CALCULATELIGHT_SPOT(vec3 fPos, vec3 fNorm, vec4 diffuseColor, vec4 specularColor, float roughness)
-{
-    vec4 ret;
-    for (int i = 0; i < MANA_LIGHT_COUNT_SPOT; i++)
-    {
-        vec3 lightDir = normalize(MANA_LIGHTS_SPOT[i].position - fPos);
-
-        // ambient
-        vec3 ambient = MANA_LIGHTS_SPOT[i].ambient * diffuseColor.rgb;
-
-        // diffuse
-        vec3 norm = normalize(fNorm);
-        float diff = max(dot(norm, lightDir), 0.0);
-        vec3 diffuse = MANA_LIGHTS_SPOT[i].diffuse * diff * diffuseColor.rgb;
-
-        // specular
-        vec3 viewDir = normalize(MANA_VIEWPOS - fPos);
-        vec3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
-        vec3 specular = MANA_LIGHTS_SPOT[i].specular * spec * specularColor.rgb;
-
-        // spotlight (soft edges)
-        float theta = dot(lightDir, normalize(-MANA_LIGHTS_SPOT[i].direction));
-        float epsilon = (MANA_LIGHTS_SPOT[i].cutOff - MANA_LIGHTS_SPOT[i].outerCutOff);
-        float intensity = clamp((theta - MANA_LIGHTS_SPOT[i].outerCutOff) / epsilon, 0.0, 1.0);
-        diffuse  *= intensity;
-        specular *= intensity;
-
-        // attenuation
-        float distance    = length(MANA_LIGHTS_SPOT[i].position - fPos);
-        float attenuation = 1.0 / (MANA_LIGHTS_SPOT[i].constant + MANA_LIGHTS_SPOT[i].linear * distance + MANA_LIGHTS_SPOT[i].quadratic * (distance * distance));
-
-        diffuse   *= attenuation;
-        specular *= attenuation;
-
-        vec3 result = ambient + diffuse + specular;
-        ret += vec4(result, 1);
-    }
-    return ret;
-}
-
-vec4 MANA_F_CALCULATELIGHT(vec3 fPos, vec3 fNorm, vec4 fDiffuse, vec4 fSpecular, float roughness)
-{
-    return MANA_F_CALCULATELIGHT_DIRECTIONAL(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + MANA_F_CALCULATELIGHT_POINT(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + MANA_F_CALCULATELIGHT_SPOT(fPos, fNorm, fDiffuse, fSpecular, roughness);
-}
-
-)###";
-
 namespace mana {
     namespace opengl {
-        std::string preprocessShader(const std::string &shader) {
-            auto index = shader.find(SHADER_INCLUDE);
-            if (index != std::string::npos) {
-                std::string start = shader.substr(0, index);
-                std::string end = shader.substr(index + SHADER_INCLUDE.length());
-                return start + SHADER_INJECT + end;
-            }
-            return shader;
-        }
-
         OGLShaderProgram::OGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 
         OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            std::string vs = preprocessShader(vertexShader);
-            std::string fs = preprocessShader(fragmentShader);
+            const std::string& vs = vertexShader;
+            const std::string& fs = fragmentShader;
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();

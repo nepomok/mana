@@ -17,37 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHT_HPP
-#define MANA_LIGHT_HPP
-
-#include "engine/math/transform.hpp"
+#include "engine/render/renderer2d.hpp"
 
 namespace mana {
-    struct Light {
-        Transform transform;
-        Vec3f ambient = Vec3f(0.1f);
-        Vec3f diffuse = Vec3f(1.0f);
-        Vec3f specular = Vec3f(1.0f);
-    };
+    Renderer2D::Renderer2D() {
 
-    struct DirectionalLight : public Light {
-        Vec3f direction;
-    };
+    }
 
-    struct PointLight : public Light {
-        float constant = 1;
-        float linear = 1;
-        float quadratic = 1;
-    };
+    Renderer2D::Renderer2D(Renderer &ren, RenderAllocator &alloc) {
 
-    struct SpotLight : public Light {
-        Vec3f direction = Vec3f(0, -1, 0);
-        float cutOff = 10;
-        float outerCutOff = 14;
-        float constant = 0.1;
-        float linear = 0.1;
-        float quadratic = 0.1;
-    };
+    }
+
+    void Renderer2D::begin(const RenderTarget &target) {
+
+    }
+
+    void Renderer2D::draw(Recti rectangle) {
+
+    }
+
+    void Renderer2D::present() {
+
+    }
 }
-
-#endif //MANA_LIGHT_HPP

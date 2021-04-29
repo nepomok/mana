@@ -64,12 +64,6 @@ namespace mana {
             }
         }
 
-        void OGLRenderer::setCamera(const Camera &camera) {
-            view = camera.view();
-            projection = camera.projection();
-            cameraTransform = camera.transform;
-        }
-
         void OGLRenderer::setViewport(Vec2i offset, Vec2i size) {
             this->viewportOffset = offset;
             this->viewportSize = size;
@@ -87,18 +81,6 @@ namespace mana {
 
         void OGLRenderer::setMultiSample(bool s) {
             this->multiSample = s;
-        }
-
-        void OGLRenderer::setDirectionalLights(const std::vector<DirectionalLight> &lights) {
-            this->directionalLights = lights;
-        }
-
-        void OGLRenderer::setPointLights(const std::vector<PointLight> &lights) {
-            this->pointLights = lights;
-        }
-
-        void OGLRenderer::setSpotLights(const std::vector<SpotLight> &lights) {
-            this->spotLights = lights;
         }
 
         void OGLRenderer::renderBegin(const RenderTarget &target) {
@@ -138,10 +120,6 @@ namespace mana {
         }
 
         void OGLRenderer::addCommand(const RenderCommand &command) {
-            Mat4f model = MatrixMath::translate(command.transform.position);
-            model = model * MatrixMath::scale(command.transform.scale);
-            model = model * MatrixMath::rotate(command.transform.rotation);
-
             //Bind textures
             for (int i = 0; i < command.textureObjects.size(); i++) {
                 auto *textureObject = command.textureObjects.at(i);
@@ -160,54 +138,6 @@ namespace mana {
             }
             auto &shader = dynamic_cast<OGLShaderProgram &>(*sp);
             shader.activate();
-
-            //Assign shader uniforms
-            //Matrices
-            shader.setMat4("MANA_M", model);
-            shader.setMat4("MANA_V", view);
-            shader.setMat4("MANA_P", projection);
-            shader.setMat4("MANA_MVP", projection * view * model);
-
-            //Lights
-            int i = 0;
-            for (auto &light : pointLights) {
-                std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
-                shader.setVec3(name + "position", light.transform.position);
-                shader.setFloat(name + "constant", light.constant);
-                shader.setFloat(name + "linear", light.linear);
-                shader.setFloat(name + "quadratic", light.quadratic);
-                shader.setVec3(name + "ambient", light.ambient);
-                shader.setVec3(name + "diffuse", light.diffuse);
-                shader.setVec3(name + "specular", light.specular);
-            }
-            i = 0;
-            for (auto &light : spotLights) {
-                std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
-                shader.setVec3(name + "position", light.transform.position);
-                shader.setVec3(name + "direction", light.direction);
-                shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
-                shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                shader.setFloat(name + "constant", light.constant);
-                shader.setFloat(name + "linear", light.linear);
-                shader.setFloat(name + "quadratic", light.quadratic);
-                shader.setVec3(name + "ambient", light.ambient);
-                shader.setVec3(name + "diffuse", light.diffuse);
-                shader.setVec3(name + "specular", light.specular);
-            }
-            i = 0;
-            for (auto &light : directionalLights) {
-                std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
-                shader.setVec3(name + "direction", light.direction);
-                shader.setVec3(name + "ambient", light.ambient);
-                shader.setVec3(name + "diffuse", light.diffuse);
-                shader.setVec3(name + "specular", light.specular);
-            }
-
-            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", directionalLights.size());
-            shader.setInt("MANA_LIGHT_COUNT_POINT", pointLights.size());
-            shader.setInt("MANA_LIGHT_COUNT_SPOT", spotLights.size());
-
-            shader.setVec3("MANA_VIEWPOS", cameraTransform.position);
 
             //Setup per model depth, stencil, culling and blend states
             if (command.enableDepthTest) {
@@ -284,12 +214,6 @@ namespace mana {
             }
 
             checkGLError("OGLRenderer::addCommand");
-        }
-
-        void OGLRenderer::addCommands(const std::vector<RenderCommand> &commands) {
-            for (const auto &command : commands) {
-                addCommand(command);
-            }
         }
 
         void OGLRenderer::renderFinish() {

@@ -32,8 +32,6 @@
 namespace mana {
     class Renderer {
     public:
-        virtual void setCamera(const Camera &camera) = 0;
-
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
 
         virtual void setClear(bool clearColor, bool clearDepth, bool clearStencil) = 0;
@@ -42,18 +40,10 @@ namespace mana {
 
         virtual void setMultiSample(bool multiSample) = 0;
 
-        virtual void setDirectionalLights(const std::vector<DirectionalLight> &lights) = 0;
-
-        virtual void setPointLights(const std::vector<PointLight> &lights) = 0;
-
-        virtual void setSpotLights(const std::vector<SpotLight> &lights) = 0;
-
         virtual void renderBegin(const RenderTarget &target) = 0;
 
         virtual void addCommand(const RenderCommand &command) = 0;
-
-        virtual void addCommands(const std::vector<RenderCommand> &commands) = 0;
-
+        
         virtual void renderFinish() = 0;
     };
 }

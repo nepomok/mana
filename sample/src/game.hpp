@@ -35,8 +35,12 @@ public:
 
         Window *wnd = dm.createWindow(api);
 
-        Renderer &ren = wnd->getRenderer();
-        RenderAllocator &alloc = wnd->getRenderAllocator();
+        auto &alloc = wnd->getRenderAllocator();
+        auto &ren = wnd->getRenderer();
+
+        ren2d = Renderer2D(ren, alloc);
+        ren3d = Renderer3D(ren, alloc);
+
         Input &input = wnd->getInput();
 
         start(*wnd, ren, alloc, input);
@@ -81,6 +85,9 @@ protected:
     virtual void loadScene(RenderAllocator &alloc) = 0;
 
     virtual void destroyScene() = 0;
+
+    Renderer2D ren2d;
+    Renderer3D ren3d;
 };
 
 #endif //MANA_GAME_HPP
