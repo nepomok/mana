@@ -60,8 +60,6 @@ protected:
         window.registerListener(*this);
         input.registerListener(*this);
         loadScene(alloc);
-        ren.setTarget(window.getRenderTarget());
-        ren.setScene(scene);
     }
 
     /**
@@ -72,9 +70,6 @@ protected:
      * @param input
      */
     virtual void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) {
-        ren.setViewport({}, window.getFramebufferSize());
-        ren.render();
-        window.swapBuffers();
     }
 
     virtual void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) {
@@ -86,8 +81,6 @@ protected:
     virtual void loadScene(RenderAllocator &alloc) = 0;
 
     virtual void destroyScene() = 0;
-
-    RenderScene scene;
 };
 
 #endif //MANA_GAME_HPP

@@ -27,7 +27,7 @@
 namespace mana {
     class PerspectiveCamera : public Camera {
     public:
-        Mat4f projection() override {
+        Mat4f projection() const override {
             return MatrixMath::perspective(fov,
                                            aspectRatio,
                                            nearClip,

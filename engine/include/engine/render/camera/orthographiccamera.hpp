@@ -26,7 +26,7 @@
 namespace mana {
     class OrthographicCamera : public Camera {
     public:
-        Mat4f projection() override {
+        Mat4f projection() const override {
             return MatrixMath::ortho(left,
                                      right,
                                      bottom,

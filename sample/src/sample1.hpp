@@ -85,7 +85,7 @@ protected:
 
         camera.transform.position += toVec3(left + up + forward);
 
-        Vec3f lightPos = scene.pointLights.at(0).transform.position;
+        Vec3f lightPos = pointLights.at(0).transform.position;
 
         Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
 
@@ -107,7 +107,7 @@ protected:
             }
         }
 
-        scene.pointLights.at(0).transform.position = lightPos;
+        pointLights.at(0).transform.position = lightPos;
         sphere->transform.position = lightPos;
 
         sphere->transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
@@ -116,22 +116,28 @@ protected:
 
         forward = view * Vec4f(0, 0, -1, 0);
 
-        scene.spotLights.at(0).direction = toVec3(forward);
-        scene.spotLights.at(0).transform.position = camera.transform.position;
+        spotLights.at(0).direction = toVec3(forward);
+        spotLights.at(0).transform.position = camera.transform.position;
 
         orthographicCamera.transform = camera.transform;
 
         camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
-        scene.camera = &orthographicCamera;
-        ren.setViewport({}, frameBuffer->getSize());
-        ren.setTarget(*frameBuffer);
-        ren.render();
+        ren.setDirectionalLights(directionalLights);
+        ren.setPointLights(pointLights);
+        ren.setSpotLights(spotLights);
 
-        scene.camera = &camera;
+        ren.setViewport({}, frameBuffer->getSize());
+        ren.setCamera(orthographicCamera);
+        ren.renderBegin(*frameBuffer);
+        ren.addCommands(commands);
+        ren.renderFinish();
+
         ren.setViewport({}, window.getFramebufferSize());
-        ren.setTarget(window.getRenderTarget());
-        ren.render();
+        ren.setCamera(camera);
+        ren.renderBegin(window.getRenderTarget());
+        ren.addCommands(commands);
+        ren.renderFinish();
 
         window.swapBuffers();
         window.update();
@@ -146,14 +152,14 @@ protected:
         light.linear = 1.0f;
         light.quadratic = 1.0f;
         light.ambient = Vec3f(0);
-        scene.pointLights.emplace_back(light);
+        pointLights.emplace_back(light);
 
         Vec3f lightPos0 = Vec3f(-4, 0.73, 0);
         SpotLight light0 = SpotLight();
         light0.transform.position = lightPos0;
         light0.cutOff = 15;
         light0.outerCutOff = 25;
-        scene.spotLights.emplace_back(light0);
+        spotLights.emplace_back(light0);
 
         Mesh planeMesh = MeshLoader::load("./assets/plane.obj");
         Mesh curveCubeMesh = MeshLoader::load("./assets/curvecube.obj");
@@ -241,7 +247,7 @@ protected:
         command.transform.rotation = Vec3f(0);
         command.transform.scale = Vec3f(1);
 
-        scene.commands.emplace(scene.commands.end(), command);
+        commands.emplace(commands.end(), command);
 
         command = RenderCommand();
         command.enableDepthTest = true;
@@ -256,7 +262,7 @@ protected:
         command.transform.rotation = Vec3f(0);
         command.transform.scale = Vec3f(0.1f);
 
-        scene.commands.emplace(scene.commands.end(), command);
+        commands.emplace(commands.end(), command);
 
         command = RenderCommand();
         command.enableDepthTest = true;
@@ -271,7 +277,7 @@ protected:
         command.transform.rotation = Vec3f(0);
         command.transform.scale = Vec3f(10.0f);
 
-        scene.commands.emplace(scene.commands.end(), command);
+        commands.emplace(commands.end(), command);
 
         command = RenderCommand();
         command.enableDepthTest = false;
@@ -281,17 +287,15 @@ protected:
 
         command.textureObjects.emplace_back(skyboxTexture);
 
-        scene.commands.emplace(scene.commands.begin(), command);
-
-        scene.camera = &camera;
+        commands.emplace(commands.begin(), command);
 
         camera.transform.position = Vec3f(0, 3, 3);
         camera.transform.rotation = Vec3f(1, 0, 0);
 
-        skybox = &*(scene.commands.begin());
-        sphere = &*(scene.commands.begin() + 2);
-        cube = &*(scene.commands.begin() + 1);
-        plane = &*(scene.commands.begin() + 3);
+        skybox = &*(commands.begin());
+        sphere = &*(commands.begin() + 2);
+        cube = &*(commands.begin() + 1);
+        plane = &*(commands.begin() + 3);
 
         frameBuffer = alloc.allocateRenderTarget(2048, 2048);
 
@@ -346,6 +350,12 @@ private:
     PerspectiveCamera camera;
 
     OrthographicCamera orthographicCamera;
+
+    std::vector<DirectionalLight> directionalLights;
+    std::vector<PointLight> pointLights;
+    std::vector<SpotLight> spotLights;
+
+    std::vector<RenderCommand> commands;
 
     RenderCommand *skybox;
     RenderCommand *sphere;

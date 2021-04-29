@@ -36,7 +36,7 @@ namespace mana {
             return ret * MatrixMath::translate(transform.position * -1);
         }
 
-        virtual Mat4f projection() = 0;
+        virtual Mat4f projection() const = 0;
 
         Transform transform;
 

@@ -26,27 +26,41 @@ namespace mana {
     namespace opengl {
         class OGLRenderer : public Renderer {
         public:
-            void setTarget(const RenderTarget &t) override;
-
-            void setScene(const RenderScene &s) override;
+            void setCamera(const Camera &camera) override;
 
             void setViewport(Vec2i offset, Vec2i size) override;
 
-            void setClear(bool cColor, bool cDepth, bool cStencil) override;
+            void setClear(bool clearColor, bool clearDepth, bool clearStencil) override;
 
-            void setClearColor(ColorRGBA cColor) override;
+            void setClearColor(ColorRGBA clearColor) override;
 
-            void setMultiSample(bool sample) override;
+            void setMultiSample(bool multiSample) override;
 
-            void render() override;
+            void setDirectionalLights(const std::vector<DirectionalLight> &lights) override;
+
+            void setPointLights(const std::vector<PointLight> &lights) override;
+
+            void setSpotLights(const std::vector<SpotLight> &lights) override;
+
+            void renderBegin(const RenderTarget &target) override;
+
+            void addCommand(const RenderCommand &command) override;
+
+            void addCommands(const std::vector<RenderCommand> &commands) override;
+
+            void renderFinish() override;
 
         private:
-            const RenderTarget *target = nullptr;
-            const RenderScene *scene = nullptr;
             Vec2i viewportOffset = {}, viewportSize = {};
             ColorRGBA clearColorValue = {};
             bool clearColor = true, clearDepth = true, clearStencil = true;
             bool multiSample = false;
+
+            Mat4f view, projection;
+            Transform cameraTransform;
+            std::vector<DirectionalLight> directionalLights;
+            std::vector<PointLight> pointLights;
+            std::vector<SpotLight> spotLights;
         };
     }
 }

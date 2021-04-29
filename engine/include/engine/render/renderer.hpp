@@ -25,15 +25,14 @@
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/rendermesh.hpp"
 #include "engine/render/rendertexture.hpp"
-#include "engine/render/renderscene.hpp"
+#include "engine/render/camera/camera.hpp"
 #include "engine/render/graphicsapi.hpp"
+#include "engine/render/lighting/light.hpp"
 
 namespace mana {
     class Renderer {
     public:
-        virtual void setTarget(const RenderTarget &target) = 0;
-
-        virtual void setScene(const RenderScene &scene) = 0;
+        virtual void setCamera(const Camera &camera) = 0;
 
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
 
@@ -43,7 +42,19 @@ namespace mana {
 
         virtual void setMultiSample(bool multiSample) = 0;
 
-        virtual void render() = 0;
+        virtual void setDirectionalLights(const std::vector<DirectionalLight> &lights) = 0;
+
+        virtual void setPointLights(const std::vector<PointLight> &lights) = 0;
+
+        virtual void setSpotLights(const std::vector<SpotLight> &lights) = 0;
+
+        virtual void renderBegin(const RenderTarget &target) = 0;
+
+        virtual void addCommand(const RenderCommand &command) = 0;
+
+        virtual void addCommands(const std::vector<RenderCommand> &commands) = 0;
+
+        virtual void renderFinish() = 0;
     };
 }
 
