@@ -43,8 +43,8 @@ Vec2i opengl::OGLUserFrameBuffer::getSize() const {
     return {width, height};
 }
 
-void opengl::OGLUserFrameBuffer::blitColor(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                           Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) {
+void opengl::OGLUserFrameBuffer::blitColor(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                           Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -85,8 +85,8 @@ void opengl::OGLUserFrameBuffer::blitColor(const FrameBuffer &source, Vec2i sour
     checkGLError("OGLUserFrameBuffer::blitFramebuffer");
 }
 
-void opengl::OGLUserFrameBuffer::blitDepth(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                           Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) {
+void opengl::OGLUserFrameBuffer::blitDepth(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                           Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -127,8 +127,8 @@ void opengl::OGLUserFrameBuffer::blitDepth(const FrameBuffer &source, Vec2i sour
     checkGLError("OGLUserFrameBuffer::blitFramebuffer");
 }
 
-void opengl::OGLUserFrameBuffer::blitStencil(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                             Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) {
+void opengl::OGLUserFrameBuffer::blitStencil(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                                             Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }

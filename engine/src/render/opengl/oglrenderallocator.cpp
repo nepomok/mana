@@ -32,100 +32,18 @@
 using namespace mana;
 using namespace mana::opengl;
 
-FrameBuffer *OGLRenderAllocator::allocateFrameBuffer(int width, int height) {
+RenderTarget *OGLRenderAllocator::allocateRenderTarget(int width, int height) {
     auto *ret = new OGLUserFrameBuffer(width, height);
 
     glGenFramebuffers(1, &ret->FBO);
 
-    checkGLError("OGLRenderAllocator::allocateFrameBuffer");
+    checkGLError("OGLRenderAllocator::allocateRenderTarget");
 
     return ret;
 }
 
-RenderTexture *OGLRenderAllocator::allocateTexture(int width, int height, TextureAttributes properties) {
-    auto *ret = new OGLRenderTexture(width, height);
-
-    glGenTextures(1, &ret->handle);
-    glBindTexture(GL_TEXTURE_2D, ret->handle);
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(properties.texWrapping));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(properties.texWrapping));
-
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                    OGLTypeConverter::convert(properties.texFilterMin));
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                    OGLTypeConverter::convert(properties.texFilterMag));
-
-    glTexImage2D(GL_TEXTURE_2D,
-                 0,
-                 OGLTypeConverter::convert(properties.internalFormat),
-                 width,
-                 height,
-                 0,
-                 OGLTypeConverter::convert(properties.internalFormat),
-                 properties.internalFormat == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
-                 NULL);
-
-    if (properties.generateMipmap) {
-        glGenerateMipmap(GL_TEXTURE_2D);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-                        OGLTypeConverter::convert(properties.mipmapFilter));
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,
-                        OGLTypeConverter::convert(properties.texFilterMag));
-    }
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    checkGLError("OGLRenderAllocator::allocateTexture");
-
-    return ret;
-}
-
-RenderTexture *OGLRenderAllocator::allocateCubeMapTexture(int width, int height, TextureAttributes properties) {
-    auto *ret = new OGLRenderTexture(width, height);
-
-    ret->isCubeMap = true;
-
-    glGenTextures(1, &ret->handle);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, ret->handle);
-
-    for (unsigned int i = 0; i < 6; i++) {
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                     0,
-                     OGLTypeConverter::convert(properties.internalFormat),
-                     width,
-                     height,
-                     0,
-                     OGLTypeConverter::convert(properties.internalFormat),
-                     GL_UNSIGNED_BYTE,
-                     NULL);
-    }
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(properties.texWrapping));
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(properties.texWrapping));
-
-    glTexParameteri(GL_TEXTURE_CUBE_MAP,
-                    GL_TEXTURE_MIN_FILTER,
-                    OGLTypeConverter::convert(properties.texFilterMin));
-    glTexParameteri(GL_TEXTURE_CUBE_MAP,
-                    GL_TEXTURE_MAG_FILTER,
-                    OGLTypeConverter::convert(properties.texFilterMag));
-
-    if (properties.generateMipmap) {
-        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-        glTexParameteri(GL_TEXTURE_CUBE_MAP,
-                        GL_TEXTURE_MIN_FILTER,
-                        OGLTypeConverter::convert(properties.mipmapFilter));
-        glTexParameteri(GL_TEXTURE_CUBE_MAP,
-                        GL_TEXTURE_MAG_FILTER,
-                        OGLTypeConverter::convert(properties.texFilterMag));
-    }
-
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-    checkGLError("OGLRenderAllocator::allocateTexture");
-
-    return ret;
+RenderTexture *OGLRenderAllocator::allocateTexture(RenderTexture::Attributes attributes) {
+    return new OGLRenderTexture(attributes);
 }
 
 RenderMesh *OGLRenderAllocator::allocateMesh(const Mesh &mesh) {

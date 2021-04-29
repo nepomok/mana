@@ -36,122 +36,124 @@
 #include "input/glfw/glfwinput.hpp"
 
 namespace mana {
-    class GLFWWindow : public Window {
-    public:
-        GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes);
+    namespace glfw {
+        class GLFWWindow : public Window {
+        public:
+            GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes);
 
-        GLFWWindow(const std::string &title,
-                   Vec2i size,
-                   WindowAttributes attributes,
-                   GLFWMonitor &monitor);
+            GLFWWindow(const std::string &title,
+                       Vec2i size,
+                       WindowAttributes attributes,
+                       GLFWMonitor &monitor);
 
-        ~GLFWWindow() override;
+            ~GLFWWindow() override;
 
-        void glfwWindowCloseCallback();
+            void glfwWindowCloseCallback();
 
-        void glfwWindowMoveCallback(Vec2i pos);
+            void glfwWindowMoveCallback(Vec2i pos);
 
-        void glfwWindowSizeCallback(int width, int height);
+            void glfwWindowSizeCallback(int width, int height);
 
-        void glfwWindowRefreshCallback();
+            void glfwWindowRefreshCallback();
 
-        void glfwWindowFocusCallback(bool focused);
+            void glfwWindowFocusCallback(bool focused);
 
-        void glfwWindowMinimizeCallback();
+            void glfwWindowMinimizeCallback();
 
-        void glfwWindowMaximizeCallback();
+            void glfwWindowMaximizeCallback();
 
-        void glfwWindowContentScaleCallback(Vec2f scale);
+            void glfwWindowContentScaleCallback(Vec2f scale);
 
-        void glfwFrameBufferSizeCallback(Vec2i size);
+            void glfwFrameBufferSizeCallback(Vec2i size);
 
-        Renderer &getRenderer() override;
+            Renderer &getRenderer() override;
 
-        RenderAllocator &getRenderAllocator() override;
+            RenderAllocator &getRenderAllocator() override;
 
-        FrameBuffer &getFrameBuffer() override;
+            RenderTarget &getRenderTarget() override;
 
-        Input &getInput() override;
+            Input &getInput() override;
 
-        void bindContext() override;
+            void bind() override;
 
-        void swapBuffers() override;
+            void swapBuffers() override;
 
-        void update() override;
+            void update() override;
 
-        bool shouldClose() override;
+            bool shouldClose() override;
 
-        void registerListener(WindowListener &listener) override;
+            void registerListener(WindowListener &listener) override;
 
-        void unregisterListener(WindowListener &listener) override;
+            void unregisterListener(WindowListener &listener) override;
 
-        void maximize() override;
+            void maximize() override;
 
-        void minimize() override;
+            void minimize() override;
 
-        void restore() override;
+            void restore() override;
 
-        void show() override;
+            void show() override;
 
-        void hide() override;
+            void hide() override;
 
-        void focus() override;
+            void focus() override;
 
-        void requestAttention() override;
+            void requestAttention() override;
 
-        void setTitle(std::string title) override;
+            void setTitle(std::string title) override;
 
-        void setIcon(ImageBuffer<ColorRGBA> &buffer) override;
+            void setIcon(ImageBuffer<ColorRGBA> &buffer) override;
 
-        void setWindowPosition(Vec2i position) override;
+            void setWindowPosition(Vec2i position) override;
 
-        Vec2i getWindowPosition() override;
+            Vec2i getWindowPosition() override;
 
-        void setWindowSize(Vec2i size) override;
+            void setWindowSize(Vec2i size) override;
 
-        Vec2i getWindowSize() override;
+            Vec2i getWindowSize() override;
 
-        void setWindowSizeLimit(Vec2i sizeMin, Vec2i sizeMax) override;
+            void setWindowSizeLimit(Vec2i sizeMin, Vec2i sizeMax) override;
 
-        void setWindowAspectRatio(Vec2i ratio) override;
+            void setWindowAspectRatio(Vec2i ratio) override;
 
-        Vec2i getFramebufferSize() override;
+            Vec2i getFramebufferSize() override;
 
-        Vec4i getFrameSize() override;
+            Vec4i getFrameSize() override;
 
-        Vec2f getWindowContentScale() override;
+            Vec2f getWindowContentScale() override;
 
-        float getWindowOpacity() override;
+            float getWindowOpacity() override;
 
-        void setWindowOpacity(float opacity) override;
+            void setWindowOpacity(float opacity) override;
 
-        Monitor *getMonitor() override;
+            Monitor *getMonitor() override;
 
-        void setMonitor(Monitor *monitor, Recti rect, int refreshRate) override;
+            void setMonitor(Monitor *monitor, Recti rect, int refreshRate) override;
 
-        void setWindowed() override;
+            void setWindowed() override;
 
-        void setWindowDecorated(bool decorated) override;
+            void setWindowDecorated(bool decorated) override;
 
-        void setWindowResizable(bool resizable) override;
+            void setWindowResizable(bool resizable) override;
 
-        void setWindowAlwaysOnTop(bool alwaysOnTop) override;
+            void setWindowAlwaysOnTop(bool alwaysOnTop) override;
 
-        void setWindowAutoMinimize(bool autoMinimize) override;
+            void setWindowAutoMinimize(bool autoMinimize) override;
 
-        void setWindowFocusOnShow(bool focusOnShow) override;
+            void setWindowFocusOnShow(bool focusOnShow) override;
 
-    private:
-        GLFWwindow *wndH;
+        private:
+            GLFWwindow *wndH;
 
-        opengl::OGLRenderer *renderer;
-        opengl::OGLRenderAllocator *renderAllocator;
+            opengl::OGLRenderer *renderer;
+            opengl::OGLRenderAllocator *renderAllocator;
 
-        GLFWInput *input;
-        GLFWWindowFrameBuffer *frameBuffer;
+            GLFWInput *input;
+            GLFWWindowFrameBuffer *frameBuffer;
 
-        std::set<WindowListener *> listeners;
-    };
+            std::set<WindowListener *> listeners;
+        };
+    }
 }
 
 #endif //MANA_GLFWWINDOW_HPP

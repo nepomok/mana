@@ -28,11 +28,9 @@ namespace mana {
     namespace opengl {
         class OGLRenderTexture : public RenderTexture {
         public:
-            int width, height;
             GLuint handle;
-            bool isCubeMap;
 
-            OGLRenderTexture(int width, int height);
+            explicit OGLRenderTexture(Attributes attributes);
 
             OGLRenderTexture(const OGLRenderTexture &copy) = delete;
 
@@ -40,15 +38,13 @@ namespace mana {
 
             ~OGLRenderTexture() override;
 
-            Vec2i getSize() override;
+            void upload(const ImageBuffer <ColorRGB> &buffer) override;
 
-            void upload(const ImageBuffer <ColorRGB> &buffer, ColorFormat internalFormat) override;
-
-            void upload(const ImageBuffer <ColorRGBA> &buffer, ColorFormat internalFormat) override;
+            void upload(const ImageBuffer <ColorRGBA> &buffer) override;
 
             ImageBuffer<ColorRGBA> download() override;
 
-            void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer, ColorFormat internalFormat) override;
+            void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) override;
 
             ImageBuffer<ColorRGBA> download(CubeMapFace face) override;
         };

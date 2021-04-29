@@ -22,7 +22,7 @@
 
 #include "engine/ecs/node.hpp"
 
-#include "engine/display/displayapi.hpp"
+#include "engine/display/displaymanager.hpp"
 
 namespace mana {
     namespace runtime {

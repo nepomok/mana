@@ -20,33 +20,30 @@
 #ifndef MANA_RENDERER_HPP
 #define MANA_RENDERER_HPP
 
-#include "engine/render/imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 #include "engine/render/rendercommand.hpp"
-#include "engine/render/framebuffer.hpp"
+#include "engine/render/rendertarget.hpp"
 #include "engine/render/rendermesh.hpp"
 #include "engine/render/rendertexture.hpp"
 #include "engine/render/renderscene.hpp"
+#include "engine/render/graphicsapi.hpp"
 
 namespace mana {
     class Renderer {
     public:
-        virtual void render(const FrameBuffer &frameBuffer,
-                            const RenderScene &scene,
-                            Vec2i viewportOffset,
-                            Vec2i viewportSize,
-                            ColorRGBA clearColorValue,
-                            bool clearColor,
-                            bool clearDepth,
-                            bool clearStencil,
-                            bool multiSample) = 0;
+        virtual void setTarget(const RenderTarget &target) = 0;
 
-        virtual void render(const FrameBuffer &frameBuffer,
-                            const RenderScene &scene,
-                            ColorRGBA clearColorValue = ColorRGBA(0),
-                            bool clearColor = true,
-                            bool clearDepth = true,
-                            bool clearStencil = true,
-                            bool multiSample = true) = 0;
+        virtual void setScene(const RenderScene &scene) = 0;
+
+        virtual void setViewport(Vec2i offset, Vec2i size) = 0;
+
+        virtual void setClear(bool clearColor, bool clearDepth, bool clearStencil) = 0;
+
+        virtual void setClearColor(ColorRGBA clearColor) = 0;
+
+        virtual void setMultiSample(bool multiSample) = 0;
+
+        virtual void render() = 0;
     };
 }
 

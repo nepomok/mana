@@ -20,7 +20,6 @@
 #ifndef MANA_OGLTYPECONVERTER_HPP
 #define MANA_OGLTYPECONVERTER_HPP
 
-#include "engine/render/textureattributes.hpp"
 #include "engine/render/rendercommand.hpp"
 
 #include "extern/glad.h"
@@ -32,12 +31,6 @@ namespace mana {
 
             GLuint convertPrimitive(uint value);
 
-            GLint convert(TextureWrapping wrapping);
-
-            GLint convert(TextureFiltering filtering);
-
-            GLint convert(MipMapFiltering filtering);
-
             GLenum convert(FaceCullingMode mode);
 
             GLenum convert(const DepthTestMode &mode);
@@ -48,9 +41,17 @@ namespace mana {
 
             GLenum convert(StencilAction action);
 
+            GLenum convert(RenderTexture::TextureType type);
+
             GLenum convert(RenderTexture::CubeMapFace face);
 
-            GLenum convert(ColorFormat format);
+            GLenum convert(RenderTexture::ColorFormat format);
+
+            GLint convert(RenderTexture::TextureWrapping wrapping);
+
+            GLint convert(RenderTexture::TextureFiltering filtering);
+
+            GLint convert(RenderTexture::MipMapFiltering filtering);
         }
     }
 }

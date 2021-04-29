@@ -31,7 +31,10 @@ public:
     virtual ~Game() = default;
 
     virtual int loop(GraphicsApi api) {
-        Window *wnd = DisplayAPI::createWindow(api);
+        DisplayManager dm(mana::GLFW);
+
+        Window *wnd = dm.createWindow(api);
+
         Renderer &ren = wnd->getRenderer();
         RenderAllocator &alloc = wnd->getRenderAllocator();
         Input &input = wnd->getInput();
@@ -57,6 +60,8 @@ protected:
         window.registerListener(*this);
         input.registerListener(*this);
         loadScene(alloc);
+        ren.setTarget(window.getRenderTarget());
+        ren.setScene(scene);
     }
 
     /**
@@ -67,7 +72,8 @@ protected:
      * @param input
      */
     virtual void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) {
-        ren.render(window.getFrameBuffer(), scene);
+        ren.setViewport({}, window.getFramebufferSize());
+        ren.render();
         window.swapBuffers();
     }
 

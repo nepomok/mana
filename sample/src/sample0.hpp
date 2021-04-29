@@ -28,10 +28,6 @@ class Sample0 : public Game {
 public:
     ~Sample0() override = default;
 
-    void onFramebufferResize(Vec2i size) override {
-        camera.aspectRatio = (float) size.x / (float) size.y;
-    }
-
 protected:
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Mouse mouse = input.getMouse();
@@ -123,7 +119,10 @@ protected:
         scene.spotLights.at(0).direction = toVec3(forward);
         scene.spotLights.at(0).transform.position = camera.transform.position;
 
-        ren.render(window.getFrameBuffer(), scene, clearColor, true, true, true, false);
+        camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
+
+        ren.setViewport({}, window.getFramebufferSize());
+        ren.render();
 
         window.swapBuffers();
         window.update();
@@ -167,12 +166,21 @@ protected:
         objects.emplace_back(lightShader);
 
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");
-        auto colorMapTexture = alloc.allocateTexture(colorMapImage.getWidth(), colorMapImage.getHeight());
 
-        colorMapTexture->upload(colorMapImage, RGB);
+        RenderTexture::Attributes attributes;
+        attributes.size = colorMapImage.getSize();
+
+        auto colorMapTexture = alloc.allocateTexture(attributes);
+
+        colorMapTexture->upload(colorMapImage);
 
         auto skyboxImage = ImageLoader::load("./assets/deepbluespace-skybox_maintex.png");
-        auto skyboxTexture = alloc.allocateCubeMapTexture(2048, 2048);
+
+        attributes = {};
+        attributes.size = {2048, 2048};
+        attributes.textureType = mana::RenderTexture::TEXTURE_CUBE_MAP;
+
+        auto skyboxTexture = alloc.allocateTexture(attributes);
 
         skyboxTexture->upload(RenderTexture::RIGHT,
                               skyboxImage.slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));

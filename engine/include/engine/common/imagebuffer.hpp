@@ -21,7 +21,7 @@
 #define MANA_IMAGEBUFFER_HPP
 
 #include "engine/common/buffer.hpp"
-#include "engine/render/color.hpp"
+#include "engine/common/color.hpp"
 #include "engine/math/rectangle.hpp"
 
 namespace mana {
@@ -31,15 +31,18 @@ namespace mana {
         Buffer<T> buffer;
 
         ImageBuffer()
-                : width(0), height(0), buffer() {}
+                : size(), buffer() {}
 
-        ImageBuffer(int width, int height, const Buffer<T> &buffer) : width(width), height(height),
+        ImageBuffer(int width, int height, const Buffer<T> &buffer) : size(width, height),
                                                                       buffer(buffer) {}
 
         ImageBuffer(int width, int height)
-                : width(width), height(height), buffer(width * height) {}
+                : size(width, height), buffer(width * height) {}
 
-        ImageBuffer(const ImageBuffer &copy) : width(copy.width), height(copy.height), buffer(copy.buffer) {}
+        explicit ImageBuffer(Vec2i size)
+                : size(size), buffer(size.x * size.y) {}
+
+        ImageBuffer(const ImageBuffer &copy) : size(copy.size), buffer(copy.buffer) {}
 
         ImageBuffer &operator=(const ImageBuffer &copy) {
             this->width = copy.width;
@@ -48,9 +51,11 @@ namespace mana {
             return *this;
         }
 
-        int getWidth() const { return width; }
+        Vec2i getSize() const { return size; }
 
-        int getHeight() const { return height; }
+        int getWidth() const { return size.x; }
+
+        int getHeight() const { return size.y; }
 
         T getPixel(int x, int y) {
             return buffer[scanLine(y) + x];
@@ -61,31 +66,31 @@ namespace mana {
         }
 
         int scanLine(int y) {
-            return y * width;
+            return y * size.x;
         }
 
         void blit(const ImageBuffer<T> &source) {
-            if (source.width != width || source.height != height) {
+            if (source.size.x != size.x || source.height != size.y) {
                 throw std::runtime_error("Invalid blit source size");
             }
             throw std::runtime_error("Not implemented");
         }
 
         ImageBuffer<T> swapRows() {
-            ImageBuffer<T> ret = ImageBuffer<T>(width, height);
-            for (int y = 0; y < height; y++) {
-                for (int x = 0; x < width; x++) {
-                    ret.setPixel(width - 1 - x, y, getPixel(x, y));
+            ImageBuffer<T> ret = ImageBuffer<T>(size.x, size.y);
+            for (int y = 0; y < size.y; y++) {
+                for (int x = 0; x < size.x; x++) {
+                    ret.setPixel(size.x - 1 - x, y, getPixel(x, y));
                 }
             }
             return std::move(ret);
         }
 
         ImageBuffer<T> swapColumns() {
-            ImageBuffer<T> ret = ImageBuffer<T>(width, height);
-            for (int x = 0; x < width; x++) {
-                for (int y = 0; y < height; y++) {
-                    ret.setPixel(x, height - 1 - y, getPixel(x, y));
+            ImageBuffer<T> ret = ImageBuffer<T>(size.x, size.y);
+            for (int x = 0; x < size.x; x++) {
+                for (int y = 0; y < size.y; y++) {
+                    ret.setPixel(x, size.y - 1 - y, getPixel(x, y));
                 }
             }
             return std::move(ret);
@@ -102,8 +107,7 @@ namespace mana {
         }
 
     private:
-        int width;
-        int height;
+        Vec2i size;
     };
 }
 

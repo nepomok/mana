@@ -28,10 +28,6 @@ class Sample1 : public Game {
 public:
     ~Sample1() override = default;
 
-    void onFramebufferResize(Vec2i size) override {
-        camera.aspectRatio = (float) size.x / (float) size.y;
-    }
-
 protected:
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Mouse mouse = input.getMouse();
@@ -125,10 +121,17 @@ protected:
 
         orthographicCamera.transform = camera.transform;
 
+        camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
+
         scene.camera = &orthographicCamera;
-        ren.render(*frameBuffer, scene, clearColor, true, true, true, false);
+        ren.setViewport({}, frameBuffer->getSize());
+        ren.setTarget(*frameBuffer);
+        ren.render();
+
         scene.camera = &camera;
-        ren.render(window.getFrameBuffer(), scene, clearColor, true, true, true, false);
+        ren.setViewport({}, window.getFramebufferSize());
+        ren.setTarget(window.getRenderTarget());
+        ren.render();
 
         window.swapBuffers();
         window.update();
@@ -172,12 +175,21 @@ protected:
         objects.emplace_back(lightShader);
 
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");
-        auto colorMapTexture = alloc.allocateTexture(colorMapImage.getWidth(), colorMapImage.getHeight());
 
-        colorMapTexture->upload(colorMapImage, RGB);
+        RenderTexture::Attributes attributes;
+        attributes.size = colorMapImage.getSize();
+
+        auto colorMapTexture = alloc.allocateTexture(attributes);
+
+        colorMapTexture->upload(colorMapImage);
 
         auto skyboxImage = ImageLoader::load("./assets/deepbluespace-skybox_maintex.png");
-        auto skyboxTexture = alloc.allocateCubeMapTexture(2048, 2048);
+
+        attributes = {};
+        attributes.size = {2048, 2048};
+        attributes.textureType = mana::RenderTexture::TEXTURE_CUBE_MAP;
+
+        auto skyboxTexture = alloc.allocateTexture(attributes);
 
         skyboxTexture->upload(RenderTexture::RIGHT,
                               skyboxImage.slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
@@ -281,13 +293,14 @@ protected:
         cube = &*(scene.commands.begin() + 1);
         plane = &*(scene.commands.begin() + 3);
 
-        frameBuffer = alloc.allocateFrameBuffer(2048, 2048);
+        frameBuffer = alloc.allocateRenderTarget(2048, 2048);
 
-        auto props = TextureAttributes();
-        props.internalFormat = ColorFormat::DEPTH;
+        auto props = RenderTexture::Attributes();
+        props.format = RenderTexture::ColorFormat::DEPTH;
         props.generateMipmap = false;
+        props.size = {2048, 2048};
 
-        auto *tex = alloc.allocateTexture(2048, 2048, props);
+        auto *tex = alloc.allocateTexture(props);
 
         objects.emplace_back(tex);
         plane->textureObjects.clear();
@@ -295,7 +308,9 @@ protected:
 
         frameBuffer->attachDepth(*tex);
 
-        tex = alloc.allocateTexture(2048, 2048);
+        attributes = {};
+        attributes.size = {2048, 2048};
+        tex = alloc.allocateTexture(attributes);
 
         objects.emplace_back(tex);
 
@@ -337,7 +352,7 @@ private:
     RenderCommand *cube;
     RenderCommand *plane;
 
-    FrameBuffer *frameBuffer;
+    RenderTarget *frameBuffer;
 };
 
 #endif //MANA_SAMPLE1_HPP

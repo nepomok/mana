@@ -38,8 +38,8 @@ namespace mana {
             return ret;
         };
 
-        void blitColor(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                                   Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override{
+        void blitColor(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                       Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override{
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }
@@ -80,8 +80,8 @@ namespace mana {
             checkGLError("GLFWWindowFrameBuffer::blitFramebuffer");
         }
 
-        void blitDepth(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                                   Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override {
+        void blitDepth(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                       Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override {
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }
@@ -122,8 +122,8 @@ namespace mana {
             checkGLError("GLFWWindowFrameBuffer::blitFramebuffer");
         }
 
-        void blitStencil(const FrameBuffer &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                                     Vec2i sourceRect, Vec2i targetRect, TextureFiltering filter) override{
+        void blitStencil(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
+                         Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override{
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }

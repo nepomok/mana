@@ -87,10 +87,10 @@ namespace mana {
     struct RenderCommand {
         Transform transform;
 
+        ShaderProgram *shader;
+
         std::vector<RenderMesh *> meshObjects;
         std::vector<RenderTexture *> textureObjects;
-
-        ShaderProgram *shader;
 
         bool enableDepthTest = false;
         bool depthTestWrite = true;

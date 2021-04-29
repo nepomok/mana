@@ -24,25 +24,73 @@
 using namespace mana;
 using namespace mana::opengl;
 
-OGLRenderTexture::OGLRenderTexture(int width, int height) : width(width), height(height), handle(), isCubeMap(false) {}
+OGLRenderTexture::OGLRenderTexture(Attributes attributes) : RenderTexture(attributes), handle() {
+    GLenum type = OGLTypeConverter::convert(attributes.textureType);
+
+    glGenTextures(1, &handle);
+    glBindTexture(type, handle);
+
+    glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
+    glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
+
+    glTexParameteri(type,
+                    GL_TEXTURE_MIN_FILTER,
+                    OGLTypeConverter::convert(attributes.filterMin));
+    glTexParameteri(type,
+                    GL_TEXTURE_MAG_FILTER,
+                    OGLTypeConverter::convert(attributes.filterMag));
+
+    if (attributes.textureType == TEXTURE_2D) {
+        glTexImage2D(type,
+                     0,
+                     OGLTypeConverter::convert(attributes.format),
+                     attributes.size.x,
+                     attributes.size.y,
+                     0,
+                     OGLTypeConverter::convert(attributes.format),
+                     attributes.format == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
+                     NULL);
+    } else {
+        for (unsigned int i = 0; i < 6; i++) {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                         0,
+                         OGLTypeConverter::convert(attributes.format),
+                         attributes.size.x,
+                         attributes.size.y,
+                         0,
+                         GL_RGBA,
+                         GL_UNSIGNED_BYTE,
+                         NULL);
+        }
+    }
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(type);
+        glTexParameteri(type, GL_TEXTURE_MIN_FILTER,
+                        OGLTypeConverter::convert(attributes.mipmapFilter));
+        glTexParameteri(type, GL_TEXTURE_MAG_FILTER,
+                        OGLTypeConverter::convert(attributes.filterMag));
+    }
+
+    glBindTexture(type, 0);
+
+    checkGLError("OGLRenderTexture::OGLRenderTexture()");
+}
 
 OGLRenderTexture::~OGLRenderTexture() {
     glDeleteTextures(1, &handle);
 }
 
-Vec2i OGLRenderTexture::getSize() {
-    return {width, height};
-}
+void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
 
-void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat internalFormat) {
-    width = buffer.getWidth();
-    height = buffer.getHeight();
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
                  0,
-                 OGLTypeConverter::convert(internalFormat),
-                 width,
-                 height,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
@@ -52,15 +100,18 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat i
     checkGLError("OGLRenderTexture::upload(RGB)");
 }
 
-void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
-    width = buffer.getWidth();
-    height = buffer.getHeight();
+void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("Texture not texture 2d");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
+
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
                  0,
-                 OGLTypeConverter::convert(internalFormat),
-                 width,
-                 height,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
@@ -71,7 +122,10 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat 
 }
 
 mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
-    auto output = ImageBuffer<ColorRGBA>(width, height);
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("Texture not texture 2d");
+
+    auto output = ImageBuffer<ColorRGBA>(attributes.size);
     glBindTexture(GL_TEXTURE_2D, handle);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, output.buffer.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -79,19 +133,18 @@ mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
     return output;
 }
 
-void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat) {
-    if (buffer.getWidth() != width || buffer.getHeight() != height) {
-        throw std::runtime_error("Attempted to write input buffer with non matching size");
-    }
+void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
+    if (attributes.textureType != TEXTURE_CUBE_MAP)
+        throw std::runtime_error("Texture not cubemap");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
-    width = buffer.getWidth();
-    height = buffer.getHeight();
     glTexImage2D(OGLTypeConverter::convert(face),
                  0,
-                 OGLTypeConverter::convert(internalFormat),
-                 width,
-                 height,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
@@ -102,5 +155,8 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
 }
 
 ImageBuffer<ColorRGBA> OGLRenderTexture::download(RenderTexture::CubeMapFace face) {
+    if (attributes.textureType != TEXTURE_CUBE_MAP)
+        throw std::runtime_error("Texture not cubemap");
+
     throw std::runtime_error("Not Implemented");
 }

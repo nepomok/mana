@@ -107,10 +107,7 @@ namespace mana {
                     }
                     auto &texture = dynamic_cast<const OGLRenderTexture &>(*textureObject);
                     glActiveTexture(getTextureSlot(i));
-                    if (texture.isCubeMap)
-                        glBindTexture(GL_TEXTURE_CUBE_MAP, texture.handle);
-                    else
-                        glBindTexture(GL_TEXTURE_2D, texture.handle);
+                    glBindTexture(OGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
                 }
 
                 //Bind shader program
@@ -247,15 +244,39 @@ namespace mana {
             }
         }
 
-        void OGLRenderer::render(const FrameBuffer &frameBuffer,
-                                 const RenderScene &scene,
-                                 Vec2i viewportOffset,
-                                 Vec2i viewportSize,
-                                 ColorRGBA clearColorValue,
-                                 bool clearColor,
-                                 bool clearDepth,
-                                 bool clearStencil,
-                                 bool multiSample) {
+        void OGLRenderer::setTarget(const RenderTarget &t) {
+            this->target = &t;
+        }
+
+        void OGLRenderer::setScene(const RenderScene &s) {
+            this->scene = &s;
+        }
+
+        void OGLRenderer::setViewport(Vec2i offset, Vec2i size) {
+            this->viewportOffset = offset;
+            this->viewportSize = size;
+        }
+
+        void OGLRenderer::setClear(bool cColor, bool cDepth, bool cStencil) {
+            this->clearColor = cColor;
+            this->clearDepth = cDepth;
+            this->clearStencil = cStencil;
+        }
+
+        void OGLRenderer::setClearColor(ColorRGBA cColor) {
+            this->clearColorValue = cColor;
+        }
+
+        void OGLRenderer::setMultiSample(bool sample) {
+            this->multiSample = sample;
+        }
+
+        void OGLRenderer::render() {
+            if (target == nullptr)
+                throw std::runtime_error("Null target");
+            if (scene == nullptr)
+                throw std::runtime_error("Null scene");
+
             glClearColor((float) clearColorValue.r() / (float) 255,
                          (float) clearColorValue.g() / (float) 255,
                          (float) clearColorValue.b() / (float) 255,
@@ -266,7 +287,7 @@ namespace mana {
             else
                 glDisable(GL_MULTISAMPLE);
 
-            auto &fb = dynamic_cast<const OGLFrameBuffer &>(frameBuffer);
+            auto &fb = dynamic_cast<const OGLFrameBuffer &>(*target);
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
@@ -274,31 +295,12 @@ namespace mana {
             glViewport(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
-            renderScene(scene, clearColor, clearDepth, clearStencil);
+            renderScene(*scene, clearColor, clearDepth, clearStencil);
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             glViewport(vpData[0], vpData[1], vpData[2], vpData[3]);
 
             checkGLError("OGLRenderer::render");
-        }
-
-        void OGLRenderer::render(const FrameBuffer &frameBuffer,
-                                 const RenderScene &scene,
-                                 ColorRGBA clearColorValue,
-                                 bool clearColor,
-                                 bool clearDepth,
-                                 bool clearStencil,
-                                 bool multiSample) {
-            auto &fb = dynamic_cast<const OGLFrameBuffer &>(frameBuffer);
-            render(frameBuffer,
-                   scene,
-                   Vec2i(0),
-                   fb.getSize(),
-                   clearColorValue,
-                   clearColor,
-                   clearDepth,
-                   clearStencil,
-                   multiSample);
         }
     }
 }

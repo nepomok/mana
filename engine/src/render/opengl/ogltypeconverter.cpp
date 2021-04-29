@@ -34,44 +34,6 @@ namespace mana {
                 return (GLuint) value;
             }
 
-            GLint convert(TextureWrapping wrapping) {
-                switch (wrapping) {
-                    case REPEAT:
-                        return GL_REPEAT;
-                    case MIRRORED_REPEAT:
-                        return GL_MIRRORED_REPEAT;
-                    case CLAMP_TO_EDGE:
-                        return GL_CLAMP_TO_EDGE;
-                    case CLAMP_TO_BORDER:
-                        return GL_CLAMP_TO_BORDER;
-                }
-                throw std::runtime_error("Invalid texture wrapping");
-            }
-
-            GLint convert(TextureFiltering filtering) {
-                switch (filtering) {
-                    case NEAREST:
-                        return GL_NEAREST;
-                    case LINEAR:
-                        return GL_LINEAR;
-                }
-                throw std::runtime_error("Invalid texture filtering");
-            }
-
-            GLint convert(MipMapFiltering filtering) {
-                switch (filtering) {
-                    case NEAREST_MIPMAP_NEAREST:
-                        return GL_NEAREST_MIPMAP_NEAREST;
-                    case LINEAR_MIPMAP_NEAREST:
-                        return GL_LINEAR_MIPMAP_NEAREST;
-                    case NEAREST_MIPMAP_LINEAR:
-                        return GL_NEAREST_MIPMAP_LINEAR;
-                    case LINEAR_MIPMAP_LINEAR:
-                        return GL_LINEAR_MIPMAP_LINEAR;
-                }
-                throw std::runtime_error("Invalid mipmap filtering");
-            }
-
             GLenum convert(FaceCullingMode mode) {
                 switch (mode) {
                     case CULL_NONE:
@@ -182,6 +144,17 @@ namespace mana {
                 throw std::runtime_error("Unsupported stencil action");
             }
 
+            GLenum convert(RenderTexture::TextureType type) {
+                switch (type) {
+                    case RenderTexture::TEXTURE_2D:
+                        return GL_TEXTURE_2D;
+                    case RenderTexture::TEXTURE_CUBE_MAP:
+                        return GL_TEXTURE_CUBE_MAP;
+                    default:
+                        throw std::runtime_error("Unrecognized texture type");
+                }
+            }
+
             GLenum convert(RenderTexture::CubeMapFace face) {
                 switch (face) {
                     case RenderTexture::FRONT:
@@ -201,23 +174,61 @@ namespace mana {
                 }
             }
 
-            GLenum convert(ColorFormat format) {
+            GLenum convert(RenderTexture::ColorFormat format) {
                 switch (format) {
-                    case RGB:
+                    case RenderTexture::RGB:
                         return GL_RGB;
-                    case RGBA:
+                    case RenderTexture::RGBA:
                         return GL_RGBA;
-                    case DEPTH:
+                    case RenderTexture::DEPTH:
                         return GL_DEPTH_COMPONENT;
-                    case DEPTH_STENCIL:
+                    case RenderTexture::DEPTH_STENCIL:
                         return GL_DEPTH_STENCIL;
-                    case RGB_COMPRESSED:
+                    case RenderTexture::RGB_COMPRESSED:
                         return GL_COMPRESSED_RGB;
-                    case RGBA_COMPRESSED:
+                    case RenderTexture::RGBA_COMPRESSED:
                         return GL_COMPRESSED_RGBA;
                     default:
                         throw std::runtime_error("Unrecognized color format");
                 }
+            }
+
+            GLint convert(RenderTexture::TextureWrapping wrapping) {
+                switch (wrapping) {
+                    case RenderTexture::REPEAT:
+                        return GL_REPEAT;
+                    case RenderTexture::MIRRORED_REPEAT:
+                        return GL_MIRRORED_REPEAT;
+                    case RenderTexture::CLAMP_TO_EDGE:
+                        return GL_CLAMP_TO_EDGE;
+                    case RenderTexture::CLAMP_TO_BORDER:
+                        return GL_CLAMP_TO_BORDER;
+                }
+                throw std::runtime_error("Invalid texture wrapping");
+            }
+
+            GLint convert(RenderTexture::TextureFiltering filtering) {
+                switch (filtering) {
+                    case RenderTexture::NEAREST:
+                        return GL_NEAREST;
+                    case RenderTexture::LINEAR:
+                        return GL_LINEAR;
+                }
+                throw std::runtime_error("Invalid texture filtering");
+            }
+
+            GLint convert(RenderTexture::MipMapFiltering filtering) {
+                switch (filtering) {
+                    case RenderTexture::NEAREST_MIPMAP_NEAREST:
+                        return GL_NEAREST_MIPMAP_NEAREST;
+                    case RenderTexture::LINEAR_MIPMAP_NEAREST:
+                        return GL_LINEAR_MIPMAP_NEAREST;
+                    case RenderTexture::NEAREST_MIPMAP_LINEAR:
+                        return GL_NEAREST_MIPMAP_LINEAR;
+                    case RenderTexture::LINEAR_MIPMAP_LINEAR:
+                        return GL_LINEAR_MIPMAP_LINEAR;
+                }
+                throw std::runtime_error("Invalid mipmap filtering");
             }
         }
     }

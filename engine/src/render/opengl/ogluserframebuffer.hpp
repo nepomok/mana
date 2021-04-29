@@ -39,26 +39,26 @@ namespace mana {
 
             Vec2i getSize() const override;
 
-            void blitColor(const FrameBuffer &source,
+            void blitColor(const RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureFiltering filter) override;
+                           RenderTexture::TextureFiltering filter) override;
 
-            void blitDepth(const FrameBuffer &source,
+            void blitDepth(const RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureFiltering filter) override;
+                           RenderTexture::TextureFiltering filter) override;
 
-            void blitStencil(const FrameBuffer &source,
+            void blitStencil(const RenderTarget &source,
                              Vec2i sourceOffset,
                              Vec2i targetOffset,
                              Vec2i sourceRect,
                              Vec2i targetRect,
-                             TextureFiltering filter) override;
+                             RenderTexture::TextureFiltering filter) override;
 
             void attachColor(const RenderTexture &texture) override;
 

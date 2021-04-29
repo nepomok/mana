@@ -17,40 +17,39 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FRAMEBUFFER_HPP
-#define MANA_FRAMEBUFFER_HPP
+#ifndef MANA_RENDERTARGET_HPP
+#define MANA_RENDERTARGET_HPP
 
 #include "engine/render/renderobject.hpp"
 #include "engine/render/rendertexture.hpp"
-#include "engine/render/textureattributes.hpp"
 
 namespace mana {
-    class FrameBuffer : public RenderObject {
+    class RenderTarget : public RenderObject {
     public:
-        ~FrameBuffer() override = default;
+        ~RenderTarget() override = default;
 
         virtual Vec2i getSize() const = 0;
 
-        virtual void blitColor(const FrameBuffer &source,
-                          Vec2i sourceOffset,
-                          Vec2i targetOffset,
-                          Vec2i sourceRect,
-                          Vec2i targetRect,
-                          TextureFiltering filter) = 0;
-
-        virtual void blitDepth(const FrameBuffer &source,
+        virtual void blitColor(const RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
-                               TextureFiltering filter) = 0;
+                               RenderTexture::TextureFiltering filter) = 0;
 
-        virtual void blitStencil(const FrameBuffer &source,
+        virtual void blitDepth(const RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
-                               TextureFiltering filter) = 0;
+                               RenderTexture::TextureFiltering filter) = 0;
+
+        virtual void blitStencil(const RenderTarget &source,
+                                 Vec2i sourceOffset,
+                                 Vec2i targetOffset,
+                                 Vec2i sourceRect,
+                                 Vec2i targetRect,
+                                 RenderTexture::TextureFiltering filter) = 0;
 
         virtual void attachColor(const RenderTexture &texture) = 0;
 
@@ -70,4 +69,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_FRAMEBUFFER_HPP
+#endif //MANA_RENDERTARGET_HPP

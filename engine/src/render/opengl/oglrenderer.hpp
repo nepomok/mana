@@ -26,23 +26,27 @@ namespace mana {
     namespace opengl {
         class OGLRenderer : public Renderer {
         public:
-            void render(const FrameBuffer &frameBuffer,
-                        const RenderScene &scene,
-                        Vec2i viewportOffset,
-                        Vec2i viewportSize,
-                        ColorRGBA clearColorValue,
-                        bool clearColor,
-                        bool clearDepth,
-                        bool clearStencil,
-                        bool multiSample) override;
+            void setTarget(const RenderTarget &t) override;
 
-            void render(const FrameBuffer &frameBuffer,
-                        const RenderScene &scene,
-                        ColorRGBA clearColorValue,
-                        bool clearColor,
-                        bool clearDepth,
-                        bool clearStencil,
-                        bool multiSample) override;
+            void setScene(const RenderScene &s) override;
+
+            void setViewport(Vec2i offset, Vec2i size) override;
+
+            void setClear(bool cColor, bool cDepth, bool cStencil) override;
+
+            void setClearColor(ColorRGBA cColor) override;
+
+            void setMultiSample(bool sample) override;
+
+            void render() override;
+
+        private:
+            const RenderTarget *target = nullptr;
+            const RenderScene *scene = nullptr;
+            Vec2i viewportOffset = {}, viewportSize = {};
+            ColorRGBA clearColorValue = {};
+            bool clearColor = true, clearDepth = true, clearStencil = true;
+            bool multiSample = false;
         };
     }
 }

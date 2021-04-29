@@ -20,29 +20,35 @@
 #ifndef MANA_WINDOW_HPP
 #define MANA_WINDOW_HPP
 
-#include "engine/render/framebuffer.hpp"
+#include "engine/render/rendertarget.hpp"
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderallocator.hpp"
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/monitor.hpp"
-#include "engine/render/imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
+#include "engine/display/windowattributes.hpp"
+#include "engine/render/graphicsapi.hpp"
 
 namespace mana {
     class Window {
     public:
+        const GraphicsApi graphicsApi;
+
+        explicit Window(GraphicsApi graphicsApi) : graphicsApi(graphicsApi) {}
+
         virtual ~Window() = default;
 
         virtual Renderer &getRenderer() = 0;
 
         virtual RenderAllocator &getRenderAllocator() = 0;
 
-        virtual FrameBuffer &getFrameBuffer() = 0;
+        virtual RenderTarget &getRenderTarget() = 0;
 
         virtual Input &getInput() = 0;
 
-        virtual void bindContext() = 0;
+        virtual void bind() = 0;
 
         virtual void swapBuffers() = 0;
 

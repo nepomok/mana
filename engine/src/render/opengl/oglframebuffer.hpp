@@ -20,38 +20,38 @@
 #ifndef MANA_OGLFRAMEBUFFER_HPP
 #define MANA_OGLFRAMEBUFFER_HPP
 
-#include "engine/render/framebuffer.hpp"
+#include "engine/render/rendertarget.hpp"
 
 #include "extern/glad.h"
 
 namespace mana {
     namespace opengl {
-        class OGLFrameBuffer : public FrameBuffer {
+        class OGLFrameBuffer : public RenderTarget {
         public:
             ~OGLFrameBuffer() override = default;
 
             Vec2i getSize() const override = 0;
 
-            void blitColor(const FrameBuffer &source,
+            void blitColor(const RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureFiltering filter) override = 0;
+                           RenderTexture::TextureFiltering filter) override = 0;
 
-            void blitDepth(const FrameBuffer &source,
+            void blitDepth(const RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureFiltering filter) override = 0;
+                           RenderTexture::TextureFiltering filter) override = 0;
 
-            void blitStencil(const FrameBuffer &source,
+            void blitStencil(const RenderTarget &source,
                              Vec2i sourceOffset,
                              Vec2i targetOffset,
                              Vec2i sourceRect,
                              Vec2i targetRect,
-                             TextureFiltering filter) override = 0;
+                             RenderTexture::TextureFiltering filter) override = 0;
 
             void attachColor(const RenderTexture &texture) override = 0;
 

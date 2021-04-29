@@ -20,13 +20,17 @@
 #ifndef MANA_RENDERTEXTURE_HPP
 #define MANA_RENDERTEXTURE_HPP
 
-#include "engine/render/imagebuffer.hpp"
+#include "engine/common/imagebuffer.hpp"
 #include "engine/render/renderobject.hpp"
-#include "engine/render/textureattributes.hpp"
 
 namespace mana {
     class RenderTexture : public RenderObject {
     public:
+        enum TextureType {
+            TEXTURE_2D,
+            TEXTURE_CUBE_MAP
+        };
+
         enum CubeMapFace {
             FRONT,
             BACK,
@@ -36,19 +40,61 @@ namespace mana {
             BOTTOM
         };
 
+        enum ColorFormat {
+            RGB,
+            RGBA,
+
+            DEPTH,
+            DEPTH_STENCIL,
+
+            RGB_COMPRESSED,
+            RGBA_COMPRESSED
+        };
+
+        enum TextureWrapping {
+            REPEAT,
+            MIRRORED_REPEAT,
+            CLAMP_TO_EDGE,
+            CLAMP_TO_BORDER
+        };
+
+        enum TextureFiltering {
+            NEAREST,
+            LINEAR
+        };
+
+        enum MipMapFiltering {
+            NEAREST_MIPMAP_NEAREST,
+            LINEAR_MIPMAP_NEAREST,
+            NEAREST_MIPMAP_LINEAR,
+            LINEAR_MIPMAP_LINEAR
+        };
+
+        struct Attributes {
+            TextureType textureType = TEXTURE_2D;
+            Vec2i size = {};
+            ColorFormat format = RGBA;
+            TextureWrapping wrapping = REPEAT;
+            TextureFiltering filterMin = NEAREST;
+            TextureFiltering filterMag = NEAREST;
+            bool generateMipmap = false;
+            MipMapFiltering mipmapFilter = NEAREST_MIPMAP_NEAREST;
+        };
+
+        const Attributes attributes;
+
+        explicit RenderTexture(Attributes attributes) : attributes(attributes) {}
+
         ~RenderTexture() override = default;
 
-        virtual Vec2i getSize() = 0;
+        virtual void upload(const ImageBuffer<ColorRGB> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<ColorRGB> &buffer, ColorFormat internalFormat = RGB) = 0;
-
-        virtual void upload(const ImageBuffer<ColorRGBA> &buffer, ColorFormat internalFormat = RGB) = 0;
+        virtual void upload(const ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual ImageBuffer<ColorRGBA> download() = 0;
 
         virtual void upload(CubeMapFace face,
-                            const ImageBuffer<ColorRGBA> &buffer,
-                            ColorFormat internalFormat = RGBA) = 0;
+                            const ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual ImageBuffer<ColorRGBA> download(CubeMapFace face) = 0;
     };
