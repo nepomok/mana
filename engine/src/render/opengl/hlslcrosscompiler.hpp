@@ -1,5 +1,5 @@
 /**
- *  Mana - 3D Game Engine
+ *  Mana - 3D Engine
  *  Copyright (C) 2021  Julian Zampiccoli
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -17,32 +17,22 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERER3D_HPP
-#define MANA_RENDERER3D_HPP
+#ifndef MANA_HLSLCROSSCOMPILER_HPP
+#define MANA_HLSLCROSSCOMPILER_HPP
 
-#include "engine/render/renderer.hpp"
-#include "engine/render/renderallocator.hpp"
+#include <map>
+#include <string>
 
 namespace mana {
-    class Renderer3D {
-    public:
-        static std::string preprocessHlsl(std::string shader);
+    namespace HlslCrossCompiler {
+        std::string compileVertexShader(const std::string &source,
+                                        const std::string &entryPoint,
+                                        const std::map<std::string, std::string> &macros);
 
-        Renderer3D();
-
-        Renderer3D(Renderer &ren, RenderAllocator &alloc);
-
-        void setEnableShadowMapping(bool shadowMapping);
-
-        void render(const RenderTarget &target,
-                    const Camera &camera,
-                    const std::vector<RenderCommand> &commands,
-                    const LightingData &lightingData);
-
-    private:
-        Renderer *ren;
-        RenderAllocator *alloc;
-    };
+        std::string compileFragmentShader(const std::string &source,
+                                          const std::string &entryPoint,
+                                          const std::map<std::string, std::string> &macros);
+    }
 }
 
-#endif //MANA_RENDERER3D_HPP
+#endif //MANA_HLSLCROSSCOMPILER_HPP

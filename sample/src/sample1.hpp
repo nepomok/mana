@@ -162,21 +162,21 @@ protected:
         Mesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
         Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
-        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(skyboxVertexShader),
-                                                                  Renderer3D::preprocessGlsl(skyboxFragmentShader));
+        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(skyboxVertexShader),
+                                                                  Renderer3D::preprocessHlsl(skyboxFragmentShader));
         objects.emplace_back(skyboxShader);
 
         skyboxShader->setInt("skybox", 0);
 
-        ShaderProgram *shader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
-                                                            Renderer3D::preprocessGlsl(fragmentShader));
+        ShaderProgram *shader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
+                                                            Renderer3D::preprocessHlsl(fragmentShader));
         objects.emplace_back(shader);
 
         shader->setInt("diffuse", 0);
         shader->setInt("specular", 1);
 
-        ShaderProgram *lightShader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
-                                                                 Renderer3D::preprocessGlsl(lightFragmentShader));
+        ShaderProgram *lightShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
+                                                                 Renderer3D::preprocessHlsl(lightFragmentShader));
         objects.emplace_back(lightShader);
 
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");
@@ -319,8 +319,8 @@ protected:
 
         frameBuffer->attachColor(*tex);
 
-        shader = alloc.allocateShaderProgram(Renderer3D::preprocessGlsl(vertexShader),
-                                             Renderer3D::preprocessGlsl(depthFragmentShader));
+        shader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
+                                             Renderer3D::preprocessHlsl(depthFragmentShader));
         plane->shader = shader;
         objects.emplace_back(shader);
 

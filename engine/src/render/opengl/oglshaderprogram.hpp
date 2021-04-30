@@ -32,15 +32,6 @@
 namespace mana {
     namespace opengl {
         /**
-         * The OGLShaderProgram implementation features a custom preprocessor which processes #include directives.
-         *
-         * Users may use the #include symbol in the passed shader source to instruct the preprocessor to inject some glsl.
-         *
-         * The directive string is then replaced by the custom preprocessor before passing the shader to the glfw compiler.
-         *
-         * The following tokens are valid for a #include directive:
-         * #include "mana.glsl"      ---     For now everything (Matrices, Lighting etc.)
-         *
          * The following vertex shader input layout is required:
          *
          * layout (location = 0) in vec3 position;

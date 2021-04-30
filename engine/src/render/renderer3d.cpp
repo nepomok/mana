@@ -20,10 +20,10 @@
 #include "engine/render/renderer3d.hpp"
 #include "engine/math/rotation.hpp"
 
-#include "render/opengl/oglglslinject.hpp"
+#include "render/hlslinject.hpp"
 
 namespace mana {
-    std::string Renderer3D::preprocessGlsl(std::string shader) {
+    std::string Renderer3D::preprocessHlsl(std::string shader) {
         auto index = shader.find(SHADER_INCLUDE);
         if (index != std::string::npos) {
             std::string start = shader.substr(0, index);
@@ -63,10 +63,13 @@ namespace mana {
 
             ShaderProgram &shader = *command.shader;
 
+            // TODO: Because the shaderconductor library converts hlsl globals into a glsl uniform block
+            // the values of it have to be provided via a uniform block buffer.
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);
             shader.setMat4("MANA_P", projection);
             shader.setMat4("MANA_MVP", projection * view * model);
+            shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
 
             int i = 0;
             for (auto &light : lightingData.dir) {
@@ -81,9 +84,9 @@ namespace mana {
             for (auto &light : lightingData.point) {
                 std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
-                shader.setFloat(name + "constant", light.constant);
-                shader.setFloat(name + "linear", light.linear);
-                shader.setFloat(name + "quadratic", light.quadratic);
+                shader.setFloat(name + "constantValue", light.constant);
+                shader.setFloat(name + "linearValue", light.linear);
+                shader.setFloat(name + "quadraticValue", light.quadratic);
                 shader.setVec3(name + "ambient", light.ambient);
                 shader.setVec3(name + "diffuse", light.diffuse);
                 shader.setVec3(name + "specular", light.specular);
@@ -95,9 +98,9 @@ namespace mana {
                 shader.setVec3(name + "direction", light.direction);
                 shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
                 shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                shader.setFloat(name + "constant", light.constant);
-                shader.setFloat(name + "linear", light.linear);
-                shader.setFloat(name + "quadratic", light.quadratic);
+                shader.setFloat(name + "constantValue", light.constant);
+                shader.setFloat(name + "linearValue", light.linear);
+                shader.setFloat(name + "quadraticValue", light.quadratic);
                 shader.setVec3(name + "ambient", light.ambient);
                 shader.setVec3(name + "diffuse", light.diffuse);
                 shader.setVec3(name + "specular", light.specular);

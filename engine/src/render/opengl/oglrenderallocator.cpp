@@ -24,6 +24,7 @@
 #include "render/opengl/ogltypeconverter.hpp"
 #include "render/opengl/oglmeshobject.hpp"
 #include "render/opengl/oglshaderprogram.hpp"
+#include "render/opengl/hlslcrosscompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
 
@@ -329,7 +330,6 @@ RenderMesh *OGLRenderAllocator::allocateInstancedMesh(const Mesh &mesh, const st
 }
 
 ShaderProgram *OGLRenderAllocator::allocateShaderProgram(std::string vertexShader, std::string fragmentShader) {
-    ShaderProgram *ret = new OGLShaderProgram(vertexShader, fragmentShader);
-    checkGLError("OGLRenderAllocator::compileShaderProgram");
-    return ret;
+    return new OGLShaderProgram(HlslCrossCompiler::compileVertexShader(vertexShader, "main", {}),
+                                HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", {}));
 }

@@ -101,8 +101,8 @@ namespace mana {
 
         RenderComponent getRenderComponent(const nlohmann::json &component, RenderAllocator &alloc) {
             RenderComponent ret;
-            auto vs = Renderer3D::preprocessGlsl(File::readAllText(component["vertexShaderPath"]));
-            auto fs = Renderer3D::preprocessGlsl(File::readAllText(component["fragmentShaderPath"]));
+            auto vs = Renderer3D::preprocessHlsl(File::readAllText(component["vertexShaderPath"]));
+            auto fs = Renderer3D::preprocessHlsl(File::readAllText(component["fragmentShaderPath"]));
             ret.shader = alloc.allocateShaderProgram(vs, fs);
             for (auto &meshPath : component["meshPaths"]) {
                 auto mesh = MeshLoader::load(meshPath);
