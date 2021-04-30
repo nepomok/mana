@@ -26,6 +26,8 @@
 
 namespace mana {
     struct ScriptComponent : public Component {
+        ScriptComponent() : Component(SCRIPT) {}
+
         Script *script = nullptr;
     };
 }

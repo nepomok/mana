@@ -26,7 +26,9 @@
 
 namespace mana {
     struct CameraComponent : public Component {
-        CameraType cameraType;
+        CameraComponent() : Component(CAMERA) {}
+
+        CameraType cameraType = PERSPECTIVE;
 
         float nearClip = 0.1f;
         float farClip = 1000.0f;

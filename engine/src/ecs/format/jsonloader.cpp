@@ -68,7 +68,6 @@ namespace mana {
 
         CameraComponent getCamera(const nlohmann::json &component) {
             CameraComponent ret;
-            ret.componentType = Component::CAMERA;
             ret.cameraType = convertCamera(component["cameraType"]);
             if (ret.cameraType == PERSPECTIVE) {
                 ret.nearClip = component["nearClip"];
@@ -88,7 +87,6 @@ namespace mana {
 
         TransformComponent getTransform(const nlohmann::json &component) {
             TransformComponent ret;
-            ret.componentType = Component::TRANSFORM;
             ret.transform.position.x = component["position.x"];
             ret.transform.position.y = component["position.y"];
             ret.transform.position.z = component["position.z"];
@@ -103,7 +101,6 @@ namespace mana {
 
         RenderComponent getRenderComponent(const nlohmann::json &component, RenderAllocator &alloc) {
             RenderComponent ret;
-            ret.componentType = Component::RENDER;
             auto vs = Renderer3D::preprocessGlsl(File::readAllText(component["vertexShaderPath"]));
             auto fs = Renderer3D::preprocessGlsl(File::readAllText(component["fragmentShaderPath"]));
             ret.shader = alloc.allocateShaderProgram(vs, fs);
@@ -125,7 +122,6 @@ namespace mana {
 
         LightComponent getLight(const nlohmann::json &component) {
             LightComponent ret;
-            ret.componentType = Component::LIGHT;
             ret.lightType = convertLight(component["lightType"]);
             ret.ambient.x = component["ambient.r"];
             ret.ambient.y = component["ambient.g"];

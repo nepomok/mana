@@ -26,7 +26,9 @@
 
 namespace mana {
     struct LightComponent : public Component {
-        LightType lightType;
+        LightComponent() : Component(LIGHT) {}
+
+        LightType lightType = LIGHT_DIRECTIONAL;
 
         Vec3f ambient = Vec3f(0.1f);
         Vec3f diffuse = Vec3f(1.0f);

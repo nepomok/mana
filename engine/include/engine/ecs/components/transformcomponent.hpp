@@ -25,6 +25,8 @@
 
 namespace mana {
     struct TransformComponent : public Component {
+        TransformComponent() : Component(TRANSFORM) {}
+
         Transform transform;
         TransformComponent *parent = nullptr;
     };

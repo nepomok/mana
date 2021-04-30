@@ -27,15 +27,17 @@ namespace mana {
      * A Component provides state.
      */
     struct Component {
-        virtual ~Component() = default;
-
         enum ComponentType {
             TRANSFORM,
             CAMERA,
             RENDER,
             LIGHT,
             SCRIPT,
-        } componentType = TRANSFORM;
+        } const componentType;
+
+        explicit Component(ComponentType type) : componentType(type) {}
+
+        virtual ~Component() = default;
 
         bool enabled = true;
         Node *node = nullptr;
