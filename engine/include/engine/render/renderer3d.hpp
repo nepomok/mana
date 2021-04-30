@@ -32,27 +32,16 @@ namespace mana {
 
         Renderer3D(Renderer &ren, RenderAllocator &alloc);
 
-        void setCamera(const Camera &camera);
-
-        void setDirectionalLights(const std::vector<DirectionalLight> &lights);
-
-        void setPointLights(const std::vector<PointLight> &lights);
-
-        void setSpotLights(const std::vector<SpotLight> &lights);
-
         void setEnableShadowMapping(bool shadowMapping);
 
-        void draw(const RenderTarget &target, const std::vector<RenderCommand> &commands);
+        void render(const RenderTarget &target,
+                    const Camera &camera,
+                    const std::vector<RenderCommand> &commands,
+                    const LightingData &lightingData);
 
     private:
         Renderer *ren;
         RenderAllocator *alloc;
-
-        const Camera *camera;
-
-        std::vector<DirectionalLight> dir;
-        std::vector<PointLight> point;
-        std::vector<SpotLight> spot;
     };
 }
 

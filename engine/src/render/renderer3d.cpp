@@ -33,35 +33,23 @@ namespace mana {
         return shader;
     }
 
-    Renderer3D::Renderer3D() = default;
+    Renderer3D::Renderer3D() : ren(nullptr), alloc(nullptr) {};
 
     Renderer3D::Renderer3D(Renderer &r, RenderAllocator &a) : ren(&r), alloc(&a) {}
-    
-    void Renderer3D::setCamera(const Camera &cam) {
-        camera = &cam;
-    }
-
-    void Renderer3D::setDirectionalLights(const std::vector<DirectionalLight> &lights) {
-        dir = lights;
-    }
-
-    void Renderer3D::setPointLights(const std::vector<PointLight> &lights) {
-        point = lights;
-    }
-
-    void Renderer3D::setSpotLights(const std::vector<SpotLight> &lights) {
-        spot = lights;
-    }
 
     void Renderer3D::setEnableShadowMapping(bool shadowMapping) {
 
     }
 
-    void Renderer3D::draw(const RenderTarget &target, const std::vector<RenderCommand> &commands) {
+    void Renderer3D::render(const RenderTarget &target,
+                            const Camera &camera,
+                            const std::vector<RenderCommand> &commands,
+                            const LightingData &lightingData) {
+        if (ren == nullptr || alloc == nullptr)
+            throw std::runtime_error("Renderer 3d not initialized");
+
         ren->renderBegin(target);
         for (const auto &command : commands) {
-            if (camera == nullptr)
-                throw std::runtime_error("Null camera");
             if (ren == nullptr)
                 throw std::runtime_error("Null renderer");
 
@@ -70,8 +58,8 @@ namespace mana {
             model = model * MatrixMath::scale(command.transform.scale);
             model = model * MatrixMath::rotate(command.transform.rotation);
 
-            view = camera->view();
-            projection = camera->projection();
+            view = camera.view();
+            projection = camera.projection();
 
             ShaderProgram &shader = *command.shader;
 
@@ -81,7 +69,16 @@ namespace mana {
             shader.setMat4("MANA_MVP", projection * view * model);
 
             int i = 0;
-            for (auto &light : point) {
+            for (auto &light : lightingData.dir) {
+                std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
+                shader.setVec3(name + "direction", light.direction);
+                shader.setVec3(name + "ambient", light.ambient);
+                shader.setVec3(name + "diffuse", light.diffuse);
+                shader.setVec3(name + "specular", light.specular);
+            }
+
+            i = 0;
+            for (auto &light : lightingData.point) {
                 std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setFloat(name + "constant", light.constant);
@@ -92,7 +89,7 @@ namespace mana {
                 shader.setVec3(name + "specular", light.specular);
             }
             i = 0;
-            for (auto &light : spot) {
+            for (auto &light : lightingData.spot) {
                 std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setVec3(name + "direction", light.direction);
@@ -105,20 +102,12 @@ namespace mana {
                 shader.setVec3(name + "diffuse", light.diffuse);
                 shader.setVec3(name + "specular", light.specular);
             }
-            i = 0;
-            for (auto &light : dir) {
-                std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
-                shader.setVec3(name + "direction", light.direction);
-                shader.setVec3(name + "ambient", light.ambient);
-                shader.setVec3(name + "diffuse", light.diffuse);
-                shader.setVec3(name + "specular", light.specular);
-            }
 
-            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", dir.size());
-            shader.setInt("MANA_LIGHT_COUNT_POINT", point.size());
-            shader.setInt("MANA_LIGHT_COUNT_SPOT", spot.size());
+            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", lightingData.dir.size());
+            shader.setInt("MANA_LIGHT_COUNT_POINT", lightingData.point.size());
+            shader.setInt("MANA_LIGHT_COUNT_SPOT", lightingData.spot.size());
 
-            shader.setVec3("MANA_VIEWPOS", camera->transform.position);
+            shader.setVec3("MANA_VIEWPOS", camera.transform.position);
 
             ren->addCommand(command);
         }

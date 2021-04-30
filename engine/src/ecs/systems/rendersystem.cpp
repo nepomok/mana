@@ -38,9 +38,7 @@ namespace mana {
     }
 
     void RenderSystem::update(float deltaTime, Scene &scene) {
-        std::vector<DirectionalLight> dirLights;
-        std::vector<PointLight> pointLights;
-        std::vector<SpotLight> spotLights;
+        LightingData lights;
 
         auto nodes = scene.findNodesWithComponent<LightComponent>();
         for (auto *nodePointer : nodes) {
@@ -60,7 +58,7 @@ namespace mana {
 
                 light.direction = comp.direction;
 
-                dirLights.emplace_back(light);
+                lights.dir.emplace_back(light);
             } else if (comp.lightType == LIGHT_POINT) {
                 PointLight light;
                 light.ambient = comp.ambient;
@@ -71,7 +69,7 @@ namespace mana {
                 light.linear = comp.linear;
                 light.quadratic = comp.quadratic;
 
-                pointLights.emplace_back(light);
+                lights.point.emplace_back(light);
             } else if (comp.lightType == LIGHT_SPOT) {
                 SpotLight light;
                 light.ambient = comp.ambient;
@@ -84,7 +82,7 @@ namespace mana {
                 light.linear = comp.linear;
                 light.quadratic = comp.quadratic;
 
-                spotLights.emplace_back(light);
+                lights.spot.emplace_back(light);
             }
         }
 
@@ -136,46 +134,42 @@ namespace mana {
             commands.emplace_back(command);
         }
 
-        Camera *camera;
         nodes = scene.findNodesWithComponent<CameraComponent>();
+        Node *cameraNode;
         for (auto &node : nodes) {
             if (!node->enabled)
                 continue;
-
             auto &comp = node->getComponent<CameraComponent>();
             if (!comp.enabled)
                 continue;
-
-            if (comp.cameraType == PERSPECTIVE) {
-                auto *cam = new PerspectiveCamera();
-                cam->fov = comp.fov;
-                cam->aspectRatio = comp.aspectRatio;
-                camera = cam;
-            } else {
-                auto *cam = new OrthographicCamera();
-                cam->left = comp.left;
-                cam->top = comp.top;
-                cam->right = comp.right;
-                cam->bottom = comp.bottom;
-                camera = cam;
-            }
-
             auto &tcomp = node->getComponent<TransformComponent>();
             if (!tcomp.enabled)
                 continue;
-
-            camera->transform = tcomp.transform;
-            camera->nearClip = comp.nearClip;
-            camera->farClip = comp.farClip;
+            cameraNode = node;
+            break;
         }
 
-        ren.setCamera(*camera);
-        ren.setDirectionalLights(dirLights);
-        ren.setPointLights(pointLights);
-        ren.setSpotLights(spotLights);
+        auto &comp = cameraNode->getComponent<CameraComponent>();
+        auto &tcomp = cameraNode->getComponent<TransformComponent>();
 
-        ren.draw(screenTarget, commands);
-
-        delete camera;
+        if (comp.cameraType == PERSPECTIVE) {
+            PerspectiveCamera cam;
+            cam.transform = tcomp.transform;
+            cam.nearClip = comp.nearClip;
+            cam.farClip = comp.farClip;
+            cam.fov = comp.fov;
+            cam.aspectRatio = comp.aspectRatio;
+            ren.render(screenTarget, cam, commands, lights);
+        } else {
+            OrthographicCamera cam;
+            cam.transform = tcomp.transform;
+            cam.nearClip = comp.nearClip;
+            cam.farClip = comp.farClip;
+            cam.left = comp.left;
+            cam.top = comp.top;
+            cam.right = comp.right;
+            cam.bottom = comp.bottom;
+            ren.render(screenTarget, cam, commands, lights);
+        }
     }
 }

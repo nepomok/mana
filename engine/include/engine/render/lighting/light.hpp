@@ -65,6 +65,12 @@ namespace mana {
         float linear = 0.1;
         float quadratic = 0.1;
     };
+
+    struct LightingData {
+        std::vector<DirectionalLight> dir;
+        std::vector<PointLight> point;
+        std::vector<SpotLight> spot;
+    };
 }
 
 #endif //MANA_LIGHT_HPP

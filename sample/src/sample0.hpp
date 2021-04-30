@@ -31,7 +31,6 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
-        ren3d.setCamera(camera);
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
@@ -90,7 +89,7 @@ protected:
 
         camera.transform.position += toVec3(left + up + forward);
 
-        Vec3f lightPos = pointLights.at(0).transform.position;
+        Vec3f lightPos = lights.point.at(0).transform.position;
 
         Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
 
@@ -112,7 +111,7 @@ protected:
             }
         }
 
-        pointLights.at(0).transform.position = lightPos;
+        lights.point.at(0).transform.position = lightPos;
         sphere->transform.position = lightPos;
 
         sphere->transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
@@ -121,17 +120,14 @@ protected:
 
         forward = view * Vec4f(0, 0, -1, 0);
 
-        spotLights.at(0).direction = toVec3(forward);
-        spotLights.at(0).transform.position = camera.transform.position;
+        lights.spot.at(0).direction = toVec3(forward);
+        lights.spot.at(0).transform.position = camera.transform.position;
 
         camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
         ren.setViewport({}, window.getFramebufferSize());
-        ren3d.setDirectionalLights(directionalLights);
-        ren3d.setPointLights(pointLights);
-        ren3d.setSpotLights(spotLights);
 
-        ren3d.draw(window.getRenderTarget(), commands);
+        ren3d.render(window.getRenderTarget(), camera, commands, lights);
 
         window.swapBuffers();
         window.update();
@@ -139,21 +135,21 @@ protected:
 
     void loadScene(RenderAllocator &alloc) override {
         Vec3f lightPos = Vec3f(2, 1, 0);
-        
+
         PointLight light;
         light.transform.position = lightPos;
         light.constant = 1.0f;
         light.linear = 1.0f;
         light.quadratic = 1.0f;
         light.ambient = Vec3f(0);
-        pointLights.emplace_back(light);
+        lights.point.emplace_back(light);
 
         Vec3f lightPos0 = Vec3f(-4, 0.73, 0);
         SpotLight light0 = SpotLight();
         light0.transform.position = lightPos0;
         light0.cutOff = 15;
         light0.outerCutOff = 25;
-        spotLights.emplace_back(light0);
+        lights.spot.emplace_back(light0);
 
         Mesh planeMesh = MeshLoader::load("./assets/plane.obj");
         Mesh curveCubeMesh = MeshLoader::load("./assets/curvecube.obj");
@@ -315,9 +311,7 @@ private:
 
     PerspectiveCamera camera;
 
-    std::vector<DirectionalLight> directionalLights;
-    std::vector<PointLight> pointLights;
-    std::vector<SpotLight> spotLights;
+    LightingData lights;
 
     std::vector<RenderCommand> commands;
 
