@@ -75,9 +75,9 @@ namespace mana {
             Vec2i size = {};
             ColorFormat format = RGBA;
             TextureWrapping wrapping = REPEAT;
-            TextureFiltering filterMin = NEAREST;
-            TextureFiltering filterMag = NEAREST;
-            bool generateMipmap = false;
+            TextureFiltering filterMin = LINEAR;
+            TextureFiltering filterMag = LINEAR;
+            bool generateMipmap = true;
             MipMapFiltering mipmapFilter = NEAREST_MIPMAP_NEAREST;
         };
 

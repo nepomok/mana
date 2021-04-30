@@ -82,6 +82,8 @@ OGLRenderTexture::~OGLRenderTexture() {
 }
 
 void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("Invalid texture type");
     if (!(buffer.getSize() == attributes.size))
         throw std::runtime_error("Upload size mismatch");
 
@@ -95,6 +97,11 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  buffer.buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLRenderTexture::upload(RGB)");
@@ -116,6 +123,11 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
                  buffer.buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLRenderTexture::upload(RGBA)");
@@ -149,6 +161,11 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
                  buffer.buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    }
+
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     checkGLError("OGLRenderTexture::upload(CUBEMAP)");

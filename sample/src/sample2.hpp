@@ -33,6 +33,7 @@ protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
+        ren.setMultiSample(true);
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
