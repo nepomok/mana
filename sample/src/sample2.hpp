@@ -105,7 +105,7 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        scene = JsonLoader::import(File::readAllText("./assets/sampleScene.json"), alloc);
+        scene = SceneLoader::loadJson(File::readAllText("./assets/sampleScene.json"), alloc);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 

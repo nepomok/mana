@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/ecs/format/jsonloader.hpp"
+#include "engine/io/sceneloader.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"
 #include "engine/ecs/components/lightcomponent.hpp"
 #include "engine/ecs/components/scriptcomponent.hpp"
@@ -33,7 +33,7 @@
 #include "extern/json.hpp"
 
 namespace mana {
-    namespace JsonLoader {
+    namespace SceneLoader {
         Component::ComponentType convertComponent(const std::string &str) {
             if (str == "transform")
                 return Component::TRANSFORM;
@@ -157,7 +157,7 @@ namespace mana {
             return ret;
         }
 
-        Scene import(std::string jsonStr, RenderAllocator &allocator) {
+        Scene loadJson(std::string jsonStr, RenderAllocator &allocator) {
             nlohmann::json j = nlohmann::json::parse(jsonStr);
             Scene ret;
             for (auto &node : j["nodes"]) {
