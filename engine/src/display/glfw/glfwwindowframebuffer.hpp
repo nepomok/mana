@@ -1,5 +1,5 @@
 /**
- *  Mana - 3D Engine
+ *  Mana - 3D Game Engine
  *  Copyright (C) 2021  Julian Zampiccoli
  *
  *  This program is free software; you can redistribute it and/or modify
