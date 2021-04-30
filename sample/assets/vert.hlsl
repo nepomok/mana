@@ -19,9 +19,9 @@ VS_OUTPUT main(const VS_INPUT v)
 {
     VS_OUTPUT ret;
 
-    ret.vPos = mul(float4(v.position, 0), MANA_MVP);
-    ret.fPos = mul(float4(v.position, 0), MANA_M).xyz;
-    ret.fNorm = mul(float4(v.normal, 0), transpose(MANA_M_INVERT)).xyz;
+    ret.vPos = mul(float4(v.position, 1), MANA_MVP);
+    ret.fPos = mul(float4(v.position, 1), MANA_M).xyz;
+    ret.fNorm = mul(float4(v.normal, 1), transpose(MANA_M_INVERT)).xyz;
     ret.fUv = v.uv;
 
     return ret;

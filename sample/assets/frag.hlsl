@@ -10,7 +10,7 @@ struct PS_INPUT {
 };
 
 struct PS_OUTPUT {
-    float4 FragColor: COLOR;
+    float4 FragColor: SV_TARGET;
 };
 
 SamplerState TextureSampler
@@ -20,8 +20,8 @@ SamplerState TextureSampler
     AddressV = Wrap;
 };
 
-PS_OUTPUT main(PS_INPUT input) {
+PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
-    ret.FragColor = float4(0, 1, 0, 1);
+    ret.FragColor = MANA_F_CALCULATELIGHT(v.fPos, v.fNorm, diffuse.Sample(TextureSampler, v.fUv), specular.Sample(TextureSampler, v.fUv), 32);
     return ret;
 }

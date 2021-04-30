@@ -47,6 +47,7 @@ std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &sour
     sourceDesc.stage = ShaderConductor::ShaderStage::VertexShader;
 
     targetDesc.language = ShaderConductor::ShadingLanguage::Glsl;
+    targetDesc.version = "130"; //Use glsl version 130 to avoid the cross compiler creating uniform block globals.
 
     ShaderConductor::Compiler::ResultDesc result = ShaderConductor::Compiler::Compile(sourceDesc,
                                                                                       options,
@@ -57,8 +58,13 @@ std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &sour
     }
     std::string s;
     for (i = 0; i < result.target.Size(); i++) {
-        s += ((char)((const char *)result.target.Data())[i]);
+        s += ((char) ((const char *) result.target.Data())[i]);
     }
+
+    //Patch version manually back to 330 because otherwise the glsl compiler throws an error.
+    std::string v = "#version 330";
+
+    s.replace(0, v.size(), v);
 
     return s;
 }
@@ -86,6 +92,7 @@ std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &so
     sourceDesc.stage = ShaderConductor::ShaderStage::PixelShader;
 
     targetDesc.language = ShaderConductor::ShadingLanguage::Glsl;
+    targetDesc.version = "130";
 
     ShaderConductor::Compiler::ResultDesc result = ShaderConductor::Compiler::Compile(sourceDesc,
                                                                                       options,
@@ -97,8 +104,12 @@ std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &so
 
     std::string s;
     for (i = 0; i < result.target.Size(); i++) {
-        s += ((char)((const char *)result.target.Data())[i]);
+        s += ((char) ((const char *) result.target.Data())[i]);
     }
+
+    std::string v = "#version 330";
+
+    s.replace(0, v.size(), v);
 
     return s;
 }

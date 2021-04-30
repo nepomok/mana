@@ -62,18 +62,16 @@ namespace mana {
             projection = camera.projection();
 
             ShaderProgram &shader = *command.shader;
-
-            // TODO: Because the shaderconductor library converts hlsl globals into a glsl uniform block
-            // the values of it have to be provided via a uniform block buffer.
-            shader.setMat4("MANA_M", model);
-            shader.setMat4("MANA_V", view);
-            shader.setMat4("MANA_P", projection);
-            shader.setMat4("MANA_MVP", projection * view * model);
-            shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+            
+            shader.setMat4("_Globals.MANA_M", model);
+            shader.setMat4("_Globals.MANA_V", view);
+            shader.setMat4("_Globals.MANA_P", projection);
+            shader.setMat4("_Globals.MANA_MVP", projection * view * model);
+            shader.setMat4("_Globals.MANA_M_INVERT", MatrixMath::inverse(model));
 
             int i = 0;
             for (auto &light : lightingData.dir) {
-                std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
+                std::string name = "_Globals.MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "direction", light.direction);
                 shader.setVec3(name + "ambient", light.ambient);
                 shader.setVec3(name + "diffuse", light.diffuse);
@@ -82,7 +80,7 @@ namespace mana {
 
             i = 0;
             for (auto &light : lightingData.point) {
-                std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
+                std::string name = "_Globals.MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setFloat(name + "constantValue", light.constant);
                 shader.setFloat(name + "linearValue", light.linear);
@@ -93,7 +91,7 @@ namespace mana {
             }
             i = 0;
             for (auto &light : lightingData.spot) {
-                std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
+                std::string name = "_Globals.MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setVec3(name + "direction", light.direction);
                 shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
@@ -106,11 +104,11 @@ namespace mana {
                 shader.setVec3(name + "specular", light.specular);
             }
 
-            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", lightingData.dir.size());
-            shader.setInt("MANA_LIGHT_COUNT_POINT", lightingData.point.size());
-            shader.setInt("MANA_LIGHT_COUNT_SPOT", lightingData.spot.size());
+            shader.setInt("_Globals.MANA_LIGHT_COUNT_DIRECTIONAL", lightingData.dir.size());
+            shader.setInt("_Globals.MANA_LIGHT_COUNT_POINT", lightingData.point.size());
+            shader.setInt("_Globals.MANA_LIGHT_COUNT_SPOT", lightingData.spot.size());
 
-            shader.setVec3("MANA_VIEWPOS", camera.transform.position);
+            shader.setVec3("_Globals.MANA_VIEWPOS", camera.transform.position);
 
             ren->addCommand(command);
         }
