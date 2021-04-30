@@ -23,7 +23,16 @@
 #include "engine/math/transform.hpp"
 
 namespace mana {
+    enum LightType {
+        LIGHT_DIRECTIONAL,
+        LIGHT_POINT,
+        LIGHT_SPOT
+    };
+
     struct Light {
+        explicit Light(LightType type) : type(type) {}
+
+        LightType type;
         Transform transform;
         Vec3f ambient = Vec3f(0.1f);
         Vec3f diffuse = Vec3f(1.0f);
@@ -31,16 +40,22 @@ namespace mana {
     };
 
     struct DirectionalLight : public Light {
+        DirectionalLight() : Light(LIGHT_DIRECTIONAL) {}
+
         Vec3f direction;
     };
 
     struct PointLight : public Light {
+        PointLight() : Light(LIGHT_POINT) {}
+
         float constant = 1;
         float linear = 1;
         float quadratic = 1;
     };
 
     struct SpotLight : public Light {
+        SpotLight() : Light(LIGHT_SPOT) {}
+
         Vec3f direction = Vec3f(0, -1, 0);
         float cutOff = 10;
         float outerCutOff = 14;

@@ -21,9 +21,12 @@
 #define MANA_TRANSFORMCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
+#include "engine/math/transform.hpp"
 
 namespace mana {
     struct TransformComponent : public Component {
+        Transform transform;
+        TransformComponent *parent = nullptr;
     };
 }
 

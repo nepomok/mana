@@ -25,13 +25,12 @@
 #include "engine/math/matrix.hpp"
 
 #include "engine/render/renderobject.hpp"
-#include "engine/render/lighting/light.hpp"
 
 namespace mana {
     class ShaderProgram : public RenderObject {
     public:
         ~ShaderProgram() override = default;
-        
+
         virtual void setBool(const std::string &name, bool value) = 0;
 
         virtual void setInt(const std::string &name, int value) = 0;

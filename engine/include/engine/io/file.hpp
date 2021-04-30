@@ -27,6 +27,10 @@
 namespace mana {
     class File {
     public:
+        static std::string readAllText(const std::string &filepath);
+
+        static void writeAllText(const std::string &filepath, const std::string &text);
+
         File();
 
         File(std::string filepath);
@@ -34,13 +38,6 @@ namespace mana {
         void open(std::string filepath);
 
         void close();
-
-        Buff8 readBuffer();
-
-        std::iostream &getStream();
-
-    private:
-        std::iostream stream;
     };
 }
 

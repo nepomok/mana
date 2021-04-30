@@ -22,8 +22,11 @@
 
 #include "engine/ecs/component.hpp"
 
+#include "engine/render/lighting/light.hpp"
+
 namespace mana {
     struct LightComponent : public Component {
+        Light *light = nullptr;
     };
 }
 

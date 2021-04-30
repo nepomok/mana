@@ -17,35 +17,44 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENE_HPP
-#define MANA_SCENE_HPP
+#ifndef MANA_JSONLOADER_HPP
+#define MANA_JSONLOADER_HPP
 
-#include <vector>
-#include <set>
+#include "engine/ecs/scene.hpp"
 
-#include "engine/ecs/node.hpp"
+#include "engine/render/renderallocator.hpp"
 
 namespace mana {
     /**
-     * A scene object in the form of a vector of nodes.
+     * Json scene has the following format:
      *
-     * Node hierarchy only exists at component level with transform parenting.
+     * {
+     *      "nodes" : [
+     *          {
+     *              "nodeName" : str,
+     *              "components" : [
+     *                  {
+     *                      "type" : enum ,
+     *                      ...
+     *                  },
+     *                  ...
+     *              ]
+     *          },
+     *          ...
+     *      ],
+     * }
      */
-    class Scene {
-    public:
-        std::map<std::string, Node> nodes;
+    namespace JsonLoader {
+        enum ComponentType {
+            TRANSFORM,
+            CAMERA,
+            RENDER,
+            LIGHT,
+            SCRIPT,
+        };
 
-        template<typename T>
-        std::vector<Node> findNodesWithComponent() {
-            const std::type_info &typeInfo = typeid(T);
-            std::vector<Node> ret;
-            for (auto &node : nodes) {
-                if (node.second.hasComponent<T>()) {
-                    ret.push_back(node.second);
-                }
-            }
-            return ret;
-        }
-    };
+        Scene import(std::string jsonStr, RenderAllocator &allocator);
+    }
 }
-#endif //MANA_SCENE_HPP
+
+#endif //MANA_JSONLOADER_HPP

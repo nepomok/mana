@@ -22,8 +22,11 @@
 
 #include "engine/ecs/component.hpp"
 
+#include "engine/render/camera/camera.hpp"
+
 namespace mana {
     struct CameraComponent : public Component {
+        Camera *camera = nullptr;
     };
 }
 

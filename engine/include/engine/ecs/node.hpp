@@ -39,6 +39,7 @@ namespace mana {
      * Uses c++11 typeindex feature.
      */
     struct Node {
+        bool enabled = true;
         std::map<std::type_index, Component *> components;
 
         template<typename T>
@@ -54,7 +55,8 @@ namespace mana {
             const std::type_info &typeInfo = typeid(T);
             if (components.find(typeInfo) != components.end())
                 throw std::runtime_error("Component of type " + std::string(typeInfo.name()) + " already exists");
-            components.at(typeInfo) = dynamic_cast<Component *>(&component);
+            components[typeInfo] = new T(component);
+            components[typeInfo]->node = this;
         }
 
         template<typename T>

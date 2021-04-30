@@ -139,7 +139,7 @@ protected:
 
     void loadScene(RenderAllocator &alloc) override {
         Vec3f lightPos = Vec3f(2, 1, 0);
-
+        
         PointLight light;
         light.transform.position = lightPos;
         light.constant = 1.0f;

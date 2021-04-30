@@ -22,8 +22,11 @@
 
 #include "engine/ecs/component.hpp"
 
+#include "engine/script/script.hpp"
+
 namespace mana {
     struct ScriptComponent : public Component {
+        Script *script = nullptr;
     };
 }
 

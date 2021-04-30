@@ -25,11 +25,18 @@
 #include "engine/math/matrixmath.hpp"
 
 namespace mana {
+    enum CameraType {
+        ORTHO,
+        PERSPECTIVE
+    };
+
     /**
      * A camera provides a view and projection matrix.
      */
     class Camera {
     public:
+        explicit Camera(CameraType type) : type(type) {}
+
         virtual Mat4f view() const {
             Mat4f ret = MatrixMath::rotate(transform.rotation);
             //The engines move the universe (Negate camera position)
@@ -37,6 +44,8 @@ namespace mana {
         }
 
         virtual Mat4f projection() const = 0;
+
+        CameraType type;
 
         Transform transform;
 

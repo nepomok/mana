@@ -17,7 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOINTERPRETER_HPP
-#define MANA_MONOINTERPRETER_HPP
+#ifndef MANA_SCRIPT_HPP
+#define MANA_SCRIPT_HPP
 
-#endif //MANA_MONOINTERPRETER_HPP
+namespace mana {
+    class Script {
+    public:
+        virtual void onEnable() {};
+
+        virtual void onDisable() {};
+
+        virtual void onUpdate() {};
+    };
+}
+
+#endif //MANA_SCRIPT_HPP

@@ -44,7 +44,7 @@
 #include "engine/ecs/scene.hpp"
 #include "engine/ecs/components/collidercomponent.hpp"
 #include "engine/ecs/components/boneanimatorcomponent.hpp"
-#include "engine/ecs/components/meshcomponent.hpp"
+#include "engine/ecs/components/rendercomponent.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"
 #include "engine/ecs/components/transformcomponent.hpp"
 #include "engine/ecs/components/lightcomponent.hpp"
@@ -59,6 +59,7 @@
 #include "engine/ecs/systems/scriptingsystem.hpp"
 #include "engine/ecs/systems/physicssystem.hpp"
 #include "engine/ecs/systems/rendersystem.hpp"
+#include "engine/ecs/format/jsonloader.hpp"
 #include "engine/sound/audiobuffer.hpp"
 #include "engine/sound/audioplayer.hpp"
 #include "engine/display/windowlistener.hpp"
@@ -86,6 +87,7 @@
 #include "engine/render/renderallocator.hpp"
 #include "engine/render/renderer2d.hpp"
 #include "engine/render/renderer3d.hpp"
+#include "engine/script/script.hpp"
 #include "engine/physics/physicsengine.hpp"
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector4.hpp"
@@ -96,7 +98,5 @@
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
 #include "engine/math/vectorconversion.hpp"
-#include "engine/lang/python/pythoninterpreter.hpp"
-#include "engine/lang/mono/monointerpreter.hpp"
 
 #endif //MANA_MANA_HPP

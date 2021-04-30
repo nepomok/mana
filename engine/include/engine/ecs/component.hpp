@@ -21,10 +21,13 @@
 #define MANA_COMPONENT_HPP
 
 namespace mana {
+    struct Node;
     /**
      * A Component provides state.
      */
     struct Component {
+        bool enabled = true;
+        Node *node = nullptr;
     };
 }
 #endif //MANA_COMPONENT_HPP
