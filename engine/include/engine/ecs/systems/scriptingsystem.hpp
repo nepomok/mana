@@ -34,14 +34,6 @@ namespace mana {
         void stop() override;
 
         void update(float deltaTime, Scene &scene) override;
-
-        void onNodeCreated(Node &node) override;
-
-        void onComponentCreated(Node &node, Component &component) override;
-
-        void onNodeRemoved(Node &node) override;
-
-        void onComponentRemoved(Node &node, Component &component) override;
     };
 }
 

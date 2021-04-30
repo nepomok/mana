@@ -26,7 +26,7 @@
 
 namespace mana {
     enum CameraType {
-        ORTHO,
+        ORTHOGRAPHIC,
         PERSPECTIVE
     };
 

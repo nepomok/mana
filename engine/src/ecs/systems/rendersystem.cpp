@@ -178,20 +178,4 @@ namespace mana {
 
         delete camera;
     }
-
-    void RenderSystem::onNodeCreated(Node &node) {
-        System::onNodeCreated(node);
-    }
-
-    void RenderSystem::onComponentCreated(Node &node, Component &component) {
-        System::onComponentCreated(node, component);
-    }
-
-    void RenderSystem::onNodeRemoved(Node &node) {
-        System::onNodeRemoved(node);
-    }
-
-    void RenderSystem::onComponentRemoved(Node &node, Component &component) {
-        System::onComponentRemoved(node, component);
-    }
 }

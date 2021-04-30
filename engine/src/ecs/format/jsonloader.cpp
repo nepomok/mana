@@ -28,17 +28,48 @@
 #include "engine/io/meshloader.hpp"
 #include "engine/io/file.hpp"
 
-#include "engine/render/camera/perspectivecamera.hpp"
-#include "engine/render/camera/orthographiccamera.hpp"
 #include "engine/render/renderer3d.hpp"
 
 #include "extern/json.hpp"
 
 namespace mana {
     namespace JsonLoader {
+        Component::ComponentType convertComponent(const std::string &str) {
+            if (str == "transform")
+                return Component::TRANSFORM;
+            else if (str == "render")
+                return Component::RENDER;
+            else if (str == "camera")
+                return Component::CAMERA;
+            else if (str == "light")
+                return Component::LIGHT;
+            else if (str == "script")
+                return Component::SCRIPT;
+            throw std::runtime_error("Unrecognized component type " + str);
+        }
+
+        CameraType convertCamera(const std::string &str) {
+            if (str == "perspective")
+                return PERSPECTIVE;
+            else if (str == "orthographic")
+                return ORTHOGRAPHIC;
+            throw std::runtime_error("Unrecognized camera type " + str);
+        }
+
+        LightType convertLight(const std::string &str) {
+            if (str == "directional")
+                return LIGHT_DIRECTIONAL;
+            else if (str == "point")
+                return LIGHT_POINT;
+            else if (str == "spot")
+                return LIGHT_SPOT;
+            throw std::runtime_error("Unrecognized light type " + str);
+        }
+
         CameraComponent getCamera(const nlohmann::json &component) {
             CameraComponent ret;
-            ret.cameraType = component["cameraType"];
+            ret.componentType = Component::CAMERA;
+            ret.cameraType = convertCamera(component["cameraType"]);
             if (ret.cameraType == PERSPECTIVE) {
                 ret.nearClip = component["nearClip"];
                 ret.farClip = component["farClip"];
@@ -57,6 +88,7 @@ namespace mana {
 
         TransformComponent getTransform(const nlohmann::json &component) {
             TransformComponent ret;
+            ret.componentType = Component::TRANSFORM;
             ret.transform.position.x = component["position.x"];
             ret.transform.position.y = component["position.y"];
             ret.transform.position.z = component["position.z"];
@@ -71,6 +103,7 @@ namespace mana {
 
         RenderComponent getRenderComponent(const nlohmann::json &component, RenderAllocator &alloc) {
             RenderComponent ret;
+            ret.componentType = Component::RENDER;
             auto vs = Renderer3D::preprocessGlsl(File::readAllText(component["vertexShaderPath"]));
             auto fs = Renderer3D::preprocessGlsl(File::readAllText(component["fragmentShaderPath"]));
             ret.shader = alloc.allocateShaderProgram(vs, fs);
@@ -92,7 +125,8 @@ namespace mana {
 
         LightComponent getLight(const nlohmann::json &component) {
             LightComponent ret;
-            ret.lightType = component["lightType"].get<LightType>();
+            ret.componentType = Component::LIGHT;
+            ret.lightType = convertLight(component["lightType"]);
             ret.ambient.x = component["ambient.r"];
             ret.ambient.y = component["ambient.g"];
             ret.ambient.z = component["ambient.b"];
@@ -136,7 +170,7 @@ namespace mana {
                     throw std::runtime_error("Node with name " + nodeName + " already exists.");
                 Node n;
                 for (auto &component : node["components"]) {
-                    switch (component["type"].get<Component::ComponentType>()) {
+                    switch (convertComponent(component["componentType"])) {
                         case Component::TRANSFORM:
                             n.addComponent(getTransform(component));
                             break;

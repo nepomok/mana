@@ -39,14 +39,6 @@ namespace mana {
         virtual void stop() = 0;
 
         virtual void update(float deltaTime, Scene &scene) = 0;
-
-        virtual void onNodeCreated(Node &node) {};
-
-        virtual void onComponentCreated(Node &node, Component &component) {};
-
-        virtual void onNodeRemoved(Node &node) {};
-
-        virtual void onComponentRemoved(Node &node, Component &component) {};
     };
 }
 #endif //MANA_SYSTEM_HPP

@@ -27,23 +27,15 @@ namespace mana {
     public:
         ECS();
 
-        explicit ECS(Scene scene);
-
         ~ECS();
-
-        void setScene(Scene scene);
-
-        Scene &getScene();
 
         void addSystem(System *system);
 
         void removeSystem(System *system);
 
-        void update(float deltaTime);
+        void update(float deltaTime, Scene &scene);
 
     private:
-        Scene scene;
-
         std::set<System *> systems;
     };
 }

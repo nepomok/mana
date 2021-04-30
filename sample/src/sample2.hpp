@@ -98,15 +98,15 @@ protected:
 
         ren.setViewport({}, window.getFramebufferSize());
 
-        ecs.update(deltaTime);
+        ecs.update(deltaTime, scene);
 
         window.swapBuffers();
         window.update();
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        ecs.setScene(JsonLoader::import(File::readAllText("./assets/sampleScene.json"), alloc));
-        cameraNode = &ecs.getScene().nodes.at("mainCamera");
+        scene = JsonLoader::import(File::readAllText("./assets/sampleScene.json"), alloc);
+        cameraNode = &scene.nodes.at("mainCamera");
     }
 
     void destroyScene() override {
@@ -125,6 +125,8 @@ private:
     ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
     ECS ecs;
+
+    Scene scene;
 
     Node *cameraNode;
 };

@@ -39,24 +39,4 @@ namespace mana {
             comp.script->onUpdate();
         }
     }
-
-    void ScriptingSystem::onNodeCreated(Node &node) {
-    }
-
-    void ScriptingSystem::onComponentCreated(Node &node, Component &component) {
-        if (component.componentType == Component::SCRIPT) {
-            auto &comp = dynamic_cast<ScriptComponent &>(component);
-            comp.script->onEnable();
-        }
-    }
-
-    void ScriptingSystem::onNodeRemoved(Node &node) {
-    }
-
-    void ScriptingSystem::onComponentRemoved(Node &node, Component &component) {
-        if (component.componentType == Component::SCRIPT) {
-            auto &comp = dynamic_cast<ScriptComponent &>(component);
-            comp.script->onDisable();
-        }
-    }
 }

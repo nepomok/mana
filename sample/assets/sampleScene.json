@@ -4,7 +4,7 @@
       "nodeName": "mainCamera",
       "components": [
         {
-          "type": 0,
+          "componentType": "transform",
           "position.x": 0,
           "position.y": 1,
           "position.z": 0,
@@ -16,8 +16,8 @@
           "scale.z": 1
         },
         {
-          "type": 1,
-          "cameraType": 1,
+          "componentType": "camera",
+          "cameraType": "perspective",
           "nearClip": 0.1,
           "farClip": 1000,
           "fov": 60,
@@ -29,7 +29,7 @@
       "nodeName": "plane",
       "components": [
         {
-          "type": 0,
+          "componentType": "transform",
           "position.x": 0,
           "position.y": 0,
           "position.z": 0,
@@ -41,7 +41,7 @@
           "scale.z": 10
         },
         {
-          "type": 2,
+          "componentType": "render",
           "vertexShaderPath": "assets/vert.vs",
           "fragmentShaderPath": "assets/frag.fs",
           "meshPaths": [
@@ -57,7 +57,7 @@
       "nodeName": "light",
       "components": [
         {
-          "type": 0,
+          "componentType": "transform",
           "position.x": 0,
           "position.y": 0,
           "position.z": 0,
@@ -69,8 +69,9 @@
           "scale.z": 1
         },
         {
-          "type": 3,
-          "lightType": 0,
+          "componentType": "light",
+
+          "lightType": "directional",
 
           "ambient.r": 0.1,
           "ambient.g": 0.1,

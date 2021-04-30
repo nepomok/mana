@@ -22,27 +22,12 @@
 #include <utility>
 
 namespace mana {
-    ECS::ECS() : scene() {}
-
-    ECS::ECS(Scene scene) : scene(std::move(scene)) {}
+    ECS::ECS() {}
 
     ECS::~ECS() {
         for (auto *system : systems) {
             delete system;
         }
-    }
-
-    void ECS::setScene(Scene s) {
-        for (auto *system : systems) {
-            for (auto &nodePair : scene.nodes) {
-                system->onNodeRemoved(nodePair.second);
-            }
-        }
-        this->scene = std::move(s);
-    }
-
-    Scene &ECS::getScene() {
-        return scene;
     }
 
     void ECS::addSystem(System *system) {
@@ -55,7 +40,7 @@ namespace mana {
         systems.erase(system);
     }
 
-    void ECS::update(float deltaTime) {
+    void ECS::update(float deltaTime, Scene &scene) {
         for (auto *system : systems) {
             system->update(deltaTime, scene);
         }
