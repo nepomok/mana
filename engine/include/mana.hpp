@@ -42,6 +42,7 @@
 #include "engine/ecs/node.hpp"
 #include "engine/ecs/system.hpp"
 #include "engine/ecs/scene.hpp"
+#include "engine/ecs/ecs.hpp"
 #include "engine/ecs/components/collidercomponent.hpp"
 #include "engine/ecs/components/boneanimatorcomponent.hpp"
 #include "engine/ecs/components/rendercomponent.hpp"

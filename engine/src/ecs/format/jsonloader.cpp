@@ -38,22 +38,19 @@ namespace mana {
     namespace JsonLoader {
         CameraComponent getCamera(const nlohmann::json &component) {
             CameraComponent ret;
-            if (component["cameraType"] == PERSPECTIVE) {
-                auto *cam = new PerspectiveCamera();
-                cam->nearClip = component["nearClip"];
-                cam->farClip = component["farClip"];
-                cam->fov = component["fov"];
-                cam->aspectRatio = component["aspectRatio"];
-                ret.camera = cam;
+            ret.cameraType = component["cameraType"];
+            if (ret.cameraType == PERSPECTIVE) {
+                ret.nearClip = component["nearClip"];
+                ret.farClip = component["farClip"];
+                ret.fov = component["fov"];
+                ret.aspectRatio = component["aspectRatio"];
             } else {
-                auto *cam = new OrthographicCamera();
-                cam->nearClip = component["nearClip"];
-                cam->farClip = component["farClip"];
-                cam->left = component["left"];
-                cam->right = component["right"];
-                cam->top = component["top"];
-                cam->bottom = component["bottom"];
-                ret.camera = cam;
+                ret.nearClip = component["nearClip"];
+                ret.farClip = component["farClip"];
+                ret.left = component["left"];
+                ret.right = component["right"];
+                ret.top = component["top"];
+                ret.bottom = component["bottom"];
             }
             return ret;
         }
@@ -93,6 +90,43 @@ namespace mana {
             return ret;
         }
 
+        LightComponent getLight(const nlohmann::json &component) {
+            LightComponent ret;
+            ret.lightType = component["lightType"].get<LightType>();
+            ret.ambient.x = component["ambient.r"];
+            ret.ambient.y = component["ambient.g"];
+            ret.ambient.z = component["ambient.b"];
+            ret.diffuse.x = component["diffuse.r"];
+            ret.diffuse.y = component["diffuse.g"];
+            ret.diffuse.z = component["diffuse.b"];
+            ret.specular.x = component["specular.r"];
+            ret.specular.y = component["specular.g"];
+            ret.specular.z = component["specular.b"];
+            switch (ret.lightType) {
+                case LIGHT_DIRECTIONAL:
+                    ret.direction.x = component["direction.x"];
+                    ret.direction.y = component["direction.y"];
+                    ret.direction.z = component["direction.z"];
+                    break;
+                case LIGHT_POINT:
+                    ret.constant = component["constant"];
+                    ret.linear = component["linear"];
+                    ret.quadratic = component["quadratic"];
+                    break;
+                case LIGHT_SPOT:
+                    ret.direction.x = component["direction.x"];
+                    ret.direction.y = component["direction.y"];
+                    ret.direction.z = component["direction.z"];
+                    ret.cutOff = component["cutOff"];
+                    ret.outerCutOff = component["outerCutOff"];
+                    ret.constant = component["constant"];
+                    ret.linear = component["linear"];
+                    ret.quadratic = component["quadratic"];
+                    break;
+            }
+            return ret;
+        }
+
         Scene import(std::string jsonStr, RenderAllocator &allocator) {
             nlohmann::json j = nlohmann::json::parse(jsonStr);
             Scene ret;
@@ -102,18 +136,20 @@ namespace mana {
                     throw std::runtime_error("Node with name " + nodeName + " already exists.");
                 Node n;
                 for (auto &component : node["components"]) {
-                    switch (component["type"].get<ComponentType>()) {
-                        case TRANSFORM:
+                    switch (component["type"].get<Component::ComponentType>()) {
+                        case Component::TRANSFORM:
                             n.addComponent(getTransform(component));
                             break;
-                        case CAMERA:
+                        case Component::CAMERA:
                             n.addComponent(getCamera(component));
                             break;
-                        case RENDER:
+                        case Component::RENDER:
                             n.addComponent(getRenderComponent(component, allocator));
                             break;
-                        case LIGHT:
-                        case SCRIPT:
+                        case Component::LIGHT:
+                            n.addComponent(getLight(component));
+                            break;
+                        case Component::SCRIPT:
                             throw std::runtime_error("Not Implemented");
                         default:
                             throw std::runtime_error("Unrecognized component type");

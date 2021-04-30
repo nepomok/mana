@@ -45,14 +45,6 @@ namespace mana {
      * }
      */
     namespace JsonLoader {
-        enum ComponentType {
-            TRANSFORM,
-            CAMERA,
-            RENDER,
-            LIGHT,
-            SCRIPT,
-        };
-
         Scene import(std::string jsonStr, RenderAllocator &allocator);
     }
 }

@@ -26,7 +26,20 @@
 
 namespace mana {
     struct LightComponent : public Component {
-        Light *light = nullptr;
+        LightType lightType;
+
+        Vec3f ambient = Vec3f(0.1f);
+        Vec3f diffuse = Vec3f(1.0f);
+        Vec3f specular = Vec3f(1.0f);
+
+        Vec3f direction;
+
+        float cutOff = 10;
+        float outerCutOff = 14;
+
+        float constant = 1;
+        float linear = 1;
+        float quadratic = 1;
     };
 }
 

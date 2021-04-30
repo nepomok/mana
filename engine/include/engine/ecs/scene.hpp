@@ -36,12 +36,12 @@ namespace mana {
         std::map<std::string, Node> nodes;
 
         template<typename T>
-        std::vector<Node> findNodesWithComponent() {
+        std::vector<Node*> findNodesWithComponent() {
             const std::type_info &typeInfo = typeid(T);
-            std::vector<Node> ret;
+            std::vector<Node*> ret;
             for (auto &node : nodes) {
                 if (node.second.hasComponent<T>()) {
-                    ret.push_back(node.second);
+                    ret.push_back(&node.second);
                 }
             }
             return ret;

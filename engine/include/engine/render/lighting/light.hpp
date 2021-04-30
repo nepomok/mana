@@ -32,6 +32,8 @@ namespace mana {
     struct Light {
         explicit Light(LightType type) : type(type) {}
 
+        virtual ~Light() = default;
+
         LightType type;
         Transform transform;
         Vec3f ambient = Vec3f(0.1f);

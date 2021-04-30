@@ -17,36 +17,35 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SYSTEM_HPP
-#define MANA_SYSTEM_HPP
+#ifndef MANA_ECS_HPP
+#define MANA_ECS_HPP
 
-#include "engine/ecs/scene.hpp"
+#include "engine/ecs/system.hpp"
 
 namespace mana {
-    /**
-     * Systems provide logic.
-     *
-     * Only systems and scripts invoked by a script system invoke logic on the scene data.
-     *
-     * Examples are invoking script lifecycle, handle render, manage memory allocation etc.
-     */
-    class System {
+    class ECS {
     public:
-        virtual ~System() = default;
+        ECS();
 
-        virtual void start() = 0;
+        explicit ECS(Scene scene);
 
-        virtual void stop() = 0;
+        ~ECS();
 
-        virtual void update(float deltaTime, Scene &scene) = 0;
+        void setScene(Scene scene);
 
-        virtual void onNodeCreated(Node &node) {};
+        Scene &getScene();
 
-        virtual void onComponentCreated(Node &node, Component &component) {};
+        void addSystem(System *system);
 
-        virtual void onNodeRemoved(Node &node) {};
+        void removeSystem(System *system);
 
-        virtual void onComponentRemoved(Node &node, Component &component) {};
+        void update(float deltaTime);
+
+    private:
+        Scene scene;
+
+        std::set<System *> systems;
     };
 }
-#endif //MANA_SYSTEM_HPP
+
+#endif //MANA_ECS_HPP

@@ -47,7 +47,7 @@ namespace mana {
             const std::type_info &typeInfo = typeid(T);
             if (components.find(typeInfo) == components.end())
                 throw std::runtime_error("Component of type " + std::string(typeInfo.name()) + " not found");
-            return dynamic_cast<T &>(components.at(typeInfo));
+            return dynamic_cast<T &>(*components.at(typeInfo));
         }
 
         template<typename T>

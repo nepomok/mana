@@ -26,7 +26,18 @@
 
 namespace mana {
     struct CameraComponent : public Component {
-        Camera *camera = nullptr;
+        CameraType cameraType;
+
+        float nearClip = 0.1f;
+        float farClip = 1000.0f;
+
+        float left = -10;
+        float top = 10;
+        float right = 10;
+        float bottom = -10;
+
+        float fov = 60;
+        float aspectRatio = 4.0f / 3.0f;
     };
 }
 

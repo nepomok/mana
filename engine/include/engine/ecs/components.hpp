@@ -17,32 +17,20 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCRIPTINGSYSTEM_H
-#define MANA_SCRIPTINGSYSTEM_H
+#ifndef MANA_COMPONENTS_HPP
+#define MANA_COMPONENTS_HPP
 
-#include "engine/ecs/system.hpp"
+#include "engine/ecs/components/collidercomponent.hpp"
+#include "engine/ecs/components/boneanimatorcomponent.hpp"
+#include "engine/ecs/components/rendercomponent.hpp"
+#include "engine/ecs/components/cameracomponent.hpp"
+#include "engine/ecs/components/transformcomponent.hpp"
+#include "engine/ecs/components/lightcomponent.hpp"
+#include "engine/ecs/components/particlecomponent.hpp"
+#include "engine/ecs/components/rigidbodycomponent.hpp"
+#include "engine/ecs/components/scriptcomponent.hpp"
+#include "engine/ecs/components/gui/textcomponent.hpp"
+#include "engine/ecs/components/gui/canvascomponent.hpp"
+#include "engine/ecs/components/gui/buttoncomponent.hpp"
 
-namespace mana {
-    class ScriptingSystem : public System {
-    public:
-        ScriptingSystem() = default;
-
-        ~ScriptingSystem() override = default;
-
-        void start() override;
-
-        void stop() override;
-
-        void update(float deltaTime, Scene &scene) override;
-
-        void onNodeCreated(Node &node) override;
-
-        void onComponentCreated(Node &node, Component &component) override;
-
-        void onNodeRemoved(Node &node) override;
-
-        void onComponentRemoved(Node &node, Component &component) override;
-    };
-}
-
-#endif //MANA_SCRIPTINGSYSTEM_H
+#endif //MANA_COMPONENTS_HPP

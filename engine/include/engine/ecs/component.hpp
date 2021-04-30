@@ -22,10 +22,21 @@
 
 namespace mana {
     struct Node;
+
     /**
      * A Component provides state.
      */
     struct Component {
+        virtual ~Component() = default;
+
+        enum ComponentType {
+            TRANSFORM,
+            CAMERA,
+            RENDER,
+            LIGHT,
+            SCRIPT,
+        } componentType = TRANSFORM;
+
         bool enabled = true;
         Node *node = nullptr;
     };

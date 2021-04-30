@@ -37,6 +37,8 @@ namespace mana {
     public:
         explicit Camera(CameraType type) : type(type) {}
 
+        virtual ~Camera() = default;
+
         virtual Mat4f view() const {
             Mat4f ret = MatrixMath::rotate(transform.rotation);
             //The engines move the universe (Negate camera position)
