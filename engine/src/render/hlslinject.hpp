@@ -23,7 +23,7 @@
 #define SHADER_INCLUDE std::string("#include \"mana.hlsl\"\n")
 
 /**
- * The hlsl source which is injected when SHADER_INCLUDE is found in a user shader packaged with the binary,
+ * The hlsl source packaged with the binary which is injected when SHADER_INCLUDE is found in a user shader,
  * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
  */
  const char *SHADER_INJECT = R"###(
