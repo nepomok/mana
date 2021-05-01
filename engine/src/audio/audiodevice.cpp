@@ -33,7 +33,6 @@ namespace mana {
         if (!device) {
             throw std::runtime_error("Failed to open default device");
         }
-        checkOALError();
     }
 
     AudioDevice::AudioDevice(const std::string &n) {
@@ -41,23 +40,19 @@ namespace mana {
         if (!device) {
             throw std::runtime_error("Failed to open device " + n);
         }
-        checkOALError();
     }
 
     AudioDevice::~AudioDevice() {
         alcCloseDevice(device);
-        checkOALError();
     }
 
     AudioContext *AudioDevice::createContext() {
         auto c = alcCreateContext(device, nullptr);
-        checkOALError();
         return new OALAudioContext(c);
     }
 
     std::vector<std::string> AudioDevice::getAvailableDevices() {
         const char *dev = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
-        checkOALError();
         std::vector<std::string> ret;
         std::string tmp;
         bool gotzero = false;

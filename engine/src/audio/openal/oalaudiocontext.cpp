@@ -30,8 +30,9 @@ namespace mana {
     OALAudioContext::OALAudioContext(ALCcontext *context) : context(context), listener(this) {}
 
     mana::OALAudioContext::~OALAudioContext() {
-        alcDestroyContext(context);
-        checkOALError();
+        if (alcGetCurrentContext() == context)
+            alcMakeContextCurrent(nullptr);
+        alcDestroyContext(context); //TODO:Fix: Destroying a openal context seems to always set invalid operation error
     }
 
     void mana::OALAudioContext::makeCurrent() {
