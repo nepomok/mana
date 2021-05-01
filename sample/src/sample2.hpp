@@ -31,6 +31,7 @@ protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
+        ecs.addSystem(new ScriptingSystem());
         ren.setMultiSample(true);
     }
 
@@ -104,7 +105,7 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        scene = SceneFile("./assets/sampleScene.json").loadScene(alloc);
+        scene = SceneFile("./assets/sampleScene.json").loadScene(alloc, monoRuntime);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 
@@ -128,6 +129,8 @@ private:
     Scene scene;
 
     Node *cameraNode;
+
+    MonoRuntime monoRuntime;
 };
 
 #endif //MANA_SAMPLE2_HPP

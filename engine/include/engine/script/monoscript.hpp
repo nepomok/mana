@@ -17,30 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENEFILE_HPP
-#define MANA_SCENEFILE_HPP
+#ifndef MANA_MONOSCRIPT_HPP
+#define MANA_MONOSCRIPT_HPP
 
-#include "engine/ecs/scene.hpp"
-#include "engine/render/renderallocator.hpp"
-#include "engine/io/file.hpp"
+#include "engine/script/script.hpp"
 #include "engine/script/mono/monoruntime.hpp"
 
 namespace mana {
-    class SceneFile : public File {
+    class MonoScript : public Script {
     public:
-        SceneFile();
+        MonoScript();
 
-        explicit SceneFile(const std::string &filepath);
+        MonoScript(MonoRuntime &runtime,
+                   const std::string &assemblyFilePath,
+                   std::string scriptClassNameSpace,
+                   std::string scriptClass);
 
-        void open(const std::string &filePath) override;
+        ~MonoScript();
 
-        void close() override;
+        void onEnable() override;
 
-        Scene loadScene(RenderAllocator &alloc, MonoRuntime &monoRuntime);
+        void onDisable() override;
+
+        void onUpdate() override;
 
     private:
-        std::string fileText;
+        std::string scriptClassNameSpace;
+        std::string scriptClassName;
+        MonoAssembly *assembly;
+        MonoObject *object;
+        MonoRuntime *runtime;
     };
 }
 
-#endif //MANA_SCENEFILE_HPP
+#endif //MANA_MONOSCRIPT_HPP

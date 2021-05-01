@@ -103,5 +103,9 @@
 #include "engine/math/rotation.hpp"
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
+#include "engine/script/mono/monoassembly.hpp"
+#include "engine/script/mono/monoobject.hpp"
+#include "engine/script/mono/monoruntime.hpp"
+#include "engine/script/monoscript.hpp"
 
 #endif //MANA_MANA_HPP

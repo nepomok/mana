@@ -26,7 +26,7 @@ void printUsage() {
 }
 
 int main(int argc, char *argv[]) {
-    int n = 1;
+    int n = 2;
     if (argc == 2) {
         n = std::stoi(argv[1]);
     }

@@ -22,6 +22,8 @@
 
 #include "engine/ecs/system.hpp"
 
+#include "engine/script/monoscript.hpp"
+
 namespace mana {
     class ScriptingSystem : public System {
     public:

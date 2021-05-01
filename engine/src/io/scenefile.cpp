@@ -24,6 +24,7 @@
 #include "engine/render/renderer3d.hpp"
 #include "engine/io/assetfile.hpp"
 #include "engine/io/imagefile.hpp"
+#include "engine/script/monoscript.hpp"
 
 #include "extern/json.hpp"
 
@@ -161,7 +162,16 @@ namespace mana {
         return ret;
     }
 
-    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator) {
+    ScriptComponent getScript(const nlohmann::json &component, MonoRuntime &monoRuntime) {
+        ScriptComponent ret;
+        ret.script = new MonoScript(monoRuntime,
+                                    component["assemblyFilePath"],
+                                    component["scriptNamespace"],
+                                    component["scriptClass"]);
+        return ret;
+    }
+
+    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator, MonoRuntime &monoRuntime) {
         nlohmann::json j = nlohmann::json::parse(jsonStr);
         Scene ret;
         for (auto &node : j["nodes"]) {
@@ -184,7 +194,8 @@ namespace mana {
                         n.addComponent(getLight(component));
                         break;
                     case Component::SCRIPT:
-                        throw std::runtime_error("Not Implemented");
+                        n.addComponent(getScript(component, monoRuntime));
+                        break;
                     default:
                         throw std::runtime_error("Unrecognized component type");
                 }
@@ -208,7 +219,7 @@ namespace mana {
         fileText.clear();
     }
 
-    Scene SceneFile::loadScene(RenderAllocator &alloc) {
-        return parseJsonScene(fileText, alloc);
+    Scene SceneFile::loadScene(RenderAllocator &alloc, MonoRuntime &monoRuntime) {
+        return parseJsonScene(fileText, alloc, monoRuntime);
     }
 }
