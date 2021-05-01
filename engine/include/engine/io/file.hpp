@@ -22,8 +22,6 @@
 
 #include <fstream>
 
-#include "engine/common/buffer.hpp"
-
 namespace mana {
     class File {
     public:

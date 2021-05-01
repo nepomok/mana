@@ -17,16 +17,36 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGELOADER_HPP
-#define MANA_IMAGELOADER_HPP
+#ifndef MANA_OALAUDIOCONTEXT_HPP
+#define MANA_OALAUDIOCONTEXT_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/audio/audiocontext.hpp"
+
+#include "audio/openal/oalaudiolistener.hpp"
+
+typedef struct ALCcontext ALCcontext;
 
 namespace mana {
-    class ImageLoader {
+    class OALAudioContext : public AudioContext {
     public:
-        static ImageBuffer<ColorRGBA> load(const std::string& filepath);
+        explicit OALAudioContext(ALCcontext *context);
+
+        ~OALAudioContext() override;
+
+        void makeCurrent() override;
+
+        AudioListener &getListener() override;
+
+        AudioBuffer *createBuffer() override;
+
+        AudioSource *createSource() override;
+
+        const ALCcontext *getContext();
+
+    private:
+        ALCcontext *context;
+        OALAudioListener listener;
     };
 }
 
-#endif //MANA_IMAGELOADER_HPP
+#endif //MANA_OALAUDIOCONTEXT_HPP

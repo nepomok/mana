@@ -20,21 +20,26 @@
 #ifndef MANA_IMAGEBUFFER_HPP
 #define MANA_IMAGEBUFFER_HPP
 
-#include "engine/common/buffer.hpp"
+#include <vector>
+#include <stdexcept>
+
 #include "engine/common/color.hpp"
 #include "engine/math/rectangle.hpp"
 
 namespace mana {
+    /**
+     * Stores 2d pixels in row major format.
+     *
+     * @tparam T The type to use for a pixel
+     */
     template<typename T>
     class ImageBuffer {
     public:
-        Buffer<T> buffer;
-
         ImageBuffer()
                 : size(), buffer() {}
 
-        ImageBuffer(int width, int height, const Buffer<T> &buffer) : size(width, height),
-                                                                      buffer(buffer) {}
+        ImageBuffer(int width, int height, const std::vector<T> &buffer) : size(width, height),
+                                                                           buffer(buffer) {}
 
         ImageBuffer(int width, int height)
                 : size(width, height), buffer(width * height) {}
@@ -47,17 +52,21 @@ namespace mana {
         ImageBuffer &operator=(const ImageBuffer &copy) {
             this->width = copy.width;
             this->height = copy.height;
-            this->buffer = Buffer<T>(copy.buffer);
+            this->buffer = std::vector<T>(copy.buffer);
             return *this;
         }
 
         Vec2i getSize() const { return size; }
 
+        const T *getData() const { return buffer.data(); }
+
+        T *getData() { return buffer.data(); }
+
         int getWidth() const { return size.x; }
 
         int getHeight() const { return size.y; }
 
-        T getPixel(int x, int y) {
+        const T &getPixel(int x, int y) const {
             return buffer[scanLine(y) + x];
         }
 
@@ -65,7 +74,7 @@ namespace mana {
             buffer[scanLine(y) + x] = color;
         }
 
-        int scanLine(int y) {
+        int scanLine(int y) const {
             return y * size.x;
         }
 
@@ -73,7 +82,11 @@ namespace mana {
             if (source.size.x != size.x || source.height != size.y) {
                 throw std::runtime_error("Invalid blit source size");
             }
-            throw std::runtime_error("Not implemented");
+            for (int x = 0; x < size.x; x++) {
+                for (int y = 0; y < size.y; y++) {
+                    setPixel(x, y, source.getPixel(x, y));
+                }
+            }
         }
 
         ImageBuffer<T> swapRows() {
@@ -108,6 +121,7 @@ namespace mana {
 
     private:
         Vec2i size;
+        std::vector<T> buffer;
     };
 }
 

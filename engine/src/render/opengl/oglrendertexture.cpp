@@ -96,7 +96,7 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
                  0,
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
-                 buffer.buffer.getData());
+                 buffer.getData());
 
     if (attributes.generateMipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -122,7 +122,7 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
-                 buffer.buffer.getData());
+                 buffer.getData());
 
     if (attributes.generateMipmap) {
         glGenerateMipmap(GL_TEXTURE_2D);
@@ -139,7 +139,7 @@ mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
 
     auto output = ImageBuffer<ColorRGBA>(attributes.size);
     glBindTexture(GL_TEXTURE_2D, handle);
-    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, output.buffer.getData());
+    glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *) output.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
     checkGLError("OGLRenderTexture::download");
     return output;
@@ -160,7 +160,7 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
                  0,
                  GL_RGBA,
                  GL_UNSIGNED_BYTE,
-                 buffer.buffer.getData());
+                 buffer.getData());
 
     if (attributes.generateMipmap) {
         glGenerateMipmap(GL_TEXTURE_CUBE_MAP);

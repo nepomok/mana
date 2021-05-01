@@ -17,16 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGELOADER_HPP
-#define MANA_IMAGELOADER_HPP
+#ifndef MANA_OALAUDIOBUFFER_HPP
+#define MANA_OALAUDIOBUFFER_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/audio/audiobuffer.hpp"
+
+typedef unsigned int ALuint;
 
 namespace mana {
-    class ImageLoader {
+    class OALAudioBuffer : public AudioBuffer {
     public:
-        static ImageBuffer<ColorRGBA> load(const std::string& filepath);
+        const ALuint handle;
+        
+        explicit OALAudioBuffer(ALuint handle);
+
+        ~OALAudioBuffer() override;
+
+        void upload(const std::vector<uint8_t> &buffer, AudioFormat format, unsigned int frequency) override;
     };
 }
 
-#endif //MANA_IMAGELOADER_HPP
+#endif //MANA_OALAUDIOBUFFER_HPP

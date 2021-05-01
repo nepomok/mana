@@ -20,8 +20,6 @@
 #ifndef MANA_RESOURCE_HPP
 #define MANA_RESOURCE_HPP
 
-#include "engine/common/buffer.hpp"
-
 namespace mana {
     /**
      * Interface for resource types.

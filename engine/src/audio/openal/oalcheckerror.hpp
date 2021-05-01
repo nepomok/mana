@@ -17,24 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef AUDIOTRACK_HPP
-#define AUDIOTRACK_HPP
+#ifndef MANA_OALCHECKERROR_HPP
+#define MANA_OALCHECKERROR_HPP
 
 #include <string>
+#include <stdexcept>
+
+#include <AL/al.h>
 
 namespace mana {
-    class AudioBuffer {
-    public:
-        AudioBuffer();
-
-        ~AudioBuffer();
-
-        void loadData();
-
-        void unloadData();
-
-        long getDuration();
-    };
+    void checkOALError(const std::string &caller = "None");
 }
 
-#endif // AUDIOTRACK_HPP
+#endif //MANA_OALCHECKERROR_HPP

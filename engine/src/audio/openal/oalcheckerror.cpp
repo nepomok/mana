@@ -17,16 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGELOADER_HPP
-#define MANA_IMAGELOADER_HPP
-
-#include "engine/common/imagebuffer.hpp"
+#include "audio/openal/oalcheckerror.hpp"
 
 namespace mana {
-    class ImageLoader {
-    public:
-        static ImageBuffer<ColorRGBA> load(const std::string& filepath);
-    };
+    void checkOALError(const std::string &caller) {
+        auto error = alGetError();
+        if (error != AL_NO_ERROR) {
+            throw std::runtime_error("OpenAL Error: " + std::to_string(error));
+        }
+    }
 }
-
-#endif //MANA_IMAGELOADER_HPP

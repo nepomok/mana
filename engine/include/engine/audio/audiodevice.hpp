@@ -17,16 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGELOADER_HPP
-#define MANA_IMAGELOADER_HPP
+#ifndef MANA_AUDIODEVICE_HPP
+#define MANA_AUDIODEVICE_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include <string>
+
+#include "engine/audio/audiocontext.hpp"
+
+typedef struct ALCdevice ALCdevice;
 
 namespace mana {
-    class ImageLoader {
+    class AudioDevice {
     public:
-        static ImageBuffer<ColorRGBA> load(const std::string& filepath);
+        AudioDevice();
+
+        explicit AudioDevice(const std::string &name);
+
+        ~AudioDevice();
+
+        AudioContext *createContext();
+
+        static std::vector<std::string> getAvailableDevices();
+
+    private:
+        ALCdevice *device;
     };
 }
 
-#endif //MANA_IMAGELOADER_HPP
+#endif //MANA_AUDIODEVICE_HPP

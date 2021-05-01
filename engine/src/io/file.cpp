@@ -20,6 +20,7 @@
 #include "engine/io/file.hpp"
 
 #include <iostream>
+#include <cstring>
 
 namespace mana {
     std::string File::readAllText(const std::string &filepath) {
