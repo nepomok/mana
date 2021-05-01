@@ -28,15 +28,93 @@ namespace mana {
 
     }
 
-    void Renderer2D::begin(const RenderTarget &target) {
+    void Renderer2D::setEnableAlphaBlending(bool enable) {
 
     }
 
-    void Renderer2D::draw(Recti rectangle) {
+    void Renderer2D::renderBegin(const RenderTarget &target) {
 
     }
 
-    void Renderer2D::present() {
+    void Renderer2D::renderBegin(const RenderTarget &target, Vec2i viewportOffset, Vec2i viewportSize) {
+
+    }
+
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, const ShaderProgram &shader,
+                          Vec2f center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, const ShaderProgram &shader) {
+
+    }
+
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, Vec2f center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture) {
+
+    }
+
+    void Renderer2D::draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Rectf rectangle, ColorRGBA color, bool fill) {
+
+    }
+
+    void Renderer2D::draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Vec2f start, Vec2f end, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::draw(Vec2f point, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, const ShaderProgram &shader,
+                          Vec2i center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, const ShaderProgram &shader) {
+
+    }
+
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, Vec2i center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture) {
+
+    }
+
+    void Renderer2D::draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Recti rectangle, ColorRGBA color, bool fill) {
+
+    }
+
+    void Renderer2D::draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center, float rotation) {
+
+    }
+
+    void Renderer2D::draw(Vec2i start, Vec2i end, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::draw(Vec2i point, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::renderPresent() {
 
     }
 }

@@ -24,17 +24,68 @@
 #include "engine/render/renderallocator.hpp"
 
 namespace mana {
+    /**
+     * The 2d renderer uses the following coordinate system:
+     *      -Y
+     *       |
+     * -X - -|- - +X
+     *       |
+     *      +Y
+     * with 0,0 at the top left and depending on the argument types of the called function either:
+     *  float(Normalized screen coordinates) = 1,1 the lower right
+     *  int(Pixel coordinates) = viewport width - 1, viewport height - 1 at the lower right.
+     */
     class Renderer2D {
     public:
         Renderer2D();
 
         Renderer2D(Renderer &ren, RenderAllocator &alloc);
 
-        void begin(const RenderTarget &target);
+        void setEnableAlphaBlending(bool enable);
 
-        void draw(Recti rectangle);
+        void renderBegin(const RenderTarget &target);
 
-        void present();
+        void renderBegin(const RenderTarget &target,
+                         Vec2i viewportOffset,
+                         Vec2i viewportSize);
+
+        void draw(Rectf srcRect, Rectf dstRect, const RenderTexture& texture, const ShaderProgram& shader, Vec2f center, float rotation);
+
+        void draw(Rectf srcRect, Rectf dstRect, const RenderTexture& texture, const ShaderProgram& shader);
+
+        void draw(Rectf srcRect, Rectf dstRect, const RenderTexture& texture, Vec2f center, float rotation);
+
+        void draw(Rectf srcRect, Rectf dstRect, const RenderTexture& texture);
+
+        void draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation);
+
+        void draw(Rectf rectangle, ColorRGBA color = {}, bool fill = true);
+
+        void draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center, float rotation);
+
+        void draw(Vec2f start, Vec2f end, ColorRGBA color = {});
+
+        void draw(Vec2f point, ColorRGBA color = {});
+
+        void draw(Recti srcRect, Recti dstRect, const RenderTexture& texture, const ShaderProgram& shader, Vec2i center, float rotation);
+
+        void draw(Recti srcRect, Recti dstRect, const RenderTexture& texture, const ShaderProgram& shader);
+
+        void draw(Recti srcRect, Recti dstRect, const RenderTexture& texture, Vec2i center, float rotation);
+
+        void draw(Recti srcRect, Recti dstRect, const RenderTexture& texture);
+
+        void draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation);
+
+        void draw(Recti rectangle, ColorRGBA color = {}, bool fill = true);
+
+        void draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center, float rotation);
+
+        void draw(Vec2i start, Vec2i end, ColorRGBA color = {});
+
+        void draw(Vec2i point, ColorRGBA color = {});
+
+        void renderPresent();
 
     private:
         Renderer *ren = nullptr;

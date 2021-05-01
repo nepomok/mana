@@ -24,7 +24,7 @@
 
 namespace mana {
     /**
-     * A rectangle defining position and dimensions.
+     * A axis aligned rectangle defining position and dimensions.
      * */
     template<typename T>
     struct Rectangle {

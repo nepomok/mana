@@ -28,7 +28,7 @@ namespace mana {
      *
      * Only systems and scripts invoked by a script system invoke logic on the scene data.
      *
-     * Examples are invoking script lifecycle, handle render, manage memory allocation etc.
+     * Examples are invoking script lifecycle, handle rendering, manage memory allocation etc.
      */
     class System {
     public:

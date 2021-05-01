@@ -183,7 +183,7 @@ namespace mana {
                 glDisable(GL_BLEND);
             }
 
-            //Bind VAOs and render.
+            //Bind VAOs and draw.
             for (auto meshPtr : command.meshObjects) {
                 if (meshPtr == nullptr) {
                     throw std::runtime_error("nullptr mesh");
