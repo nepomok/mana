@@ -5,3 +5,4 @@
 - [ShaderConductor](https://github.com/microsoft/ShaderConductor)
 - [AssImp](https://github.com/assimp/assimp)
 - [OpenAL-Soft](https://github.com/kcat/openal-soft)
+- [libsndfile](https://github.com/libsndfile/libsndfile)

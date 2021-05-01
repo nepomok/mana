@@ -18,6 +18,8 @@
  */
 
 #include <AL/al.h>
+#include <AL/alext.h>
+
 #include <vector>
 
 #include "audio/openal/oalaudiobuffer.hpp"
@@ -34,6 +36,10 @@ namespace mana {
                 return AL_FORMAT_STEREO8;
             case STEREO16:
                 return AL_FORMAT_STEREO16;
+            case BFORMAT2D_16:
+                return AL_FORMAT_BFORMAT2D_16;
+            case BFORMAT3D_16:
+                return AL_FORMAT_BFORMAT3D_16;
         }
         throw std::runtime_error("Unrecognized format");
     }

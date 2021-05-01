@@ -25,16 +25,16 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/bin)
 
 add_library(mana-engine ${ENGINE_SRC})
 target_include_directories(mana-engine PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC})
-target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal)
+target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)
 
 add_executable(mana-editor ${ENGINE_SRC} ${EDITOR_SRC})
 target_include_directories(mana-editor PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC} ${DIR_EDITOR_INCLUDE})
-target_link_libraries(mana-editor glfw GL dl ShaderConductor dxcompiler assimp openal)
+target_link_libraries(mana-editor glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)
 
 add_executable(mana-runtime ${ENGINE_SRC} ${EDITOR_SRC} ${RUNTIME_SRC})
 target_include_directories(mana-runtime PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC} ${DIR_EDITOR_INCLUDE} ${DIR_RUNTIME_INCLUDE})
-target_link_libraries(mana-runtime glfw GL dl ShaderConductor dxcompiler assimp openal)
+target_link_libraries(mana-runtime glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)
 
 add_executable(mana-sample ${ENGINE_SRC} ${SAMPLE_SRC})
 target_include_directories(mana-sample PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC})
-target_link_libraries(mana-sample glfw GL dl ShaderConductor dxcompiler assimp openal)
+target_link_libraries(mana-sample glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)

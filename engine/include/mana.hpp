@@ -32,6 +32,7 @@
 #include "engine/io/meshloader.hpp"
 #include "engine/io/fileresource.hpp"
 #include "engine/io/sceneloader.hpp"
+#include "engine/io/audiofile.hpp"
 #include "engine/input/input.hpp"
 #include "engine/input/mousekey.hpp"
 #include "engine/input/inputlistener.hpp"

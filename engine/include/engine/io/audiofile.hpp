@@ -17,18 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOFORMAT_HPP
-#define MANA_AUDIOFORMAT_HPP
+#ifndef MANA_AUDIOFILE_HPP
+#define MANA_AUDIOFILE_HPP
+
+#include <string>
+#include <vector>
+#include <cstdint>
+
+#include "engine/audio/audioformat.hpp"
 
 namespace mana {
-    enum AudioFormat {
-        MONO8,
-        MONO16,
-        STEREO8,
-        STEREO16,
-        BFORMAT2D_16,
-        BFORMAT3D_16
+    class AudioFile {
+    public:
+        AudioFile();
+
+        explicit AudioFile(const std::string &filePath);
+
+        ~AudioFile();
+
+        void loadFile(const std::string &filePath);
+
+        AudioFormat getFormat() const;
+
+        int getSampleRate() const;
+
+        const std::vector<uint8_t> &getBuffer() const;
+
+    private:
+        AudioFormat format;
+        int sampleRate;
+        std::vector<uint8_t> buffer;
     };
 }
 
-#endif //MANA_AUDIOFORMAT_HPP
+#endif //MANA_AUDIOFILE_HPP
