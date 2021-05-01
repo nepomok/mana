@@ -24,15 +24,12 @@
 #ifndef MANA_MANA_HPP
 #define MANA_MANA_HPP
 
-#include "engine/io/imageloader.hpp"
-#include "engine/io/resource.hpp"
-#include "engine/io/resourcemanager.hpp"
+#include "engine/io/res/resource.hpp"
 #include "engine/io/file.hpp"
-#include "engine/io/imagewriter.hpp"
-#include "engine/io/meshloader.hpp"
-#include "engine/io/fileresource.hpp"
-#include "engine/io/sceneloader.hpp"
 #include "engine/io/audiofile.hpp"
+#include "engine/io/assetfile.hpp"
+#include "engine/io/scenefile.hpp"
+#include "engine/io/imagefile.hpp"
 #include "engine/input/input.hpp"
 #include "engine/input/mousekey.hpp"
 #include "engine/input/inputlistener.hpp"

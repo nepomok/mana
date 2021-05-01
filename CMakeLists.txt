@@ -27,7 +27,7 @@ add_library(mana-engine ${ENGINE_SRC})
 target_include_directories(mana-engine PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC})
 target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)
 
-add_executable(mana-editor ${ENGINE_SRC} ${EDITOR_SRC})
+add_executable(mana-editor ${ENGINE_SRC} ${EDITOR_SRC} engine/include/engine/io/scenefile.hpp engine/include/engine/io/assetfile.hpp)
 target_include_directories(mana-editor PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC} ${DIR_EDITOR_INCLUDE})
 target_link_libraries(mana-editor glfw GL dl ShaderConductor dxcompiler assimp openal sndfile)
 

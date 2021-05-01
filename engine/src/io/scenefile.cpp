@@ -1,3 +1,5 @@
+#include <string>
+
 /**
  *  Mana - 3D Game Engine
  *  Copyright (C) 2021  Julian Zampiccoli
@@ -17,18 +19,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/sceneloader.hpp"
-#include "engine/ecs/components/cameracomponent.hpp"
-#include "engine/ecs/components/lightcomponent.hpp"
-#include "engine/ecs/components/scriptcomponent.hpp"
-#include "engine/ecs/components/transformcomponent.hpp"
-#include "engine/ecs/components/rendercomponent.hpp"
-
-#include "engine/io/imageloader.hpp"
-#include "engine/io/meshloader.hpp"
-#include "engine/io/file.hpp"
-
+#include "engine/io/scenefile.hpp"
+#include "engine/ecs/components.hpp"
 #include "engine/render/renderer3d.hpp"
+#include "engine/io/assetfile.hpp"
+#include "engine/io/imagefile.hpp"
 
 #include "extern/json.hpp"
 
@@ -112,16 +107,16 @@ namespace mana {
         }
 
         for (auto &meshPath : component["meshPaths"]) {
-            auto mesh = MeshLoader::load(meshPath);
-            ret.meshData.emplace_back(alloc.allocateMesh(mesh));
+            auto meshAsset = AssetFile(meshPath);
+            ret.meshData.emplace_back(alloc.allocateMesh(meshAsset.getMesh()));
         }
 
         for (const auto &texturePath : component["texturePaths"]) {
-            auto img = ImageLoader::load(texturePath);
+            auto img = ImageFile(texturePath);
             auto attr = RenderTexture::Attributes();
-            attr.size = img.getSize();
+            attr.size = img.getBuffer().getSize();
             auto tex = alloc.allocateTexture(attr);
-            tex->upload(img);
+            tex->upload(img.getBuffer());
             ret.textures.emplace_back(tex);
         }
         return ret;
@@ -166,7 +161,7 @@ namespace mana {
         return ret;
     }
 
-    Scene SceneLoader::loadJson(std::string jsonStr, RenderAllocator &allocator) {
+    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator) {
         nlohmann::json j = nlohmann::json::parse(jsonStr);
         Scene ret;
         for (auto &node : j["nodes"]) {
@@ -197,5 +192,23 @@ namespace mana {
             ret.nodes[nodeName] = n;
         }
         return ret;
+    }
+
+    SceneFile::SceneFile() = default;
+
+    SceneFile::SceneFile(const std::string &filepath) {
+        fileText = File::readAllText(filepath);
+    }
+
+    void SceneFile::open(const std::string &filePath) {
+        fileText = File::readAllText(filePath);
+    }
+
+    void SceneFile::close() {
+        fileText.clear();
+    }
+
+    Scene SceneFile::loadScene(RenderAllocator &alloc) {
+        return parseJsonScene(fileText, alloc);
     }
 }

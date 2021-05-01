@@ -50,8 +50,7 @@ namespace mana {
         ImageBuffer(const ImageBuffer &copy) : size(copy.size), buffer(copy.buffer) {}
 
         ImageBuffer &operator=(const ImageBuffer &copy) {
-            this->width = copy.width;
-            this->height = copy.height;
+            this->size = copy.size;
             this->buffer = std::vector<T>(copy.buffer);
             return *this;
         }
@@ -109,7 +108,7 @@ namespace mana {
             return std::move(ret);
         }
 
-        ImageBuffer<T> slice(const Recti &rect) {
+        ImageBuffer<T> slice(const Recti &rect) const {
             ImageBuffer<T> ret = ImageBuffer<T>(rect.dimensions.x, rect.dimensions.y);
             for (int x = rect.position.x; x < rect.position.x + rect.dimensions.x; x++) {
                 for (int y = rect.position.y; y < rect.position.y + rect.dimensions.y; y++) {

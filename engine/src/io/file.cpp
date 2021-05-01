@@ -49,15 +49,7 @@ namespace mana {
         fos.close();
     }
 
-    File::File() {
-
-    }
-
-    File::File(std::string filepath) {
-
-    }
-
-    void File::open(std::string filepath) {
+    void File::open(const std::string &filePath) {
 
     }
 

@@ -17,36 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENELOADER_HPP
-#define MANA_SCENELOADER_HPP
+#ifndef MANA_SCENEFILE_HPP
+#define MANA_SCENEFILE_HPP
 
 #include "engine/ecs/scene.hpp"
-
 #include "engine/render/renderallocator.hpp"
+#include "engine/io/file.hpp"
 
 namespace mana {
-    namespace SceneLoader {
-        /**
-         * Json scene has the following format:
-         *
-         * {
-         *      "nodes" : [
-         *          {
-         *              "nodeName" : str,
-         *              "components" : [
-         *                  {
-         *                      "type" : enum ,
-         *                      ...
-         *                  },
-         *                  ...
-         *              ]
-         *          },
-         *          ...
-         *      ],
-         * }
-         */
-        Scene loadJson(std::string jsonStr, RenderAllocator &allocator);
-    }
+    class SceneFile : public File {
+    public:
+        SceneFile();
+
+        explicit SceneFile(const std::string &filepath);
+
+        void open(const std::string &filePath) override;
+
+        void close() override;
+
+        Scene loadScene(RenderAllocator &alloc);
+
+    private:
+        std::string fileText;
+    };
 }
 
-#endif //MANA_SCENELOADER_HPP
+#endif //MANA_SCENEFILE_HPP

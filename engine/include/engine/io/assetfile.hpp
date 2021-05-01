@@ -17,30 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGERESOURCE_HPP
-#define MANA_IMAGERESOURCE_HPP
+#ifndef MANA_ASSETFILE_HPP
+#define MANA_ASSETFILE_HPP
 
 #include "engine/io/file.hpp"
-#include "resource.hpp"
+#include "engine/render/geometry/mesh.hpp"
 
 namespace mana {
-    /**
-     * A resource backed by a file.
-     */
-    template<typename T>
-    class FileResource : public Resource<T> {
+    class AssetFile : public File {
     public:
-        FileResource(const File &file);
+        AssetFile();
 
-        ~FileResource() override = default;
+        explicit AssetFile(const std::string &filePath);
 
-        T &getData() override;
+        void open(const std::string &filePath) override;
 
-        void free() override;
+        void close() override;
+
+        const Mesh &getMesh();
+
+        const std::vector<Mesh> &getAllMeshes();
 
     private:
-        File file;
+        std::vector<Mesh> meshes;
     };
 }
 
-#endif //MANA_IMAGERESOURCE_HPP
+#endif //MANA_ASSETFILE_HPP

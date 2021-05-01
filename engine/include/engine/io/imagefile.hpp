@@ -17,15 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RESOURCEMANAGER_HPP
-#define MANA_RESOURCEMANAGER_HPP
+#ifndef MANA_IMAGEFILE_HPP
+#define MANA_IMAGEFILE_HPP
 
-#include "resource.hpp"
+#include "engine/io/file.hpp"
+
+#include "engine/render/imagebuffer.hpp"
 
 namespace mana {
-    class ResourceManager {
+    class ImageFile : public File {
     public:
+        ImageFile();
+
+        explicit ImageFile(const std::string &filePath);
+
+        void open(const std::string &filePath) override;
+
+        void close() override;
+
+        const ImageBuffer<ColorRGBA> &getBuffer();
+
+    private:
+        ImageBuffer<ColorRGBA> buffer;
     };
 }
 
-#endif //MANA_RESOURCEMANAGER_HPP
+#endif //MANA_IMAGEFILE_HPP

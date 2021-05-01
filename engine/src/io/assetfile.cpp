@@ -17,10 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "engine/io/assetfile.hpp"
+
 #include <stdexcept>
 
 #include "engine/render/geometry/vertex.hpp"
-#include "engine/io/meshloader.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
@@ -63,32 +64,37 @@ namespace mana {
         return ret;
     }
 
-    Mesh MeshLoader::load(const std::string &filepath) {
-        Assimp::Importer importer;
-        const auto *scenePointer = importer.ReadFile(filepath, aiPostProcessSteps::aiProcess_Triangulate);
-        if (scenePointer == nullptr)
-            throw std::runtime_error("Failed to open mesh file at " + filepath);
-
-        const auto &scene = dynamic_cast<const aiScene &>(*scenePointer);
-
-        if (scene.mNumMeshes == 0)
-            throw std::runtime_error("No mesh found in file " + filepath);
-
-        return convertMesh(dynamic_cast<const aiMesh &>(*scene.mMeshes[0]));
-    }
-
-    std::vector<Mesh> MeshLoader::loadMultiple(const std::string &filepath) {
+    std::vector<Mesh> readMeshFromFile(const std::string &filePath) {
         Assimp::Importer importer;
         std::vector<Mesh> ret;
-        const auto *scenePointer = importer.ReadFile(filepath, aiPostProcessSteps::aiProcess_Triangulate);
+        const auto *scenePointer = importer.ReadFile(filePath, aiPostProcessSteps::aiProcess_Triangulate);
         if (scenePointer == nullptr)
-            throw std::runtime_error("Failed to open mesh file at " + filepath);
-
+            throw std::runtime_error("Failed to open mesh file at " + filePath);
         const auto &scene = dynamic_cast<const aiScene &>(*scenePointer);
         ret.resize(scene.mNumMeshes);
         for (auto i = 0; i < scene.mNumMeshes; i++) {
             ret.at(i) = (convertMesh(dynamic_cast<const aiMesh &>(*scene.mMeshes[0])));
         }
         return ret;
+    }
+
+    AssetFile::AssetFile() = default;
+
+    AssetFile::AssetFile(const std::string &filePath) : meshes(readMeshFromFile(filePath)) {}
+
+    void AssetFile::open(const std::string &filePath) {
+        meshes = readMeshFromFile(filePath);
+    }
+
+    void AssetFile::close() {
+        meshes.clear();
+    }
+
+    const Mesh &AssetFile::getMesh() {
+        return meshes.at(0);
+    }
+
+    const std::vector<Mesh> &AssetFile::getAllMeshes() {
+        return meshes;
     }
 }

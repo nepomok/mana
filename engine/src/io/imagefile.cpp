@@ -17,17 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/imageloader.hpp"
-
-#include <stdexcept>
-#include <cstring>
+#include "engine/io/imagefile.hpp"
 
 #include "extern/stb_image.h"
 
+#include <cstring>
+
 namespace mana {
-    ImageBuffer<ColorRGBA> ImageLoader::load(const std::string &filepath) {
+    ImageBuffer<ColorRGBA> readImageFile(const std::string &filePath) {
         int width, height, nrChannels;
-        stbi_uc *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 4);
+        stbi_uc *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 4);
         if (data) {
             auto ret = ImageBuffer<ColorRGBA>(width, height);
             std::memcpy(ret.getData(), data, (width * height) * (sizeof(stbi_uc) * 4));
@@ -36,8 +35,27 @@ namespace mana {
         } else {
             stbi_image_free(data);
             std::string error = "Failed to load image ";
-            error.append(filepath);
+            error.append(filePath);
             throw std::runtime_error(error);
         }
+    }
+
+    ImageFile::ImageFile() = default;
+
+    ImageFile::ImageFile(const std::string &filePath) {
+        buffer = readImageFile(filePath);
+    }
+
+    void ImageFile::open(const std::string &filePath) {
+        buffer = readImageFile(filePath);
+
+    }
+
+    void ImageFile::close() {
+        buffer = {};
+    }
+
+    const ImageBuffer<ColorRGBA> &ImageFile::getBuffer() {
+        return buffer;
     }
 }
