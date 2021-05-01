@@ -33,9 +33,18 @@ namespace mana {
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
         for (auto *node : nodes) {
-            if (!node->enabled)
-                continue;
             auto &comp = node->getComponent<ScriptComponent>();
+            if (!node->enabled || !comp.enabled) {
+                if (comp.scriptEnabled) {
+                    comp.script->onDisable();
+                    comp.scriptEnabled = false;
+                }
+                continue;
+            }
+            if (!comp.scriptEnabled) {
+                comp.scriptEnabled = true;
+                comp.script->onEnable();
+            }
             comp.script->onUpdate();
         }
     }
