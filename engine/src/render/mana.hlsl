@@ -1,3 +1,5 @@
+#define MANA_MAX_LIGHTS 20
+
 float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
@@ -13,8 +15,6 @@ struct MANA_T_LIGHT_DIRECTIONAL {
     float3 diffuse;
     float3 specular;
 };
-
-#define MANA_MAX_LIGHTS 20
 
 MANA_T_LIGHT_DIRECTIONAL MANA_LIGHTS_DIRECTIONAL[MANA_MAX_LIGHTS];
 

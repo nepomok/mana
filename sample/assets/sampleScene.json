@@ -42,8 +42,8 @@
         },
         {
           "componentType": "render",
-          "vertexShaderPath": "assets/vert.hlsl",
-          "fragmentShaderPath": "assets/frag.hlsl",
+          "vertexShaderPath": "assets/hlsl/vertex.hlsl",
+          "fragmentShaderPath": "assets/hlsl/fragment.hlsl",
           "meshPaths": [
             "assets/plane.obj"
           ],

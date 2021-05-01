@@ -22,8 +22,6 @@
 
 #include "game.hpp"
 
-#include "shadersource.hpp"
-
 class Sample1 : public Game {
 public:
     ~Sample1() override = default;
@@ -162,21 +160,27 @@ protected:
         Mesh sphereMesh = MeshLoader::load("./assets/icosphere.obj");
         Mesh cubeMesh = MeshLoader::load("./assets/cube.obj");
 
+        std::string vertexShader = File::readAllText("./assets/hlsl/vertex.hlsl");
+        std::string fragmentShader = File::readAllText("./assets/hlsl/fragment.hlsl");
+        std::string skyboxVertexShader = File::readAllText("./assets/hlsl/skyboxVertex.hlsl");
+        std::string skyboxFragmentShader = File::readAllText("./assets/hlsl/skyboxFragment.hlsl");
+        std::string depthFragmentShader = File::readAllText("./assets/hlsl/depthFragment.hlsl");
+
         ShaderProgram *skyboxShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(skyboxVertexShader),
                                                                   Renderer3D::preprocessHlsl(skyboxFragmentShader));
         objects.emplace_back(skyboxShader);
 
-        skyboxShader->setInt("skybox", 0);
+        skyboxShader->setTexture("skybox", 0);
 
         ShaderProgram *shader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
                                                             Renderer3D::preprocessHlsl(fragmentShader));
         objects.emplace_back(shader);
 
-        shader->setInt("diffuse", 0);
-        shader->setInt("specular", 1);
+        shader->setTexture("diffuse", 0);
+        shader->setTexture("specular", 1);
 
         ShaderProgram *lightShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
-                                                                 Renderer3D::preprocessHlsl(lightFragmentShader));
+                                                                 Renderer3D::preprocessHlsl(fragmentShader));
         objects.emplace_back(lightShader);
 
         auto colorMapImage = ImageLoader::load("./assets/colormap.png");

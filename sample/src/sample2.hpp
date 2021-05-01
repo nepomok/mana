@@ -23,8 +23,6 @@
 
 #include "game.hpp"
 
-#include "shadersource.hpp"
-
 class Sample2 : public Game {
 public:
     ~Sample2() override = default;

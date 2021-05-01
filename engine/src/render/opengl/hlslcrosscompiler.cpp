@@ -39,6 +39,8 @@ std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &sour
         i++;
     }
 
+    options.disableOptimizations = true;
+
     sourceDesc.entryPoint = entryPoint.c_str();
     sourceDesc.defines = macro;
     sourceDesc.numDefines = macros.size();
@@ -84,6 +86,8 @@ std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &so
         macro[i].value = m.second.c_str();
         i++;
     }
+
+    options.disableOptimizations = true;
 
     sourceDesc.entryPoint = entryPoint.c_str();
     sourceDesc.defines = macro;

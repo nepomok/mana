@@ -23,9 +23,12 @@
 #define SHADER_INCLUDE std::string("#include \"mana.hlsl\"\n")
 
 /**
- * The hlsl source which is injected when SHADER_INCLUDE is found in a user shader.
+ * The hlsl source which is injected when SHADER_INCLUDE is found in a user shader packaged with the binary,
+ * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
  */
  const char *SHADER_INJECT = R"###(
+#define MANA_MAX_LIGHTS 20
+
 float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
@@ -41,8 +44,6 @@ struct MANA_T_LIGHT_DIRECTIONAL {
     float3 diffuse;
     float3 specular;
 };
-
-#define MANA_MAX_LIGHTS 20
 
 MANA_T_LIGHT_DIRECTIONAL MANA_LIGHTS_DIRECTIONAL[MANA_MAX_LIGHTS];
 

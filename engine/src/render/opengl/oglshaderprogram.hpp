@@ -53,6 +53,8 @@ namespace mana {
 
             void activate();
 
+            void setTexture(const std::string &name, int slot) override;
+
             void setBool(const std::string &name, bool value) override;
 
             void setInt(const std::string &name, int value) override;

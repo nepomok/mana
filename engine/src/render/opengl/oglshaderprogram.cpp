@@ -97,6 +97,20 @@ namespace mana {
             checkGLError("");
         }
 
+        void OGLShaderProgram::setTexture(const std::string &name, int slot) {
+            // ShaderConductor(SPIRV) merges hlsl texture objects names with the names of the sampler state when sampling
+            // from the texture object in the resulting glsl.
+            // Therefore the user is required to define and use a separate SampleState structure for every texture object.
+            // This SampleState structure should have the name sampleState_TEXTURENAME.
+            std::string globName = "SPIRV_Cross_Combined" + name + "samplerState_" + name;
+            activate();
+            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            if (i == -1)
+                throw std::runtime_error("Uniform not found " + name);
+            glUniform1i(i, (int) slot);
+            checkGLError("");
+        }
+
         void OGLShaderProgram::setBool(const std::string &name, bool value) {
             std::string globName = "_Globals." + name;
             activate();

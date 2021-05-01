@@ -104,6 +104,8 @@ namespace mana {
             auto vs = Renderer3D::preprocessHlsl(File::readAllText(component["vertexShaderPath"]));
             auto fs = Renderer3D::preprocessHlsl(File::readAllText(component["fragmentShaderPath"]));
             ret.shader = alloc.allocateShaderProgram(vs, fs);
+            ret.shader->setTexture("diffuse", 0);
+            ret.shader->setTexture("specular", 1);
             for (auto &meshPath : component["meshPaths"]) {
                 auto mesh = MeshLoader::load(meshPath);
                 ret.meshData.emplace_back(alloc.allocateMesh(mesh));
