@@ -67,40 +67,37 @@ namespace mana {
 
     CameraComponent getCamera(const nlohmann::json &component) {
         CameraComponent ret;
-        ret.cameraType = convertCamera(component.value("cameraType", "perspective"));
+        ret.cameraType = convertCamera(component["cameraType"]);
         if (ret.cameraType == PERSPECTIVE) {
-            ret.nearClip = component.value("nearClip", 1.0);
-            ret.farClip = component.value("farClip", 1.0);
-            ret.fov = component.value("fov", 1.0);
-            ret.aspectRatio = component.value("aspectRatio", 1.0);
+            ret.nearClip = component["nearClip"];
+            ret.farClip = component["farClip"];
+            ret.fov = component["fov"];
+            ret.aspectRatio = component["aspectRatio"];
         } else {
-            ret.nearClip = component.value("nearClip", 1.0);
-            ret.farClip = component.value("farClip", 1.0);
-            ret.left = component.value("left", 1.0);
-            ret.right = component.value("right", 1.0);
-            ret.top = component.value("top", 1.0);
-            ret.bottom = component.value("bottom", 1.0);
+            ret.nearClip = component["nearClip"];
+            ret.farClip = component["farClip"];
+            ret.left = component["left"];
+            ret.right = component["right"];
+            ret.top = component["top"];
+            ret.bottom = component["bottom"];
         }
         return ret;
     }
 
     TransformComponent getTransform(const nlohmann::json &component) {
         TransformComponent ret;
-        if (component.contains("position")) {
-            ret.transform.position.x = component["position"].value("x", 0.0);
-            ret.transform.position.y = component["position"].value("y", 0.0);
-            ret.transform.position.z = component["position"].value("z", 0.0);
-        }
-        if (component.contains("rotation")) {
-            ret.transform.rotation.x = component["rotation"].value("x", 0.0);
-            ret.transform.rotation.y = component["rotation"].value("y", 0.0);
-            ret.transform.rotation.z = component["rotation"].value("z", 0.0);
-        }
-        if (component.contains("scale")) {
-            ret.transform.scale.x = component["scale"].value("x", 1.0);
-            ret.transform.scale.y = component["scale"].value("y", 1.0);
-            ret.transform.scale.z = component["scale"].value("z", 1.0);
-        }
+        ret.transform.position.x = component["position"]["x"];
+        ret.transform.position.y = component["position"]["y"];
+        ret.transform.position.z = component["position"]["z"];
+
+        ret.transform.rotation.x = component["rotation"]["x"];
+        ret.transform.rotation.y = component["rotation"]["y"];
+        ret.transform.rotation.z = component["rotation"]["z"];
+
+        ret.transform.scale.x = component["scale"]["x"];
+        ret.transform.scale.y = component["scale"]["y"];
+        ret.transform.scale.z = component["scale"]["z"];
+
         return ret;
     }
 
@@ -132,40 +129,38 @@ namespace mana {
 
     LightComponent getLight(const nlohmann::json &component) {
         LightComponent ret;
-        ret.lightType = convertLight(component.value("lightType", "directional"));
-        if (component.contains("ambient")) {
-            ret.ambient.x = component["ambient"].value("r", 1.0);
-            ret.ambient.y = component["ambient"].value("g", 1.0);
-            ret.ambient.z = component["ambient"].value("b", 1.0);
-        }
-        if (component.contains("diffuse")) {
-            ret.diffuse.x = component["diffuse"].value("r", 1.0);
-            ret.diffuse.y = component["diffuse"].value("g", 1.0);
-            ret.diffuse.z = component["diffuse"].value("b", 1.0);
-        }
-        if (component.contains("specular")) {
-            ret.specular.x = component["specular"].value("r", 1.0);
-            ret.specular.y = component["specular"].value("g", 1.0);
-            ret.specular.z = component["specular"].value("b", 1.0);
-        }
+        ret.lightType = convertLight(component["lightType"]);
+
+        ret.ambient.x = component["ambient"]["r"];
+        ret.ambient.y = component["ambient"]["g"];
+        ret.ambient.z = component["ambient"]["b"];
+        ret.diffuse.x = component["diffuse"]["r"];
+        ret.diffuse.y = component["diffuse"]["g"];
+        ret.diffuse.z = component["diffuse"]["b"];
+        ret.specular.x = component["specular"]["r"];
+        ret.specular.y = component["specular"]["g"];
+        ret.specular.z = component["specular"]["b"];
+
         switch (ret.lightType) {
             case LIGHT_POINT:
-                ret.constant = component.value("constant", 1.0);
-                ret.linear = component.value("linear", 1.0);
-                ret.quadratic = component.value("quadratic", 1.0);
+                ret.constant = component["constant"];
+                ret.linear = component["linear"];
+                ret.quadratic = component["quadratic"];
+                break;
+            case LIGHT_SPOT:
+                ret.direction.x = component["direction"]["x"];
+                ret.direction.y = component["direction"]["y"];
+                ret.direction.z = component["direction"]["z"];
+                ret.cutOff = component["cutOff"];
+                ret.outerCutOff = component["outerCutOff"];
+                ret.constant = component["constant"];
+                ret.linear = component["linear"];
+                ret.quadratic = component["quadratic"];
                 break;
             case LIGHT_DIRECTIONAL:
-            case LIGHT_SPOT:
-                if (component.contains("direction")) {
-                    ret.direction.x = component["direction"].value("x", 1.0);
-                    ret.direction.y = component["direction"].value("y", 1.0);
-                    ret.direction.z = component["direction"].value("z", 1.0);
-                }
-                ret.cutOff = component.value("cutOff", 1.0);
-                ret.outerCutOff = component.value("outerCutOff", 1.0);
-                ret.constant = component.value("constant", 1.0);
-                ret.linear = component.value("linear", 1.0);
-                ret.quadratic = component.value("quadratic", 1.0);
+                ret.direction.x = component["direction"]["x"];
+                ret.direction.y = component["direction"]["y"];
+                ret.direction.z = component["direction"]["z"];
                 break;
         }
         return ret;
