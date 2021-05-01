@@ -23,7 +23,7 @@
 #include <vector>
 #include <stdexcept>
 
-#include "engine/common/color.hpp"
+#include "engine/render/color.hpp"
 #include "engine/math/rectangle.hpp"
 
 namespace mana {

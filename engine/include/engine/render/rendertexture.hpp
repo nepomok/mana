@@ -20,7 +20,7 @@
 #ifndef MANA_RENDERTEXTURE_HPP
 #define MANA_RENDERTEXTURE_HPP
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 #include "engine/render/renderobject.hpp"
 
 namespace mana {

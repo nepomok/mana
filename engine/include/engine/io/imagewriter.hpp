@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "engine/common/imagebuffer.hpp"
+#include "engine/render/imagebuffer.hpp"
 
 namespace mana {
     class ImageWriter {
