@@ -5,15 +5,21 @@
       "components": [
         {
           "componentType": "transform",
-          "position.x": 0,
-          "position.y": 1,
-          "position.z": 0,
-          "rotation.x": 0,
-          "rotation.y": 0,
-          "rotation.z": 0,
-          "scale.x": 1,
-          "scale.y": 1,
-          "scale.z": 1
+          "position": {
+            "x": 0,
+            "y": 1,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
         },
         {
           "componentType": "camera",
@@ -30,20 +36,36 @@
       "components": [
         {
           "componentType": "transform",
-          "position.x": 0,
-          "position.y": 0,
-          "position.z": 0,
-          "rotation.x": 0,
-          "rotation.y": 0,
-          "rotation.z": 0,
-          "scale.x": 10,
-          "scale.y": 10,
-          "scale.z": 10
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 10,
+            "y": 10,
+            "z": 10
+          }
         },
         {
           "componentType": "render",
           "vertexShaderPath": "assets/hlsl/vertex.hlsl",
           "fragmentShaderPath": "assets/hlsl/fragment.hlsl",
+          "textureMapping": [
+            {
+              "name": "diffuse",
+              "slot": 0
+            },
+            {
+              "name": "specular",
+              "slot": 1
+            }
+          ],
           "meshPaths": [
             "assets/plane.obj"
           ],
@@ -58,34 +80,45 @@
       "components": [
         {
           "componentType": "transform",
-          "position.x": 0,
-          "position.y": 0,
-          "position.z": 0,
-          "rotation.x": 0,
-          "rotation.y": 0,
-          "rotation.z": 0,
-          "scale.x": 1,
-          "scale.y": 1,
-          "scale.z": 1
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
         },
         {
           "componentType": "light",
-
           "lightType": "directional",
-
-          "ambient.r": 0.1,
-          "ambient.g": 0.1,
-          "ambient.b": 0.1,
-          "diffuse.r": 1,
-          "diffuse.g": 1,
-          "diffuse.b": 1,
-          "specular.r": 1,
-          "specular.g": 1,
-          "specular.b": 1,
-
-          "direction.x": -0.5,
-          "direction.y": -0.5,
-          "direction.z": 0
+          "ambient": {
+            "r": 0.1,
+            "g": 0.1,
+            "b": 0.1
+          },
+          "diffuse": {
+            "r": 1,
+            "g": 1,
+            "b": 1
+          },
+          "specular": {
+            "r": 1,
+            "g": 1,
+            "b": 1
+          },
+          "direction": {
+            "x": -0.5,
+            "y": -0.5,
+            "z": 0
+          }
         }
       ]
     }
