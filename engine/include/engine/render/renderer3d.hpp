@@ -24,9 +24,6 @@
 #include "engine/render/renderallocator.hpp"
 
 namespace mana {
-    /**
-     * The 3d renderer uses right handed coordinate system.
-     */
     class Renderer3D {
     public:
         static std::string preprocessHlsl(std::string shader);
