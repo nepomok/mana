@@ -22,59 +22,67 @@
 #include "engine/render/geometry/vertex.hpp"
 #include "engine/io/meshloader.hpp"
 
-#include "extern/OBJ_Loader.h"
+#include <assimp/Importer.hpp>
+#include <assimp/scene.h>
+#include <assimp/postprocess.h>
 
 namespace mana {
-    Vec3f toMana(objl::Vector3 vec) {
-        return {vec.X, vec.Y, vec.Z};
-    }
+    Mesh convertMesh(const aiMesh &assMesh) {
+        Mesh ret;
+        ret.primitive = TRI;
+        ret.indexed = true;
+        for (int y = 0; y < assMesh.mNumFaces; y++) {
+            const auto &face = dynamic_cast<const aiFace &>(assMesh.mFaces[y]);
+            if (face.mNumIndices != 3)
+                throw std::runtime_error("Mesh triangulation failed");
+            for (int z = 0; z < face.mNumIndices; z++) {
+                ret.indices.emplace_back(face.mIndices[z]);
+            }
+        }
 
-    Vec2f toMana(objl::Vector2 vec) {
-        return {vec.X, vec.Y};
+        for (int y = 0; y < assMesh.mNumVertices; y++) {
+            const auto &p = dynamic_cast<const aiVector3D &>(assMesh.mVertices[y]);
+
+            Vec3f pos{p.x, p.y, p.z};
+            Vec3f norm{};
+            Vec2f uv{};
+
+            if (assMesh.mNormals != nullptr) {
+                const auto &n = dynamic_cast<const aiVector3D &>(assMesh.mNormals[y]);
+                norm = {n.x, n.y, n.z};
+            }
+
+            if (assMesh.mTextureCoords[0] != nullptr) {
+                const auto &t = dynamic_cast<const aiVector3D &>(assMesh.mTextureCoords[0][y]);
+                uv = {t.x, -t.y};
+            }
+
+            ret.vertices.emplace_back(Vertex(pos, norm, uv));
+        }
+
+        return ret;
     }
 
     Mesh MeshLoader::load(const std::string &filepath) {
-        objl::Loader loader;
-        if (loader.LoadFile(filepath)) {
-            Mesh ret;
-            objl::Mesh objMesh = loader.LoadedMeshes[0];
-            ret.indexed = !objMesh.Indices.empty();
-            ret.indices = objMesh.Indices;
-            for (auto &vert : objMesh.Vertices) {
-                Vec2f tex = toMana(vert.TextureCoordinate);
-                tex.y *= -1;
-                ret.vertices.emplace_back(Vertex(toMana(vert.Position), toMana(vert.Normal), tex));
-            }
-            ret.primitive = TRI;
-            return ret;
-        } else {
-            std::string error = "Failed to load obj file ";
-            error.append(filepath);
-            throw std::runtime_error(error);
-        }
+        Assimp::Importer importer;
+        const auto &scene = dynamic_cast<const aiScene &>(
+                *importer.ReadFile(filepath, aiPostProcessSteps::aiProcess_Triangulate));
+
+        if (scene.mNumMeshes == 0)
+            throw std::runtime_error("No mesh found in file " + filepath);
+
+        return convertMesh(dynamic_cast<const aiMesh &>(*scene.mMeshes[0]));
     }
 
     std::vector<Mesh> MeshLoader::loadMultiple(const std::string &filepath) {
-        objl::Loader loader;
-        if (loader.LoadFile(filepath)) {
-            std::vector<Mesh> ret;
-            for (auto &mesh : loader.LoadedMeshes) {
-                Mesh r;
-                r.indexed = !mesh.Indices.empty();
-                r.indices = mesh.Indices;
-                for (auto &vert : mesh.Vertices) {
-                    Vec2f tex = toMana(vert.TextureCoordinate);
-                    tex.y *= -1;
-                    r.vertices.emplace_back(Vertex(toMana(vert.Position), toMana(vert.Normal), tex));
-                }
-                r.primitive = TRI;
-                ret.emplace_back(r);
-            }
-            return ret;
-        } else {
-            std::string error = "Failed to load obj file ";
-            error.append(filepath);
-            throw std::runtime_error(error);
+        Assimp::Importer importer;
+        std::vector<Mesh> ret;
+        const auto &scene = dynamic_cast<const aiScene &>(
+                *importer.ReadFile(filepath, aiPostProcessSteps::aiProcess_Triangulate));
+        ret.resize(scene.mNumMeshes);
+        for (auto i = 0; i < scene.mNumMeshes; i++) {
+            ret.at(i) = (convertMesh(dynamic_cast<const aiMesh &>(*scene.mMeshes[0])));
         }
+        return ret;
     }
 }
