@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <engine/script/monoscript.hpp>
+#include <engine/script/mono/monoscript.hpp>
 
 namespace mana {
     MonoScript::MonoScript() : object(nullptr),

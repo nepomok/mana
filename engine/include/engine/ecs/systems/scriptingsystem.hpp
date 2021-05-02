@@ -22,7 +22,7 @@
 
 #include "engine/ecs/system.hpp"
 
-#include "engine/script/monoscript.hpp"
+#include "engine/script/mono/monoscript.hpp"
 
 namespace mana {
     class ScriptingSystem : public System {

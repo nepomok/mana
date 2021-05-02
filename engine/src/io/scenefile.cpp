@@ -24,7 +24,7 @@
 #include "engine/render/renderer3d.hpp"
 #include "engine/io/assetfile.hpp"
 #include "engine/io/imagefile.hpp"
-#include "engine/script/monoscript.hpp"
+#include "engine/script/mono/monoscript.hpp"
 
 #include "extern/json.hpp"
 
