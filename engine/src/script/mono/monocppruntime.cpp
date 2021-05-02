@@ -21,12 +21,14 @@
 #include <mono/metadata/loader.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
+#include <mono/metadata/mono-config.h>
 
 #include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
     MonoCppRuntime::MonoCppRuntime() {
         domainPointer = mono_jit_init("DefaultDomain");
+        mono_config_parse(nullptr);
     }
 
     MonoCppRuntime::MonoCppRuntime(const std::string &domainName) {

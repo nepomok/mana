@@ -42,7 +42,7 @@ protected:
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
-        manaAssembly->invokeStaticMethod("Mana", "Time", "_internal_setDeltaTime", 42);
+        manaAssembly->setStaticField("Mana", "Time", "deltaTime", deltaTime);
 
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;

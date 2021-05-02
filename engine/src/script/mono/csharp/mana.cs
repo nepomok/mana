@@ -1,10 +1,8 @@
 namespace Mana
 {
-    public class Time
+    public static class Time
     {
         public static float deltaTime;
-
-        public static void _internal_setDeltaTime(float deltaTime){ System.Console.WriteLine("DeltaTime: " + deltaTime); Time.deltaTime = deltaTime; }
     }
 
     public class Script
