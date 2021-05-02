@@ -33,9 +33,25 @@ namespace mana {
 
         const void *getObjectPointer() const { return objectPointer; }
 
+        void invokeMethod(const std::string &name, void **args) const;
+
         void invokeMethod(const std::string &name) const;
 
+        void setField(const std::string &name, MonoCppObject *object) const;
+
+        void setField(const std::string &name, void *value) const;
+
         void setField(const std::string &name, float value) const;
+
+        void setField(const std::string &name, int value) const;
+
+        MonoCppObject *getFieldObject(const std::string &name) const;
+
+        void *getFieldValue(const std::string &name) const;
+
+        float getFieldFloat(const std::string &name) const;
+
+        int getFieldInt(const std::string &name) const;
 
         std::string nameSpace;
         std::string className;

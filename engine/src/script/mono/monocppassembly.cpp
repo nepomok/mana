@@ -33,9 +33,8 @@ namespace mana {
               assemblyPointer(assemblyPointer),
               imagePointer(mono_assembly_get_image((MonoAssembly *) assemblyPointer)) {}
 
-    MonoCppAssembly::~MonoCppAssembly() {
-    }
-
+    MonoCppAssembly::~MonoCppAssembly() = default; //TODO: Unload assembly in destructor
+    
     void MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace,
                                              const std::string &className,
                                              const std::string &functionName) const {
@@ -71,7 +70,7 @@ namespace mana {
     void MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace,
                                              const std::string &className,
                                              const std::string &functionName,
-                                             double arg) const {
+                                             float arg) const {
         auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
         if (c == nullptr)
             throw std::runtime_error("Failed to find class " + className);
