@@ -24,79 +24,53 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
+#include <cstring>
+
 #include "engine/script/mono/monocppobject.hpp"
 
 namespace mana {
-    MonoCppObject::MonoCppObject(void *imagePointer, void *objectPointer) : imagePointer(imagePointer),
-                                                                            objectPointer(objectPointer) {}
+    MonoCppObject::MonoCppObject(void *objectPointer) : objectPointer(objectPointer) {}
 
     MonoCppObject::~MonoCppObject() = default; //TODO: Deallocate object in destructor
 
-    void MonoCppObject::invokeMethod(const std::string &name, void **args) const {
-        auto desc = mono_method_desc_new(name.c_str(), true);
-        auto method = mono_method_desc_search_in_image(desc, (MonoImage *) imagePointer);
-        mono_runtime_invoke(method, objectPointer, args, nullptr);
+    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
+        if (objectPointer == nullptr)
+            throw std::runtime_error("Null object");
+        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
+        auto *method = mono_class_get_method_from_name((MonoClass *) classPointer, name.c_str(), args.args.size());
+        if (method == nullptr)
+            throw std::runtime_error("Failed to find method " + name);
+        void *a[args.args.size()];
+        for (int i = 0; i < args.args.size(); i++) {
+            a[i] = args.args[i];
+        }
+        auto *o = mono_runtime_invoke(method, objectPointer, a, nullptr);
+        return MonoCppObject(o);
     }
 
-    void MonoCppObject::invokeMethod(const std::string &name) const {
-        auto desc = mono_method_desc_new(name.c_str(), true);
-        auto method = mono_method_desc_search_in_image(desc, (MonoImage *) imagePointer);
-        mono_runtime_invoke(method, objectPointer, nullptr, nullptr);
+    void MonoCppObject::setField(const std::string &name, MonoCppValue &value) const {
+        if (objectPointer == nullptr)
+            throw std::runtime_error("Null object");
+        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
+        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        if (f == nullptr)
+            throw std::runtime_error("Field not found " + name);
+        mono_field_set_value((MonoObject *) objectPointer, f, value.ptr);
     }
 
-    void MonoCppObject::setField(const std::string &name, MonoCppObject *object) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        mono_field_set_value((MonoObject *) objectPointer, f, object->objectPointer);
-    }
-
-    void MonoCppObject::setField(const std::string &name, void *value) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        mono_field_set_value((MonoObject *) objectPointer, f, value);
-    }
-
-    void MonoCppObject::setField(const std::string &name, float value) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        mono_field_set_value((MonoObject *) objectPointer, f, &value);
-    }
-
-    void MonoCppObject::setField(const std::string &name, int value) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        mono_field_set_value((MonoObject *) objectPointer, f, &value);
-    }
-
-    MonoCppObject *MonoCppObject::getFieldObject(const std::string &name) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        void *ret = nullptr;
-        mono_field_get_value((MonoObject *) objectPointer, f, ret);
-        return new MonoCppObject(imagePointer, objectPointer);
-    }
-
-    void *MonoCppObject::getFieldValue(const std::string &name) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        void *ret = nullptr;
-        mono_field_get_value((MonoObject *) objectPointer, f, ret);
+    MonoCppValue MonoCppObject::getField(const std::string &name) const {
+        if (objectPointer == nullptr)
+            throw std::runtime_error("Null object");
+        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
+        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        if (f == nullptr)
+            throw std::runtime_error("Field not found " + name);
+        MonoCppValue ret;
+        mono_field_get_value((MonoObject *) objectPointer, f, &ret.ptr);
         return ret;
     }
 
-    float MonoCppObject::getFieldFloat(const std::string &name) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        float ret;
-        mono_field_get_value((MonoObject *) objectPointer, f, &ret);
-        return ret;
-    }
-
-    int MonoCppObject::getFieldInt(const std::string &name) const {
-        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
-        auto *f = mono_class_get_field_from_name(c, name.c_str());
-        int ret;
-        mono_field_get_value((MonoObject *) objectPointer, f, &ret);
-        return ret;
+    bool MonoCppObject::isNull() const {
+        return objectPointer == nullptr;
     }
 }

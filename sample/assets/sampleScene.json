@@ -145,7 +145,7 @@
         },
         {
           "componentType": "script",
-          "assemblyFilePath": "assets/script.dll",
+          "assemblyFilePath": "assets/testscript.dll",
           "scriptNamespace": "",
           "scriptClass": "TestScript"
         }

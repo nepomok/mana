@@ -21,7 +21,48 @@
 
 #include "engine/ecs/components.hpp"
 
+#include <cstring>
+
 namespace mana {
+    MonoCppObject uploadComponent(const Component &c, MonoCppAssembly &manaAssembly) {
+        return manaAssembly.createObject("Mana", "Transform");
+    }
+
+    Component downloadComponent(MonoCppObject &o) {
+
+    }
+
+    void applySceneToMono(MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly, Scene &scene) {
+        auto o = manaAssembly.createObject("Mana", "Scene");
+        for (auto &n : scene.nodes) {
+            auto monoNode = manaAssembly.createObject("Mana", "Node");
+            for (auto &c : n.second.components) {
+                auto monoComponent = uploadComponent(*c.second, manaAssembly);
+                MonoCppArguments args;
+                args.addArgument<void>(monoComponent.objectPointer);
+                monoNode.invokeMethod("AddComponent", args);
+            }
+            MonoCppArguments args;
+            args.addArgumentString(n.first);
+            args.addArgument<void>(monoNode.objectPointer);
+            o.invokeMethod("SetNode", args);
+        }
+        MonoCppValue v;
+        v.setValue<void>(o.objectPointer);
+        manaAssembly.setStaticField("Mana", "Scene", "scene", v);
+    }
+
+    void readSceneFromMono(MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly, Scene &scene) {
+        auto o = manaAssembly.getStaticField("Mana", "Scene", "scene");
+        for (auto &n : scene.nodes) {
+            auto nodeObject = MonoCppObject(o.ptr);
+        }
+    }
+
+    ScriptingSystem::ScriptingSystem(MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly)
+            : msCorLib(&msCorLib),
+              manaAssembly(&manaAssembly) {}
+
     void ScriptingSystem::start() {
 
     }
@@ -31,6 +72,7 @@ namespace mana {
     }
 
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
+        applySceneToMono(*msCorLib, *manaAssembly, scene);
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
@@ -47,5 +89,6 @@ namespace mana {
             }
             comp.script->onUpdate();
         }
+        readSceneFromMono(*msCorLib, *manaAssembly, scene);
     }
 }

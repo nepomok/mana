@@ -24,6 +24,9 @@
 
 #include "engine/script/mono/monocppobject.hpp"
 
+#include "engine/script/mono/monocpparguments.hpp"
+#include "engine/script/mono/monocppvalue.hpp"
+
 namespace mana {
     class MonoCppAssembly {
     public:
@@ -31,42 +34,22 @@ namespace mana {
 
         ~MonoCppAssembly();
 
-        void invokeStaticMethod(const std::string &nameSpace,
-                                const std::string &className,
-                                const std::string &functionName) const;
-
-        void invokeStaticMethod(const std::string &nameSpace,
-                                const std::string &className,
-                                const std::string &functionName,
-                                void **args) const;
-
-        void invokeStaticMethod(const std::string &nameSpace,
-                                const std::string &className,
-                                const std::string &functionName,
-                                int arg) const;
-
-        void invokeStaticMethod(const std::string &nameSpace,
-                                const std::string &className,
-                                const std::string &functionName,
-                                float arg) const;
+        MonoCppObject invokeStaticMethod(const std::string &nameSpace,
+                                         const std::string &className,
+                                         const std::string &functionName,
+                                         MonoCppArguments &args) const;
 
         void setStaticField(const std::string &nameSpace,
                             const std::string &className,
                             const std::string &fieldName,
-                            void *value) const;
+                            MonoCppValue &value) const;
 
-        void setStaticField(const std::string &nameSpace,
-                            const std::string &className,
-                            const std::string &fieldName,
-                            int value) const;
+        MonoCppValue getStaticField(const std::string &nameSpace,
+                                     const std::string &className,
+                                     const std::string &fieldName) const;
 
-        void setStaticField(const std::string &nameSpace,
-                            const std::string &className,
-                            const std::string &fieldName,
-                            float value) const;
-
-        MonoCppObject *createObject(const std::string &nameSpace,
-                                    const std::string &className) const;
+        MonoCppObject createObject(const std::string &nameSpace,
+                                   const std::string &className) const;
 
         void *domainPointer;
         void *imagePointer;

@@ -17,31 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCRIPTINGSYSTEM_H
-#define MANA_SCRIPTINGSYSTEM_H
+#ifndef MANA_MONOCPPTYPE_HPP
+#define MANA_MONOCPPTYPE_HPP
 
-#include "engine/ecs/system.hpp"
-
-#include "engine/script/mono/monoscript.hpp"
-#include "engine/script/mono/monocppassembly.hpp"
+#include <vector>
+#include <string>
 
 namespace mana {
-    class ScriptingSystem : public System {
-    public:
-        ScriptingSystem(MonoCppAssembly&msCorLib, MonoCppAssembly &manaAssembly);
+    struct MonoCppArguments {
+        std::vector<void *> args;
 
-        ~ScriptingSystem() override = default;
+        template<typename T>
+        void addArgument(T *value) {
+            args.emplace_back(value);
+        }
 
-        void start() override;
-
-        void stop() override;
-
-        void update(float deltaTime, Scene &scene) override;
-
-    private:
-        MonoCppAssembly *msCorLib;
-        MonoCppAssembly *manaAssembly;
+        void addArgumentString(const std::string &str);
     };
 }
 
-#endif //MANA_SCRIPTINGSYSTEM_H
+#endif //MANA_MONOCPPTYPE_HPP

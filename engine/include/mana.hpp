@@ -108,4 +108,7 @@
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
 
+#include "engine/script/mono/monocpparguments.hpp"
+#include "engine/script/mono/monocppvalue.hpp"
+
 #endif //MANA_MANA_HPP

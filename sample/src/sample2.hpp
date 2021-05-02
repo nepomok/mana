@@ -30,10 +30,11 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
-        ecs.addSystem(new ScriptingSystem());
-        ren.setMultiSample(true);
         manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
+
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
+        ecs.addSystem(new ScriptingSystem(monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        ren.setMultiSample(true);
     }
 
     void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
@@ -42,7 +43,9 @@ protected:
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
-        manaAssembly->setStaticField("Mana", "Time", "deltaTime", deltaTime);
+        MonoCppValue v;
+        v.setValue<float>(&deltaTime);
+        manaAssembly->setStaticField("Mana", "Time", "deltaTime", v);
 
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
@@ -113,7 +116,7 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        scene = SceneFile("./assets/sampleScene.json").loadScene(alloc, monoRuntime);
+        scene = SceneFile("assets/sampleScene.json").loadScene(alloc, monoRuntime);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 

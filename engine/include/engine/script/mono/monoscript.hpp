@@ -29,8 +29,8 @@ namespace mana {
         MonoScript();
 
         MonoScript(MonoCppAssembly *assembly,
-                   std::string scriptClassNameSpace,
-                   std::string scriptClass);
+                   const std::string& scriptClassNameSpace,
+                   const std::string& scriptClass);
 
         ~MonoScript();
 
@@ -41,10 +41,8 @@ namespace mana {
         void onUpdate() override;
 
     private:
-        std::string scriptClassNameSpace;
-        std::string scriptClassName;
         MonoCppAssembly *assembly;
-        MonoCppObject *object;
+        MonoCppObject object;
     };
 }
 
