@@ -1,10 +1,5 @@
 namespace Mana
 {
-    public static class Time
-    {
-        public static float deltaTime;
-    }
-
     public class Script
     {
         public virtual void OnEnable() {}

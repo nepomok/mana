@@ -1,0 +1,7 @@
+namespace Mana
+{
+    class Component
+    {
+        
+    }
+}

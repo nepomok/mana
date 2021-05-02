@@ -1,0 +1,6 @@
+namespace Mana
+{
+    class Scene
+    {
+    }
+}
