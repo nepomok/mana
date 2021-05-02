@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(DIR_ENGINE_INCLUDE engine/include/)
-set(DIR_ENGINE_SRC engine/src/)
+set(DIR_ENGINE_SRC engine/src/cpp/)
 
 set(DIR_EDITOR_INCLUDE editor/include/)
 set(DIR_EDITOR_SRC editor/src/)
@@ -27,7 +27,7 @@ add_library(mana-engine ${ENGINE_SRC})
 target_include_directories(mana-engine PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC})
 target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal sndfile mono-2.0)
 
-add_executable(mana-editor ${ENGINE_SRC} ${EDITOR_SRC} engine/include/engine/io/scenefile.hpp engine/include/engine/io/assetfile.hpp)
+add_executable(mana-editor ${ENGINE_SRC} ${EDITOR_SRC})
 target_include_directories(mana-editor PUBLIC ${DIR_ENGINE_INCLUDE} ${DIR_ENGINE_SRC} ${DIR_EDITOR_INCLUDE})
 target_link_libraries(mana-editor glfw GL dl ShaderConductor dxcompiler assimp openal sndfile mono-2.0)
 
