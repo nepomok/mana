@@ -17,31 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <stdexcept>
+
 #include <mono/jit/jit.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
-#include "engine/script/mono/monoassembly.hpp"
+#include "engine/script/mono/monocppobject.hpp"
 
 namespace mana {
-    MonoAssembly::MonoAssembly(void *assemblyPointer) : assemblyPointer(assemblyPointer) {}
+    MonoCppObject::MonoCppObject(void *imagePointer, void *objectPointer) : imagePointer(imagePointer),
+                                                                            objectPointer(objectPointer) {}
 
-    MonoAssembly::~MonoAssembly() {
-        mono_assembly_close((::MonoAssembly *) assemblyPointer);
+    MonoCppObject::~MonoCppObject() {
     }
 
-    void MonoAssembly::invokeStaticMethod(const std::string &name) const {
+    void MonoCppObject::invokeMethod(const std::string &name) const {
         auto desc = mono_method_desc_new(name.c_str(), true);
-        auto method = mono_method_desc_search_in_image(desc,
-                                                       mono_assembly_get_image((::MonoAssembly *) assemblyPointer));
-        mono_runtime_invoke(method, nullptr, nullptr, nullptr);
+        auto method = mono_method_desc_search_in_image(desc, (MonoImage *) imagePointer);
+        mono_runtime_invoke(method, objectPointer, nullptr, nullptr);
     }
 
-    void MonoAssembly::invokeMethod(const MonoObject &object, const std::string &name) const {
-        auto desc = mono_method_desc_new(name.c_str(), true);
-        auto method = mono_method_desc_search_in_image(desc,
-                                                       mono_assembly_get_image((::MonoAssembly *) assemblyPointer));
-        mono_runtime_invoke(method, object.objectPointer, nullptr, nullptr);
+    void MonoCppObject::setField(const std::string &name, float value) const {
+        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
+        auto *f = mono_class_get_field_from_name(c, name.c_str());
+        mono_field_set_value((MonoObject*)objectPointer, f, &value);
     }
 }

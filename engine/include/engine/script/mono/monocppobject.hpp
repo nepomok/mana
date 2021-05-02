@@ -17,26 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOASSEMBLY_HPP
-#define MANA_MONOASSEMBLY_HPP
+#ifndef MANA_MONOCPPOBJECT_HPP
+#define MANA_MONOCPPOBJECT_HPP
 
 #include <string>
 
-#include "engine/script/mono/monoobject.hpp"
-
 namespace mana {
-    class MonoAssembly {
+    class MonoCppObject {
     public:
-        explicit MonoAssembly(void *assemblyPointer);
+        explicit MonoCppObject(void *imagePointer, void *objectPointer);
 
-        ~MonoAssembly();
+        ~MonoCppObject();
 
-        void invokeStaticMethod(const std::string &name) const;
+        const void *getAssemblyPointer() const { return imagePointer; }
 
-        void invokeMethod(const MonoObject &object, const std::string &name) const;
+        const void *getObjectPointer() const { return objectPointer; }
 
-        const void *assemblyPointer;
+        void invokeMethod(const std::string &name) const;
+
+        void setField(const std::string &name, float value) const;
+
+        std::string nameSpace;
+        std::string className;
+        void *imagePointer;
+        void *objectPointer;
     };
 }
 
-#endif //MANA_MONOASSEMBLY_HPP
+#endif //MANA_MONOCPPOBJECT_HPP

@@ -1,18 +1,20 @@
 using System;
+using Mana;
 
-class TestScript
+class TestScript  : Script
 {
-    public void OnEnable()
+    public override void OnEnable()
     {
-        System.Console.WriteLine("OnEnable");
+        System.Console.WriteLine("OnEnable " + Time.deltaTime);
     }
 
-    public void OnUpdate()
+    public override void OnUpdate()
     {
+        System.Console.WriteLine("OnUpdate " + Time.deltaTime);
     }
 
-    public void OnDisable()
+    public override void OnDisable()
     {
-        System.Console.WriteLine("OnDisable");
+        System.Console.WriteLine("OnDisable " + Time.deltaTime);
     }
 }

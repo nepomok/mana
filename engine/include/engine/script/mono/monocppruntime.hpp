@@ -17,29 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONORUNTIME_HPP
-#define MANA_MONORUNTIME_HPP
+#ifndef MANA_MONOCPPRUNTIME_HPP
+#define MANA_MONOCPPRUNTIME_HPP
 
-#include "engine/script/mono/monoassembly.hpp"
+#include "engine/script/mono/monocppassembly.hpp"
 
 namespace mana {
-    class MonoRuntime {
+    class MonoCppRuntime {
     public:
-        MonoRuntime();
+        MonoCppRuntime();
 
-        explicit MonoRuntime(const std::string &domainName);
+        explicit MonoCppRuntime(const std::string &domainName);
 
-        ~MonoRuntime();
+        ~MonoCppRuntime();
 
-        MonoAssembly *loadAssembly(const std::string &filePath);
-
-        MonoObject *createObject(const MonoAssembly &assembly,
-                                 const std::string &nameSpace,
-                                 const std::string &className);
+        MonoCppAssembly *loadAssembly(const std::string &filePath);
 
     private:
         void *domainPointer;
     };
 }
 
-#endif //MANA_MONORUNTIME_HPP
+#endif //MANA_MONOCPPRUNTIME_HPP

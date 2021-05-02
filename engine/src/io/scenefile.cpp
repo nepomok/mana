@@ -162,16 +162,15 @@ namespace mana {
         return ret;
     }
 
-    ScriptComponent getScript(const nlohmann::json &component, MonoRuntime &monoRuntime) {
+    ScriptComponent getScript(const nlohmann::json &component, MonoCppRuntime &monoRuntime) {
         ScriptComponent ret;
-        ret.script = new MonoScript(monoRuntime,
-                                    component["assemblyFilePath"],
+        ret.script = new MonoScript(monoRuntime.loadAssembly(component["assemblyFilePath"]),
                                     component["scriptNamespace"],
                                     component["scriptClass"]);
         return ret;
     }
 
-    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator, MonoRuntime &monoRuntime) {
+    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator, MonoCppRuntime &monoRuntime) {
         nlohmann::json j = nlohmann::json::parse(jsonStr);
         Scene ret;
         for (auto &node : j["nodes"]) {
@@ -219,7 +218,7 @@ namespace mana {
         fileText.clear();
     }
 
-    Scene SceneFile::loadScene(RenderAllocator &alloc, MonoRuntime &monoRuntime) {
+    Scene SceneFile::loadScene(RenderAllocator &alloc, MonoCppRuntime &monoRuntime) {
         return parseJsonScene(fileText, alloc, monoRuntime);
     }
 }

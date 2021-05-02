@@ -23,7 +23,7 @@
 #include "engine/ecs/scene.hpp"
 #include "engine/render/renderallocator.hpp"
 #include "engine/io/file.hpp"
-#include "engine/script/mono/monoruntime.hpp"
+#include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
     class SceneFile : public File {
@@ -36,7 +36,7 @@ namespace mana {
 
         void close() override;
 
-        Scene loadScene(RenderAllocator &alloc, MonoRuntime &monoRuntime);
+        Scene loadScene(RenderAllocator &alloc, MonoCppRuntime &monoRuntime);
 
     private:
         std::string fileText;

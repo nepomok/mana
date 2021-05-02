@@ -17,22 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOOBJECT_HPP
-#define MANA_MONOOBJECT_HPP
+#include <mono/jit/jit.h>
+#include <mono/metadata/loader.h>
+#include <mono/metadata/assembly.h>
+#include <mono/metadata/debug-helpers.h>
 
-#include <string>
+#include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
-    class MonoObject {
-    public:
-        explicit MonoObject(void *objectPointer);
+    MonoCppRuntime::MonoCppRuntime() {
+        domainPointer = mono_jit_init("DefaultDomain");
+    }
 
-        ~MonoObject();
+    MonoCppRuntime::MonoCppRuntime(const std::string &domainName) {
+        domainPointer = mono_jit_init(domainName.c_str());
+    }
 
-        const void *getObjectPointer() const { return objectPointer; }
+    MonoCppRuntime::~MonoCppRuntime() {
+        mono_jit_cleanup((MonoDomain *) domainPointer);
+    }
 
-        void *objectPointer;
-    };
+    MonoCppAssembly *MonoCppRuntime::loadAssembly(const std::string &filePath) {
+        return new mana::MonoCppAssembly(domainPointer, mono_domain_assembly_open((MonoDomain *) domainPointer, filePath.c_str()));
+    }
 }
-
-#endif //MANA_MONOOBJECT_HPP

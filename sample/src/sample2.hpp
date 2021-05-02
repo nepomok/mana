@@ -33,9 +33,17 @@ protected:
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
         ecs.addSystem(new ScriptingSystem());
         ren.setMultiSample(true);
+        manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
+    }
+
+    void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
+        delete manaAssembly;
+        Game::stop(window, renderApi, alloc, input);
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
+        manaAssembly->invokeStaticMethod("Mana", "Time", "_internal_setDeltaTime", 42);
+
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
         mouseLastFrame = mouse;
@@ -130,7 +138,9 @@ private:
 
     Node *cameraNode;
 
-    MonoRuntime monoRuntime;
+    MonoCppRuntime monoRuntime;
+
+    MonoCppAssembly *manaAssembly;
 };
 
 #endif //MANA_SAMPLE2_HPP

@@ -21,15 +21,14 @@
 #define MANA_MONOSCRIPT_HPP
 
 #include "engine/script/script.hpp"
-#include "engine/script/mono/monoruntime.hpp"
+#include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
     class MonoScript : public Script {
     public:
         MonoScript();
 
-        MonoScript(MonoRuntime &runtime,
-                   const std::string &assemblyFilePath,
+        MonoScript(MonoCppAssembly *assembly,
                    std::string scriptClassNameSpace,
                    std::string scriptClass);
 
@@ -44,9 +43,8 @@ namespace mana {
     private:
         std::string scriptClassNameSpace;
         std::string scriptClassName;
-        MonoAssembly *assembly;
-        MonoObject *object;
-        MonoRuntime *runtime;
+        MonoCppAssembly *assembly;
+        MonoCppObject *object;
     };
 }
 
