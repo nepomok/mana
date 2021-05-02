@@ -38,12 +38,22 @@ namespace mana {
         void invokeStaticMethod(const std::string &nameSpace,
                                 const std::string &className,
                                 const std::string &functionName,
+                                void **args) const;
+
+        void invokeStaticMethod(const std::string &nameSpace,
+                                const std::string &className,
+                                const std::string &functionName,
                                 int arg) const;
 
         void invokeStaticMethod(const std::string &nameSpace,
                                 const std::string &className,
                                 const std::string &functionName,
                                 float arg) const;
+
+        void setStaticField(const std::string &nameSpace,
+                            const std::string &className,
+                            const std::string &fieldName,
+                            void *value) const;
 
         void setStaticField(const std::string &nameSpace,
                             const std::string &className,

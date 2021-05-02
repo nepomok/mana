@@ -46,6 +46,17 @@ namespace mana {
         mono_runtime_invoke(m, nullptr, nullptr, nullptr);
     }
 
+    void MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace, const std::string &className,
+                                             const std::string &functionName, void **args) const {
+        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
+        if (c == nullptr)
+            throw std::runtime_error("Failed to find class " + className);
+        auto *m = mono_class_get_method_from_name(c, functionName.c_str(), 1);
+        if (m == nullptr)
+            throw std::runtime_error("Failed to find method " + functionName);
+        mono_runtime_invoke(m, nullptr, args, nullptr);
+    }
+
     void MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace,
                                              const std::string &className,
                                              const std::string &functionName,
@@ -84,6 +95,17 @@ namespace mana {
         void *args[1];
         args[0] = &arg;
         mono_runtime_invoke(m, nullptr, args, nullptr);
+    }
+
+    void MonoCppAssembly::setStaticField(const std::string &nameSpace, const std::string &className,
+                                         const std::string &fieldName, void *value) const {
+        auto *c = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
+        if (c == nullptr)
+            throw std::runtime_error("Failed to find class " + className);
+        auto *f = mono_class_get_field_from_name(c, fieldName.c_str());
+        if (f == nullptr)
+            throw std::runtime_error("Failed to find field " + fieldName);
+        mono_field_static_set_value(mono_class_vtable((MonoDomain *) domainPointer, c), f, value);
     }
 
     void MonoCppAssembly::setStaticField(const std::string &nameSpace,
