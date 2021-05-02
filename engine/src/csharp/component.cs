@@ -1,7 +1,0 @@
-namespace Mana
-{
-    class Component
-    {
-        
-    }
-}

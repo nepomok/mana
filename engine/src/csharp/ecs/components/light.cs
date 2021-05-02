@@ -1,6 +1,7 @@
 namespace Mana
 {
-    class Scene
+    class Light : Component
     {
+
     }
 }

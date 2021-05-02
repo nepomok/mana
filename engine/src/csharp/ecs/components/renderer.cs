@@ -1,6 +1,6 @@
 namespace Mana
 {
-    class Vector2
+    class Renderer : Component
     {
         
     }

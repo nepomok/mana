@@ -1,6 +1,6 @@
 namespace Mana
 {
-    class Vector3
+    class Camera : Component
     {
         
     }
