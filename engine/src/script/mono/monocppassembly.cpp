@@ -28,13 +28,12 @@
 #include "engine/script/mono/monocppassembly.hpp"
 
 namespace mana {
-    MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer)
+    MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *imagePointer)
             : domainPointer(domainPointer),
-              assemblyPointer(assemblyPointer),
-              imagePointer(mono_assembly_get_image((MonoAssembly *) assemblyPointer)) {}
+              imagePointer(imagePointer) {}
 
     MonoCppAssembly::~MonoCppAssembly() = default; //TODO: Unload assembly in destructor
-    
+
     void MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace,
                                              const std::string &className,
                                              const std::string &functionName) const {
@@ -122,10 +121,9 @@ namespace mana {
     }
 
     MonoCppObject *MonoCppAssembly::createObject(const std::string &nameSpace, const std::string &className) const {
-        MonoImage *image = mono_assembly_get_image((::MonoAssembly *) assemblyPointer);
-        MonoClass *monoClass = mono_class_from_name(image, nameSpace.c_str(), className.c_str());
+        MonoClass *monoClass = mono_class_from_name((MonoImage *) imagePointer, nameSpace.c_str(), className.c_str());
         MonoObject *classObject = mono_object_new((MonoDomain *) domainPointer, monoClass);
         mono_runtime_object_init(classObject);
-        return new MonoCppObject(image, classObject);
+        return new MonoCppObject((MonoImage *) imagePointer, classObject);
     }
 }

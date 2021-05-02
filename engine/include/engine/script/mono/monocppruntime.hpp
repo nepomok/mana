@@ -31,9 +31,12 @@ namespace mana {
 
         ~MonoCppRuntime();
 
+        MonoCppAssembly &getMsCorLibAssembly();
+
         MonoCppAssembly *loadAssembly(const std::string &filePath);
 
     private:
+        MonoCppAssembly msCorLib;
         void *domainPointer;
     };
 }
