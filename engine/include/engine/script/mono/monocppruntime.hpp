@@ -22,6 +22,7 @@
 
 #include "engine/script/mono/monocppassembly.hpp"
 
+//TODO: Refactor mono abstraction.
 namespace mana {
     class MonoCppRuntime {
     public:
@@ -35,7 +36,7 @@ namespace mana {
 
         MonoCppAssembly *loadAssembly(const std::string &filePath);
 
-        MonoCppObject getMonoStringObject(const std::string &str);
+        MonoCppObject* getMonoStringObject(const std::string &str);
 
         std::string getStringFromMonoString(const MonoCppObject& strObject);
 

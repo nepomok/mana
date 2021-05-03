@@ -28,22 +28,23 @@ namespace mana {
                            const std::string &scriptClass)
             : object(nullptr),
               assembly(assembly) {
-        object = assembly->createObject(scriptClassNameSpace, scriptClass);
+        object = assembly->createObject(scriptClassNameSpace, scriptClass, true);
     }
 
     MonoScript::~MonoScript() {
+        delete object;
         delete assembly;
     }
 
     void MonoScript::onEnable() {
-        object.invokeMethod("OnEnable");
+        object->invokeMethod("OnEnable");
     }
 
     void MonoScript::onDisable() {
-        object.invokeMethod("OnDisable");
+        object->invokeMethod("OnDisable");
     }
 
     void MonoScript::onUpdate() {
-        object.invokeMethod("OnUpdate");
+        object->invokeMethod("OnUpdate");
     }
 }

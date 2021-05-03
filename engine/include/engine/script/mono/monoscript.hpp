@@ -42,7 +42,7 @@ namespace mana {
 
     private:
         MonoCppAssembly *assembly;
-        MonoCppObject object;
+        MonoCppObject *object;
     };
 }
 

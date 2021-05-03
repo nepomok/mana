@@ -23,91 +23,107 @@
 
 #include <cstring>
 
+//TODO: Refactor script scene interface, fix mono crash
 namespace mana {
-    MonoCppObject uploadVector(MonoCppAssembly &manaAssembly, Vec3f vec) {
-        auto ret = manaAssembly.createObject("Mana", "Vector3");
+    MonoCppObject *uploadVector(MonoCppAssembly &manaAssembly, Vec3f vec) {
+        auto *ret = manaAssembly.createObject("Mana", "Vector3");
         MonoCppValue v;
         v.ptr = &vec.x;
-        ret.setField("x", v);
+        ret->setField("x", v);
         v.ptr = &vec.y;
-        ret.setField("y", v);
+        ret->setField("y", v);
         v.ptr = &vec.z;
-        ret.setField("z", v);
+        ret->setField("z", v);
         return ret;
     }
 
-    MonoCppObject uploadTransform(Component &c, MonoCppAssembly &manaAssembly) {
+    MonoCppObject *uploadTransform(Component &c, MonoCppAssembly &manaAssembly) {
         auto &t = dynamic_cast<TransformComponent &>(c);
-        MonoCppObject ret = manaAssembly.createObject("Mana", "Transform");
+        auto *ret = manaAssembly.createObject("Mana", "Transform");
         MonoCppValue v;
-        v.ptr = uploadVector(manaAssembly, t.transform.position).objectPointer;
-        ret.setField("position", v);
-        v.ptr = uploadVector(manaAssembly, t.transform.rotation).objectPointer;
-        ret.setField("rotation", v);
-        v.ptr = uploadVector(manaAssembly, t.transform.scale).objectPointer;
-        ret.setField("scale", v);
+        auto *o = uploadVector(manaAssembly, t.transform.position);
+        v.ptr = o->objectPointer;
+        ret->setField("position", v);
+        delete o;
+        o = uploadVector(manaAssembly, t.transform.rotation);
+        v.ptr = o->objectPointer;
+        ret->setField("rotation", v);
+        delete o;
+        o = uploadVector(manaAssembly, t.transform.scale);
+        v.ptr = o->objectPointer;
+        ret->setField("scale", v);
         return ret;
     }
 
-    MonoCppObject uploadCamera(Component &c, MonoCppAssembly &manaAssembly) {
+    MonoCppObject *uploadCamera(Component &c, MonoCppAssembly &manaAssembly) {
         auto &cam = dynamic_cast<CameraComponent &>(c);
-        MonoCppObject ret = manaAssembly.createObject("Mana", "Camera");
+        auto *ret = manaAssembly.createObject("Mana", "Camera");
         MonoCppValue v;
         v.setValue<int>((int *) &cam.cameraType);
-        ret.setField("cameraType", v);
+        ret->setField("cameraType", v);
         v.setValue<float>(&cam.nearClip);
-        ret.setField("nearClip", v);
+        ret->setField("nearClip", v);
         v.setValue<float>(&cam.farClip);
-        ret.setField("farClip", v);
+        ret->setField("farClip", v);
         v.setValue<float>(&cam.left);
-        ret.setField("left", v);;
+        ret->setField("left", v);;
         v.setValue<float>(&cam.top);
-        ret.setField("top", v);
+        ret->setField("top", v);
         v.setValue<float>(&cam.right);
-        ret.setField("right", v);
+        ret->setField("right", v);
         v.setValue<float>(&cam.bottom);
-        ret.setField("bottom", v);
+        ret->setField("bottom", v);
         v.setValue<float>(&cam.fov);
-        ret.setField("fov", v);
+        ret->setField("fov", v);
         v.setValue<float>(&cam.aspectRatio);
-        ret.setField("aspectRatio", v);
+        ret->setField("aspectRatio", v);
         return ret;
     }
 
-    MonoCppObject uploadLight(Component &c, MonoCppAssembly &manaAssembly) {
+    MonoCppObject *uploadLight(Component &c, MonoCppAssembly &manaAssembly) {
         auto &l = dynamic_cast<LightComponent &>(c);
-        MonoCppObject ret = manaAssembly.createObject("Mana", "Light");
+        auto *ret = manaAssembly.createObject("Mana", "Light");
         MonoCppValue v;
         v.setValue<int>((int *) &l.lightType);
-        ret.setField("lightType", v);
+        ret->setField("lightType", v);
 
-        v.setValue<void>(uploadVector(manaAssembly, l.ambient).objectPointer);
-        ret.setField("ambient", v);
-        v.setValue<void>(uploadVector(manaAssembly, l.diffuse).objectPointer);
-        ret.setField("diffuse", v);
-        v.setValue<void>(uploadVector(manaAssembly, l.specular).objectPointer);
-        ret.setField("specular", v);
+        auto *o = uploadVector(manaAssembly, l.ambient);
+        v.setValue<void>(o->objectPointer);
+        ret->setField("ambient", v);
+        delete o;
 
-        v.setValue<void>(uploadVector(manaAssembly, l.direction).objectPointer);
-        ret.setField("direction", v);
+        o = uploadVector(manaAssembly, l.diffuse);
+        v.setValue<void>(o->objectPointer);
+        ret->setField("diffuse", v);
+        delete o;
+
+        o = uploadVector(manaAssembly, l.specular);
+        v.setValue<void>(o->objectPointer);
+        ret->setField("specular", v);
+        delete o;
+
+        o = uploadVector(manaAssembly, l.direction);
+        v.setValue<void>(o->objectPointer);
+        ret->setField("direction", v);
+        delete o;
 
         v.setValue<float>(&l.cutOff);
-        ret.setField("cutOff", v);
+        ret->setField("cutOff", v);
 
         v.setValue<float>(&l.outerCutOff);
-        ret.setField("outerCutOff", v);
+        ret->setField("outerCutOff", v);
 
         v.setValue<float>(&l.constant);
-        ret.setField("constant", v);
+        ret->setField("constant", v);
         v.setValue<float>(&l.linear);
-        ret.setField("linear", v);
+        ret->setField("linear", v);
         v.setValue<float>(&l.quadratic);
-        ret.setField("quadratic", v);
+        ret->setField("quadratic", v);
 
         return ret;
     }
 
-    MonoCppObject uploadComponent(Component &c, MonoCppAssembly &manaAssembly) {
+    MonoCppObject *uploadComponent(Component &c, MonoCppAssembly &manaAssembly) {
         switch (c.componentType) {
             case Component::TRANSFORM:
                 return uploadTransform(c, manaAssembly);
@@ -129,12 +145,15 @@ namespace mana {
     }
 
     void downloadTransform(MonoCppObject &o, TransformComponent &c) {
-        auto mo = o.getField("position");
-        downloadVector(mo, c.transform.position);
-        mo = o.getField("rotation");
-        downloadVector(mo, c.transform.rotation);
-        mo = o.getField("scale");
-        downloadVector(mo, c.transform.scale);
+        auto *mo = o.getField("position");
+        downloadVector(*mo, c.transform.position);
+        delete mo;
+        auto *ro = o.getField("rotation");
+        downloadVector(*ro, c.transform.rotation);
+        delete ro;
+        auto *so = o.getField("scale");
+        downloadVector(*so, c.transform.scale);
+        delete so;
     }
 
     void downloadCamera(MonoCppObject &o, CameraComponent &c) {
@@ -154,17 +173,21 @@ namespace mana {
     void downloadLight(MonoCppObject &o, LightComponent &c) {
         c.lightType = o.getFieldValue("lightType", sizeof(int)).getValue<LightType>();
 
-        auto vo = o.getField("ambient");
-        downloadVector(vo, c.ambient);
+        auto *ao = o.getField("ambient");
+        downloadVector(*ao, c.ambient);
+        delete ao;
 
-        vo = o.getField("diffuse");
-        downloadVector(vo, c.diffuse);
+        auto *diffo = o.getField("diffuse");
+        downloadVector(*diffo, c.diffuse);
+        delete diffo;
 
-        vo = o.getField("specular");
-        downloadVector(vo, c.specular);
+        auto *so = o.getField("specular");
+        downloadVector(*so, c.specular);
+        delete so;
 
-        vo = o.getField("direction");
-        downloadVector(vo, c.direction);
+        auto *diro = o.getField("direction");
+        downloadVector(*diro, c.direction);
+        delete diro;
 
         c.cutOff = o.getFieldValue("cutOff", sizeof(float)).getValue<float>();
         c.outerCutOff = o.getFieldValue("outerCutOff", sizeof(float)).getValue<float>();
@@ -194,42 +217,51 @@ namespace mana {
                           MonoCppAssembly &msCorLib,
                           MonoCppAssembly &manaAssembly,
                           Scene &scene) {
-        auto o = manaAssembly.createObject("Mana", "Scene");
+        auto *o = manaAssembly.createObject("Mana", "Scene");
         for (auto &n : scene.nodes) {
-            auto monoNode = manaAssembly.createObject("Mana", "Node");
+            auto *monoNode = manaAssembly.createObject("Mana", "Node");
             for (auto &c : n.second.components) {
-                auto monoComponent = uploadComponent(*c.second, manaAssembly);
+                auto *monoComponent = uploadComponent(*c.second, manaAssembly);
                 MonoCppValue v;
-                v.setValue<void>(monoNode.objectPointer);
-                monoComponent.setField("node", v);
+                v.setValue<void>(monoNode->objectPointer);
+                monoComponent->setField("node", v);
                 MonoCppArguments args;
-                args.addArgument<void>(monoComponent.objectPointer);
-                monoNode.invokeMethod("AddComponent", args);
+                args.addArgument<void>(monoComponent->objectPointer);
+                monoNode->invokeMethod("AddComponent", args);
+                delete monoComponent;
             }
+            auto *strO = runtime.getMonoStringObject(n.first);
             MonoCppArguments args;
-            args.addArgument<void>(runtime.getMonoStringObject(n.first).objectPointer);
-            args.addArgument<void>(monoNode.objectPointer);
-            o.invokeMethod("AddNode", args);
+            args.addArgument<void>(strO->objectPointer);
+            args.addArgument<void>(monoNode->objectPointer);
+            o->invokeMethod("AddNode", args);
+            delete strO;
+            delete monoNode;
         }
         MonoCppValue v;
-        v.setValue<void>(o.objectPointer);
+        v.setValue<void>(o->objectPointer);
         manaAssembly.setStaticField("Mana", "Scene", "scene", v);
+        delete o;
     }
 
     void readSceneFromMono(MonoCppRuntime &runtime,
                            MonoCppAssembly &msCorLib,
                            MonoCppAssembly &manaAssembly,
                            Scene &scene) {
-        auto op = manaAssembly.getStaticField("Mana", "Scene", "scene");
-        auto o = MonoCppObject(op.ptr);
+        auto *o = manaAssembly.getStaticField("Mana", "Scene", "scene");
         for (auto &n : scene.nodes) {
+            auto * monoStr = runtime.getMonoStringObject(n.first);
             MonoCppArguments arg;
-            arg.addArgument<void>(runtime.getMonoStringObject(n.first).objectPointer);
-            auto nodeObject = o.invokeMethod("GetNode", arg);
+            arg.addArgument<void>(monoStr->objectPointer);
+            auto *nodeObject = o->invokeMethod("GetNode", arg);
             //Only read back transforms for now.
-            auto transform = nodeObject.invokeMethod("GetTransform");
-            downloadComponent(transform, n.second.getComponent<TransformComponent>());
+            auto *transform = nodeObject->invokeMethod("GetTransform");
+            downloadComponent(*transform, n.second.getComponent<TransformComponent>());
+            delete monoStr;
+            delete transform;
+            delete nodeObject;
         }
+        delete o;
     }
 
     ScriptingSystem::ScriptingSystem(MonoCppRuntime &runtime, MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly)

@@ -34,7 +34,7 @@ namespace mana {
 
         ~MonoCppAssembly();
 
-        MonoCppObject invokeStaticMethod(const std::string &nameSpace,
+        MonoCppObject* invokeStaticMethod(const std::string &nameSpace,
                                          const std::string &className,
                                          const std::string &functionName,
                                          MonoCppArguments &args) const;
@@ -44,12 +44,13 @@ namespace mana {
                             const std::string &fieldName,
                             MonoCppValue &value) const;
 
-        MonoCppValue getStaticField(const std::string &nameSpace,
-                                     const std::string &className,
-                                     const std::string &fieldName) const;
+        MonoCppObject * getStaticField(const std::string &nameSpace,
+                                       const std::string &className,
+                                       const std::string &fieldName) const;
 
-        MonoCppObject createObject(const std::string &nameSpace,
-                                   const std::string &className) const;
+        MonoCppObject* createObject(const std::string &nameSpace,
+                                   const std::string &className,
+                                   bool keepRef = false) const;
 
         void *domainPointer;
         void *assemblyPointer;

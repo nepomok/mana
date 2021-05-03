@@ -29,16 +29,18 @@ namespace mana {
     class MonoCppObject {
     public:
         void *objectPointer;
+        uint32_t gcHandle;
+        const bool keepRef;
 
-        explicit MonoCppObject(void *objectPointer);
+        explicit MonoCppObject(void *objectPointer, bool keepRef = false);
 
         ~MonoCppObject();
 
-        MonoCppObject invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
+        MonoCppObject* invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
 
         void setField(const std::string &name, MonoCppValue &value) const;
 
-        MonoCppObject getField(const std::string &name) const;
+        MonoCppObject* getField(const std::string &name) const;
 
         MonoCppValue getFieldValue(const std::string &name, size_t valueSize) const;
 

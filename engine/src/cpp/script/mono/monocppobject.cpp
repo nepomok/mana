@@ -29,11 +29,21 @@
 #include "engine/script/mono/monocppobject.hpp"
 
 namespace mana {
-    MonoCppObject::MonoCppObject(void *objectPointer) : objectPointer(objectPointer) {}
+    MonoCppObject::MonoCppObject(void *objectPointer, bool keepRef) : objectPointer(objectPointer),
+                                                                      gcHandle(0),
+                                                                      keepRef(keepRef) {
+        if (keepRef) {
+            gcHandle = mono_gchandle_new((MonoObject *) objectPointer, true);
+        }
+    }
 
-    MonoCppObject::~MonoCppObject() = default; //TODO: Deallocate object in destructor
+    MonoCppObject::~MonoCppObject() {
+        if (keepRef) {
+            mono_gchandle_free(gcHandle);
+        }
+    }
 
-    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
+    MonoCppObject *MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
         auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
@@ -45,7 +55,7 @@ namespace mana {
             a[i] = args.args[i];
         }
         auto *o = mono_runtime_invoke(method, objectPointer, a, nullptr);
-        return MonoCppObject(o);
+        return new MonoCppObject(o);
     }
 
     void MonoCppObject::setField(const std::string &name, MonoCppValue &value) const {
@@ -58,15 +68,15 @@ namespace mana {
         mono_field_set_value((MonoObject *) objectPointer, f, value.ptr);
     }
 
-    MonoCppObject MonoCppObject::getField(const std::string &name) const {
+    MonoCppObject *MonoCppObject::getField(const std::string &name) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
         auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
         auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
         if (f == nullptr)
             throw std::runtime_error("Field not found " + name);
-        MonoCppObject ret(nullptr);
-        mono_field_get_value((MonoObject *) objectPointer, f, &ret.objectPointer);
+        auto* ret = new MonoCppObject(nullptr);
+        mono_field_get_value((MonoObject *) objectPointer, f, &ret->objectPointer);
         return ret;
     }
 
