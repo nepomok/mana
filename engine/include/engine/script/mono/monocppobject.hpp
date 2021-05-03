@@ -35,7 +35,7 @@ namespace mana {
     public:
         MonoCppObject();
 
-        MonoCppObject(void *objectPointer, bool pinned = false);
+        explicit MonoCppObject(void *objectPointer, bool pinned = false);
 
         MonoCppObject(MonoCppObject &&other) noexcept;
 
