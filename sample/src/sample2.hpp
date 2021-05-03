@@ -30,8 +30,6 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
-        manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
-
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
         ecs.addSystem(new ScriptingSystem(monoRuntime.getMsCorLibAssembly(), *manaAssembly));
         ren.setMultiSample(true);
@@ -116,6 +114,8 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
+        //IMPORTANT: All assemblies referenced in other assemblies have to be loaded first.
+        manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
         scene = SceneFile("assets/sampleScene.json").loadScene(alloc, monoRuntime);
         cameraNode = &scene.nodes.at("mainCamera");
     }

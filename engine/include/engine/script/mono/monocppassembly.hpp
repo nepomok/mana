@@ -30,7 +30,7 @@
 namespace mana {
     class MonoCppAssembly {
     public:
-        explicit MonoCppAssembly(void *domainPointer, void *imagePointer);
+        explicit MonoCppAssembly(void *domainPointer, void *assemblyPointer);
 
         ~MonoCppAssembly();
 
@@ -52,7 +52,7 @@ namespace mana {
                                    const std::string &className) const;
 
         void *domainPointer;
-        void *imagePointer;
+        void *assemblyPointer;
     };
 }
 

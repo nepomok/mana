@@ -29,13 +29,13 @@ namespace mana {
     MonoCppRuntime::MonoCppRuntime() : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
         mono_config_parse(nullptr);
-        msCorLib = MonoCppAssembly(domainPointer, mono_get_corlib());
+        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
     MonoCppRuntime::MonoCppRuntime(const std::string &domainName) : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init(domainName.c_str());
         mono_config_parse(nullptr);
-        msCorLib = MonoCppAssembly(domainPointer, mono_get_corlib());
+        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
     MonoCppRuntime::~MonoCppRuntime() {
@@ -47,7 +47,7 @@ namespace mana {
     }
 
     MonoCppAssembly *MonoCppRuntime::loadAssembly(const std::string &filePath) {
-        return new mana::MonoCppAssembly(domainPointer, mono_assembly_get_image(mono_domain_assembly_open(
-                (MonoDomain *) domainPointer, filePath.c_str())));
+        return new mana::MonoCppAssembly(domainPointer,
+                                         mono_domain_assembly_open((MonoDomain *) domainPointer, filePath.c_str()));
     }
 }

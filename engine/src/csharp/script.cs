@@ -2,7 +2,7 @@ namespace Mana
 {
     public class Script
     {
-        protected readonly Node node;
+        public readonly Node node;
 
         public virtual void OnEnable() {}
 

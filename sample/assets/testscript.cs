@@ -10,7 +10,7 @@ class TestScript  : Script
 
     public override void OnUpdate()
     {
-        System.Console.WriteLine("OnUpdate " + Time.deltaTime);
+        System.Console.WriteLine("OnUpdate " + Time.deltaTime + " NODE COUNT: " + Scene.scene.nodes.Count);
     }
 
     public override void OnDisable()
