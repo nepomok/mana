@@ -33,10 +33,12 @@ public:
     virtual int loop(GraphicsApi api) {
         DisplayManager dm(mana::GLFW);
 
-        Window *wnd = dm.createWindow(api);
+        Window *wnd = dm.createWindow(api,"Game", {640, 480}, {});
 
         auto &alloc = wnd->getRenderAllocator();
         auto &ren = wnd->getRenderer();
+
+        ren.setMultiSample(true);
 
         ren2d = Renderer2D(ren, alloc);
         ren3d = Renderer3D(ren, alloc);

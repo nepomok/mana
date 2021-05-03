@@ -46,7 +46,7 @@ namespace mana {
         int bitsDepth = 24;
         int bitsStencil = 8;
 
-        int msaaSamples = 0;
+        int msaaSamples = 4;
 
         bool sRGBCapable = false;
 
