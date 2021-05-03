@@ -32,7 +32,9 @@ namespace mana {
             args.emplace_back(value);
         }
 
-        void addArgumentString(const std::string &str);
+        void clear() {
+            args.clear();
+        }
     };
 }
 

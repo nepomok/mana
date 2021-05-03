@@ -35,6 +35,10 @@ namespace mana {
 
         MonoCppAssembly *loadAssembly(const std::string &filePath);
 
+        MonoCppObject getMonoStringObject(const std::string &str);
+
+        std::string getStringFromMonoString(const MonoCppObject& strObject);
+
     private:
         MonoCppAssembly msCorLib;
         void *domainPointer;

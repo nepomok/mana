@@ -50,4 +50,12 @@ namespace mana {
         return new mana::MonoCppAssembly(domainPointer,
                                          mono_domain_assembly_open((MonoDomain *) domainPointer, filePath.c_str()));
     }
+
+    MonoCppObject MonoCppRuntime::getMonoStringObject(const std::string &str) {
+        return MonoCppObject(mono_string_new((MonoDomain *) domainPointer, str.c_str()));
+    }
+
+    std::string MonoCppRuntime::getStringFromMonoString(const MonoCppObject& strObject) {
+        return mono_string_to_utf8((MonoString*)strObject.objectPointer);
+    }
 }

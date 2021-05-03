@@ -5,13 +5,7 @@ namespace Mana
 {
     public class Node
     {
-        public string name;
-        public readonly List<Component> components = new List<Component>();
-
-        public void AddComponent(Component component)
-        {
-            components.Add(component);
-        }
+        private readonly List<Component> components = new List<Component>();
 
         public Component GetComponent(int index)
         {
@@ -21,6 +15,21 @@ namespace Mana
         public int GetComponentCount()
         {
             return components.Count;
+        }
+
+        public Transform GetTransform()
+        {
+            foreach (var component in components)
+            {
+                if (component is Transform)
+                    return component as Transform;
+            }
+            return null;
+        }
+
+        private void AddComponent(Component component)
+        {
+            components.Add(component);
         }
     }
 }

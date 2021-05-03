@@ -30,7 +30,7 @@ namespace mana {
         const T &getValue() {
             if (ptr == nullptr)
                 throw std::runtime_error("null return value");
-            return dynamic_cast<const T &>(ptr);
+            return static_cast<const T &>(*static_cast<T*>(ptr));
         }
 
         template<typename T>

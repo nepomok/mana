@@ -31,7 +31,7 @@ protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
-        ecs.addSystem(new ScriptingSystem(monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        ecs.addSystem(new ScriptingSystem(monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
         ren.setMultiSample(true);
     }
 

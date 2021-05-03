@@ -58,7 +58,19 @@ namespace mana {
         mono_field_set_value((MonoObject *) objectPointer, f, value.ptr);
     }
 
-    MonoCppValue MonoCppObject::getField(const std::string &name) const {
+    MonoCppObject MonoCppObject::getField(const std::string &name) const {
+        if (objectPointer == nullptr)
+            throw std::runtime_error("Null object");
+        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
+        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        if (f == nullptr)
+            throw std::runtime_error("Field not found " + name);
+        MonoCppObject ret(nullptr);
+        mono_field_get_value((MonoObject *) objectPointer, f, &ret.objectPointer);
+        return ret;
+    }
+
+    MonoCppValue MonoCppObject::getFieldValue(const std::string &name, size_t valueSize) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
         auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
@@ -66,7 +78,8 @@ namespace mana {
         if (f == nullptr)
             throw std::runtime_error("Field not found " + name);
         MonoCppValue ret;
-        mono_field_get_value((MonoObject *) objectPointer, f, &ret.ptr);
+        ret.ptr = new void *[valueSize];
+        mono_field_get_value((MonoObject *) objectPointer, f, ret.ptr);
         return ret;
     }
 

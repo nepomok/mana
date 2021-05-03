@@ -28,7 +28,7 @@
 namespace mana {
     class ScriptingSystem : public System {
     public:
-        ScriptingSystem(MonoCppAssembly&msCorLib, MonoCppAssembly &manaAssembly);
+        ScriptingSystem(MonoCppRuntime &runtime, MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly);
 
         ~ScriptingSystem() override = default;
 
@@ -39,6 +39,7 @@ namespace mana {
         void update(float deltaTime, Scene &scene) override;
 
     private:
+        MonoCppRuntime *runtime;
         MonoCppAssembly *msCorLib;
         MonoCppAssembly *manaAssembly;
     };

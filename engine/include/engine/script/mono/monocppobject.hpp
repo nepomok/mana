@@ -38,7 +38,9 @@ namespace mana {
 
         void setField(const std::string &name, MonoCppValue &value) const;
 
-        MonoCppValue getField(const std::string &name) const;
+        MonoCppObject getField(const std::string &name) const;
+
+        MonoCppValue getFieldValue(const std::string &name, size_t valueSize) const;
 
         bool isNull() const;
     };
