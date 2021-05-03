@@ -17,26 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENT_HPP
-#define MANA_COMPONENT_HPP
-
-#include "engine/ecs/componenttype.hpp"
+#ifndef MANA_COMPONENTTYPE_HPP
+#define MANA_COMPONENTTYPE_HPP
 
 namespace mana {
-    struct Node;
-
-    /**
-     * A Component provides state.
-     */
-    struct Component {
-        const ComponentType componentType;
-
-        explicit Component(ComponentType type) : componentType(type) {}
-
-        virtual ~Component() = default;
-
-        bool enabled = true;
-        Node *node = nullptr;
+    enum ComponentType {
+        NONE,
+        TRANSFORM,
+        CAMERA,
+        RENDER,
+        LIGHT,
+        SCRIPT,
     };
 }
-#endif //MANA_COMPONENT_HPP
+
+#endif //MANA_COMPONENTTYPE_HPP

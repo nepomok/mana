@@ -130,4 +130,21 @@ namespace mana {
         return objectPointer;
     }
 
+    std::string MonoCppObject::getClassNamespace() const {
+        auto *c = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        if (c == nullptr)
+            throw std::runtime_error("Failed to get class");
+        return mono_class_get_namespace(c);
+    }
+
+    std::string MonoCppObject::getClassName() const {
+        auto *c = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        if (c == nullptr)
+            throw std::runtime_error("Failed to get class");
+        return mono_class_get_name(c);
+    }
+
+    void *MonoCppObject::unbox() const {
+        return mono_object_unbox(static_cast<MonoObject *>(objectPointer));
+    }
 }

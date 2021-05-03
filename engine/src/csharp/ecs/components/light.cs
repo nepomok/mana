@@ -8,7 +8,12 @@ namespace Mana
             POINT,
             SPOT
         }
-        
+
+        public Light()
+        {
+            base.type = ComponentType.LIGHT;
+        }
+
         LightType lightType;
 
         Vector3 ambient;

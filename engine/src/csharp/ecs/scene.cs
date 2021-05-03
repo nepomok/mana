@@ -3,9 +3,6 @@ using System.Collections.Generic;
 
 namespace Mana
 {
-    /**
-        The scene and nodes are immutable for now only component values can be changed.
-    */
     public class Scene
     {
         public readonly static Scene scene;
@@ -19,28 +16,32 @@ namespace Mana
             return nodes[name];
         }
 
-        private void AddNode(string name, Node node)
+        public Node CreateNode(string name)
         {
             if (nodes.ContainsKey(name))
                 throw new ArgumentException("Node with name " + name + " already exists");
+            Mana.Internal.SceneInterface.createNode(name);
+            return nodes[name];
+        }
 
-            Console.WriteLine("ADD NODE " + name + " " + node);
-
-            for (int i = 0; i < node.GetComponentCount(); i++)
-            {
-                Console.WriteLine("Component: " + node.GetComponent(i).GetType());
-            }
-
-            Transform t = node.GetTransform();
-
-            Console.WriteLine("TRANFORM " + t.position.x + " " + t.position.y + " " + t.position.z);
-
-            nodes[name] = node;
+        public void DestroyNode(string name)
+        {
+            nodes.Remove(name);
+            Mana.Internal.SceneInterface.destroyNode(name);
         }
 
         public int GetNodesCount()
         {
             return nodes.Count;
+        }
+
+        internal void _AddNode(string name, Node node)
+        {
+            if (nodes.ContainsKey(name))
+                throw new ArgumentException("Node with name " + name + " already exists");
+
+            node.name = name;
+            nodes[name] = node;
         }
     }
 }

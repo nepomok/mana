@@ -2,10 +2,15 @@ namespace Mana
 {
     public class Transform : Component
     {
+        public Transform()
+        {
+            base.type = ComponentType.TRANSFORM;
+        }
+
         public Vector3 position;
         public Vector3 rotation;
         public Vector3 scale;
-        
+
         public Transform parent;
     }
 }

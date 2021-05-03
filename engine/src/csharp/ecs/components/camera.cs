@@ -7,7 +7,12 @@ namespace Mana
             PERSPECTIVE,
             ORTHOGRAPHIC
         }
-        
+
+        public Camera()
+        {
+            base.type = ComponentType.CAMERA;
+        }
+
         CameraType cameraType;
 
         float nearClip;

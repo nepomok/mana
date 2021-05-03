@@ -27,7 +27,7 @@
 #include <typeindex>
 #include <functional>
 
-#include "component.hpp"
+#include "engine/ecs/components.hpp"
 
 namespace mana {
     /**
@@ -41,6 +41,37 @@ namespace mana {
     struct Node {
         bool enabled = true;
         std::map<std::type_index, Component *> components;
+
+        static std::type_index getComponentTypeIndex(ComponentType type) {
+            switch (type) {
+                case TRANSFORM:
+                    return typeid(TransformComponent);
+                case CAMERA:
+                    return typeid(CameraComponent);
+                case RENDER:
+                    return typeid(RenderComponent);
+                case LIGHT:
+                    return typeid(LightComponent);
+                case SCRIPT:
+                    return typeid(ScriptComponent);
+                default:
+                    throw std::runtime_error("Unrecognized component type " + std::to_string(type));
+            }
+        }
+
+        static ComponentType getComponentType(std::type_index index) {
+            if (index == typeid(TransformComponent)) {
+                return TRANSFORM;
+            } else if (index == typeid(CameraComponent)) {
+                return CAMERA;
+            } else if (index == typeid(RenderComponent)) {
+                return RENDER;
+            } else if (index == typeid(LightComponent)) {
+                return LIGHT;
+            } else if (index == typeid(ScriptComponent)) {
+                return SCRIPT;
+            }
+        }
 
         template<typename T>
         T &getComponent() {

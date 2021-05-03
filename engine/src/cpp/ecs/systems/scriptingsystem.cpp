@@ -21,6 +21,8 @@
 
 #include "engine/ecs/components.hpp"
 
+#include "script/sceneinterface.hpp"
+
 //TODO: Refactor script scene interface
 namespace mana {
     MonoCppObject uploadVector(MonoCppAssembly &manaAssembly, Vec3f vec) {
@@ -46,12 +48,12 @@ namespace mana {
         ret.setField("cameraType", &cam.cameraType);
         ret.setField("nearClip", &cam.nearClip);
         ret.setField("farClip", &cam.farClip);
-        ret.setField("left", &cam.farClip);;
-        ret.setField("top", &cam.farClip);
-        ret.setField("right", &cam.farClip);
-        ret.setField("bottom", &cam.farClip);
-        ret.setField("fov", &cam.farClip);
-        ret.setField("aspectRatio", &cam.farClip);
+        ret.setField("left", &cam.left);;
+        ret.setField("top", &cam.top);
+        ret.setField("right", &cam.right);
+        ret.setField("bottom", &cam.bottom);
+        ret.setField("fov", &cam.fov);
+        ret.setField("aspectRatio", &cam.aspectRatio);
         return std::move(ret);
     }
 
@@ -76,14 +78,14 @@ namespace mana {
 
     MonoCppObject uploadComponent(Component &c, MonoCppAssembly &manaAssembly) {
         switch (c.componentType) {
-            case Component::TRANSFORM:
+            case ComponentType::TRANSFORM:
                 return std::move(uploadTransform(c, manaAssembly));
-            case Component::CAMERA:
+            case ComponentType::CAMERA:
                 return std::move(uploadCamera(c, manaAssembly));
-            case Component::LIGHT:
+            case ComponentType::LIGHT:
                 return std::move(uploadLight(c, manaAssembly));
-            case Component::RENDER:
-            case Component::SCRIPT:
+            case ComponentType::RENDER:
+            case ComponentType::SCRIPT:
             default:
                 return std::move(manaAssembly.createObject("Mana", "Component"));
         }
@@ -142,25 +144,26 @@ namespace mana {
 
     void downloadComponent(MonoCppObject &o, Component &c) {
         switch (c.componentType) {
-            case Component::TRANSFORM:
+            case ComponentType::TRANSFORM:
                 downloadTransform(o, (TransformComponent &) c);
                 break;
-            case Component::CAMERA:
+            case ComponentType::CAMERA:
                 downloadCamera(o, (CameraComponent &) c);
                 break;
-            case Component::LIGHT:
+            case ComponentType::LIGHT:
                 downloadLight(o, (LightComponent &) c);
                 break;
-            case Component::RENDER:
-            case Component::SCRIPT:
+            case ComponentType::RENDER:
+            case ComponentType::SCRIPT:
+            default:
                 break;
         }
     }
 
-    void applySceneToMono(MonoCppRuntime &runtime,
-                          MonoCppAssembly &msCorLib,
-                          MonoCppAssembly &manaAssembly,
-                          Scene &scene) {
+    void uploadScene(MonoCppRuntime &runtime,
+                     MonoCppAssembly &msCorLib,
+                     MonoCppAssembly &manaAssembly,
+                     Scene &scene) {
         auto monoScene = manaAssembly.createObject("Mana", "Scene");
         for (auto &n : scene.nodes) {
             auto monoNode = manaAssembly.createObject("Mana", "Node");
@@ -169,30 +172,37 @@ namespace mana {
                 monoComponent.setField("node", monoNode.getObjectPointer());
                 MonoCppArguments args;
                 args.add(monoComponent);
-                monoNode.invokeMethod("AddComponent", args);
+                monoNode.invokeMethod("_AddComponent", args);
             }
             auto str = runtime.stringFromUtf8(n.first);
             MonoCppArguments args;
             args.add(str);
             args.add(monoNode);
-            monoScene.invokeMethod("AddNode", args);
+            monoScene.invokeMethod("_AddNode", args);
         }
         manaAssembly.setStaticField("Mana", "Scene", "scene", monoScene.getObjectPointer());
     }
 
-    void readSceneFromMono(MonoCppRuntime &runtime,
-                           MonoCppAssembly &msCorLib,
-                           MonoCppAssembly &manaAssembly,
-                           Scene &scene) {
+    void downloadScene(MonoCppRuntime &runtime,
+                       MonoCppAssembly &msCorLib,
+                       MonoCppAssembly &manaAssembly,
+                       Scene &scene) {
         auto monoScene = manaAssembly.getStaticField("Mana", "Scene", "scene");
         for (auto &n : scene.nodes) {
             auto monoStr = runtime.stringFromUtf8(n.first);
             MonoCppArguments arg;
             arg.add(monoStr);
             auto monoNode = monoScene.invokeMethod("GetNode", arg);
-            //Only read back transforms for now.
-            auto transform = monoNode.invokeMethod("GetTransform");
-            downloadComponent(transform, n.second.getComponent<TransformComponent>());
+            const int componentCount = monoNode.invokeMethod("GetComponentCount").unbox<int>();
+            for (int i = 0; i < componentCount; i++) {
+                arg.clear();
+                arg.add(i);
+                auto monoComponent = monoNode.invokeMethod("GetComponent", arg);
+                auto t = monoComponent.getField<ComponentType>("type");
+                if (t == ComponentType::NONE)
+                    continue;
+                downloadComponent(monoComponent, *n.second.components.at(Node::getComponentTypeIndex(t)));
+            }
         }
     }
 
@@ -210,7 +220,8 @@ namespace mana {
     }
 
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
-        applySceneToMono(*runtime, *msCorLib, *manaAssembly, scene);
+        SceneInterface::setScene(&scene);
+        uploadScene(*runtime, *msCorLib, *manaAssembly, scene);
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
@@ -227,6 +238,7 @@ namespace mana {
             }
             comp.script->onUpdate();
         }
-        readSceneFromMono(*runtime, *msCorLib, *manaAssembly, scene);
+        SceneInterface::setScene(nullptr);
+        downloadScene(*runtime, *msCorLib, *manaAssembly, scene);
     }
 }

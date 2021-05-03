@@ -66,6 +66,17 @@ namespace mana {
 
         void *getObjectPointer() const;
 
+        std::string getClassNamespace() const;
+
+        std::string getClassName() const;
+
+        void *unbox() const;
+
+        template<typename T>
+        T unbox() const {
+            return *static_cast<T *>(unbox());
+        }
+
     private:
         void *objectPointer;
         uint32_t gcHandle;

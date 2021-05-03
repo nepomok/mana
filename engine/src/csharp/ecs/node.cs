@@ -5,6 +5,7 @@ namespace Mana
 {
     public class Node
     {
+        internal string name;
         private readonly List<Component> components = new List<Component>();
 
         public Component GetComponent(int index)
@@ -27,7 +28,19 @@ namespace Mana
             return null;
         }
 
-        private void AddComponent(Component component)
+        public void AddComponent(Component component)
+        {
+            components.Add(component);
+            Mana.Internal.SceneInterface.createComponent(name, component.type);
+        }
+
+        public void RemoveComponent(Component component)
+        {
+            components.Remove(component);
+            Mana.Internal.SceneInterface.destroyComponent(name, component.type);
+        }
+
+        internal void _AddComponent(Component component)
         {
             components.Add(component);
         }

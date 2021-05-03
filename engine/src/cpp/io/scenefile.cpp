@@ -29,17 +29,17 @@
 #include "extern/json.hpp"
 
 namespace mana {
-    Component::ComponentType convertComponent(const std::string &str) {
+    ComponentType convertComponent(const std::string &str) {
         if (str == "transform")
-            return Component::TRANSFORM;
+            return TRANSFORM;
         else if (str == "render")
-            return Component::RENDER;
+            return RENDER;
         else if (str == "camera")
-            return Component::CAMERA;
+            return CAMERA;
         else if (str == "light")
-            return Component::LIGHT;
+            return LIGHT;
         else if (str == "script")
-            return Component::SCRIPT;
+            return SCRIPT;
         throw std::runtime_error("Unrecognized component type " + str);
     }
 
@@ -180,19 +180,19 @@ namespace mana {
             Node n;
             for (auto &component : node["components"]) {
                 switch (convertComponent(component["componentType"])) {
-                    case Component::TRANSFORM:
+                    case TRANSFORM:
                         n.addComponent(getTransform(component));
                         break;
-                    case Component::CAMERA:
+                    case CAMERA:
                         n.addComponent(getCamera(component));
                         break;
-                    case Component::RENDER:
+                    case RENDER:
                         n.addComponent(getRenderComponent(component, allocator));
                         break;
-                    case Component::LIGHT:
+                    case LIGHT:
                         n.addComponent(getLight(component));
                         break;
-                    case Component::SCRIPT:
+                    case SCRIPT:
                         n.addComponent(getScript(component, monoRuntime));
                         break;
                     default:

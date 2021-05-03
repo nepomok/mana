@@ -17,26 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENT_HPP
-#define MANA_COMPONENT_HPP
-
-#include "engine/ecs/componenttype.hpp"
+#ifndef MANA_SCENEINTERFACE_HPP
+#define MANA_SCENEINTERFACE_HPP
 
 namespace mana {
-    struct Node;
+    namespace SceneInterface {
+        void setScene(Scene *s);
 
-    /**
-     * A Component provides state.
-     */
-    struct Component {
-        const ComponentType componentType;
+        extern "C"
+        {
+        void createNode(const char *name);
 
-        explicit Component(ComponentType type) : componentType(type) {}
+        void destroyNode(const char *name);
 
-        virtual ~Component() = default;
+        void createComponent(const char *nodeName, ComponentType type);
 
-        bool enabled = true;
-        Node *node = nullptr;
-    };
+        void destroyComponent(const char *nodeName, ComponentType type);
+        }
+    }
 }
-#endif //MANA_COMPONENT_HPP
+
+#endif //MANA_SCENEINTERFACE_HPP
