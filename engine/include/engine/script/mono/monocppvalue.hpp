@@ -24,17 +24,21 @@
 
 namespace mana {
     struct MonoCppValue {
+        MonoCppValue() = default;
+
+        MonoCppValue(void *ptr) : ptr(ptr) {}
+
         void *ptr = nullptr;
 
         template<typename T>
-        const T &getValue() {
+        const T &get() {
             if (ptr == nullptr)
                 throw std::runtime_error("null return value");
-            return static_cast<const T &>(*static_cast<T*>(ptr));
+            return static_cast<const T &>(*static_cast<T *>(ptr));
         }
 
         template<typename T>
-        void setValue(T *p) {
+        void setValue(T &p) {
             ptr = p;
         }
     };

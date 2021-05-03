@@ -26,25 +26,50 @@
 #include "engine/script/mono/monocppvalue.hpp"
 
 namespace mana {
+    /**
+     * A monocpp object wraps a MonoObject instance.
+     *
+     * It optionally keeps the object pointer pinned to prevent the mono gc from moving / deleting the contained object.
+     */
     class MonoCppObject {
     public:
-        void *objectPointer;
-        uint32_t gcHandle;
-        const bool keepRef;
+        MonoCppObject();
 
-        explicit MonoCppObject(void *objectPointer, bool keepRef = false);
+        MonoCppObject(void *objectPointer, bool pinned = false);
+
+        MonoCppObject(MonoCppObject &&other) noexcept;
+
+        MonoCppObject(const MonoCppObject &other);
 
         ~MonoCppObject();
 
-        MonoCppObject* invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
+        MonoCppObject &operator=(const MonoCppObject &other);
 
-        void setField(const std::string &name, MonoCppValue &value) const;
+        MonoCppObject invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
 
-        MonoCppObject* getField(const std::string &name) const;
+        void setField(const std::string &name, MonoCppValue value) const;
 
-        MonoCppValue getFieldValue(const std::string &name, size_t valueSize) const;
+        MonoCppObject getField(const std::string &name) const;
+
+        template<typename T>
+        T getField(const std::string &name) const {
+            T r;
+            getFieldValuePtr(name, &r);
+            return r;
+        }
+
+        void getFieldValuePtr(const std::string &name, void *data) const;
 
         bool isNull() const;
+
+        bool isPinned() const;
+
+        void *getObjectPointer() const;
+
+    private:
+        void *objectPointer;
+        uint32_t gcHandle;
+        bool pinned;
     };
 }
 

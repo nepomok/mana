@@ -24,76 +24,110 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
-#include <cstring>
-
 #include "engine/script/mono/monocppobject.hpp"
 
 namespace mana {
-    MonoCppObject::MonoCppObject(void *objectPointer, bool keepRef) : objectPointer(objectPointer),
-                                                                      gcHandle(0),
-                                                                      keepRef(keepRef) {
-        if (keepRef) {
-            gcHandle = mono_gchandle_new((MonoObject *) objectPointer, true);
+    MonoCppObject::MonoCppObject() : objectPointer(nullptr), gcHandle(0), pinned(false) {}
+
+    MonoCppObject::MonoCppObject(void *objectPointer, bool pinned) : objectPointer(objectPointer),
+                                                                     gcHandle(0),
+                                                                     pinned(pinned) {
+        if (pinned) {
+            gcHandle = mono_gchandle_new(static_cast<MonoObject *>(objectPointer), true);
         }
     }
 
+    MonoCppObject::MonoCppObject(MonoCppObject &&other) noexcept {
+        objectPointer = other.objectPointer;
+        gcHandle = other.gcHandle;
+        pinned = other.pinned;
+        other.objectPointer = nullptr;
+        other.gcHandle = 0;
+        other.pinned = false;
+    }
+
+    MonoCppObject::MonoCppObject(const MonoCppObject &other) {
+        objectPointer = mono_object_clone(static_cast<MonoObject *>(other.objectPointer));
+        if (other.pinned) {
+            gcHandle = mono_gchandle_new(static_cast<MonoObject *>(objectPointer), true);
+        }
+        pinned = other.pinned;
+    }
+
     MonoCppObject::~MonoCppObject() {
-        if (keepRef) {
+        if (pinned) {
             mono_gchandle_free(gcHandle);
         }
     }
 
-    MonoCppObject *MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
+    MonoCppObject &MonoCppObject::operator=(const MonoCppObject &other) {
+        if (&other == this)
+            return *this;
+        objectPointer = mono_object_clone(static_cast<MonoObject *>(other.objectPointer));
+        if (other.pinned) {
+            gcHandle = mono_gchandle_new(static_cast<MonoObject *>(objectPointer), true);
+        }
+        pinned = other.pinned;
+        return *this;
+    }
+
+    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
-        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
-        auto *method = mono_class_get_method_from_name((MonoClass *) classPointer, name.c_str(), args.args.size());
+        auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        auto *method = mono_class_get_method_from_name(classPointer, name.c_str(), args.size());
         if (method == nullptr)
             throw std::runtime_error("Failed to find method " + name);
-        void *a[args.args.size()];
-        for (int i = 0; i < args.args.size(); i++) {
-            a[i] = args.args[i];
+        void *a[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            a[i] = args.data()[i];
         }
         auto *o = mono_runtime_invoke(method, objectPointer, a, nullptr);
-        return new MonoCppObject(o);
+        return std::move(MonoCppObject(o));
     }
 
-    void MonoCppObject::setField(const std::string &name, MonoCppValue &value) const {
+    void MonoCppObject::setField(const std::string &name, MonoCppValue value) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
-        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
-        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        auto *f = mono_class_get_field_from_name(classPointer, name.c_str());
         if (f == nullptr)
             throw std::runtime_error("Field not found " + name);
-        mono_field_set_value((MonoObject *) objectPointer, f, value.ptr);
+        mono_field_set_value(static_cast<MonoObject *>( objectPointer), f, value.ptr);
     }
 
-    MonoCppObject *MonoCppObject::getField(const std::string &name) const {
+    MonoCppObject MonoCppObject::getField(const std::string &name) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
-        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
-        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        auto *f = mono_class_get_field_from_name(classPointer, name.c_str());
         if (f == nullptr)
             throw std::runtime_error("Field not found " + name);
-        auto* ret = new MonoCppObject(nullptr);
-        mono_field_get_value((MonoObject *) objectPointer, f, &ret->objectPointer);
-        return ret;
+        void *ob = nullptr;
+        mono_field_get_value(static_cast<MonoObject *>(objectPointer), f, &ob);
+        return std::move(MonoCppObject(ob));
     }
 
-    MonoCppValue MonoCppObject::getFieldValue(const std::string &name, size_t valueSize) const {
+    void MonoCppObject::getFieldValuePtr(const std::string &name, void *data) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
-        auto *classPointer = mono_object_get_class((MonoObject *) objectPointer);
-        auto *f = mono_class_get_field_from_name((MonoClass *) classPointer, name.c_str());
+        auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
+        auto *f = mono_class_get_field_from_name(classPointer, name.c_str());
         if (f == nullptr)
             throw std::runtime_error("Field not found " + name);
-        MonoCppValue ret;
-        ret.ptr = new void *[valueSize];
-        mono_field_get_value((MonoObject *) objectPointer, f, ret.ptr);
-        return ret;
+        mono_field_get_value(static_cast<MonoObject *>(objectPointer), f, data);
     }
 
     bool MonoCppObject::isNull() const {
         return objectPointer == nullptr;
     }
+
+    bool MonoCppObject::isPinned() const {
+        return pinned;
+    }
+
+    void *MonoCppObject::getObjectPointer() const {
+        return objectPointer;
+    }
+
 }

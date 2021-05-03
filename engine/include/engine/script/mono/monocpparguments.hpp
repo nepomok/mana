@@ -24,17 +24,23 @@
 #include <string>
 
 namespace mana {
+    class MonoCppObject;
+
     struct MonoCppArguments {
+        void add(int &value);
+
+        void add(float &value);
+
+        void add(const MonoCppObject &value);
+
+        void clear();
+
+        const std::vector<void *> &data();
+
+        size_t size();
+
+    private:
         std::vector<void *> args;
-
-        template<typename T>
-        void addArgument(T *value) {
-            args.emplace_back(value);
-        }
-
-        void clear() {
-            args.clear();
-        }
     };
 }
 

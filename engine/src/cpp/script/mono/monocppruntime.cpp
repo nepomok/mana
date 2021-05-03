@@ -26,20 +26,22 @@
 #include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
-    MonoCppRuntime::MonoCppRuntime() : msCorLib(nullptr, nullptr) {
+    MonoCppRuntime::MonoCppRuntime()
+            : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
         mono_config_parse(nullptr);
         msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
-    MonoCppRuntime::MonoCppRuntime(const std::string &domainName) : msCorLib(nullptr, nullptr) {
+    MonoCppRuntime::MonoCppRuntime(const std::string &domainName)
+            : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init(domainName.c_str());
         mono_config_parse(nullptr);
         msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
     MonoCppRuntime::~MonoCppRuntime() {
-        mono_jit_cleanup((MonoDomain *) domainPointer);
+        mono_jit_cleanup(static_cast<MonoDomain *>(domainPointer));
     }
 
     MonoCppAssembly &MonoCppRuntime::getMsCorLibAssembly() {
@@ -48,14 +50,16 @@ namespace mana {
 
     MonoCppAssembly *MonoCppRuntime::loadAssembly(const std::string &filePath) {
         return new mana::MonoCppAssembly(domainPointer,
-                                         mono_domain_assembly_open((MonoDomain *) domainPointer, filePath.c_str()));
+                                         mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer),
+                                                                   filePath.c_str()));
     }
 
-    MonoCppObject *MonoCppRuntime::getMonoStringObject(const std::string &str) {
-        return new MonoCppObject(mono_string_new((MonoDomain *) domainPointer, str.c_str()));
+    MonoCppObject MonoCppRuntime::stringFromUtf8(const std::string &str, bool pinned) {
+        auto *p = mono_string_new(static_cast<MonoDomain *>(domainPointer), str.c_str());
+        return std::move(MonoCppObject(p, pinned));
     }
 
-    std::string MonoCppRuntime::getStringFromMonoString(const MonoCppObject &strObject) {
-        return mono_string_to_utf8((MonoString *) strObject.objectPointer);
+    std::string MonoCppRuntime::stringToUtf8(const MonoCppObject &strObject) {
+        return mono_string_to_utf8(static_cast<MonoString *>(strObject.getObjectPointer()));
     }
 }

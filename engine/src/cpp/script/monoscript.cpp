@@ -32,19 +32,18 @@ namespace mana {
     }
 
     MonoScript::~MonoScript() {
-        delete object;
         delete assembly;
     }
 
     void MonoScript::onEnable() {
-        object->invokeMethod("OnEnable");
+        object.invokeMethod("OnEnable");
     }
 
     void MonoScript::onDisable() {
-        object->invokeMethod("OnDisable");
+        object.invokeMethod("OnDisable");
     }
 
     void MonoScript::onUpdate() {
-        object->invokeMethod("OnUpdate");
+        object.invokeMethod("OnUpdate");
     }
 }

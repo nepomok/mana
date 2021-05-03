@@ -41,9 +41,7 @@ protected:
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
-        MonoCppValue v;
-        v.setValue<float>(&deltaTime);
-        manaAssembly->setStaticField("Mana", "Time", "deltaTime", v);
+        manaAssembly->setStaticField("Mana", "Time", "deltaTime", &deltaTime);
 
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;

@@ -17,32 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOCPPRUNTIME_HPP
-#define MANA_MONOCPPRUNTIME_HPP
+#include "engine/script/mono/monocpparguments.hpp"
 
-#include "engine/script/mono/monocppassembly.hpp"
+#include "engine/script/mono/monocppobject.hpp"
 
-namespace mana {
-    class MonoCppRuntime {
-    public:
-        MonoCppRuntime();
-
-        explicit MonoCppRuntime(const std::string &domainName);
-
-        ~MonoCppRuntime();
-
-        MonoCppAssembly &getMsCorLibAssembly();
-
-        MonoCppAssembly *loadAssembly(const std::string &filePath);
-
-        MonoCppObject stringFromUtf8(const std::string &str, bool pinned = false);
-
-        std::string stringToUtf8(const MonoCppObject &strObject);
-
-    private:
-        MonoCppAssembly msCorLib;
-        void *domainPointer;
-    };
+void mana::MonoCppArguments::add(int &value) {
+    args.emplace_back(&value);
 }
 
-#endif //MANA_MONOCPPRUNTIME_HPP
+void mana::MonoCppArguments::add(float &value) {
+    args.emplace_back(&value);
+}
+
+void mana::MonoCppArguments::add(const mana::MonoCppObject &value) {
+    args.emplace_back(value.getObjectPointer());
+}
+
+void mana::MonoCppArguments::clear() {
+    args.clear();
+}
+
+const std::vector<void *> &mana::MonoCppArguments::data() {
+    return args;
+}
+
+size_t mana::MonoCppArguments::size() {
+    return args.size();
+}
