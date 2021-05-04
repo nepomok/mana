@@ -30,8 +30,8 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
-        ecs.addSystem(new ScriptingSystem(monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
+        ecs.addSystem(new ScriptingSystem(*res, monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d, *res));
     }
 
     void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
@@ -113,18 +113,16 @@ protected:
     void loadScene(RenderAllocator &alloc) override {
         //IMPORTANT: All assemblies referenced in other assemblies have to be loaded first.
         manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
-        scene = SceneFile("assets/sampleScene.json").loadScene(alloc, monoRuntime);
+        scene = SceneFile("assets/sampleScene.json").getScene();
+        res = ResourceFile("assets/sampleResources.json").getResources(alloc, monoRuntime);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 
     void destroyScene() override {
-        for (auto *p : objects)
-            delete p;
+        delete res;
     }
 
 private:
-    std::vector<RenderObject *> objects;
-
     float cameraRotationSpeed = 45.0f;
     float cameraMovementSpeed = 5.0f;
 
@@ -134,13 +132,14 @@ private:
 
     ECS ecs;
 
-    Scene scene;
-
     Node *cameraNode;
 
     MonoCppRuntime monoRuntime;
 
     MonoCppAssembly *manaAssembly;
+
+    Scene scene;
+    Resources* res;
 };
 
 #endif //MANA_SAMPLE2_HPP

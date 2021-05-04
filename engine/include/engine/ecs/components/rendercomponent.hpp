@@ -24,37 +24,22 @@
 
 #include "engine/render/rendercommand.hpp"
 
+#include "engine/resource/render/meshbufferresource.hpp"
+#include "engine/resource/render/shaderresource.hpp"
+#include "engine/resource/render/textureresource.hpp"
+
 namespace mana {
     struct RenderComponent : public Component {
         RenderComponent() : Component(RENDER) {}
 
-        int order = 0;
+        std::string shaderResourceName;
+        std::vector<std::string> meshResourceNames;
+        std::vector<std::string> textureResourceNames;
+        std::map<std::string, int> textureMapping;
 
-        ShaderProgram *shader = nullptr;
+        RenderProperties renderProperties;
 
-        std::vector<RenderTexture *> textures{};
-        std::vector<RenderMesh *> meshData{};
-
-        bool enableDepthTest = false;
-        bool depthTestWrite = true;
-        DepthTestMode depthTestMode = DepthTestMode::DEPTH_TEST_LESS;
-
-        bool enableStencilTest = false;
-        uint stencilTestMask = 0xFF;
-        StencilMode stencilMode = StencilMode::STENCIL_ALWAYS;
-        int stencilReference = 1;
-        uint stencilFunctionMask = 0xFF;
-        StencilAction stencilFail = StencilAction::STENCIL_KEEP;
-        StencilAction stencilDepthFail = StencilAction::STENCIL_KEEP;
-        StencilAction stencilPass = StencilAction::STENCIL_KEEP;
-
-        bool enableFaceCulling = false;
-        FaceCullingMode faceCullMode = FaceCullingMode::CULL_FRONT;
-        bool faceCullClockwiseWinding = false;
-
-        bool enableBlending = false;
-        BlendMode blendSourceMode = BlendMode::ONE;
-        BlendMode blendDestinationMode = BlendMode::ZERO;
+        int renderOrder = 0;
     };
 }
 

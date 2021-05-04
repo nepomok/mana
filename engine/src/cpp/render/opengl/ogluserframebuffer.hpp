@@ -44,37 +44,37 @@ namespace mana {
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           RenderTexture::TextureFiltering filter) override;
+                           Texture::TextureFiltering filter) override;
 
             void blitDepth(const RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           RenderTexture::TextureFiltering filter) override;
+                           Texture::TextureFiltering filter) override;
 
             void blitStencil(const RenderTarget &source,
                              Vec2i sourceOffset,
                              Vec2i targetOffset,
                              Vec2i sourceRect,
                              Vec2i targetRect,
-                             RenderTexture::TextureFiltering filter) override;
+                             Texture::TextureFiltering filter) override;
 
-            void attachColor(const RenderTexture &texture) override;
+            void attachColor(const Texture &texture) override;
 
-            void attachDepth(const RenderTexture &texture) override;
+            void attachDepth(const Texture &texture) override;
 
-            void attachStencil(const RenderTexture &texture) override;
+            void attachStencil(const Texture &texture) override;
 
-            void attachDepthStencil(const RenderTexture &texture) override;
+            void attachDepthStencil(const Texture &texture) override;
 
-            void attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+            void attachColor(Texture::CubeMapFace face, const Texture &texture) override;
 
-            void attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+            void attachDepth(Texture::CubeMapFace face, const Texture &texture) override;
 
-            void attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+            void attachStencil(Texture::CubeMapFace face, const Texture &texture) override;
 
-            void attachDepthStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override;
+            void attachDepthStencil(Texture::CubeMapFace face, const Texture &texture) override;
 
             GLuint getFBO() const override;
         };

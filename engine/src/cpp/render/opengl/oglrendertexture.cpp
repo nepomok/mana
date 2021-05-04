@@ -24,7 +24,7 @@
 using namespace mana;
 using namespace mana::opengl;
 
-OGLRenderTexture::OGLRenderTexture(Attributes attributes) : RenderTexture(attributes), handle() {
+OGLRenderTexture::OGLRenderTexture(Attributes attributes) : Texture(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
     glGenTextures(1, &handle);
@@ -174,7 +174,7 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
     checkGLError("OGLRenderTexture::upload(CUBEMAP)");
 }
 
-ImageBuffer<ColorRGBA> OGLRenderTexture::download(RenderTexture::CubeMapFace face) {
+ImageBuffer<ColorRGBA> OGLRenderTexture::download(Texture::CubeMapFace face) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("Texture not cubemap");
 

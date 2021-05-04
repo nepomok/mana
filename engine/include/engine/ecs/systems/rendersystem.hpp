@@ -25,10 +25,14 @@
 #include "engine/render/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
 
+#include "engine/resource/resources.hpp"
+
 namespace mana {
+    class ECS;
+
     class RenderSystem : public System {
     public:
-        explicit RenderSystem(const RenderTarget &screenTarget, Renderer3D &ren);
+        explicit RenderSystem(const RenderTarget &screenTarget, Renderer3D &ren, Resources &res);
 
         ~RenderSystem() override = default;
 
@@ -41,6 +45,7 @@ namespace mana {
     private:
         const RenderTarget &screenTarget;
         Renderer3D &ren;
+        Resources &res;
     };
 }
 

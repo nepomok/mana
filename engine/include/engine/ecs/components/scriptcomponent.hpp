@@ -28,8 +28,9 @@ namespace mana {
     struct ScriptComponent : public Component {
         ScriptComponent() : Component(SCRIPT) {}
 
+        std::string scriptResourceName;
+
         bool scriptEnabled = false;
-        Script *script = nullptr;
     };
 }
 

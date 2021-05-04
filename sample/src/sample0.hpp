@@ -178,7 +178,7 @@ protected:
 
         auto colorMapImage = ImageFile("./assets/colormap.png");
 
-        RenderTexture::Attributes attributes;
+        Texture::Attributes attributes;
         attributes.size = colorMapImage.getBuffer().getSize();
 
         auto colorMapTexture = alloc.allocateTexture(attributes);
@@ -189,42 +189,43 @@ protected:
 
         attributes = {};
         attributes.size = {2048, 2048};
-        attributes.textureType = mana::RenderTexture::TEXTURE_CUBE_MAP;
+        attributes.textureType = mana::Texture::TEXTURE_CUBE_MAP;
 
         auto skyboxTexture = alloc.allocateTexture(attributes);
 
-        skyboxTexture->upload(RenderTexture::RIGHT,
+        skyboxTexture->upload(Texture::RIGHT,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderTexture::LEFT,
+        skyboxTexture->upload(Texture::LEFT,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 1, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderTexture::TOP,
+        skyboxTexture->upload(Texture::TOP,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 2, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderTexture::BOTTOM,
+        skyboxTexture->upload(Texture::BOTTOM,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 3, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderTexture::FRONT,
+        skyboxTexture->upload(Texture::FRONT,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 4, 0), Vec2i(2048, 2048))));
 
-        skyboxTexture->upload(RenderTexture::BACK,
+        skyboxTexture->upload(Texture::BACK,
                               skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 5, 0), Vec2i(2048, 2048))));
 
         objects.emplace_back(colorMapTexture);
         objects.emplace_back(skyboxTexture);
 
-        RenderMesh *cubePtr = alloc.allocateMesh(cubeMesh.getMesh());
-        RenderMesh *curveCubePtr = alloc.allocateMesh(curveCubeMesh.getMesh());
-        RenderMesh *planePtr = alloc.allocateMesh(planeMesh.getMesh());
-        RenderMesh *spherePtr = alloc.allocateInstancedMesh(sphereMesh.getMesh(), {Transform({0, 0, 0}, {}, {1, 1, 1}),
-                                                                                   Transform({0, 1, 0}, {}, {1, 1, 1}),
-                                                                                   Transform({0, -1, 0}, {}, {1, 1, 1}),
-                                                                                   Transform({1, 0, 0}, {}, {1, 1, 1}),
-                                                                                   Transform({-1, 0, 0}, {}, {1, 1, 1}),
-                                                                                   Transform({0, 0, 1}, {}, {1, 1, 1}),
-                                                                                   Transform({0, 0, -1}, {},
-                                                                                             {1, 1, 1})});
+        MeshBuffer *cubePtr = alloc.allocateMeshBuffer(cubeMesh.getMeshData().at("Cube"));
+        MeshBuffer *curveCubePtr = alloc.allocateMeshBuffer(curveCubeMesh.getMeshData().at("Cube"));
+        MeshBuffer *planePtr = alloc.allocateMeshBuffer(planeMesh.getMeshData().at("Plane"));
+        MeshBuffer *spherePtr = alloc.allocateInstancedMeshBuffer(sphereMesh.getMeshData().at("Sphere"),
+                                                                  {Transform({0, 0, 0}, {}, {1, 1, 1}),
+                                                                   Transform({0, 1, 0}, {}, {1, 1, 1}),
+                                                                   Transform({0, -1, 0}, {}, {1, 1, 1}),
+                                                                   Transform({1, 0, 0}, {}, {1, 1, 1}),
+                                                                   Transform({-1, 0, 0}, {}, {1, 1, 1}),
+                                                                   Transform({0, 0, 1}, {}, {1, 1, 1}),
+                                                                   Transform({0, 0, -1}, {},
+                                                                             {1, 1, 1})});
 
         objects.emplace_back(cubePtr);
         objects.emplace_back(curveCubePtr);
@@ -232,7 +233,7 @@ protected:
         objects.emplace_back(spherePtr);
 
         RenderCommand command;
-        command.enableDepthTest = true;
+        command.properties.enableDepthTest = true;
 
         command.meshObjects.emplace_back(curveCubePtr);
 
@@ -247,7 +248,7 @@ protected:
         commands.emplace(commands.end(), command);
 
         command = RenderCommand();
-        command.enableDepthTest = true;
+        command.properties.enableDepthTest = true;
 
         command.meshObjects.emplace_back(spherePtr);
 
@@ -262,7 +263,7 @@ protected:
         commands.emplace(commands.end(), command);
 
         command = RenderCommand();
-        command.enableDepthTest = true;
+        command.properties.enableDepthTest = true;
 
         command.meshObjects.emplace_back(planePtr);
 
@@ -277,7 +278,7 @@ protected:
         commands.emplace(commands.end(), command);
 
         command = RenderCommand();
-        command.enableDepthTest = false;
+        command.properties.enableDepthTest = false;
         command.meshObjects.emplace_back(cubePtr);
 
         command.shader = skyboxShader;

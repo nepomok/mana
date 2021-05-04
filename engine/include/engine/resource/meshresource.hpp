@@ -17,29 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RESOURCE_HPP
-#define MANA_RESOURCE_HPP
+#ifndef MANA_MESHRESOURCE_HPP
+#define MANA_MESHRESOURCE_HPP
+
+#include "engine/resource/resource.hpp"
+#include "engine/render/geometry/mesh.hpp"
 
 namespace mana {
-    /**
-     * Interface for resource types.
-     *
-     * A resource holds a object of type T.
-     *
-     * A resource is loaded when calling get and stays
-     * in memory until free is called or the resource object is destroyed.
-     *
-     * A resource can be loaded again by calling get after free has been called.
-     */
-    template<typename T>
-    class Resource {
+    class MeshResource : public Resource {
     public:
-        virtual ~Resource() = default;
-
-        virtual T &get() = 0;
-
-        virtual void free() = 0;
+        virtual const Mesh &getMesh() = 0;
     };
 }
 
-#endif //MANA_RESOURCE_HPP
+#endif //MANA_MESHRESOURCE_HPP

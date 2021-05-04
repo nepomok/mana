@@ -1,0 +1,101 @@
+{
+  "resources": [
+    {
+      "name": "Mesh.Plane",
+      "type": "meshfile",
+      "assetFilePath": "assets/plane.obj",
+      "assetName": "Plane"
+    },
+    {
+      "name": "Mesh.Cube",
+      "type": "meshfile",
+      "assetFilePath": "assets/cube.obj",
+      "assetName": "Cube"
+    },
+    {
+      "name": "Text.defaultVertexShader",
+      "type": "textfile",
+      "filePath": "assets/hlsl/vertex.hlsl"
+    },
+    {
+      "name": "Text.defaultFragmentShader",
+      "type": "textfile",
+      "filePath": "assets/hlsl/fragment.hlsl"
+    },
+    {
+      "name": "Text.skyboxVertexShader",
+      "type": "textfile",
+      "filePath": "assets/hlsl/skyboxVertex.hlsl"
+    },
+    {
+      "name": "Text.skyboxFragmentShader",
+      "type": "textfile",
+      "filePath": "assets/hlsl/skyboxFragment.hlsl"
+    },
+    {
+      "name": "Image.colorMap",
+      "type": "imagefile",
+      "filePath": "assets/colormap.png"
+    },
+    {
+      "name": "Image.skybox",
+      "type": "imagefile",
+      "filePath": "assets/deepbluespace-skybox_maintex.png"
+    },
+    {
+      "name": "Shader.default",
+      "type": "shader",
+      "vertexShaderResourceName": "Text.defaultVertexShader",
+      "fragmentShaderResourceName": "Text.defaultFragmentShader"
+    },
+    {
+      "name": "Shader.skybox",
+      "type": "shader",
+      "vertexShaderResourceName": "Text.skyboxVertexShader",
+      "fragmentShaderResourceName": "Text.skyboxFragmentShader"
+    },
+    {
+      "name": "MeshBuffer.plane",
+      "type": "meshbuffer",
+      "meshResourceName": "Mesh.Plane",
+      "instanced": false
+    },
+    {
+      "name": "MeshBuffer.cube",
+      "type": "meshbuffer",
+      "meshResourceName": "Mesh.Cube",
+      "instanced": false
+    },
+    {
+      "name": "Texture.colorMap",
+      "type": "texture",
+      "imageResourceName": "Image.colorMap",
+      "textureType": "texture2d",
+      "format": "rgba",
+      "wrapping": "repeat",
+      "filterMin": "linear",
+      "filterMag": "linear",
+      "generateMipmap": false,
+      "mipmapFilter": "nearest_mipmap_nearest"
+    },
+    {
+      "name": "Texture.skybox",
+      "type": "texture",
+      "imageResourceName": "Image.skybox",
+      "textureType": "cubemap",
+      "format": "rgba",
+      "wrapping": "repeat",
+      "filterMin": "linear",
+      "filterMag": "linear",
+      "generateMipmap": false,
+      "mipmapFilter": "nearest_mipmap_nearest"
+    },
+    {
+      "name": "Script.testScript",
+      "type": "monoscript",
+      "assemblyFileName": "assets/testscript.dll",
+      "nameSpace": "",
+      "className": "TestScript"
+    }
+  ]
+}

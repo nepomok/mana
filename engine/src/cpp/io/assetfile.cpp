@@ -64,16 +64,19 @@ namespace mana {
         return ret;
     }
 
-    std::vector<Mesh> readMeshFromFile(const std::string &filePath) {
+    std::map<std::string, Mesh> readMeshFromFile(const std::string &filePath) {
         Assimp::Importer importer;
-        std::vector<Mesh> ret;
+        std::map<std::string, Mesh> ret;
         const auto *scenePointer = importer.ReadFile(filePath, aiPostProcessSteps::aiProcess_Triangulate);
         if (scenePointer == nullptr)
             throw std::runtime_error("Failed to open mesh file at " + filePath);
         const auto &scene = dynamic_cast<const aiScene &>(*scenePointer);
-        ret.resize(scene.mNumMeshes);
         for (auto i = 0; i < scene.mNumMeshes; i++) {
-            ret.at(i) = (convertMesh(dynamic_cast<const aiMesh &>(*scene.mMeshes[0])));
+            const auto &aimesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[0]);
+            std::string meshname = aimesh.mName.C_Str();
+            if (ret.find(meshname) != ret.end())
+                throw std::runtime_error("Duplicate mesh name in file " + filePath);
+            ret[aimesh.mName.C_Str()] = convertMesh(aimesh);
         }
         return ret;
     }
@@ -90,11 +93,7 @@ namespace mana {
         meshes.clear();
     }
 
-    const Mesh &AssetFile::getMesh() {
-        return meshes.at(0);
-    }
-
-    const std::vector<Mesh> &AssetFile::getAllMeshes() {
+    const std::map<std::string, Mesh> &AssetFile::getMeshData() {
         return meshes;
     }
 }

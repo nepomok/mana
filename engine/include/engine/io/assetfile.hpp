@@ -20,6 +20,8 @@
 #ifndef MANA_ASSETFILE_HPP
 #define MANA_ASSETFILE_HPP
 
+#include <map>
+
 #include "engine/io/file.hpp"
 #include "engine/render/geometry/mesh.hpp"
 
@@ -34,12 +36,10 @@ namespace mana {
 
         void close() override;
 
-        const Mesh &getMesh();
-
-        const std::vector<Mesh> &getAllMeshes();
+        const std::map<std::string, Mesh> &getMeshData();
 
     private:
-        std::vector<Mesh> meshes;
+        std::map<std::string, Mesh> meshes;
     };
 }
 

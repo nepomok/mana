@@ -40,20 +40,20 @@ namespace mana {
 
     }
 
-    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, const ShaderProgram &shader,
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const Texture &texture, const ShaderProgram &shader,
                           Vec2f center, float rotation) {
 
     }
 
-    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, const ShaderProgram &shader) {
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const Texture &texture, const ShaderProgram &shader) {
 
     }
 
-    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture, Vec2f center, float rotation) {
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const Texture &texture, Vec2f center, float rotation) {
 
     }
 
-    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const RenderTexture &texture) {
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, const Texture &texture) {
 
     }
 
@@ -77,20 +77,20 @@ namespace mana {
 
     }
 
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, const ShaderProgram &shader,
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const Texture &texture, const ShaderProgram &shader,
                           Vec2i center, float rotation) {
 
     }
 
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, const ShaderProgram &shader) {
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const Texture &texture, const ShaderProgram &shader) {
 
     }
 
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture, Vec2i center, float rotation) {
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const Texture &texture, Vec2i center, float rotation) {
 
     }
 
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, const RenderTexture &texture) {
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, const Texture &texture) {
 
     }
 

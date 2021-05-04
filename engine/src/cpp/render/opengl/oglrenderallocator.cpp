@@ -41,11 +41,11 @@ RenderTarget *OGLRenderAllocator::allocateRenderTarget(int width, int height) {
     return ret;
 }
 
-RenderTexture *OGLRenderAllocator::allocateTexture(RenderTexture::Attributes attributes) {
+Texture *OGLRenderAllocator::allocateTexture(Texture::Attributes attributes) {
     return new OGLRenderTexture(attributes);
 }
 
-RenderMesh *OGLRenderAllocator::allocateMesh(const Mesh &mesh) {
+MeshBuffer *OGLRenderAllocator::allocateMeshBuffer(const Mesh &mesh) {
     if (mesh.primitive != TRI) {
         throw std::runtime_error("Unsupported primitive");
     }
@@ -176,12 +176,12 @@ RenderMesh *OGLRenderAllocator::allocateMesh(const Mesh &mesh) {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    checkGLError("OGLRenderAllocator::allocateMesh");
+    checkGLError("OGLRenderAllocator::allocateMeshBuffer");
 
     return ret;
 }
 
-RenderMesh *OGLRenderAllocator::allocateInstancedMesh(const Mesh &mesh, const std::vector<Transform> &offsets) {
+MeshBuffer *OGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
     if (mesh.primitive != TRI) {
         throw std::runtime_error("Unsupported primitive");
     }

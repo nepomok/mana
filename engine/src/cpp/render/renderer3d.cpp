@@ -114,4 +114,14 @@ namespace mana {
         }
         ren->renderFinish();
     }
+
+    const Renderer &Renderer3D::getRenderer() {
+        assert(ren != nullptr);
+        return *ren;
+    }
+
+    const RenderAllocator &Renderer3D::getAllocator() {
+        assert(alloc != nullptr);
+        return *alloc;
+    }
 }

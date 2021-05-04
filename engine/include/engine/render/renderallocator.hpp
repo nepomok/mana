@@ -22,7 +22,7 @@
 
 #include "engine/render/geometry/mesh.hpp"
 #include "engine/render/rendertarget.hpp"
-#include "engine/render/rendermesh.hpp"
+#include "engine/render/meshbuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 #include "engine/math/transform.hpp"
 #include "engine/render/graphicsapi.hpp"
@@ -32,11 +32,11 @@ namespace mana {
     public:
         virtual RenderTarget *allocateRenderTarget(int width, int height) = 0;
 
-        virtual RenderTexture *allocateTexture(RenderTexture::Attributes attributes) = 0;
+        virtual Texture *allocateTexture(Texture::Attributes attributes) = 0;
 
-        virtual RenderMesh *allocateMesh(const Mesh &mesh) = 0;
+        virtual MeshBuffer *allocateMeshBuffer(const Mesh &mesh) = 0;
 
-        virtual RenderMesh *allocateInstancedMesh(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
+        virtual MeshBuffer *allocateInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
 
         virtual ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) = 0;
     };

@@ -39,6 +39,10 @@ namespace mana {
                     const std::vector<RenderCommand> &commands,
                     const LightingData &lightingData);
 
+        const Renderer &getRenderer();
+
+        const RenderAllocator &getAllocator();
+
     private:
         Renderer *ren;
         RenderAllocator *alloc;

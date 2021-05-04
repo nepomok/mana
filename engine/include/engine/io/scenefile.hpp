@@ -26,6 +26,9 @@
 #include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
+    /**
+     * A json scene file.
+     */
     class SceneFile : public File {
     public:
         SceneFile();
@@ -36,9 +39,10 @@ namespace mana {
 
         void close() override;
 
-        Scene loadScene(RenderAllocator &alloc, MonoCppRuntime &monoRuntime);
+        Scene getScene();
 
     private:
+        std::string filePath;
         std::string fileText;
     };
 }

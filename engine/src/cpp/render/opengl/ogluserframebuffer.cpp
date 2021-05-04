@@ -44,7 +44,7 @@ Vec2i opengl::OGLUserFrameBuffer::getSize() const {
 }
 
 void opengl::OGLUserFrameBuffer::blitColor(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                           Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
+                                           Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -86,7 +86,7 @@ void opengl::OGLUserFrameBuffer::blitColor(const RenderTarget &source, Vec2i sou
 }
 
 void opengl::OGLUserFrameBuffer::blitDepth(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                           Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
+                                           Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -128,7 +128,7 @@ void opengl::OGLUserFrameBuffer::blitDepth(const RenderTarget &source, Vec2i sou
 }
 
 void opengl::OGLUserFrameBuffer::blitStencil(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                             Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) {
+                                             Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -169,7 +169,7 @@ void opengl::OGLUserFrameBuffer::blitStencil(const RenderTarget &source, Vec2i s
     checkGLError("OGLUserFrameBuffer::blitFramebuffer");
 }
 
-void opengl::OGLUserFrameBuffer::attachColor(const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachColor(const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
@@ -177,7 +177,7 @@ void opengl::OGLUserFrameBuffer::attachColor(const RenderTexture &texture) {
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachDepth(const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachDepth(const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
@@ -185,7 +185,7 @@ void opengl::OGLUserFrameBuffer::attachDepth(const RenderTexture &texture) {
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachStencil(const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachStencil(const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
@@ -193,7 +193,7 @@ void opengl::OGLUserFrameBuffer::attachStencil(const RenderTexture &texture) {
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachDepthStencil(const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachDepthStencil(const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
@@ -201,7 +201,7 @@ void opengl::OGLUserFrameBuffer::attachDepthStencil(const RenderTexture &texture
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachColor(Texture::CubeMapFace face, const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, OGLTypeConverter::convert(face), tex.handle, 0);
@@ -209,7 +209,7 @@ void opengl::OGLUserFrameBuffer::attachColor(RenderTexture::CubeMapFace face, co
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachDepth(Texture::CubeMapFace face, const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
@@ -217,7 +217,7 @@ void opengl::OGLUserFrameBuffer::attachDepth(RenderTexture::CubeMapFace face, co
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachStencil(Texture::CubeMapFace face, const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
@@ -225,8 +225,8 @@ void opengl::OGLUserFrameBuffer::attachStencil(RenderTexture::CubeMapFace face, 
     checkGLError("");
 }
 
-void opengl::OGLUserFrameBuffer::attachDepthStencil(RenderTexture::CubeMapFace face,
-                                                    const RenderTexture &texture) {
+void opengl::OGLUserFrameBuffer::attachDepthStencil(Texture::CubeMapFace face,
+                                                    const Texture &texture) {
     auto &tex = dynamic_cast<const OGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);

@@ -36,7 +36,7 @@ namespace mana {
         void update(float deltaTime, Scene &scene);
 
     private:
-        std::set<System *> systems;
+        std::vector<System *> systems;
     };
 }
 

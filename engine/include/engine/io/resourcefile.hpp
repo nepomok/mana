@@ -17,18 +17,34 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERMESH_HPP
-#define MANA_RENDERMESH_HPP
+#ifndef MANA_RESOURCEFILE_HPP
+#define MANA_RESOURCEFILE_HPP
 
-#include "engine/render/renderobject.hpp"
+#include "engine/io/file.hpp"
 
-#include "engine/math/transform.hpp"
+#include "engine/resource/resources.hpp"
+
+#include "engine/render/renderallocator.hpp"
+#include "engine/script/mono/monocppruntime.hpp"
 
 namespace mana {
-    class RenderMesh : public RenderObject {
+    /**
+     * A json resource file.
+     */
+    class ResourceFile : public File {
     public:
-        ~RenderMesh() override = default;
+        ResourceFile(const std::string &filePath);
+
+        void open(const std::string &filePath) override;
+
+        void close() override;
+
+        Resources* getResources(RenderAllocator &allocator, MonoCppRuntime &monoRuntime);
+
+    private:
+        std::string filePath;
+        std::string fileContents;
     };
 }
 
-#endif //MANA_RENDERMESH_HPP
+#endif //MANA_RESOURCEFILE_HPP

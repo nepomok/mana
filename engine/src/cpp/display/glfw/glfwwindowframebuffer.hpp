@@ -39,7 +39,7 @@ namespace mana {
         };
 
         void blitColor(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                       Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override{
+                       Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) override{
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }
@@ -81,7 +81,7 @@ namespace mana {
         }
 
         void blitDepth(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                       Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override {
+                       Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) override {
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }
@@ -123,7 +123,7 @@ namespace mana {
         }
 
         void blitStencil(const RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                         Vec2i sourceRect, Vec2i targetRect, RenderTexture::TextureFiltering filter) override{
+                         Vec2i sourceRect, Vec2i targetRect, Texture::TextureFiltering filter) override{
             if (sourceRect.x < 0 || sourceRect.y < 0) {
                 throw std::runtime_error("Rect cannot be negative");
             }
@@ -164,35 +164,35 @@ namespace mana {
             checkGLError("OGLUserFrameBuffer::blitFramebuffer");
         }
 
-        void attachColor(const RenderTexture &texture) override {
+        void attachColor(const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachDepth(const RenderTexture &texture) override {
+        void attachDepth(const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachStencil(const RenderTexture &texture) override {
+        void attachStencil(const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachDepthStencil(const RenderTexture &texture) override {
+        void attachDepthStencil(const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) override {
+        void attachColor(Texture::CubeMapFace face, const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) override {
+        void attachDepth(Texture::CubeMapFace face, const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override {
+        void attachStencil(Texture::CubeMapFace face, const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 
-        void attachDepthStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) override {
+        void attachDepthStencil(Texture::CubeMapFace face, const Texture &texture) override {
             throw std::runtime_error("Not Implemented");
         };
 

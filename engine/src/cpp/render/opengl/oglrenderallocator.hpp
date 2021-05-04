@@ -28,12 +28,12 @@ namespace mana {
         public:
             RenderTarget *allocateRenderTarget(int width, int height) override;
 
-            RenderTexture *allocateTexture(RenderTexture::Attributes attributes) override;
+            Texture *allocateTexture(Texture::Attributes attributes) override;
 
-            RenderMesh *allocateMesh(const Mesh &mesh) override;
+            MeshBuffer *allocateMeshBuffer(const Mesh &mesh) override;
 
-            RenderMesh *allocateInstancedMesh(const Mesh &mesh,
-                                              const std::vector<Transform> &offsets) override;
+            MeshBuffer *allocateInstancedMeshBuffer(const Mesh &mesh,
+                                                    const std::vector<Transform> &offsets) override;
 
             ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) override;
         };

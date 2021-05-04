@@ -21,7 +21,7 @@
 #define MANA_RENDERTARGET_HPP
 
 #include "engine/render/renderobject.hpp"
-#include "engine/render/rendertexture.hpp"
+#include "engine/render/texture.hpp"
 
 namespace mana {
     class RenderTarget : public RenderObject {
@@ -35,37 +35,37 @@ namespace mana {
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
-                               RenderTexture::TextureFiltering filter) = 0;
+                               Texture::TextureFiltering filter) = 0;
 
         virtual void blitDepth(const RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
-                               RenderTexture::TextureFiltering filter) = 0;
+                               Texture::TextureFiltering filter) = 0;
 
         virtual void blitStencil(const RenderTarget &source,
                                  Vec2i sourceOffset,
                                  Vec2i targetOffset,
                                  Vec2i sourceRect,
                                  Vec2i targetRect,
-                                 RenderTexture::TextureFiltering filter) = 0;
+                                 Texture::TextureFiltering filter) = 0;
 
-        virtual void attachColor(const RenderTexture &texture) = 0;
+        virtual void attachColor(const Texture &texture) = 0;
 
-        virtual void attachDepth(const RenderTexture &texture) = 0;
+        virtual void attachDepth(const Texture &texture) = 0;
 
-        virtual void attachStencil(const RenderTexture &texture) = 0;
+        virtual void attachStencil(const Texture &texture) = 0;
 
-        virtual void attachDepthStencil(const RenderTexture &texture) = 0;
+        virtual void attachDepthStencil(const Texture &texture) = 0;
 
-        virtual void attachColor(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
+        virtual void attachColor(Texture::CubeMapFace face, const Texture &texture) = 0;
 
-        virtual void attachDepth(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
+        virtual void attachDepth(Texture::CubeMapFace face, const Texture &texture) = 0;
 
-        virtual void attachStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
+        virtual void attachStencil(Texture::CubeMapFace face, const Texture &texture) = 0;
 
-        virtual void attachDepthStencil(RenderTexture::CubeMapFace face, const RenderTexture &texture) = 0;
+        virtual void attachDepthStencil(Texture::CubeMapFace face, const Texture &texture) = 0;
     };
 }
 

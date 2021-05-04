@@ -22,8 +22,8 @@
 
 #include <vector>
 
-#include "engine/render/rendermesh.hpp"
-#include "engine/render/rendertexture.hpp"
+#include "engine/render/meshbuffer.hpp"
+#include "engine/render/texture.hpp"
 #include "engine/render/shaderprogram.hpp"
 
 #include "engine/math/transform.hpp"
@@ -83,15 +83,8 @@ namespace mana {
         CONSTANT_ALPHA,
         ONE_MINUS_CONSTANT_ALPHA
     };
-    
-    struct RenderCommand {
-        Transform transform;
 
-        ShaderProgram *shader;
-
-        std::vector<RenderMesh *> meshObjects;
-        std::vector<RenderTexture *> textureObjects;
-
+    struct RenderProperties {
         bool enableDepthTest = false;
         bool depthTestWrite = true;
         DepthTestMode depthTestMode = DepthTestMode::DEPTH_TEST_LESS;
@@ -112,6 +105,17 @@ namespace mana {
         bool enableBlending = false;
         BlendMode blendSourceMode = BlendMode::ONE;
         BlendMode blendDestinationMode = BlendMode::ZERO;
+    };
+
+    struct RenderCommand {
+        Transform transform;
+
+        ShaderProgram *shader;
+
+        std::vector<MeshBuffer *> meshObjects;
+        std::vector<Texture *> textureObjects;
+
+        RenderProperties properties;
     };
 }
 

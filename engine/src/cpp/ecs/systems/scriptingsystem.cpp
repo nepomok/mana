@@ -23,6 +23,8 @@
 
 #include "script/sceneinterface.hpp"
 
+#include "engine/resource/scriptresource.hpp"
+
 //TODO: Refactor script scene interface
 namespace mana {
     MonoCppObject uploadVector(MonoCppAssembly &manaAssembly, Vec3f vec) {
@@ -206,10 +208,12 @@ namespace mana {
         }
     }
 
-    ScriptingSystem::ScriptingSystem(MonoCppRuntime &runtime, MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly)
-            : runtime(&runtime),
-              msCorLib(&msCorLib),
-              manaAssembly(&manaAssembly) {}
+    ScriptingSystem::ScriptingSystem(Resources &res, MonoCppRuntime &runtime, MonoCppAssembly &msCorLib,
+                                     MonoCppAssembly &manaAssembly)
+            : res(res),
+              runtime(runtime),
+              msCorLib(msCorLib),
+              manaAssembly(manaAssembly) {}
 
     void ScriptingSystem::start() {
 
@@ -221,24 +225,24 @@ namespace mana {
 
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
         SceneInterface::setScene(&scene);
-        uploadScene(*runtime, *msCorLib, *manaAssembly, scene);
+        uploadScene(runtime, msCorLib, manaAssembly, scene);
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
-                    comp.script->onDisable();
+                    res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onDisable();
                     comp.scriptEnabled = false;
                 }
                 continue;
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                comp.script->onEnable();
+                res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onEnable();
             }
-            comp.script->onUpdate();
+            res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onUpdate();
         }
         SceneInterface::setScene(nullptr);
-        downloadScene(*runtime, *msCorLib, *manaAssembly, scene);
+        downloadScene(runtime, msCorLib, manaAssembly, scene);
     }
 }

@@ -27,8 +27,8 @@
 #include "engine/render/camera/orthographiccamera.hpp"
 
 namespace mana {
-    RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren) : screenTarget(scr), ren(ren) {
-
+    RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren, Resources &res)
+            : screenTarget(scr), ren(ren), res(res) {
     }
 
     void RenderSystem::start() {
@@ -110,7 +110,7 @@ namespace mana {
 
         std::sort(renderComponents.begin(), renderComponents.end(),
                   [](const RenderComponent *a, const RenderComponent *b) -> bool {
-                      return a->order < b->order;
+                      return a->renderOrder < b->renderOrder;
                   });
 
         std::vector<RenderCommand> commands;
@@ -119,31 +119,39 @@ namespace mana {
 
             command.transform = mapping[comp]->transform;
 
-            command.shader = comp->shader;
+            command.shader = res.getResource<ShaderResource>(comp->shaderResourceName).getShader();
+            for (auto &m : comp->textureMapping) {
+                command.shader->setTexture(m.first, m.second);
+            }
 
-            command.textureObjects = comp->textures;
-            command.meshObjects = comp->meshData;
+            for (auto &t : comp->textureResourceNames) {
+                command.textureObjects.emplace_back(res.getResource<TextureResource>(t).getTexture());
+            }
 
-            command.enableDepthTest = comp->enableDepthTest;
-            command.depthTestWrite = comp->depthTestWrite;
-            command.depthTestMode = comp->depthTestMode;
+            for (auto &m : comp->meshResourceNames) {
+                command.meshObjects.emplace_back(res.getResource<MeshBufferResource>(m).getRenderMesh());
+            }
 
-            command.enableStencilTest = comp->enableStencilTest;
-            command.stencilTestMask = comp->stencilTestMask;
-            command.stencilMode = comp->stencilMode;
-            command.stencilReference = comp->stencilReference;
-            command.stencilFunctionMask = comp->stencilFunctionMask;
-            command.stencilFail = comp->stencilFail;
-            command.stencilDepthFail = comp->stencilDepthFail;
-            command.stencilPass = comp->stencilPass;
+            command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
+            command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
+            command.properties.depthTestMode = comp->renderProperties.depthTestMode;
 
-            command.enableFaceCulling = comp->enableFaceCulling;
-            command.faceCullMode = comp->faceCullMode;
-            command.faceCullClockwiseWinding = comp->faceCullClockwiseWinding;
+            command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
+            command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
+            command.properties.stencilMode = comp->renderProperties.stencilMode;
+            command.properties.stencilReference = comp->renderProperties.stencilReference;
+            command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
+            command.properties.stencilFail = comp->renderProperties.stencilFail;
+            command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
+            command.properties.stencilPass = comp->renderProperties.stencilPass;
 
-            command.enableBlending = comp->enableBlending;
-            command.blendSourceMode = comp->blendSourceMode;
-            command.blendDestinationMode = comp->blendDestinationMode;
+            command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
+            command.properties.faceCullMode = comp->renderProperties.faceCullMode;
+            command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
+
+            command.properties.enableBlending = comp->renderProperties.enableBlending;
+            command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
+            command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
             commands.emplace_back(command);
         }

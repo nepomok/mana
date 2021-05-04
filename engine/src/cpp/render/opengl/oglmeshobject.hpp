@@ -20,7 +20,7 @@
 #ifndef MANA_OGLMESHOBJECT_HPP
 #define MANA_OGLMESHOBJECT_HPP
 
-#include "engine/render/rendermesh.hpp"
+#include "engine/render/meshbuffer.hpp"
 #include "engine/math/matrixmath.hpp"
 
 #include "oglcheckerror.hpp"
@@ -29,7 +29,7 @@
 
 namespace mana {
     namespace opengl {
-        class OGLMeshObject : public RenderMesh {
+        class OGLMeshObject : public MeshBuffer {
         public:
             GLuint VAO;
             GLuint VBO;

@@ -25,64 +25,11 @@
 #include "engine/io/assetfile.hpp"
 #include "engine/io/imagefile.hpp"
 #include "engine/script/mono/monoscript.hpp"
-#include "engine/render/rendertexture.hpp"
+#include "engine/render/texture.hpp"
 
 #include "extern/json.hpp"
 
 namespace mana {
-    RenderTexture::TextureType parseTextureType(const std::string &str) {
-        if (str == "texture2d")
-            return RenderTexture::TEXTURE_2D;
-        else if (str == "cubemap")
-            return RenderTexture::TEXTURE_CUBE_MAP;
-        else
-            throw std::runtime_error("Invalid texture type " + str);
-    }
-
-    RenderTexture::ColorFormat parseColorFormat(const std::string &str) {
-        if (str == "rgba")
-            return RenderTexture::RGBA;
-        else if (str == "rgb")
-            return RenderTexture::RGB;
-        else
-            throw std::runtime_error("Invalid color format " + str);
-    }
-
-    RenderTexture::TextureWrapping parseTextureWrapping(const std::string &str) {
-        if (str == "repeat")
-            return RenderTexture::REPEAT;
-        else if (str == "mirrored_repeat")
-            return RenderTexture::MIRRORED_REPEAT;
-        else if (str == "clamp_to_edge")
-            return RenderTexture::CLAMP_TO_EDGE;
-        else if (str == "clamp_to_border")
-            return RenderTexture::CLAMP_TO_BORDER;
-        else
-            throw std::runtime_error("Invalid texture wrapping " + str);
-    }
-
-    RenderTexture::TextureFiltering parseTextureFiltering(const std::string &str) {
-        if (str == "nearest")
-            return RenderTexture::NEAREST;
-        else if (str == "linear")
-            return RenderTexture::LINEAR;
-        else
-            throw std::runtime_error("Invalid texture filtering " + str);
-    }
-
-    RenderTexture::MipMapFiltering parseMipMapFiltering(const std::string &str) {
-        if (str == "nearest_mipmap_nearest")
-            return RenderTexture::NEAREST_MIPMAP_NEAREST;
-        else if (str == "linear_mipmap_nearest")
-            return RenderTexture::LINEAR_MIPMAP_NEAREST;
-        else if (str == "nearest_mipmap_linear")
-            return RenderTexture::NEAREST_MIPMAP_LINEAR;
-        else if (str == "linear_mipmap_linear")
-            return RenderTexture::LINEAR_MIPMAP_LINEAR;
-        else
-            throw std::runtime_error("Invalid mipmap filtering " + str);
-    }
-
     ComponentType parseComponent(const std::string &str) {
         if (str == "transform")
             return TRANSFORM;
@@ -263,75 +210,42 @@ namespace mana {
         return ret;
     }
 
-    RenderComponent getRenderComponent(const nlohmann::json &component, RenderAllocator &alloc) {
+    RenderComponent getRenderComponent(const nlohmann::json &component) {
         RenderComponent ret;
-        auto vs = Renderer3D::preprocessHlsl(File::readAllText(component["vertexShaderPath"]));
-        auto fs = Renderer3D::preprocessHlsl(File::readAllText(component["fragmentShaderPath"]));
-        ret.shader = alloc.allocateShaderProgram(vs, fs);
+        ret.shaderResourceName = component["shaderResourceName"];
 
         for (const auto &entry : component["textureMapping"]) {
-            ret.shader->setTexture(entry["name"], entry["slot"]);
+            ret.textureMapping.insert({std::string(entry["name"]), entry["slot"]});
         }
 
         for (auto &mesh : component["meshes"]) {
-            auto meshAsset = AssetFile(mesh["filePath"]);
-            if (mesh["instanced"]) {
-                std::vector<Transform> offsets;
-                for (auto &t : mesh["offsets"]) {
-                    offsets.emplace_back(getTransform(t));
-                }
-                ret.meshData.emplace_back(alloc.allocateInstancedMesh(meshAsset.getMesh(), offsets));
-            } else {
-                ret.meshData.emplace_back(alloc.allocateMesh(meshAsset.getMesh()));
-            }
+            ret.meshResourceNames.emplace_back(mesh["resourceName"]);
         }
 
         for (const auto &entry : component["textures"]) {
-            auto img = ImageFile(entry["filePath"]);
-            auto attr = RenderTexture::Attributes();
-            attr.textureType = parseTextureType(entry["textureType"]);
-            attr.format = parseColorFormat(entry["format"]);
-            attr.wrapping = parseTextureWrapping(entry["wrapping"]);
-            attr.filterMin = parseTextureFiltering(entry["filterMin"]);
-            attr.filterMag = parseTextureFiltering(entry["filterMag"]);
-            attr.mipmapFilter = parseMipMapFiltering(entry["mipmapFilter"]);
-            attr.generateMipmap = entry["generateMipmap"];
-            attr.size = img.getBuffer().getSize();
-
-            if (attr.textureType == RenderTexture::TEXTURE_2D) {
-                auto tex = alloc.allocateTexture(attr);
-                tex->upload(img.getBuffer());
-                ret.textures.emplace_back(tex);
-            } else if (attr.textureType == RenderTexture::TEXTURE_CUBE_MAP) {
-                attr.size.x = attr.size.x / 6;
-                if (attr.size.x != attr.size.y)
-                    throw std::runtime_error("Invalid cubemap image file");
-                auto tex = alloc.allocateTexture(attr);
-                tex->uploadCubeMap(img.getBuffer());
-                ret.textures.emplace_back(tex);
-            }
+            ret.textureResourceNames.emplace_back(entry["resourceName"]);
         }
 
         auto props = component["renderProperties"];
-        ret.enableDepthTest = props["enableDepthTest"];
-        ret.depthTestWrite = props["depthTestWrite"];
-        ret.depthTestMode = parseDepthTestMode(props["depthTestMode"]);
-        ret.enableStencilTest = props["enableStencilTest"];
-        ret.stencilTestMask = props["stencilTestMask"];
-        ret.stencilMode = parseStencilMode(props["stencilMode"]);
-        ret.stencilReference = props["stencilReference"];
-        ret.stencilFunctionMask = props["stencilFunctionMask"];
-        ret.stencilFail = parseStencilAction(props["stencilFail"]);
-        ret.stencilDepthFail = parseStencilAction(props["stencilDepthFail"]);
-        ret.stencilPass = parseStencilAction(props["stencilPass"]);
-        ret.enableFaceCulling = props["enableFaceCulling"];
-        ret.faceCullMode = parseFaceCullMode(props["faceCullMode"]);
-        ret.faceCullClockwiseWinding = props["faceCullClockwiseWinding"];
-        ret.enableBlending = props["enableBlending"];
-        ret.blendSourceMode = parseBlendMode(props["blendSourceMode"]);
-        ret.blendDestinationMode = parseBlendMode(props["blendDestinationMode"]);
+        ret.renderProperties.enableDepthTest = props["enableDepthTest"];
+        ret.renderProperties.depthTestWrite = props["depthTestWrite"];
+        ret.renderProperties.depthTestMode = parseDepthTestMode(props["depthTestMode"]);
+        ret.renderProperties.enableStencilTest = props["enableStencilTest"];
+        ret.renderProperties.stencilTestMask = props["stencilTestMask"];
+        ret.renderProperties.stencilMode = parseStencilMode(props["stencilMode"]);
+        ret.renderProperties.stencilReference = props["stencilReference"];
+        ret.renderProperties.stencilFunctionMask = props["stencilFunctionMask"];
+        ret.renderProperties.stencilFail = parseStencilAction(props["stencilFail"]);
+        ret.renderProperties.stencilDepthFail = parseStencilAction(props["stencilDepthFail"]);
+        ret.renderProperties.stencilPass = parseStencilAction(props["stencilPass"]);
+        ret.renderProperties.enableFaceCulling = props["enableFaceCulling"];
+        ret.renderProperties.faceCullMode = parseFaceCullMode(props["faceCullMode"]);
+        ret.renderProperties.faceCullClockwiseWinding = props["faceCullClockwiseWinding"];
+        ret.renderProperties.enableBlending = props["enableBlending"];
+        ret.renderProperties.blendSourceMode = parseBlendMode(props["blendSourceMode"]);
+        ret.renderProperties.blendDestinationMode = parseBlendMode(props["blendDestinationMode"]);
 
-        ret.order = props["renderOrder"];
+        ret.renderOrder = props["renderOrder"];
 
         return ret;
     }
@@ -375,15 +289,13 @@ namespace mana {
         return ret;
     }
 
-    ScriptComponent getScript(const nlohmann::json &component, MonoCppRuntime &monoRuntime) {
+    ScriptComponent getScript(const nlohmann::json &component) {
         ScriptComponent ret;
-        ret.script = new MonoScript(monoRuntime.loadAssembly(component["assemblyFilePath"]),
-                                    component["scriptNamespace"],
-                                    component["scriptClass"]);
+        ret.scriptResourceName = component["resourceName"];
         return ret;
     }
 
-    Scene parseJsonScene(const std::string &jsonStr, RenderAllocator &allocator, MonoCppRuntime &monoRuntime) {
+    Scene parseJsonScene(const std::string &jsonStr) {
         nlohmann::json j = nlohmann::json::parse(jsonStr);
         Scene ret;
         for (auto &node : j["nodes"]) {
@@ -400,13 +312,13 @@ namespace mana {
                         n.addComponent(getCamera(component));
                         break;
                     case RENDER:
-                        n.addComponent(getRenderComponent(component, allocator));
+                        n.addComponent(getRenderComponent(component));
                         break;
                     case LIGHT:
                         n.addComponent(getLight(component));
                         break;
                     case SCRIPT:
-                        n.addComponent(getScript(component, monoRuntime));
+                        n.addComponent(getScript(component));
                         break;
                     default:
                         throw std::runtime_error("Unrecognized component type");
@@ -431,7 +343,7 @@ namespace mana {
         fileText.clear();
     }
 
-    Scene SceneFile::loadScene(RenderAllocator &alloc, MonoCppRuntime &monoRuntime) {
-        return parseJsonScene(fileText, alloc, monoRuntime);
+    Scene SceneFile::getScene() {
+        return parseJsonScene(fileText);
     }
 }

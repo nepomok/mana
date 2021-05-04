@@ -25,10 +25,15 @@
 #include "engine/script/mono/monoscript.hpp"
 #include "engine/script/mono/monocppassembly.hpp"
 
+#include "engine/resource/resources.hpp"
+
 namespace mana {
     class ScriptingSystem : public System {
     public:
-        ScriptingSystem(MonoCppRuntime &runtime, MonoCppAssembly &msCorLib, MonoCppAssembly &manaAssembly);
+        ScriptingSystem(Resources &res,
+                        MonoCppRuntime &runtime,
+                        MonoCppAssembly &msCorLib,
+                        MonoCppAssembly &manaAssembly);
 
         ~ScriptingSystem() override = default;
 
@@ -39,9 +44,10 @@ namespace mana {
         void update(float deltaTime, Scene &scene) override;
 
     private:
-        MonoCppRuntime *runtime;
-        MonoCppAssembly *msCorLib;
-        MonoCppAssembly *manaAssembly;
+        Resources &res;
+        MonoCppRuntime &runtime;
+        MonoCppAssembly &msCorLib;
+        MonoCppAssembly &manaAssembly;
     };
 }
 

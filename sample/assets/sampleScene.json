@@ -54,8 +54,7 @@
         },
         {
           "componentType": "render",
-          "vertexShaderPath": "assets/hlsl/vertex.hlsl",
-          "fragmentShaderPath": "assets/hlsl/fragment.hlsl",
+          "shaderResourceName": "Shader.default",
           "textureMapping": [
             {
               "name": "diffuse",
@@ -68,56 +67,12 @@
           ],
           "meshes": [
             {
-              "filePath": "assets/plane.obj",
-              "instanced": true,
-              "offsets": [
-                {
-                  "position": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0
-                  },
-                  "rotation": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0
-                  },
-                  "scale": {
-                    "x": 1,
-                    "y": 1,
-                    "z": 1
-                  }
-                },
-                {
-                  "position": {
-                    "x": 5,
-                    "y": 0,
-                    "z": 0
-                  },
-                  "rotation": {
-                    "x": 0,
-                    "y": 0,
-                    "z": 0
-                  },
-                  "scale": {
-                    "x": 1,
-                    "y": 1,
-                    "z": 1
-                  }
-                }
-              ]
+              "resourceName": "MeshBuffer.plane"
             }
           ],
           "textures": [
             {
-              "filePath": "assets/colormap.png",
-              "textureType": "texture2d",
-              "format": "rgba",
-              "wrapping": "repeat",
-              "filterMin": "linear",
-              "filterMag": "linear",
-              "generateMipmap": false,
-              "mipmapFilter": "nearest_mipmap_nearest"
+              "resourceName": "Texture.colorMap"
             }
           ],
           "renderProperties": {
@@ -166,8 +121,7 @@
         },
         {
           "componentType": "render",
-          "vertexShaderPath": "assets/hlsl/skyboxVertex.hlsl",
-          "fragmentShaderPath": "assets/hlsl/skyboxFragment.hlsl",
+          "shaderResourceName": "Shader.skybox",
           "textureMapping": [
             {
               "name": "skybox",
@@ -176,20 +130,12 @@
           ],
           "meshes": [
             {
-              "filePath": "assets/cube.obj",
-              "instanced": false
+              "resourceName": "MeshBuffer.cube"
             }
           ],
           "textures": [
             {
-              "filePath": "assets/deepbluespace-skybox_maintex.png",
-              "textureType": "cubemap",
-              "format": "rgba",
-              "wrapping": "repeat",
-              "filterMin": "linear",
-              "filterMag": "linear",
-              "generateMipmap": false,
-              "mipmapFilter": "nearest_mipmap_nearest"
+              "resourceName": "Texture.skybox"
             }
           ],
           "renderProperties": {
@@ -285,9 +231,7 @@
         },
         {
           "componentType": "script",
-          "assemblyFilePath": "assets/testscript.dll",
-          "scriptNamespace": "",
-          "scriptClass": "TestScript"
+          "resourceName": "Script.testScript"
         }
       ]
     }
