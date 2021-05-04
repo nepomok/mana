@@ -20,6 +20,7 @@
 #ifndef MANA_SAMPLE0_HPP
 #define MANA_SAMPLE0_HPP
 
+
 #include "game.hpp"
 
 class Sample0 : public Game {
@@ -29,30 +30,34 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
+        ecs.addSystem(new ScriptingSystem(*res, monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d, *res));
+    }
+
+    void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
+        delete manaAssembly;
+        Game::stop(window, renderApi, alloc, input);
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
+        manaAssembly->setStaticField("Mana", "Time", "deltaTime", &deltaTime);
+
         Mouse mouse = input.getMouse();
         Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
         mouseLastFrame = mouse;
 
         double rotationSpeed = cameraRotationSpeed * deltaTime;
 
-        if (mouse.leftButtonDown && (mouseDiff.x != 0 || mouseDiff.y != 0)) {
-            cube->transform.rotation.x += mouseDiff.y * rotationSpeed;
-            cube->transform.rotation.y += mouseDiff.x * rotationSpeed;
-        }
-
         if (input.getKeyDown(KEY_UP)) {
-            camera.transform.rotation.x += rotationSpeed;
+            cameraNode->getComponent<TransformComponent>().transform.rotation.x += rotationSpeed;
         } else if (input.getKeyDown(KEY_DOWN)) {
-            camera.transform.rotation.x -= rotationSpeed;
+            cameraNode->getComponent<TransformComponent>().transform.rotation.x -= rotationSpeed;
         }
 
         if (input.getKeyDown(KEY_LEFT)) {
-            camera.transform.rotation.y -= rotationSpeed;
+            cameraNode->getComponent<TransformComponent>().transform.rotation.y -= rotationSpeed;
         } else if (input.getKeyDown(KEY_RIGHT)) {
-            camera.transform.rotation.y += rotationSpeed;
+            cameraNode->getComponent<TransformComponent>().transform.rotation.y += rotationSpeed;
         }
 
         Vec3f inputMovement = Vec3f(0);
@@ -74,8 +79,18 @@ protected:
             inputMovement.y = -1;
         }
 
+        cameraNode->getComponent<CameraComponent>().aspectRatio =
+                (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
+
+        PerspectiveCamera cam;
+        cam.transform = cameraNode->getComponent<TransformComponent>().transform;
+        cam.nearClip = cameraNode->getComponent<CameraComponent>().nearClip;
+        cam.farClip = cameraNode->getComponent<CameraComponent>().farClip;
+        cam.fov = cameraNode->getComponent<CameraComponent>().fov;
+        cam.aspectRatio = cameraNode->getComponent<CameraComponent>().aspectRatio;
+
         //Translate direction vectors with desired length into world space and add them to the current camera position.
-        Mat4f view = camera.view();
+        Mat4f view = cam.view();
 
         view = MatrixMath::inverse(view);
 
@@ -85,246 +100,46 @@ protected:
         Vec4f up = (view) * Vec4f(0, inputMovement.y * movementSpeed, 0, 0);
         Vec4f forward = (view) * Vec4f(0, 0, inputMovement.z * movementSpeed, 0);
 
-        camera.transform.position += toVec3(left + up + forward);
-
-        Vec3f lightPos = lights.point.at(0).transform.position;
-
-        Mat4f rot = MatrixMath::rotate(Vec3f(0, rotationSpeed, 0));
-
-        lightPos = toVec3(rot * toVec4(lightPos, 1));
-
-        if (incrementLight) {
-            if (lightPos.y < 2) {
-                lightPos.y += lightMovementSpeed * deltaTime;
-            } else {
-                lightPos.y = 2;
-                incrementLight = false;
-            }
-        } else {
-            if (lightPos.y > 0.5f) {
-                lightPos.y -= lightMovementSpeed * deltaTime;
-            } else {
-                lightPos.y = 0.5f;
-                incrementLight = true;
-            }
-        }
-
-        lights.point.at(0).transform.position = lightPos;
-        sphere->transform.position = lightPos;
-
-        sphere->transform.rotation += Vec3f(rotationSpeed, rotationSpeed / 2, rotationSpeed);
-
-        skybox->transform.position = camera.transform.position;
-
-        forward = view * Vec4f(0, 0, -1, 0);
-
-        lights.spot.at(0).direction = toVec3(forward);
-        lights.spot.at(0).transform.position = camera.transform.position;
-
-        camera.aspectRatio = (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
+        cameraNode->getComponent<TransformComponent>().transform.position += toVec3(left + up + forward);
 
         ren.setViewport({}, window.getFramebufferSize());
 
-        ren3d.render(window.getRenderTarget(), camera, commands, lights);
+        ecs.update(deltaTime, scene);
 
         window.swapBuffers();
         window.update();
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        Vec3f lightPos = Vec3f(2, 1, 0);
-
-        PointLight light;
-        light.transform.position = lightPos;
-        light.constant = 1.0f;
-        light.linear = 1.0f;
-        light.quadratic = 1.0f;
-        light.ambient = Vec3f(0);
-        lights.point.emplace_back(light);
-
-        Vec3f lightPos0 = Vec3f(-4, 0.73, 0);
-        SpotLight light0 = SpotLight();
-        light0.transform.position = lightPos0;
-        light0.cutOff = 15;
-        light0.outerCutOff = 25;
-        lights.spot.emplace_back(light0);
-
-        auto planeMesh = AssetFile("./assets/plane.obj");
-        auto curveCubeMesh = AssetFile("./assets/curvecube.obj");
-        auto sphereMesh = AssetFile("./assets/icosphere.obj");
-        auto cubeMesh = AssetFile("./assets/cube.obj");
-
-        std::string vertexShader = File::readAllText("./assets/hlsl/vertex.hlsl");
-        std::string fragmentShader = File::readAllText("./assets/hlsl/fragment.hlsl");
-        std::string skyboxVertexShader = File::readAllText("./assets/hlsl/skyboxVertex.hlsl");
-        std::string skyboxFragmentShader = File::readAllText("./assets/hlsl/skyboxFragment.hlsl");
-
-        ShaderProgram *skyboxShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(skyboxVertexShader),
-                                                                  Renderer3D::preprocessHlsl(skyboxFragmentShader));
-        objects.emplace_back(skyboxShader);
-
-        skyboxShader->setTexture("skybox", 0);
-
-        shader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
-                                             Renderer3D::preprocessHlsl(fragmentShader));
-        objects.emplace_back(shader);
-
-        shader->setTexture("diffuse", 0);
-        shader->setTexture("specular", 1);
-
-        ShaderProgram *lightShader = alloc.allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader),
-                                                                 Renderer3D::preprocessHlsl(fragmentShader));
-        objects.emplace_back(lightShader);
-
-        auto colorMapImage = ImageFile("./assets/colormap.png");
-
-        Texture::Attributes attributes;
-        attributes.size = colorMapImage.getBuffer().getSize();
-
-        auto colorMapTexture = alloc.allocateTexture(attributes);
-
-        colorMapTexture->upload(colorMapImage.getBuffer());
-
-        auto skyboxImage = ImageFile("./assets/deepbluespace-skybox_maintex.png");
-
-        attributes = {};
-        attributes.size = {2048, 2048};
-        attributes.textureType = mana::Texture::TEXTURE_CUBE_MAP;
-
-        auto skyboxTexture = alloc.allocateTexture(attributes);
-
-        skyboxTexture->upload(Texture::RIGHT,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(0, 0), Vec2i(2048, 2048))));
-
-        skyboxTexture->upload(Texture::LEFT,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 1, 0), Vec2i(2048, 2048))));
-
-        skyboxTexture->upload(Texture::TOP,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 2, 0), Vec2i(2048, 2048))));
-
-        skyboxTexture->upload(Texture::BOTTOM,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 3, 0), Vec2i(2048, 2048))));
-
-        skyboxTexture->upload(Texture::FRONT,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 4, 0), Vec2i(2048, 2048))));
-
-        skyboxTexture->upload(Texture::BACK,
-                              skyboxImage.getBuffer().slice(Recti(Vec2i(2048 * 5, 0), Vec2i(2048, 2048))));
-
-        objects.emplace_back(colorMapTexture);
-        objects.emplace_back(skyboxTexture);
-
-        MeshBuffer *cubePtr = alloc.allocateMeshBuffer(cubeMesh.getMeshData().at("Cube"));
-        MeshBuffer *curveCubePtr = alloc.allocateMeshBuffer(curveCubeMesh.getMeshData().at("Cube"));
-        MeshBuffer *planePtr = alloc.allocateMeshBuffer(planeMesh.getMeshData().at("Plane"));
-        MeshBuffer *spherePtr = alloc.allocateInstancedMeshBuffer(sphereMesh.getMeshData().at("Sphere"),
-                                                                  {Transform({0, 0, 0}, {}, {1, 1, 1}),
-                                                                   Transform({0, 1, 0}, {}, {1, 1, 1}),
-                                                                   Transform({0, -1, 0}, {}, {1, 1, 1}),
-                                                                   Transform({1, 0, 0}, {}, {1, 1, 1}),
-                                                                   Transform({-1, 0, 0}, {}, {1, 1, 1}),
-                                                                   Transform({0, 0, 1}, {}, {1, 1, 1}),
-                                                                   Transform({0, 0, -1}, {},
-                                                                             {1, 1, 1})});
-
-        objects.emplace_back(cubePtr);
-        objects.emplace_back(curveCubePtr);
-        objects.emplace_back(planePtr);
-        objects.emplace_back(spherePtr);
-
-        RenderCommand command;
-        command.properties.enableDepthTest = true;
-
-        command.meshObjects.emplace_back(curveCubePtr);
-
-        command.shader = shader;
-
-        command.textureObjects.emplace_back(colorMapTexture);
-
-        command.transform.position = Vec3f(0, 1, 0);
-        command.transform.rotation = Vec3f(0);
-        command.transform.scale = Vec3f(1);
-
-        commands.emplace(commands.end(), command);
-
-        command = RenderCommand();
-        command.properties.enableDepthTest = true;
-
-        command.meshObjects.emplace_back(spherePtr);
-
-        command.shader = shader;
-
-        command.textureObjects.emplace_back(colorMapTexture);
-
-        command.transform.position = lightPos;
-        command.transform.rotation = Vec3f(0);
-        command.transform.scale = Vec3f(0.1f);
-
-        commands.emplace(commands.end(), command);
-
-        command = RenderCommand();
-        command.properties.enableDepthTest = true;
-
-        command.meshObjects.emplace_back(planePtr);
-
-        command.shader = shader;
-
-        command.textureObjects.emplace_back(colorMapTexture);
-
-        command.transform.position = Vec3f(0);
-        command.transform.rotation = Vec3f(0);
-        command.transform.scale = Vec3f(10.0f);
-
-        commands.emplace(commands.end(), command);
-
-        command = RenderCommand();
-        command.properties.enableDepthTest = false;
-        command.meshObjects.emplace_back(cubePtr);
-
-        command.shader = skyboxShader;
-
-        command.textureObjects.emplace_back(skyboxTexture);
-
-        commands.emplace(commands.begin(), command);
-
-        camera.transform.position = Vec3f(0, 3, 3);
-        camera.transform.rotation = Vec3f(1, 0, 0);
-
-        skybox = &*(commands.begin());
-        sphere = &*(commands.begin() + 2);
-        cube = &*(commands.begin() + 1);
+        //IMPORTANT: All assemblies referenced in other assemblies have to be loaded first.
+        manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
+        scene = SceneFile("assets/sampleScene.json").getScene();
+        res = ResourceFile("assets/sampleResources.json").getResources(alloc, monoRuntime);
+        cameraNode = &scene.nodes.at("mainCamera");
     }
 
     void destroyScene() override {
-        for (auto *p : objects)
-            delete p;
+        delete res;
     }
 
 private:
-    std::vector<RenderObject *> objects;
-
     float cameraRotationSpeed = 45.0f;
     float cameraMovementSpeed = 5.0f;
-
-    bool incrementLight = false;
-
-    float lightMovementSpeed = 1.0f;
 
     Mouse mouseLastFrame;
 
     ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
-    PerspectiveCamera camera;
+    ECS ecs;
 
-    LightingData lights;
+    Node *cameraNode;
 
-    std::vector<RenderCommand> commands;
+    MonoCppRuntime monoRuntime;
 
-    RenderCommand *skybox;
-    RenderCommand *sphere;
-    RenderCommand *cube;
+    MonoCppAssembly *manaAssembly;
 
-    ShaderProgram *shader;
+    Scene scene;
+    Resources* res;
 };
 
 #endif //MANA_SAMPLE0_HPP

@@ -20,12 +20,31 @@
 #ifndef MANA_RENDERER3D_HPP
 #define MANA_RENDERER3D_HPP
 
+#include <utility>
+
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderallocator.hpp"
 
 namespace mana {
     class Renderer3D {
     public:
+        struct Unit {
+            Unit() : transform(), command() {}
+
+            Unit(Transform t, RenderCommand command) : transform(t), command(std::move(command)) {}
+
+            Transform transform;
+            RenderCommand command;
+        };
+
+        struct RenderScene {
+            Camera *camera;
+            std::vector<Unit> units;
+            std::vector<DirectionalLight> dir;
+            std::vector<PointLight> point;
+            std::vector<SpotLight> spot;
+        };
+
         static std::string preprocessHlsl(std::string shader);
 
         Renderer3D();
@@ -35,9 +54,7 @@ namespace mana {
         void setEnableShadowMapping(bool shadowMapping);
 
         void render(const RenderTarget &target,
-                    const Camera &camera,
-                    const std::vector<RenderCommand> &commands,
-                    const LightingData &lightingData);
+                    const RenderScene &scene);
 
         const Renderer &getRenderer();
 

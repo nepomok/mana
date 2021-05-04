@@ -40,7 +40,7 @@ namespace mana {
     }
 
     void RenderSystem::update(float deltaTime, Scene &scene) {
-        LightingData lights;
+        Renderer3D::RenderScene scene3d;
 
         auto nodes = scene.findNodesWithComponent<LightComponent>();
         for (auto *nodePointer : nodes) {
@@ -60,7 +60,7 @@ namespace mana {
 
                 light.direction = comp.direction;
 
-                lights.dir.emplace_back(light);
+                scene3d.dir.emplace_back(light);
             } else if (comp.lightType == LIGHT_POINT) {
                 PointLight light;
                 light.ambient = comp.ambient;
@@ -71,7 +71,7 @@ namespace mana {
                 light.linear = comp.linear;
                 light.quadratic = comp.quadratic;
 
-                lights.point.emplace_back(light);
+                scene3d.point.emplace_back(light);
             } else if (comp.lightType == LIGHT_SPOT) {
                 SpotLight light;
                 light.ambient = comp.ambient;
@@ -84,7 +84,7 @@ namespace mana {
                 light.linear = comp.linear;
                 light.quadratic = comp.quadratic;
 
-                lights.spot.emplace_back(light);
+                scene3d.spot.emplace_back(light);
             }
         }
 
@@ -113,47 +113,46 @@ namespace mana {
                       return a->renderOrder < b->renderOrder;
                   });
 
-        std::vector<RenderCommand> commands;
         for (auto *comp : renderComponents) {
-            RenderCommand command;
+            Renderer3D::Unit unit;
 
-            command.transform = mapping[comp]->transform;
+            unit.transform = mapping[comp]->transform;
 
-            command.shader = res.getResource<ShaderResource>(comp->shaderResourceName).getShader();
+            unit.command.shader = res.getResource<ShaderResource>(comp->shaderResourceName).getShader();
             for (auto &m : comp->textureMapping) {
-                command.shader->setTexture(m.first, m.second);
+                unit.command.shader->setTexture(m.first, m.second);
             }
 
             for (auto &t : comp->textureResourceNames) {
-                command.textureObjects.emplace_back(res.getResource<TextureResource>(t).getTexture());
+                unit.command.textures.emplace_back(res.getResource<TextureResource>(t).getTexture());
             }
 
             for (auto &m : comp->meshResourceNames) {
-                command.meshObjects.emplace_back(res.getResource<MeshBufferResource>(m).getRenderMesh());
+                unit.command.meshBuffers.emplace_back(res.getResource<MeshBufferResource>(m).getRenderMesh());
             }
 
-            command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
-            command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
-            command.properties.depthTestMode = comp->renderProperties.depthTestMode;
+            unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
+            unit.command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
+            unit.command.properties.depthTestMode = comp->renderProperties.depthTestMode;
 
-            command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
-            command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
-            command.properties.stencilMode = comp->renderProperties.stencilMode;
-            command.properties.stencilReference = comp->renderProperties.stencilReference;
-            command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
-            command.properties.stencilFail = comp->renderProperties.stencilFail;
-            command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
-            command.properties.stencilPass = comp->renderProperties.stencilPass;
+            unit.command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
+            unit.command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
+            unit.command.properties.stencilMode = comp->renderProperties.stencilMode;
+            unit.command.properties.stencilReference = comp->renderProperties.stencilReference;
+            unit.command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
+            unit.command.properties.stencilFail = comp->renderProperties.stencilFail;
+            unit.command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
+            unit.command.properties.stencilPass = comp->renderProperties.stencilPass;
 
-            command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
-            command.properties.faceCullMode = comp->renderProperties.faceCullMode;
-            command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
+            unit.command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
+            unit.command.properties.faceCullMode = comp->renderProperties.faceCullMode;
+            unit.command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
 
-            command.properties.enableBlending = comp->renderProperties.enableBlending;
-            command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
-            command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
+            unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
+            unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
+            unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
-            commands.emplace_back(command);
+            scene3d.units.emplace_back(unit);
         }
 
         nodes = scene.findNodesWithComponent<CameraComponent>();
@@ -173,25 +172,23 @@ namespace mana {
 
         auto &comp = cameraNode->getComponent<CameraComponent>();
         auto &tcomp = cameraNode->getComponent<TransformComponent>();
-
         if (comp.cameraType == PERSPECTIVE) {
-            PerspectiveCamera cam;
-            cam.transform = tcomp.transform;
-            cam.nearClip = comp.nearClip;
-            cam.farClip = comp.farClip;
-            cam.fov = comp.fov;
-            cam.aspectRatio = comp.aspectRatio;
-            ren.render(screenTarget, cam, commands, lights);
+            perspectiveCamera.transform = tcomp.transform;
+            perspectiveCamera.nearClip = comp.nearClip;
+            perspectiveCamera.farClip = comp.farClip;
+            perspectiveCamera.fov = comp.fov;
+            perspectiveCamera.aspectRatio = comp.aspectRatio;
+            scene3d.camera = &perspectiveCamera;
         } else {
-            OrthographicCamera cam;
-            cam.transform = tcomp.transform;
-            cam.nearClip = comp.nearClip;
-            cam.farClip = comp.farClip;
-            cam.left = comp.left;
-            cam.top = comp.top;
-            cam.right = comp.right;
-            cam.bottom = comp.bottom;
-            ren.render(screenTarget, cam, commands, lights);
+            orthoCamera.transform = tcomp.transform;
+            orthoCamera.nearClip = comp.nearClip;
+            orthoCamera.farClip = comp.farClip;
+            orthoCamera.left = comp.left;
+            orthoCamera.top = comp.top;
+            orthoCamera.right = comp.right;
+            orthoCamera.bottom = comp.bottom;
+            scene3d.camera = &orthoCamera;
         }
+        ren.render(screenTarget, scene3d);
     }
 }

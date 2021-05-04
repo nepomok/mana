@@ -121,8 +121,8 @@ namespace mana {
 
         void OGLRenderer::addCommand(const RenderCommand &command) {
             //Bind textures
-            for (int i = 0; i < command.textureObjects.size(); i++) {
-                auto *textureObject = command.textureObjects.at(i);
+            for (int i = 0; i < command.textures.size(); i++) {
+                auto *textureObject = command.textures.at(i);
                 if (textureObject == nullptr) {
                     throw std::runtime_error("nullptr texture");
                 }
@@ -184,11 +184,11 @@ namespace mana {
             }
 
             //Bind VAOs and draw.
-            for (auto meshPtr : command.meshObjects) {
-                if (meshPtr == nullptr) {
+            for (auto *meshBuffer : command.meshBuffers) {
+                if (meshBuffer == nullptr) {
                     throw std::runtime_error("nullptr mesh");
                 }
-                auto &mesh = dynamic_cast<const OGLMeshObject &>(*meshPtr);
+                auto &mesh = dynamic_cast<const OGLMeshObject &>(*meshBuffer);
 
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {

@@ -38,30 +38,26 @@ namespace mana {
     Renderer3D::Renderer3D(Renderer &r, RenderAllocator &a) : ren(&r), alloc(&a) {}
 
     void Renderer3D::setEnableShadowMapping(bool shadowMapping) {
-
     }
 
     void Renderer3D::render(const RenderTarget &target,
-                            const Camera &camera,
-                            const std::vector<RenderCommand> &commands,
-                            const LightingData &lightingData) {
+                            const RenderScene &scene) {
         if (ren == nullptr || alloc == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
         ren->renderBegin(target);
-        for (const auto &command : commands) {
+        Mat4f model, view, projection;
+        view = scene.camera->view();
+        projection = scene.camera->projection();
+        for (const auto &unit : scene.units) {
             if (ren == nullptr)
                 throw std::runtime_error("Null renderer");
 
-            Mat4f model, view, projection;
-            model = MatrixMath::translate(command.transform.position);
-            model = model * MatrixMath::scale(command.transform.scale);
-            model = model * MatrixMath::rotate(command.transform.rotation);
+            model = MatrixMath::translate(unit.transform.position);
+            model = model * MatrixMath::scale(unit.transform.scale);
+            model = model * MatrixMath::rotate(unit.transform.rotation);
 
-            view = camera.view();
-            projection = camera.projection();
-
-            ShaderProgram &shader = *command.shader;
+            ShaderProgram &shader = *unit.command.shader;
 
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);
@@ -70,7 +66,7 @@ namespace mana {
             shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
 
             int i = 0;
-            for (auto &light : lightingData.dir) {
+            for (auto &light : scene.dir) {
                 std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "direction", light.direction);
                 shader.setVec3(name + "ambient", light.ambient);
@@ -79,7 +75,7 @@ namespace mana {
             }
 
             i = 0;
-            for (auto &light : lightingData.point) {
+            for (auto &light : scene.point) {
                 std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setFloat(name + "constantValue", light.constant);
@@ -90,7 +86,7 @@ namespace mana {
                 shader.setVec3(name + "specular", light.specular);
             }
             i = 0;
-            for (auto &light : lightingData.spot) {
+            for (auto &light : scene.spot) {
                 std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
                 shader.setVec3(name + "position", light.transform.position);
                 shader.setVec3(name + "direction", light.direction);
@@ -104,13 +100,13 @@ namespace mana {
                 shader.setVec3(name + "specular", light.specular);
             }
 
-            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", lightingData.dir.size());
-            shader.setInt("MANA_LIGHT_COUNT_POINT", lightingData.point.size());
-            shader.setInt("MANA_LIGHT_COUNT_SPOT", lightingData.spot.size());
+            shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", scene.dir.size());
+            shader.setInt("MANA_LIGHT_COUNT_POINT", scene.point.size());
+            shader.setInt("MANA_LIGHT_COUNT_SPOT", scene.spot.size());
 
-            shader.setVec3("MANA_VIEWPOS", camera.transform.position);
+            shader.setVec3("MANA_VIEWPOS", unit.transform.position);
 
-            ren->addCommand(command);
+            ren->addCommand(unit.command);
         }
         ren->renderFinish();
     }

@@ -24,6 +24,8 @@
 
 #include "engine/render/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
+#include "engine/render/camera/perspectivecamera.hpp"
+#include "engine/render/camera/orthographiccamera.hpp"
 
 #include "engine/resource/resources.hpp"
 
@@ -46,6 +48,8 @@ namespace mana {
         const RenderTarget &screenTarget;
         Renderer3D &ren;
         Resources &res;
+        PerspectiveCamera perspectiveCamera;
+        OrthographicCamera orthoCamera;
     };
 }
 

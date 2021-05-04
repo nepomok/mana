@@ -18,15 +18,13 @@
  */
 
 #include "sample0.hpp"
-#include "sample1.hpp"
-#include "sample2.hpp"
 
 void printUsage() {
     printf("Usage: samples SAMPLE_NUMBER\n");
 }
 
 int main(int argc, char *argv[]) {
-    int n = 2;
+    int n = 0;
     if (argc == 2) {
         n = std::stoi(argv[1]);
     }
@@ -35,12 +33,6 @@ int main(int argc, char *argv[]) {
     switch (n) {
         case 0:
             game = new Sample0();
-            break;
-        case 1:
-            game = new Sample1();
-            break;
-        case 2:
-            game = new Sample2();
             break;
         default:
             printUsage();
