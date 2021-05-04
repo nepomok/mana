@@ -95,6 +95,11 @@
             "blendDestinationMode": "zero",
             "renderOrder": 1
           }
+        },
+        {
+          "componentType": "script",
+          "resourceName": "Script.inputController",
+          "queue": 0
         }
       ]
     },
@@ -158,6 +163,11 @@
             "blendDestinationMode": "zero",
             "renderOrder": 0
           }
+        },
+        {
+          "componentType": "script",
+          "resourceName": "Script.skyboxController",
+          "queue": 1
         }
       ]
     },
@@ -205,33 +215,6 @@
             "y": -0.5,
             "z": 0
           }
-        }
-      ]
-    },
-    {
-      "nodeName": "scriptNode",
-      "components": [
-        {
-          "componentType": "transform",
-          "position": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          },
-          "rotation": {
-            "x": 0,
-            "y": 0,
-            "z": 0
-          },
-          "scale": {
-            "x": 1,
-            "y": 1,
-            "z": 1
-          }
-        },
-        {
-          "componentType": "script",
-          "resourceName": "Script.testScript"
         }
       ]
     }

@@ -25,12 +25,15 @@
 #include "engine/script/mono/monoscript.hpp"
 #include "engine/script/mono/monocppassembly.hpp"
 
+#include "engine/input/input.hpp"
+
 #include "engine/resource/resources.hpp"
 
 namespace mana {
-    class ScriptingSystem : public System {
+    class ScriptingSystem : public System, InputListener {
     public:
         ScriptingSystem(Resources &res,
+                        Input &input,
                         MonoCppRuntime &runtime,
                         MonoCppAssembly &msCorLib,
                         MonoCppAssembly &manaAssembly);
@@ -44,7 +47,23 @@ namespace mana {
         void update(float deltaTime, Scene &scene) override;
 
     private:
+        void onKeyDown(Key key) override;
+
+        void onKeyUp(Key key) override;
+
+        void onMouseMove(double xpos, double ypos) override;
+
+        void onMouseWheelScroll(double ammount) override;
+
+        void onMouseKeyDown(MouseKey key) override;
+
+        void onMouseKeyUp(MouseKey key) override;
+
+        void onTextInput(std::string text) override;
+
+    private:
         Resources &res;
+        Input &input;
         MonoCppRuntime &runtime;
         MonoCppAssembly &msCorLib;
         MonoCppAssembly &manaAssembly;

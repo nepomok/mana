@@ -292,6 +292,7 @@ namespace mana {
     ScriptComponent getScript(const nlohmann::json &component) {
         ScriptComponent ret;
         ret.scriptResourceName = component["resourceName"];
+        ret.queue = component["queue"];
         return ret;
     }
 

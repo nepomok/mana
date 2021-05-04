@@ -74,7 +74,7 @@ namespace mana {
         }
 
         template<typename T>
-        T &getComponent() {
+        T &getComponent() const {
             const std::type_info &typeInfo = typeid(T);
             if (components.find(typeInfo) == components.end())
                 throw std::runtime_error("Component of type " + std::string(typeInfo.name()) + " not found");

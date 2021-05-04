@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <algorithm>
+
 #include "engine/ecs/systems/scriptingsystem.hpp"
 
 #include "engine/ecs/components.hpp"
@@ -208,33 +210,43 @@ namespace mana {
         }
     }
 
-    ScriptingSystem::ScriptingSystem(Resources &res, MonoCppRuntime &runtime, MonoCppAssembly &msCorLib,
+    ScriptingSystem::ScriptingSystem(Resources &res,
+                                     Input &input,
+                                     MonoCppRuntime &runtime,
+                                     MonoCppAssembly &msCorLib,
                                      MonoCppAssembly &manaAssembly)
             : res(res),
               runtime(runtime),
               msCorLib(msCorLib),
-              manaAssembly(manaAssembly) {}
+              manaAssembly(manaAssembly),
+              input(input) {
+    }
 
     void ScriptingSystem::start() {
-
+        input.registerListener(*this);
     }
 
     void ScriptingSystem::stop() {
-
+        input.unregisterListener(*this);
     }
 
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
         SceneInterface::setScene(&scene);
         uploadScene(runtime, msCorLib, manaAssembly, scene);
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
+
+        std::sort(nodes.begin(), nodes.end(),
+                  [](const Node *a, const Node *b) -> bool {
+                      return a->getComponent<ScriptComponent>().queue < b->getComponent<ScriptComponent>().queue;
+                  });
+
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
-                    res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onDisable();
                     comp.scriptEnabled = false;
+                    res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onDisable();
                 }
-                continue;
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
@@ -242,7 +254,58 @@ namespace mana {
             }
             res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onUpdate();
         }
+
         SceneInterface::setScene(nullptr);
         downloadScene(runtime, msCorLib, manaAssembly, scene);
+        MonoCppArguments a;
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd", a);
+    }
+
+    void ScriptingSystem::onKeyDown(Key key) {
+        int v = key;
+        MonoCppArguments args;
+        args.add(v);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnKeyDown", args);
+    }
+
+    void ScriptingSystem::onKeyUp(Key key) {
+        int v = key;
+        MonoCppArguments args;
+        args.add(v);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnKeyUp", args);
+    }
+
+    void ScriptingSystem::onMouseMove(double xpos, double ypos) {
+        MonoCppArguments args;
+        args.add(xpos);
+        args.add(ypos);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseMove", args);
+    }
+
+    void ScriptingSystem::onMouseWheelScroll(double ammount) {
+        MonoCppArguments args;
+        args.add(ammount);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseWheelScroll", args);
+    }
+
+    void ScriptingSystem::onMouseKeyDown(MouseKey key) {
+        int v = key;
+        MonoCppArguments args;
+        args.add(v);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseKeyDown", args);
+    }
+
+    void ScriptingSystem::onMouseKeyUp(MouseKey key) {
+        int v = key;
+        MonoCppArguments args;
+        args.add(v);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseKeyUp", args);
+    }
+
+    void ScriptingSystem::onTextInput(std::string text) {
+        MonoCppArguments args;
+        auto monostr = runtime.stringFromUtf8(text);
+        args.add(monostr);
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnTextInput", args);
     }
 }

@@ -42,7 +42,7 @@ namespace mana {
         auto *c = mono_class_from_name(imagePointer, nameSpace.c_str(), className.c_str());
         if (c == nullptr)
             throw std::runtime_error("Failed to find class " + className);
-        auto *m = mono_class_get_method_from_name(c, functionName.c_str(), 0);
+        auto *m = mono_class_get_method_from_name(c, functionName.c_str(), args.size());
         if (m == nullptr)
             throw std::runtime_error("Failed to find method " + functionName);
 

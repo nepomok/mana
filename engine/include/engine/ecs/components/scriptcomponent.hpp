@@ -31,6 +31,8 @@ namespace mana {
         std::string scriptResourceName;
 
         bool scriptEnabled = false;
+
+        int queue = 0;
     };
 }
 

@@ -31,6 +31,8 @@ namespace mana {
 
         void add(float &value);
 
+        void add(double &value);
+
         void add(const MonoCppObject &value);
 
         void clear();

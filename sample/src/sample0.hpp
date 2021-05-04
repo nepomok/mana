@@ -30,7 +30,8 @@ public:
 protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
-        ecs.addSystem(new ScriptingSystem(*res, monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        ren.setClearColor(clearColor);
+        ecs.addSystem(new ScriptingSystem(*res, input, monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d, *res));
     }
 
@@ -42,76 +43,19 @@ protected:
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         manaAssembly->setStaticField("Mana", "Time", "deltaTime", &deltaTime);
 
-        Mouse mouse = input.getMouse();
-        Vec2d mouseDiff = mouse.position - mouseLastFrame.position;
-        mouseLastFrame = mouse;
-
-        double rotationSpeed = cameraRotationSpeed * deltaTime;
-
-        if (input.getKeyDown(KEY_UP)) {
-            cameraNode->getComponent<TransformComponent>().transform.rotation.x += rotationSpeed;
-        } else if (input.getKeyDown(KEY_DOWN)) {
-            cameraNode->getComponent<TransformComponent>().transform.rotation.x -= rotationSpeed;
-        }
-
-        if (input.getKeyDown(KEY_LEFT)) {
-            cameraNode->getComponent<TransformComponent>().transform.rotation.y -= rotationSpeed;
-        } else if (input.getKeyDown(KEY_RIGHT)) {
-            cameraNode->getComponent<TransformComponent>().transform.rotation.y += rotationSpeed;
-        }
-
-        Vec3f inputMovement = Vec3f(0);
-        if (input.getKeyDown(KEY_A)) {
-            inputMovement.x = -1;
-        } else if (input.getKeyDown(KEY_D)) {
-            inputMovement.x = 1;
-        }
-
-        if (input.getKeyDown(KEY_W)) {
-            inputMovement.z = -1;
-        } else if (input.getKeyDown(KEY_S)) {
-            inputMovement.z = 1;
-        }
-
-        if (input.getKeyDown(KEY_E)) {
-            inputMovement.y = 1;
-        } else if (input.getKeyDown(KEY_Q)) {
-            inputMovement.y = -1;
-        }
-
         cameraNode->getComponent<CameraComponent>().aspectRatio =
                 (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
-        PerspectiveCamera cam;
-        cam.transform = cameraNode->getComponent<TransformComponent>().transform;
-        cam.nearClip = cameraNode->getComponent<CameraComponent>().nearClip;
-        cam.farClip = cameraNode->getComponent<CameraComponent>().farClip;
-        cam.fov = cameraNode->getComponent<CameraComponent>().fov;
-        cam.aspectRatio = cameraNode->getComponent<CameraComponent>().aspectRatio;
-
-        //Translate direction vectors with desired length into world space and add them to the current camera position.
-        Mat4f view = cam.view();
-
-        view = MatrixMath::inverse(view);
-
-        float movementSpeed = cameraMovementSpeed * deltaTime;
-
-        Vec4f left = (view) * Vec4f(inputMovement.x * movementSpeed, 0, 0, 0);
-        Vec4f up = (view) * Vec4f(0, inputMovement.y * movementSpeed, 0, 0);
-        Vec4f forward = (view) * Vec4f(0, 0, inputMovement.z * movementSpeed, 0);
-
-        cameraNode->getComponent<TransformComponent>().transform.position += toVec3(left + up + forward);
+        window.update();
 
         ren.setViewport({}, window.getFramebufferSize());
-
         ecs.update(deltaTime, scene);
 
         window.swapBuffers();
-        window.update();
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        //IMPORTANT: All assemblies referenced in other assemblies have to be loaded first.
+        //IMPORTANT: Assemblies referenced in other assemblies have to be loaded before loading referencing assemblies.
         manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
         scene = SceneFile("assets/sampleScene.json").getScene();
         res = ResourceFile("assets/sampleResources.json").getResources(alloc, monoRuntime);
@@ -123,23 +67,15 @@ protected:
     }
 
 private:
-    float cameraRotationSpeed = 45.0f;
-    float cameraMovementSpeed = 5.0f;
-
-    Mouse mouseLastFrame;
-
     ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
+    MonoCppRuntime monoRuntime;
+    MonoCppAssembly *manaAssembly;
     ECS ecs;
+    Scene scene;
+    Resources *res;
 
     Node *cameraNode;
-
-    MonoCppRuntime monoRuntime;
-
-    MonoCppAssembly *manaAssembly;
-
-    Scene scene;
-    Resources* res;
 };
 
 #endif //MANA_SAMPLE0_HPP

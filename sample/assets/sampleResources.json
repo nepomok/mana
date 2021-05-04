@@ -91,11 +91,18 @@
       "mipmapFilter": "nearest_mipmap_nearest"
     },
     {
-      "name": "Script.testScript",
+      "name": "Script.inputController",
       "type": "monoscript",
-      "assemblyFileName": "assets/testscript.dll",
+      "assemblyFileName": "assets/script.dll",
       "nameSpace": "",
-      "className": "TestScript"
+      "className": "InputController"
+    },
+    {
+      "name": "Script.skyboxController",
+      "type": "monoscript",
+      "assemblyFileName": "assets/script.dll",
+      "nameSpace": "",
+      "className": "SkyboxController"
     }
   ]
 }

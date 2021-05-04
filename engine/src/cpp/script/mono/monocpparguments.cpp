@@ -29,6 +29,10 @@ void mana::MonoCppArguments::add(float &value) {
     args.emplace_back(&value);
 }
 
+void mana::MonoCppArguments::add(double &value) {
+    args.emplace_back(&value);
+}
+
 void mana::MonoCppArguments::add(const mana::MonoCppObject &value) {
     args.emplace_back(value.getObjectPointer());
 }

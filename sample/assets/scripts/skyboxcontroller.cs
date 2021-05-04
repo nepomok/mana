@@ -1,11 +1,11 @@
 using System;
 using Mana;
 
-class TestScript : Script
+class SkyboxController : Script
 {
     public override void OnEnable()
     {
-        System.Console.WriteLine("OnEnable TestScript");
+        System.Console.WriteLine("OnEnable SkyboxController");
     }
 
     public override void OnUpdate()
@@ -19,6 +19,6 @@ class TestScript : Script
 
     public override void OnDisable()
     {
-        System.Console.WriteLine("OnDisable TestScript");
+        System.Console.WriteLine("OnDisable SkyboxController");
     }
 }
