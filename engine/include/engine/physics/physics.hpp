@@ -17,7 +17,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYSICSENGINE_HPP
-#define MANA_PHYSICSENGINE_HPP
+#ifndef MANA_PHYSICS_HPP
+#define MANA_PHYSICS_HPP
 
-#endif //MANA_PHYSICSENGINE_HPP
+#include "engine/physics/physicsapi.hpp"
+#include "engine/physics/2d/world2d.hpp"
+#include "engine/physics/3d/world3d.hpp"
+
+namespace mana {
+    namespace Physics {
+        World2D *createWorld2D(PhysicsApi api);
+
+        World3D *createWorld3D(PhysicsApi api);
+    }
+}
+
+#endif //MANA_PHYSICS_HPP

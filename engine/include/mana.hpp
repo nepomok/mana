@@ -17,10 +17,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * Convenience header which includes all engine headers.
- */
-
 #ifndef MANA_MANA_HPP
 #define MANA_MANA_HPP
 
@@ -36,6 +32,7 @@
 #include "engine/input/key.hpp"
 #include "engine/input/mouse.hpp"
 #include "engine/ecs/component.hpp"
+#include "engine/ecs/componenttype.hpp"
 #include "engine/ecs/node.hpp"
 #include "engine/ecs/components.hpp"
 #include "engine/ecs/system.hpp"
@@ -61,7 +58,9 @@
 #include "engine/script/script.hpp"
 #include "engine/script/mono/monocppruntime.hpp"
 #include "engine/script/mono/monocppobject.hpp"
+#include "engine/script/mono/monocppvalue.hpp"
 #include "engine/script/mono/monoscript.hpp"
+#include "engine/script/mono/monocpparguments.hpp"
 #include "engine/script/mono/monocppassembly.hpp"
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/displayapi.hpp"
@@ -96,7 +95,14 @@
 #include "engine/audio/audiosource.hpp"
 #include "engine/audio/audiocontext.hpp"
 #include "engine/audio/audioformat.hpp"
-#include "engine/physics/physicsengine.hpp"
+#include "engine/physics/rigidbodytype.hpp"
+#include "engine/physics/physics.hpp"
+#include "engine/physics/2d/collider2d.hpp"
+#include "engine/physics/2d/rigidbody2d.hpp"
+#include "engine/physics/2d/world2d.hpp"
+#include "engine/physics/3d/world3d.hpp"
+#include "engine/physics/3d/collider3d.hpp"
+#include "engine/physics/3d/rigidbody3d.hpp"
 #include "engine/math/vector2.hpp"
 #include "engine/math/transform.hpp"
 #include "engine/math/vectorconversion.hpp"
@@ -108,7 +114,4 @@
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
 
-#include "engine/script/mono/monocpparguments.hpp"
-#include "engine/script/mono/monocppvalue.hpp"
-
-#endif //MANA_MANA_HPP
+#endif // MANA_MANA_HPP
