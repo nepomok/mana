@@ -32,12 +32,12 @@ namespace mana {
         };
 
         enum CubeMapFace {
-            FRONT,
-            BACK,
-            LEFT,
             RIGHT,
+            LEFT,
             TOP,
-            BOTTOM
+            BOTTOM,
+            FRONT,
+            BACK
         };
 
         enum ColorFormat {
@@ -77,7 +77,7 @@ namespace mana {
             TextureWrapping wrapping = REPEAT;
             TextureFiltering filterMin = LINEAR;
             TextureFiltering filterMag = LINEAR;
-            bool generateMipmap = true;
+            bool generateMipmap = false;
             MipMapFiltering mipmapFilter = NEAREST_MIPMAP_NEAREST;
         };
 
@@ -97,6 +97,10 @@ namespace mana {
                             const ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual ImageBuffer<ColorRGBA> download(CubeMapFace face) = 0;
+
+        virtual void uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) = 0;
+
+        virtual ImageBuffer<ColorRGBA> downloadCubeMap() = 0;
     };
 }
 

@@ -28,6 +28,8 @@ namespace mana {
     struct RenderComponent : public Component {
         RenderComponent() : Component(RENDER) {}
 
+        int order = 0;
+
         ShaderProgram *shader = nullptr;
 
         std::vector<RenderTexture *> textures{};

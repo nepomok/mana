@@ -32,6 +32,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : RenderTexture(attrib
 
     glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
     glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
+    checkGLError("OGLRenderTexture::OGLRenderTexture()");
 
     glTexParameteri(type,
                     GL_TEXTURE_MIN_FILTER,
@@ -39,6 +40,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : RenderTexture(attrib
     glTexParameteri(type,
                     GL_TEXTURE_MAG_FILTER,
                     OGLTypeConverter::convert(attributes.filterMag));
+    checkGLError("OGLRenderTexture::OGLRenderTexture()");
 
     if (attributes.textureType == TEXTURE_2D) {
         glTexImage2D(type,
@@ -63,6 +65,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : RenderTexture(attrib
                          NULL);
         }
     }
+    checkGLError("OGLRenderTexture::OGLRenderTexture()");
 
     if (attributes.generateMipmap) {
         glGenerateMipmap(type);
@@ -177,3 +180,26 @@ ImageBuffer<ColorRGBA> OGLRenderTexture::download(RenderTexture::CubeMapFace fac
 
     throw std::runtime_error("Not Implemented");
 }
+
+void OGLRenderTexture::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
+    auto faceSize = buffer.getSize();
+    faceSize.x = faceSize.x / 6;
+    if (faceSize.x != faceSize.y)
+        throw std::runtime_error("Invalid cubemap image");
+    if (!(faceSize == attributes.size))
+        throw std::runtime_error("Invalid cubemap face size");
+    for (int i = 0; i < 6; i++) {
+        upload(static_cast<CubeMapFace>(i), buffer.slice(Recti(Vec2i(faceSize.x * i, 0), faceSize)));
+    }
+}
+
+ImageBuffer<ColorRGBA> OGLRenderTexture::downloadCubeMap() {
+    auto size = attributes.size;
+    size.x = size.x * 6;
+    ImageBuffer<ColorRGBA> ret(size);
+    for (int i = 0; i < 6; i++) {
+        ret.blit({Vec2i(i * attributes.size.x, 0), attributes.size}, download(static_cast<CubeMapFace>(i)));
+    }
+    return ret;
+}
+

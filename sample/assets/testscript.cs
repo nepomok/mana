@@ -10,13 +10,11 @@ class TestScript : Script
 
     public override void OnUpdate()
     {
-        Node n = Scene.scene.GetNode("plane");
-
-        Transform t = n.GetTransform();
-
-        t.position = t.position + new Vector3(1, 0, 0) * Time.deltaTime;
-
-        t.rotation = t.rotation + new Vector3(0, 15, 0) * Time.deltaTime;
+        Node cam = Scene.scene.GetNode("mainCamera");
+        Node skybox = Scene.scene.GetNode("skybox");
+        Transform camT = cam.GetTransform();
+        Transform skyT = skybox.GetTransform();
+        skyT.position = camT.position;
     }
 
     public override void OnDisable()

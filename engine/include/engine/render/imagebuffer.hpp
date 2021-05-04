@@ -88,6 +88,27 @@ namespace mana {
             }
         }
 
+        void blit(const Recti &targetRect, const ImageBuffer<T> &source) {
+            if (!(source.size == targetRect.dimensions)) {
+                throw std::runtime_error("Invalid blit source size");
+            }
+            for (int x = 0; x < targetRect.dimensions.x; x++) {
+                for (int y = 0; y < targetRect.dimensions.y; y++) {
+                    setPixel(x + targetRect.position.x, y + targetRect.position.y, source.getPixel(x, y));
+                }
+            }
+        }
+
+        ImageBuffer<T> slice(const Recti &rect) const {
+            ImageBuffer<T> ret = ImageBuffer<T>(rect.dimensions.x, rect.dimensions.y);
+            for (int x = rect.position.x; x < rect.position.x + rect.dimensions.x; x++) {
+                for (int y = rect.position.y; y < rect.position.y + rect.dimensions.y; y++) {
+                    ret.setPixel(x - rect.position.x, y - rect.position.y, getPixel(x, y));
+                }
+            }
+            return std::move(ret);
+        }
+
         ImageBuffer<T> swapRows() {
             ImageBuffer<T> ret = ImageBuffer<T>(size.x, size.y);
             for (int y = 0; y < size.y; y++) {
@@ -103,16 +124,6 @@ namespace mana {
             for (int x = 0; x < size.x; x++) {
                 for (int y = 0; y < size.y; y++) {
                     ret.setPixel(x, size.y - 1 - y, getPixel(x, y));
-                }
-            }
-            return std::move(ret);
-        }
-
-        ImageBuffer<T> slice(const Recti &rect) const {
-            ImageBuffer<T> ret = ImageBuffer<T>(rect.dimensions.x, rect.dimensions.y);
-            for (int x = rect.position.x; x < rect.position.x + rect.dimensions.x; x++) {
-                for (int y = rect.position.y; y < rect.position.y + rect.dimensions.y; y++) {
-                    ret.setPixel(x - rect.position.x, y - rect.position.y, getPixel(x, y));
                 }
             }
             return std::move(ret);

@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <algorithm>
+
 #include "engine/ecs/systems/rendersystem.hpp"
 
 #include "engine/ecs/components.hpp"
@@ -86,7 +88,8 @@ namespace mana {
             }
         }
 
-        std::vector<RenderCommand> commands;
+        std::map<RenderComponent *, TransformComponent *> mapping;
+        std::vector<RenderComponent *> renderComponents;
         nodes = scene.findNodesWithComponent<RenderComponent>();
         for (auto &nodePointer : nodes) {
             auto &node = *nodePointer;
@@ -101,35 +104,46 @@ namespace mana {
             if (!tcomp.enabled)
                 continue;
 
+            renderComponents.emplace_back(&comp);
+            mapping[&comp] = &tcomp;
+        }
+
+        std::sort(renderComponents.begin(), renderComponents.end(),
+                  [](const RenderComponent *a, const RenderComponent *b) -> bool {
+                      return a->order < b->order;
+                  });
+
+        std::vector<RenderCommand> commands;
+        for (auto *comp : renderComponents) {
             RenderCommand command;
 
-            command.transform = tcomp.transform;
+            command.transform = mapping[comp]->transform;
 
-            command.shader = comp.shader;
+            command.shader = comp->shader;
 
-            command.textureObjects = comp.textures;
-            command.meshObjects = comp.meshData;
+            command.textureObjects = comp->textures;
+            command.meshObjects = comp->meshData;
 
-            command.enableDepthTest = comp.enableDepthTest;
-            command.depthTestWrite = comp.depthTestWrite;
-            command.depthTestMode = comp.depthTestMode;
+            command.enableDepthTest = comp->enableDepthTest;
+            command.depthTestWrite = comp->depthTestWrite;
+            command.depthTestMode = comp->depthTestMode;
 
-            command.enableStencilTest = comp.enableStencilTest;
-            command.stencilTestMask = comp.stencilTestMask;
-            command.stencilMode = comp.stencilMode;
-            command.stencilReference = comp.stencilReference;
-            command.stencilFunctionMask = comp.stencilFunctionMask;
-            command.stencilFail = comp.stencilFail;
-            command.stencilDepthFail = comp.stencilDepthFail;
-            command.stencilPass = comp.stencilPass;
+            command.enableStencilTest = comp->enableStencilTest;
+            command.stencilTestMask = comp->stencilTestMask;
+            command.stencilMode = comp->stencilMode;
+            command.stencilReference = comp->stencilReference;
+            command.stencilFunctionMask = comp->stencilFunctionMask;
+            command.stencilFail = comp->stencilFail;
+            command.stencilDepthFail = comp->stencilDepthFail;
+            command.stencilPass = comp->stencilPass;
 
-            command.enableFaceCulling = comp.enableFaceCulling;
-            command.faceCullMode = comp.faceCullMode;
-            command.faceCullClockwiseWinding = comp.faceCullClockwiseWinding;
+            command.enableFaceCulling = comp->enableFaceCulling;
+            command.faceCullMode = comp->faceCullMode;
+            command.faceCullClockwiseWinding = comp->faceCullClockwiseWinding;
 
-            command.enableBlending = comp.enableBlending;
-            command.blendSourceMode = comp.blendSourceMode;
-            command.blendDestinationMode = comp.blendDestinationMode;
+            command.enableBlending = comp->enableBlending;
+            command.blendSourceMode = comp->blendSourceMode;
+            command.blendDestinationMode = comp->blendDestinationMode;
 
             commands.emplace_back(command);
         }

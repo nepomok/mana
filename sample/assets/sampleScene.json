@@ -66,12 +66,152 @@
               "slot": 1
             }
           ],
-          "meshPaths": [
-            "assets/plane.obj"
+          "meshes": [
+            {
+              "filePath": "assets/plane.obj",
+              "instanced": true,
+              "offsets": [
+                {
+                  "position": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                  },
+                  "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                  },
+                  "scale": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                  }
+                },
+                {
+                  "position": {
+                    "x": 5,
+                    "y": 0,
+                    "z": 0
+                  },
+                  "rotation": {
+                    "x": 0,
+                    "y": 0,
+                    "z": 0
+                  },
+                  "scale": {
+                    "x": 1,
+                    "y": 1,
+                    "z": 1
+                  }
+                }
+              ]
+            }
           ],
-          "texturePaths": [
-            "assets/colormap.png"
-          ]
+          "textures": [
+            {
+              "filePath": "assets/colormap.png",
+              "textureType": "texture2d",
+              "format": "rgba",
+              "wrapping": "repeat",
+              "filterMin": "linear",
+              "filterMag": "linear",
+              "generateMipmap": false,
+              "mipmapFilter": "nearest_mipmap_nearest"
+            }
+          ],
+          "renderProperties": {
+            "enableDepthTest": true,
+            "depthTestWrite": true,
+            "depthTestMode": "depth_test_less",
+            "enableStencilTest": false,
+            "stencilTestMask": 255,
+            "stencilMode": "stencil_always",
+            "stencilReference": 1,
+            "stencilFunctionMask": 255,
+            "stencilFail": "stencil_keep",
+            "stencilDepthFail": "stencil_keep",
+            "stencilPass": "stencil_keep",
+            "enableFaceCulling": false,
+            "faceCullMode": "cull_front",
+            "faceCullClockwiseWinding": false,
+            "enableBlending": false,
+            "blendSourceMode": "one",
+            "blendDestinationMode": "zero",
+            "renderOrder": 1
+          }
+        }
+      ]
+    },
+    {
+      "nodeName": "skybox",
+      "components": [
+        {
+          "componentType": "transform",
+          "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "rotation": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+          },
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        },
+        {
+          "componentType": "render",
+          "vertexShaderPath": "assets/hlsl/skyboxVertex.hlsl",
+          "fragmentShaderPath": "assets/hlsl/skyboxFragment.hlsl",
+          "textureMapping": [
+            {
+              "name": "skybox",
+              "slot": 0
+            }
+          ],
+          "meshes": [
+            {
+              "filePath": "assets/cube.obj",
+              "instanced": false
+            }
+          ],
+          "textures": [
+            {
+              "filePath": "assets/deepbluespace-skybox_maintex.png",
+              "textureType": "cubemap",
+              "format": "rgba",
+              "wrapping": "repeat",
+              "filterMin": "linear",
+              "filterMag": "linear",
+              "generateMipmap": false,
+              "mipmapFilter": "nearest_mipmap_nearest"
+            }
+          ],
+          "renderProperties": {
+            "enableDepthTest": false,
+            "depthTestWrite": false,
+            "depthTestMode": "depth_test_less",
+            "enableStencilTest": false,
+            "stencilTestMask": 255,
+            "stencilMode": "stencil_always",
+            "stencilReference": 1,
+            "stencilFunctionMask": 255,
+            "stencilFail": "stencil_keep",
+            "stencilDepthFail": "stencil_keep",
+            "stencilPass": "stencil_keep",
+            "enableFaceCulling": false,
+            "faceCullMode": "cull_front",
+            "faceCullClockwiseWinding": false,
+            "enableBlending": false,
+            "blendSourceMode": "one",
+            "blendDestinationMode": "zero",
+            "renderOrder": 0
+          }
         }
       ]
     },
