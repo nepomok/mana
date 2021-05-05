@@ -5,6 +5,7 @@
     </ItemGroup>
     <ItemGroup>
         <Compile Include="engine/src/csharp/**" />
+        <Compile Include="sample/assets/scripts/src/**" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
