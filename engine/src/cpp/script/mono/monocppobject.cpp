@@ -71,6 +71,16 @@ namespace mana {
         return *this;
     }
 
+    MonoCppObject &MonoCppObject::operator=(MonoCppObject &&other) {
+        objectPointer = other.objectPointer;
+        gcHandle = other.gcHandle;
+        pinned = other.pinned;
+        other.objectPointer = nullptr;
+        other.gcHandle = 0;
+        other.pinned = false;
+        return *this;
+    }
+
     MonoCppObject MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
@@ -86,7 +96,7 @@ namespace mana {
         return std::move(MonoCppObject(o));
     }
 
-    void MonoCppObject::setField(const std::string &name, MonoCppValue value) const {
+    void MonoCppObject::setField(const std::string &name, const MonoCppValue &value) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
         auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));

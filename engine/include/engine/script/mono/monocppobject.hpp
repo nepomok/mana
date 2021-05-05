@@ -45,9 +45,11 @@ namespace mana {
 
         MonoCppObject &operator=(const MonoCppObject &other);
 
+        MonoCppObject &operator=(MonoCppObject &&other);
+
         MonoCppObject invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
 
-        void setField(const std::string &name, MonoCppValue value) const;
+        void setField(const std::string &name, const MonoCppValue &value) const;
 
         MonoCppObject getField(const std::string &name) const;
 
@@ -55,7 +57,7 @@ namespace mana {
         T getField(const std::string &name) const {
             T r;
             getFieldValuePtr(name, &r);
-            return r;
+            return std::move(r);
         }
 
         void getFieldValuePtr(const std::string &name, void *data) const;
