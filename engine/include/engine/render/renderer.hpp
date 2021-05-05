@@ -30,9 +30,6 @@
 #include "engine/render/lighting/light.hpp"
 
 namespace mana {
-    /**
-    * The renderer uses right handed coordinate system when handling render command transforms.
-    */
     class Renderer {
     public:
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
