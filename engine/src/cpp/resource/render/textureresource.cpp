@@ -40,7 +40,7 @@ namespace mana {
         attrib.size = img->getBuffer().getSize();
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;
-        texture = alloc->allocateTexture(attrib);
+        texture = alloc->allocateTextureBuffer(attrib);
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP) {
             texture->uploadCubeMap(img->getBuffer());
         } else {

@@ -32,7 +32,7 @@ namespace mana {
     public:
         virtual RenderTarget *allocateRenderTarget(int width, int height) = 0;
 
-        virtual TextureBuffer *allocateTexture(TextureBuffer::Attributes attributes) = 0;
+        virtual TextureBuffer *allocateTextureBuffer(TextureBuffer::Attributes attributes) = 0;
 
         virtual MeshBuffer *allocateMeshBuffer(const Mesh &mesh) = 0;
 

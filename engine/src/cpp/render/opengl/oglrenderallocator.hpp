@@ -28,7 +28,7 @@ namespace mana {
         public:
             RenderTarget *allocateRenderTarget(int width, int height) override;
 
-            TextureBuffer *allocateTexture(TextureBuffer::Attributes attributes) override;
+            TextureBuffer *allocateTextureBuffer(TextureBuffer::Attributes attributes) override;
 
             MeshBuffer *allocateMeshBuffer(const Mesh &mesh) override;
 
