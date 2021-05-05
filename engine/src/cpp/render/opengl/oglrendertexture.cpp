@@ -24,7 +24,7 @@
 using namespace mana;
 using namespace mana::opengl;
 
-OGLRenderTexture::OGLRenderTexture(Attributes attributes) : Texture(attributes), handle() {
+OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
     glGenTextures(1, &handle);
@@ -112,7 +112,7 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
 
 void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Texture not texture 2d");
+        throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
         throw std::runtime_error("Upload size mismatch");
 
@@ -138,7 +138,7 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
 
 mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
     if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Texture not texture 2d");
+        throw std::runtime_error("TextureBuffer not texture 2d");
 
     auto output = ImageBuffer<ColorRGBA>(attributes.size);
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -150,7 +150,7 @@ mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
 
 void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
-        throw std::runtime_error("Texture not cubemap");
+        throw std::runtime_error("TextureBuffer not cubemap");
     if (!(buffer.getSize() == attributes.size))
         throw std::runtime_error("Upload size mismatch");
 
@@ -174,9 +174,9 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
     checkGLError("OGLRenderTexture::upload(CUBEMAP)");
 }
 
-ImageBuffer<ColorRGBA> OGLRenderTexture::download(Texture::CubeMapFace face) {
+ImageBuffer<ColorRGBA> OGLRenderTexture::download(TextureBuffer::CubeMapFace face) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
-        throw std::runtime_error("Texture not cubemap");
+        throw std::runtime_error("TextureBuffer not cubemap");
 
     throw std::runtime_error("Not Implemented");
 }

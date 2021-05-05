@@ -144,88 +144,88 @@ namespace mana {
                 throw std::runtime_error("Unsupported stencil action");
             }
 
-            GLenum convert(Texture::TextureType type) {
+            GLenum convert(TextureBuffer::TextureType type) {
                 switch (type) {
-                    case Texture::TEXTURE_2D:
+                    case TextureBuffer::TEXTURE_2D:
                         return GL_TEXTURE_2D;
-                    case Texture::TEXTURE_CUBE_MAP:
+                    case TextureBuffer::TEXTURE_CUBE_MAP:
                         return GL_TEXTURE_CUBE_MAP;
                     default:
                         throw std::runtime_error("Unrecognized texture type");
                 }
             }
 
-            GLenum convert(Texture::CubeMapFace face) {
+            GLenum convert(TextureBuffer::CubeMapFace face) {
                 switch (face) {
-                    case Texture::FRONT:
+                    case TextureBuffer::FRONT:
                         return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-                    case Texture::BACK:
+                    case TextureBuffer::BACK:
                         return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-                    case Texture::LEFT:
+                    case TextureBuffer::LEFT:
                         return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-                    case Texture::RIGHT:
+                    case TextureBuffer::RIGHT:
                         return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-                    case Texture::TOP:
+                    case TextureBuffer::TOP:
                         return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-                    case Texture::BOTTOM:
+                    case TextureBuffer::BOTTOM:
                         return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
                     default:
                         throw std::runtime_error("Unrecognized cube map face");
                 }
             }
 
-            GLenum convert(Texture::ColorFormat format) {
+            GLenum convert(TextureBuffer::ColorFormat format) {
                 switch (format) {
-                    case Texture::RGB:
+                    case TextureBuffer::RGB:
                         return GL_RGB;
-                    case Texture::RGBA:
+                    case TextureBuffer::RGBA:
                         return GL_RGBA;
-                    case Texture::DEPTH:
+                    case TextureBuffer::DEPTH:
                         return GL_DEPTH_COMPONENT;
-                    case Texture::DEPTH_STENCIL:
+                    case TextureBuffer::DEPTH_STENCIL:
                         return GL_DEPTH_STENCIL;
-                    case Texture::RGB_COMPRESSED:
+                    case TextureBuffer::RGB_COMPRESSED:
                         return GL_COMPRESSED_RGB;
-                    case Texture::RGBA_COMPRESSED:
+                    case TextureBuffer::RGBA_COMPRESSED:
                         return GL_COMPRESSED_RGBA;
                     default:
                         throw std::runtime_error("Unrecognized color format");
                 }
             }
 
-            GLint convert(Texture::TextureWrapping wrapping) {
+            GLint convert(TextureBuffer::TextureWrapping wrapping) {
                 switch (wrapping) {
-                    case Texture::REPEAT:
+                    case TextureBuffer::REPEAT:
                         return GL_REPEAT;
-                    case Texture::MIRRORED_REPEAT:
+                    case TextureBuffer::MIRRORED_REPEAT:
                         return GL_MIRRORED_REPEAT;
-                    case Texture::CLAMP_TO_EDGE:
+                    case TextureBuffer::CLAMP_TO_EDGE:
                         return GL_CLAMP_TO_EDGE;
-                    case Texture::CLAMP_TO_BORDER:
+                    case TextureBuffer::CLAMP_TO_BORDER:
                         return GL_CLAMP_TO_BORDER;
                 }
                 throw std::runtime_error("Invalid texture wrapping");
             }
 
-            GLint convert(Texture::TextureFiltering filtering) {
+            GLint convert(TextureBuffer::TextureFiltering filtering) {
                 switch (filtering) {
-                    case Texture::NEAREST:
+                    case TextureBuffer::NEAREST:
                         return GL_NEAREST;
-                    case Texture::LINEAR:
+                    case TextureBuffer::LINEAR:
                         return GL_LINEAR;
                 }
                 throw std::runtime_error("Invalid texture filtering");
             }
 
-            GLint convert(Texture::MipMapFiltering filtering) {
+            GLint convert(TextureBuffer::MipMapFiltering filtering) {
                 switch (filtering) {
-                    case Texture::NEAREST_MIPMAP_NEAREST:
+                    case TextureBuffer::NEAREST_MIPMAP_NEAREST:
                         return GL_NEAREST_MIPMAP_NEAREST;
-                    case Texture::LINEAR_MIPMAP_NEAREST:
+                    case TextureBuffer::LINEAR_MIPMAP_NEAREST:
                         return GL_LINEAR_MIPMAP_NEAREST;
-                    case Texture::NEAREST_MIPMAP_LINEAR:
+                    case TextureBuffer::NEAREST_MIPMAP_LINEAR:
                         return GL_NEAREST_MIPMAP_LINEAR;
-                    case Texture::LINEAR_MIPMAP_LINEAR:
+                    case TextureBuffer::LINEAR_MIPMAP_LINEAR:
                         return GL_LINEAR_MIPMAP_LINEAR;
                 }
                 throw std::runtime_error("Invalid mipmap filtering");

@@ -96,7 +96,7 @@
 #include "engine/render/renderer.hpp"
 #include "engine/render/shaderprogram.hpp"
 #include "engine/render/renderer2d.hpp"
-#include "engine/render/texture.hpp"
+#include "engine/render/texturebuffer.hpp"
 #include "engine/render/rendercommand.hpp"
 #include "engine/render/renderer3d.hpp"
 #include "engine/render/renderallocator.hpp"

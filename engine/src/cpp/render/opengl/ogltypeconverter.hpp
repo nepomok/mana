@@ -41,17 +41,17 @@ namespace mana {
 
             GLenum convert(StencilAction action);
 
-            GLenum convert(Texture::TextureType type);
+            GLenum convert(TextureBuffer::TextureType type);
 
-            GLenum convert(Texture::CubeMapFace face);
+            GLenum convert(TextureBuffer::CubeMapFace face);
 
-            GLenum convert(Texture::ColorFormat format);
+            GLenum convert(TextureBuffer::ColorFormat format);
 
-            GLint convert(Texture::TextureWrapping wrapping);
+            GLint convert(TextureBuffer::TextureWrapping wrapping);
 
-            GLint convert(Texture::TextureFiltering filtering);
+            GLint convert(TextureBuffer::TextureFiltering filtering);
 
-            GLint convert(Texture::MipMapFiltering filtering);
+            GLint convert(TextureBuffer::MipMapFiltering filtering);
         }
     }
 }

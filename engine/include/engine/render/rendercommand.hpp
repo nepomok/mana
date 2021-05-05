@@ -23,7 +23,7 @@
 #include <vector>
 
 #include "engine/render/meshbuffer.hpp"
-#include "engine/render/texture.hpp"
+#include "engine/render/texturebuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 
 #include "engine/math/transform.hpp"
@@ -109,7 +109,7 @@ namespace mana {
 
     struct RenderCommand {
         ShaderProgram *shader;
-        std::vector<Texture *> textures;
+        std::vector<TextureBuffer *> textures;
         std::vector<MeshBuffer *> meshBuffers;
         RenderProperties properties;
     };

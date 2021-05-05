@@ -20,13 +20,13 @@
 #ifndef MANA_OGLRENDERTEXTURE_HPP
 #define MANA_OGLRENDERTEXTURE_HPP
 
-#include "engine/render/texture.hpp"
+#include "engine/render/texturebuffer.hpp"
 
 #include "extern/glad.h"
 
 namespace mana {
     namespace opengl {
-        class OGLRenderTexture : public Texture {
+        class OGLRenderTexture : public TextureBuffer {
         public:
             GLuint handle;
 

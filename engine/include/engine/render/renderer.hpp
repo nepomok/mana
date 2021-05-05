@@ -24,7 +24,7 @@
 #include "engine/render/rendercommand.hpp"
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/meshbuffer.hpp"
-#include "engine/render/texture.hpp"
+#include "engine/render/texturebuffer.hpp"
 #include "engine/render/camera/camera.hpp"
 #include "engine/render/graphicsapi.hpp"
 #include "engine/render/lighting/light.hpp"

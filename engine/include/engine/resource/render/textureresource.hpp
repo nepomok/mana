@@ -28,7 +28,7 @@ namespace mana {
     public:
         TextureResource();
 
-        TextureResource(RenderAllocator &allocator, ImageResource &resource, Texture::Attributes attributes);
+        TextureResource(RenderAllocator &allocator, ImageResource &resource, TextureBuffer::Attributes attributes);
 
         ~TextureResource() override;
 
@@ -36,13 +36,13 @@ namespace mana {
 
         void free() override;
 
-        Texture *getTexture();
+        TextureBuffer *getTexture();
 
     private:
         RenderAllocator *alloc;
         ImageResource *img;
-        Texture::Attributes attrib;
-        Texture *texture;
+        TextureBuffer::Attributes attrib;
+        TextureBuffer *texture;
     };
 }
 

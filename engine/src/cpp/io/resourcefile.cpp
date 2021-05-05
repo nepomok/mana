@@ -30,55 +30,55 @@
 #include "extern/json.hpp"
 
 namespace mana {
-    Texture::TextureType parseTextureType(const std::string &str) {
+    TextureBuffer::TextureType parseTextureType(const std::string &str) {
         if (str == "texture2d")
-            return Texture::TEXTURE_2D;
+            return TextureBuffer::TEXTURE_2D;
         else if (str == "cubemap")
-            return Texture::TEXTURE_CUBE_MAP;
+            return TextureBuffer::TEXTURE_CUBE_MAP;
         else
             throw std::runtime_error("Invalid texture type " + str);
     }
 
-    Texture::ColorFormat parseColorFormat(const std::string &str) {
+    TextureBuffer::ColorFormat parseColorFormat(const std::string &str) {
         if (str == "rgba")
-            return Texture::RGBA;
+            return TextureBuffer::RGBA;
         else if (str == "rgb")
-            return Texture::RGB;
+            return TextureBuffer::RGB;
         else
             throw std::runtime_error("Invalid color format " + str);
     }
 
-    Texture::TextureWrapping parseTextureWrapping(const std::string &str) {
+    TextureBuffer::TextureWrapping parseTextureWrapping(const std::string &str) {
         if (str == "repeat")
-            return Texture::REPEAT;
+            return TextureBuffer::REPEAT;
         else if (str == "mirrored_repeat")
-            return Texture::MIRRORED_REPEAT;
+            return TextureBuffer::MIRRORED_REPEAT;
         else if (str == "clamp_to_edge")
-            return Texture::CLAMP_TO_EDGE;
+            return TextureBuffer::CLAMP_TO_EDGE;
         else if (str == "clamp_to_border")
-            return Texture::CLAMP_TO_BORDER;
+            return TextureBuffer::CLAMP_TO_BORDER;
         else
             throw std::runtime_error("Invalid texture wrapping " + str);
     }
 
-    Texture::TextureFiltering parseTextureFiltering(const std::string &str) {
+    TextureBuffer::TextureFiltering parseTextureFiltering(const std::string &str) {
         if (str == "nearest")
-            return Texture::NEAREST;
+            return TextureBuffer::NEAREST;
         else if (str == "linear")
-            return Texture::LINEAR;
+            return TextureBuffer::LINEAR;
         else
             throw std::runtime_error("Invalid texture filtering " + str);
     }
 
-    Texture::MipMapFiltering parseMipMapFiltering(const std::string &str) {
+    TextureBuffer::MipMapFiltering parseMipMapFiltering(const std::string &str) {
         if (str == "nearest_mipmap_nearest")
-            return Texture::NEAREST_MIPMAP_NEAREST;
+            return TextureBuffer::NEAREST_MIPMAP_NEAREST;
         else if (str == "linear_mipmap_nearest")
-            return Texture::LINEAR_MIPMAP_NEAREST;
+            return TextureBuffer::LINEAR_MIPMAP_NEAREST;
         else if (str == "nearest_mipmap_linear")
-            return Texture::NEAREST_MIPMAP_LINEAR;
+            return TextureBuffer::NEAREST_MIPMAP_LINEAR;
         else if (str == "linear_mipmap_linear")
-            return Texture::LINEAR_MIPMAP_LINEAR;
+            return TextureBuffer::LINEAR_MIPMAP_LINEAR;
         else
             throw std::runtime_error("Invalid mipmap filtering " + str);
     }
@@ -132,7 +132,7 @@ namespace mana {
     }
 
     TextureResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
-        Texture::Attributes attr;
+        TextureBuffer::Attributes attr;
         attr.textureType = parseTextureType(j["textureType"]);
         attr.format = parseColorFormat(j["format"]);
         attr.wrapping = parseTextureWrapping(j["wrapping"]);

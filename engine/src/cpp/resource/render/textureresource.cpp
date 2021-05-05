@@ -22,7 +22,7 @@
 namespace mana {
     TextureResource::TextureResource(RenderAllocator &allocator,
                                      ImageResource &resource,
-                                     Texture::Attributes attributes)
+                                     TextureBuffer::Attributes attributes)
             : alloc(&allocator),
               img(&resource),
               attrib(attributes),
@@ -38,10 +38,10 @@ namespace mana {
         if (isLoaded)
             return;
         attrib.size = img->getBuffer().getSize();
-        if (attrib.textureType == Texture::TEXTURE_CUBE_MAP)
+        if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;
         texture = alloc->allocateTexture(attrib);
-        if (attrib.textureType == Texture::TEXTURE_CUBE_MAP) {
+        if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP) {
             texture->uploadCubeMap(img->getBuffer());
         } else {
             texture->upload(img->getBuffer());
@@ -57,7 +57,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    Texture *TextureResource::getTexture() {
+    TextureBuffer *TextureResource::getTexture() {
         if (!isLoaded)
             load();
         return texture;

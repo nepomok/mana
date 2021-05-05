@@ -49,13 +49,13 @@ namespace mana {
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
-        void draw(Rectf srcRect, Rectf dstRect, const Texture& texture, const ShaderProgram& shader, Vec2f center, float rotation);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, const ShaderProgram& shader, Vec2f center, float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const Texture& texture, const ShaderProgram& shader);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, const ShaderProgram& shader);
 
-        void draw(Rectf srcRect, Rectf dstRect, const Texture& texture, Vec2f center, float rotation);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, Vec2f center, float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const Texture& texture);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture);
 
         void draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation);
 
@@ -67,13 +67,13 @@ namespace mana {
 
         void draw(Vec2f point, ColorRGBA color = {});
 
-        void draw(Recti srcRect, Recti dstRect, const Texture& texture, const ShaderProgram& shader, Vec2i center, float rotation);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, const ShaderProgram& shader, Vec2i center, float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const Texture& texture, const ShaderProgram& shader);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, const ShaderProgram& shader);
 
-        void draw(Recti srcRect, Recti dstRect, const Texture& texture, Vec2i center, float rotation);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, Vec2i center, float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const Texture& texture);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture);
 
         void draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation);
 

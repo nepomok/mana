@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TEXTURE_HPP
-#define MANA_TEXTURE_HPP
+#ifndef MANA_TEXTUREBUFFER_HPP
+#define MANA_TEXTUREBUFFER_HPP
 
 #include "engine/render/imagebuffer.hpp"
 #include "engine/render/renderobject.hpp"
 
 namespace mana {
-    class Texture : public RenderObject {
+    class TextureBuffer : public RenderObject {
     public:
         enum TextureType {
             TEXTURE_2D,
@@ -83,9 +83,9 @@ namespace mana {
 
         const Attributes attributes;
 
-        explicit Texture(Attributes attributes) : attributes(attributes) {}
+        explicit TextureBuffer(Attributes attributes) : attributes(attributes) {}
 
-        ~Texture() override = default;
+        ~TextureBuffer() override = default;
 
         virtual void upload(const ImageBuffer<ColorRGB> &buffer) = 0;
 
@@ -104,4 +104,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_TEXTURE_HPP
+#endif //MANA_TEXTUREBUFFER_HPP

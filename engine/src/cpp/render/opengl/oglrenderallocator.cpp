@@ -41,7 +41,7 @@ RenderTarget *OGLRenderAllocator::allocateRenderTarget(int width, int height) {
     return ret;
 }
 
-Texture *OGLRenderAllocator::allocateTexture(Texture::Attributes attributes) {
+TextureBuffer *OGLRenderAllocator::allocateTexture(TextureBuffer::Attributes attributes) {
     return new OGLRenderTexture(attributes);
 }
 
