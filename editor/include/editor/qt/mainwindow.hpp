@@ -17,3 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifndef MANA_MAINWINDOW_HPP
+#define MANA_MAINWINDOW_HPP
+
+#include <QMainWindow>
+
+class MainWindow : public QMainWindow {
+Q_OBJECT
+public:
+    MainWindow();
+
+    ~MainWindow() override;
+};
+
+#endif //MANA_MAINWINDOW_HPP

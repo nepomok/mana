@@ -17,19 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- The editor is responsible for providing a user interface for handling ecs scenes.
-
- Desired Features:
-    Write and read ecs scenes from some format
-    Edit ecs scenes interactively
-*/
-
 #include <QApplication>
 
-#include "mana-editor.hpp"
+#include "editor/qt/mainwindow.hpp"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
-    return 0;
+    MainWindow win;
+    win.show();
+    return app.exec();
 }

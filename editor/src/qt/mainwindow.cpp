@@ -17,7 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MANA_EDITOR_HPP
-#define MANA_MANA_EDITOR_HPP
+#include "editor/qt/mainwindow.hpp"
 
-#endif //MANA_MANA_EDITOR_HPP
+MainWindow::MainWindow() {
+
+}
+
+MainWindow::~MainWindow() {
+
+}
