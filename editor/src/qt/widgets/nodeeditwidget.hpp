@@ -17,14 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- The editor is responsible for providing a user interface for handling ecs scenes.
+#ifndef MANA_NODEEDITWIDGET_HPP
+#define MANA_NODEEDITWIDGET_HPP
 
- Desired Features:
-    Write and read ecs scenes from some format
-    Edit ecs scenes interactively
-*/
-
-int main(int argc, char *argv[]) {
-
-}
+#endif //MANA_NODEEDITWIDGET_HPP
