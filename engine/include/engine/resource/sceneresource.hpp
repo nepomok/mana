@@ -17,21 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_BONEANIMATIONCOMPONENT_HPP
-#define MANA_BONEANIMATIONCOMPONENT_HPP
+#ifndef MANA_SCENERESOURCE_HPP
+#define MANA_SCENERESOURCE_HPP
 
-#include "engine/ecs/component.hpp"
+#include "engine/resource/resource.hpp"
+#include "engine/resource/noderesource.hpp"
+
+#include "engine/ecs/scene.hpp"
 
 namespace mana {
-    struct BoneAnimationComponent : public Component {
-        Component *clone() override {
-            return new BoneAnimationComponent(*this);
-        }
+    class SceneResource : public Resource {
+    public:
+        virtual const std::string &getName() = 0;
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(BoneAnimationComponent);
-        }
+        virtual Scene getScene() = 0;
     };
 }
 
-#endif //MANA_BONEANIMATIONCOMPONENT_HPP
+#endif //MANA_SCENERESOURCE_HPP

@@ -35,6 +35,10 @@ namespace mana {
 
         virtual ~Component() = default;
 
+        virtual Component *clone() = 0;
+
+        virtual const std::type_info& getTypeInfo() = 0;
+
         bool enabled = true;
         Node *node = nullptr;
     };

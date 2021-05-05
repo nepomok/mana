@@ -32,6 +32,14 @@ namespace mana {
     struct RenderComponent : public Component {
         RenderComponent() : Component(RENDER) {}
 
+        Component *clone() override {
+            return new RenderComponent(*this);
+        }
+
+        const std::type_info& getTypeInfo() override {
+            return typeid(RenderComponent);
+        }
+
         std::string shaderResourceName;
         std::vector<std::string> meshResourceNames;
         std::vector<std::string> textureResourceNames;

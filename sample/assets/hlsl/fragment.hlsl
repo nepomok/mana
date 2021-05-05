@@ -21,7 +21,7 @@ SamplerState samplerState_specular
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
-    ret.FragColor = mana_caluculate_light(v.fPos,
+    ret.FragColor = mana_calculate_light(v.fPos,
                                           v.fNorm,
                                           diffuse.Sample(samplerState_diffuse,v.fUv),
                                           specular.Sample(samplerState_specular, v.fUv),

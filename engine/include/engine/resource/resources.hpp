@@ -30,6 +30,9 @@
 #include "engine/resource/textresource.hpp"
 
 namespace mana {
+    /**
+     * hmm is transform a resource
+     */
     class Resources {
     public:
         std::map<std::string, Resource *> resources;

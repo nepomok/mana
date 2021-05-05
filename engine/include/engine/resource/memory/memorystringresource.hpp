@@ -17,21 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_BONEANIMATIONCOMPONENT_HPP
-#define MANA_BONEANIMATIONCOMPONENT_HPP
+#ifndef MANA_MEMSTRINGRESOURCE_HPP
+#define MANA_MEMSTRINGRESOURCE_HPP
 
-#include "engine/ecs/component.hpp"
+#include "engine/resource/textresource.hpp"
 
 namespace mana {
-    struct BoneAnimationComponent : public Component {
-        Component *clone() override {
-            return new BoneAnimationComponent(*this);
-        }
+    class MemoryStringResource : public TextResource {
+    public:
+        std::string text;
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(BoneAnimationComponent);
+        MemoryStringResource() : text() {}
+
+        MemoryStringResource(std::string text) : text(std::move(text)) {}
+
+        void load() override {}
+
+        void free() override {}
+
+        const std::string &getText() override {
+            return text;
         }
     };
 }
 
-#endif //MANA_BONEANIMATIONCOMPONENT_HPP
+#endif //MANA_MEMSTRINGRESOURCE_HPP

@@ -57,7 +57,8 @@ protected:
     void loadScene(RenderAllocator &alloc) override {
         //IMPORTANT: Assemblies referenced in other assemblies have to be loaded before loading referencing assemblies.
         manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
-        scene = SceneFile("assets/sampleScene.json").getScene();
+        TextFileResource memStr("assets/sampleScene.json");
+        scene = JsonSceneResource(memStr).getScene();
         res = ResourceFile("assets/sampleResources.json").getResources(alloc, monoRuntime);
         cameraNode = &scene.nodes.at("mainCamera");
     }

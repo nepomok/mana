@@ -24,6 +24,13 @@
 
 namespace mana {
     struct RigidBodyComponent : public Component {
+        Component *clone() override {
+            return new RigidBodyComponent(*this);
+        }
+
+        const std::type_info& getTypeInfo() override {
+            return typeid(RigidBodyComponent);
+        }
     };
 }
 

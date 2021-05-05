@@ -24,6 +24,13 @@
 
 namespace mana {
     struct ColliderComponent : public Component {
+        Component *clone() override {
+            return new ColliderComponent(*this);
+        }
+
+        const std::type_info& getTypeInfo() override {
+            return typeid(ColliderComponent);
+        }
     };
 }
 

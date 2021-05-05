@@ -27,6 +27,14 @@ namespace mana {
     struct TransformComponent : public Component {
         TransformComponent() : Component(TRANSFORM) {}
 
+        Component *clone() override {
+            return new TransformComponent(*this);
+        }
+
+        const std::type_info& getTypeInfo() override {
+            return typeid(TransformComponent);
+        }
+
         Transform transform;
         TransformComponent *parent = nullptr;
     };

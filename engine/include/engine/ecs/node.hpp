@@ -42,6 +42,38 @@ namespace mana {
         bool enabled = true;
         std::map<std::type_index, Component *> components;
 
+        Node() : enabled(true), components() {}
+
+        Node(const Node &other) {
+            enabled = other.enabled;
+            for (auto &p : other.components) {
+                components[p.first] = p.second->clone();
+            }
+        }
+
+        Node(Node &&other) noexcept {
+            enabled = other.enabled;
+            for (auto &p : other.components) {
+                components[p.first] = p.second;
+            }
+            other.enabled = true;
+            other.components.clear();
+        }
+
+        ~Node() {
+            for (auto &p : components) {
+                delete p.second;
+            }
+        }
+
+        Node &operator=(const Node &other) {
+            enabled = other.enabled;
+            for (auto &p : other.components) {
+                components[p.first] = p.second->clone();
+            }
+            return *this;
+        }
+
         static std::type_index getComponentTypeIndex(ComponentType type) {
             switch (type) {
                 case TRANSFORM:
@@ -83,10 +115,27 @@ namespace mana {
 
         template<typename T>
         void addComponent(const T &component) {
+            if (component == nullptr)
+                throw std::runtime_error("null component");
             const std::type_info &typeInfo = typeid(T);
             if (components.find(typeInfo) != components.end())
                 throw std::runtime_error("Component of type " + std::string(typeInfo.name()) + " already exists");
             components[typeInfo] = new T(component);
+            components[typeInfo]->node = this;
+        }
+
+        /**
+         * Add a component by pointer, the node takes ownership of the passed pointer.
+         *
+         * @param component
+         */
+        void addComponentPointer(Component *const component) {
+            if (component == nullptr)
+                throw std::runtime_error("null component");
+            const std::type_info &typeInfo = component->getTypeInfo();
+            if (components.find(typeInfo) != components.end())
+                throw std::runtime_error("Component of type " + std::string(typeInfo.name()) + " already exists");
+            components[typeInfo] = component;
             components[typeInfo]->node = this;
         }
 

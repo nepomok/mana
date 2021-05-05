@@ -28,6 +28,14 @@ namespace mana {
     struct ScriptComponent : public Component {
         ScriptComponent() : Component(SCRIPT) {}
 
+        Component *clone() override {
+            return new ScriptComponent(*this);
+        }
+
+        const std::type_info& getTypeInfo() override {
+            return typeid(ScriptComponent);
+        }
+
         std::string scriptResourceName;
 
         bool scriptEnabled = false;

@@ -17,21 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_BONEANIMATIONCOMPONENT_HPP
-#define MANA_BONEANIMATIONCOMPONENT_HPP
+#ifndef MANA_NODERESOURCE_HPP
+#define MANA_NODERESOURCE_HPP
 
-#include "engine/ecs/component.hpp"
+#include "engine/ecs/node.hpp"
+
+#include "engine/resource/componentresource.hpp"
 
 namespace mana {
-    struct BoneAnimationComponent : public Component {
-        Component *clone() override {
-            return new BoneAnimationComponent(*this);
-        }
+    /**
+     * A node resource defines the node name and a list of component resources.
+     */
+    class NodeResource : public Resource {
+    public:
+        /**
+         * Returns the node name.
+         *
+         * @return
+         */
+        virtual std::string getName() = 0;
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(BoneAnimationComponent);
-        }
+        virtual Node getNode() = 0;
     };
 }
 
-#endif //MANA_BONEANIMATIONCOMPONENT_HPP
+#endif //MANA_NODERESOURCE_HPP

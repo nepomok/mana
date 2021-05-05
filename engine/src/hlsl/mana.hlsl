@@ -1,6 +1,6 @@
 #define MANA_MAX_LIGHTS 20
 
-float4x4 Mana_M;
+float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
 float4x4 MANA_MVP;
