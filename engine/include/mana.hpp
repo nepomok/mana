@@ -103,6 +103,8 @@
 #include "engine/render/geometry/vertex.hpp"
 #include "engine/render/geometry/primitive.hpp"
 #include "engine/render/geometry/mesh.hpp"
+#include "engine/render/opengl/oglframebuffer.hpp"
+#include "engine/render/opengl/ogluserframebuffer.hpp"
 #include "engine/audio/audiodevice.hpp"
 #include "engine/audio/audiobuffer.hpp"
 #include "engine/audio/audiolistener.hpp"

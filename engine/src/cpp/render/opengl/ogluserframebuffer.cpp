@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "ogluserframebuffer.hpp"
+#include "engine/render/opengl/ogluserframebuffer.hpp"
 #include "ogltypeconverter.hpp"
 #include "oglcheckerror.hpp"
 #include "oglrendertexture.hpp"

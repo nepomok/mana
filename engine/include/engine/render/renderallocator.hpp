@@ -32,6 +32,8 @@ namespace mana {
     public:
         static RenderAllocator *instantiate(GraphicsApi api);
 
+        virtual ~RenderAllocator() = default;
+
         virtual RenderTarget *allocateRenderTarget(int width, int height) = 0;
 
         virtual TextureBuffer *allocateTextureBuffer(TextureBuffer::Attributes attributes) = 0;

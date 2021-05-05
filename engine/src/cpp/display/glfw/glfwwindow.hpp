@@ -22,14 +22,15 @@
 
 #include <set>
 
+#include "extern/glad.h"
+
 #include "engine/display/window.hpp"
 #include "engine/display/windowattributes.hpp"
 
 #include "render/opengl/oglrenderer.hpp"
 #include "render/opengl/oglrenderallocator.hpp"
-#include "render/opengl/oglframebuffer.hpp"
+#include "engine/render/opengl/oglframebuffer.hpp"
 
-#include "glfwwindow.hpp"
 #include "glfwmonitor.hpp"
 #include "glfwwindowframebuffer.hpp"
 

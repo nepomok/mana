@@ -30,6 +30,9 @@ public:
     MainWindow();
 
     ~MainWindow() override;
+
+private:
+    SceneDisplayWidget* sceneDisplay;
 };
 
 #endif //MANA_MAINWINDOW_HPP

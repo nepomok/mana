@@ -17,18 +17,32 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
+#include "editor/qt/widgets/scenedisplaywidget.hpp"
 
-#include <QVBoxLayout>
+SceneDisplayWidget::SceneDisplayWidget(int fps) : fps(fps) {
+    makeCurrent();
+    ren = mana::Renderer::instantiate(mana::OPENGL);
+    alloc = mana::RenderAllocator::instantiate(mana::OPENGL);
+    ren3d = mana::Renderer3D(*ren, *alloc);
 
-MainWindow::MainWindow() {
-    auto *rootWidget = new QWidget(this);
-    rootWidget->setLayout(new QVBoxLayout());
-    rootWidget->layout()->addWidget(new SceneDisplayWidget());
+    connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
+
+    timer.start((int) ((1.0f / (float) fps) * 1000));
 }
 
-MainWindow::~MainWindow() {
-
+SceneDisplayWidget::~SceneDisplayWidget() {
+    delete alloc;
+    delete ren;
 }
 
+void SceneDisplayWidget::setScene(const mana::Renderer3D::RenderScene &s) {
+    scene = s;
+}
 
+mana::Renderer3D::RenderScene &SceneDisplayWidget::getScene() {
+    return scene;
+}
+
+void SceneDisplayWidget::onTimerUpdate() {
+
+}

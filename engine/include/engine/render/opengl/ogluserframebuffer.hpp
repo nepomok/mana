@@ -22,6 +22,8 @@
 
 #include "oglframebuffer.hpp"
 
+typedef unsigned int GLuint;
+
 namespace mana {
     namespace opengl {
         class OGLUserFrameBuffer : public OGLFrameBuffer {

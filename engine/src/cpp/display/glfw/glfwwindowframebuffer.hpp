@@ -20,7 +20,7 @@
 #ifndef MANA_GLFWWINDOWFRAMEBUFFER_HPP
 #define MANA_GLFWWINDOWFRAMEBUFFER_HPP
 
-#include "render/opengl/oglframebuffer.hpp"
+#include "engine/render/opengl/oglframebuffer.hpp"
 
 #include "render/opengl/ogltypeconverter.hpp"
 #include "render/opengl/oglcheckerror.hpp"

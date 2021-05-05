@@ -21,6 +21,7 @@
 #define MANA_SCENEDISPLAYWIDGET_HPP
 
 #include <QOpenGLWidget>
+#include <QTimer>
 
 #include "engine/render/renderer3d.hpp"
 
@@ -32,14 +33,21 @@ public:
 
     void setScene(const mana::Renderer3D::RenderScene &scene);
 
-    mana::Renderer3D::RenderScene& getScene();
+    mana::Renderer3D::RenderScene &getScene();
 
+private slots:
 
+    void onTimerUpdate();
 
 private:
+
     int fps;
 
-    mana::Renderer3D ren;
+    QTimer timer;
+
+    mana::Renderer *ren;
+    mana::RenderAllocator *alloc;
+    mana::Renderer3D ren3d;
     mana::Renderer3D::RenderScene scene;
 };
 

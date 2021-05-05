@@ -22,7 +22,7 @@
 
 #include "engine/render/rendertarget.hpp"
 
-#include "extern/glad.h"
+typedef unsigned int GLuint;
 
 namespace mana {
     namespace opengl {

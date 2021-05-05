@@ -34,6 +34,8 @@ namespace mana {
     public:
         static Renderer *instantiate(GraphicsApi graphicsApi);
 
+        virtual ~Renderer() = default;
+
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
 
         virtual void setClear(bool clearColor, bool clearDepth, bool clearStencil) = 0;

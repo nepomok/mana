@@ -17,18 +17,3 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
-
-#include <QVBoxLayout>
-
-MainWindow::MainWindow() {
-    auto *rootWidget = new QWidget(this);
-    rootWidget->setLayout(new QVBoxLayout());
-    rootWidget->layout()->addWidget(new SceneDisplayWidget());
-}
-
-MainWindow::~MainWindow() {
-
-}
-
-

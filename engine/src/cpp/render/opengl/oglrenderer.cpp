@@ -28,7 +28,7 @@
 #include "oglshaderprogram.hpp"
 #include "oglrendertexture.hpp"
 #include "oglmeshobject.hpp"
-#include "oglframebuffer.hpp"
+#include "engine/render/opengl/oglframebuffer.hpp"
 
 #include "oglcheckerror.hpp"
 #include "ogltypeconverter.hpp"

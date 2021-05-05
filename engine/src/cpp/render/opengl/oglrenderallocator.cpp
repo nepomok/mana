@@ -19,7 +19,7 @@
 
 #include "oglrenderallocator.hpp"
 #include "oglrendertexture.hpp"
-#include "ogluserframebuffer.hpp"
+#include "engine/render/opengl/ogluserframebuffer.hpp"
 #include "oglcheckerror.hpp"
 #include "oglmeshobject.hpp"
 #include "oglshaderprogram.hpp"
