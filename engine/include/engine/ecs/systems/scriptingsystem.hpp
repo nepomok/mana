@@ -63,7 +63,7 @@ namespace mana {
     private:
         Resources &res;
         Input &input;
-        MonoCppDomain domain;
+        MonoCppDomain &domain;
         MonoCppAssembly &msCorLib;
         MonoCppAssembly &manaAssembly;
     };
