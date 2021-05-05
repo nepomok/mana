@@ -41,9 +41,10 @@ namespace mana {
         }
 
         std::string shaderResourceName;
-        std::vector<std::string> meshResourceNames;
         std::vector<std::string> textureResourceNames;
         std::map<std::string, int> textureMapping;
+
+        std::vector<std::string> meshResourceNames;
 
         RenderProperties renderProperties;
 
