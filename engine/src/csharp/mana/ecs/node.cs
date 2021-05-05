@@ -40,7 +40,7 @@ namespace Mana
             Mana.Internal.SceneInterface.destroyComponent(name, component.type);
         }
 
-        internal void _AddComponent(Component component)
+        private void _AddComponent(Component component)
         {
             components.Add(component);
         }

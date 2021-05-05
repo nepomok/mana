@@ -17,19 +17,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOCPPRUNTIME_HPP
-#define MANA_MONOCPPRUNTIME_HPP
+#ifndef MANA_MONOCPPDOMAIN_HPP
+#define MANA_MONOCPPDOMAIN_HPP
 
 #include "engine/script/mono/monocppassembly.hpp"
 
 namespace mana {
-    class MonoCppRuntime {
+    class MonoCppDomain {
     public:
-        MonoCppRuntime();
+        MonoCppDomain();
 
-        explicit MonoCppRuntime(const std::string &domainName);
+        explicit MonoCppDomain(const std::string &domainName);
 
-        ~MonoCppRuntime();
+        ~MonoCppDomain();
 
         MonoCppAssembly &getMsCorLibAssembly();
 
@@ -45,4 +45,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MONOCPPRUNTIME_HPP
+#endif //MANA_MONOCPPDOMAIN_HPP

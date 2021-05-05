@@ -27,7 +27,7 @@
 namespace mana {
     class MonoScriptResource : public ScriptResource {
     public:
-        MonoScriptResource(MonoCppRuntime &monoRuntime,
+        MonoScriptResource(MonoCppDomain &monoRuntime,
                            std::string assemblyFileName,
                            std::string nameSpace,
                            std::string className);
@@ -41,7 +41,7 @@ namespace mana {
         Script *getScript() override;
 
     private:
-        MonoCppRuntime *monoCppRuntime;
+        MonoCppDomain *monoCppRuntime;
         std::string assemblyFileName;
         std::string nameSpace;
         std::string className;

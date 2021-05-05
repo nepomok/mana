@@ -25,7 +25,7 @@
 #include "engine/resource/resources.hpp"
 
 #include "engine/render/renderallocator.hpp"
-#include "engine/script/mono/monocppruntime.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
 namespace mana {
     /**
@@ -39,7 +39,7 @@ namespace mana {
 
         void close() override;
 
-        Resources* getResources(RenderAllocator &allocator, MonoCppRuntime &monoRuntime);
+        Resources* getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime);
 
     private:
         std::string filePath;

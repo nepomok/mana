@@ -22,7 +22,7 @@
 #include <utility>
 
 namespace mana {
-    MonoScriptResource::MonoScriptResource(MonoCppRuntime &monoCppRuntime,
+    MonoScriptResource::MonoScriptResource(MonoCppDomain &monoCppRuntime,
                                            std::string assemblyFileName,
                                            std::string nameSpace,
                                            std::string className)

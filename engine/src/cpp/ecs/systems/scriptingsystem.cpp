@@ -164,7 +164,7 @@ namespace mana {
         }
     }
 
-    void uploadScene(MonoCppRuntime &runtime,
+    void uploadScene(MonoCppDomain &runtime,
                      MonoCppAssembly &msCorLib,
                      MonoCppAssembly &manaAssembly,
                      Scene &scene) {
@@ -187,13 +187,13 @@ namespace mana {
         manaAssembly.setStaticField("Mana", "Scene", "scene", monoScene.getObjectPointer());
     }
 
-    void downloadScene(MonoCppRuntime &runtime,
+    void downloadScene(MonoCppDomain &domain,
                        MonoCppAssembly &msCorLib,
                        MonoCppAssembly &manaAssembly,
                        Scene &scene) {
         auto monoScene = manaAssembly.getStaticField("Mana", "Scene", "scene");
         for (auto &n : scene.nodes) {
-            auto monoStr = runtime.stringFromUtf8(n.first);
+            auto monoStr = domain.stringFromUtf8(n.first);
             MonoCppArguments arg;
             arg.add(monoStr);
             auto monoNode = monoScene.invokeMethod("GetNode", arg);
@@ -212,15 +212,13 @@ namespace mana {
 
     ScriptingSystem::ScriptingSystem(Resources &res,
                                      Input &input,
-                                     MonoCppRuntime &runtime,
-                                     MonoCppAssembly &msCorLib,
+                                     MonoCppDomain &domain,
                                      MonoCppAssembly &manaAssembly)
             : res(res),
-              runtime(runtime),
-              msCorLib(msCorLib),
+              domain(domain),
+              msCorLib(domain.getMsCorLibAssembly()),
               manaAssembly(manaAssembly),
-              input(input) {
-    }
+              input(input) {}
 
     void ScriptingSystem::start() {
         input.registerListener(*this);
@@ -231,8 +229,10 @@ namespace mana {
     }
 
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
+        manaAssembly.setStaticField("Mana", "Time", "deltaTime", &deltaTime);
+
         SceneInterface::setScene(&scene);
-        uploadScene(runtime, msCorLib, manaAssembly, scene);
+        uploadScene(domain, msCorLib, manaAssembly, scene);
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
 
         std::sort(nodes.begin(), nodes.end(),
@@ -256,7 +256,7 @@ namespace mana {
         }
 
         SceneInterface::setScene(nullptr);
-        downloadScene(runtime, msCorLib, manaAssembly, scene);
+        downloadScene(domain, msCorLib, manaAssembly, scene);
         MonoCppArguments a;
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd", a);
     }
@@ -302,9 +302,9 @@ namespace mana {
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseKeyUp", args);
     }
 
-    void ScriptingSystem::onTextInput(std::string text) {
+    void ScriptingSystem::onTextInput(const std::string &text) {
         MonoCppArguments args;
-        auto monostr = runtime.stringFromUtf8(text);
+        auto monostr = domain.stringFromUtf8(text);
         args.add(monostr);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnTextInput", args);
     }

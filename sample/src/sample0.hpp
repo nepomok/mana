@@ -31,7 +31,8 @@ protected:
     void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
         Game::start(window, ren, alloc, input);
         ren.setClearColor(clearColor);
-        ecs.addSystem(new ScriptingSystem(*res, input, monoRuntime, monoRuntime.getMsCorLibAssembly(), *manaAssembly));
+        manaAssembly = domain.loadAssembly("mana.dll");
+        ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d, *res));
     }
 
@@ -41,8 +42,6 @@ protected:
     }
 
     void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
-        manaAssembly->setStaticField("Mana", "Time", "deltaTime", &deltaTime);
-
         cameraNode->getComponent<CameraComponent>().aspectRatio =
                 (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
@@ -55,11 +54,9 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        //IMPORTANT: Assemblies referenced in other assemblies have to be loaded before loading referencing assemblies.
-        manaAssembly = monoRuntime.loadAssembly("assets/mana.dll");
         TextFileResource memStr("assets/sampleScene.json");
         scene = JsonSceneResource(memStr).getScene();
-        res = ResourceFile("assets/sampleResources.json").getResources(alloc, monoRuntime);
+        res = ResourceFile("assets/sampleResources.json").getResources(alloc, domain);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 
@@ -70,8 +67,9 @@ protected:
 private:
     ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
-    MonoCppRuntime monoRuntime;
+    MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
+
     ECS ecs;
     Scene scene;
     Resources *res;

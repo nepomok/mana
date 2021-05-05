@@ -75,7 +75,7 @@
 #include "engine/resource/file/imagefileresource.hpp"
 #include "engine/resource/file/meshfileresource.hpp"
 #include "engine/script/script.hpp"
-#include "engine/script/mono/monocppruntime.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 #include "engine/script/mono/monocppobject.hpp"
 #include "engine/script/mono/monocppvalue.hpp"
 #include "engine/script/mono/monoscript.hpp"

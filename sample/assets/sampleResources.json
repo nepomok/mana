@@ -3,13 +3,13 @@
     {
       "name": "Mesh.Plane",
       "type": "meshfile",
-      "assetFilePath": "assets/plane.obj",
+      "assetFilePath": "assets/meshes/plane.obj",
       "assetName": "Plane"
     },
     {
       "name": "Mesh.Cube",
       "type": "meshfile",
-      "assetFilePath": "assets/cube.obj",
+      "assetFilePath": "assets/meshes/cube.obj",
       "assetName": "Cube"
     },
     {
@@ -35,12 +35,12 @@
     {
       "name": "Image.colorMap",
       "type": "imagefile",
-      "filePath": "assets/colormap.png"
+      "filePath": "assets/images/colormap.png"
     },
     {
       "name": "Image.skybox",
       "type": "imagefile",
-      "filePath": "assets/deepbluespace-skybox_maintex.png"
+      "filePath": "assets/images/deepbluespace-skybox_maintex.png"
     },
     {
       "name": "Shader.default",
@@ -93,14 +93,14 @@
     {
       "name": "Script.inputController",
       "type": "monoscript",
-      "assemblyFileName": "assets/script.dll",
+      "assemblyFileName": "assets/scripts/script.dll",
       "nameSpace": "",
       "className": "InputController"
     },
     {
       "name": "Script.skyboxController",
       "type": "monoscript",
-      "assemblyFileName": "assets/script.dll",
+      "assemblyFileName": "assets/scripts/script.dll",
       "nameSpace": "",
       "className": "SkyboxController"
     }

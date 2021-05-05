@@ -7,6 +7,6 @@ namespace Mana
         public double positionX;
         public double positionY;
 
-        public Dictionary<MouseKey, KeyState> keys = new Dictionary<MouseKey, KeyState>();
+        public readonly Dictionary<MouseKey, KeyState> keys = new Dictionary<MouseKey, KeyState>();
     }
 }

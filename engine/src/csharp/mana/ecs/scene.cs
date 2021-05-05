@@ -35,7 +35,7 @@ namespace Mana
             return nodes.Count;
         }
 
-        internal void _AddNode(string name, Node node)
+        private void _AddNode(string name, Node node)
         {
             if (nodes.ContainsKey(name))
                 throw new ArgumentException("Node with name " + name + " already exists");

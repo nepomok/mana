@@ -34,8 +34,7 @@ namespace mana {
     public:
         ScriptingSystem(Resources &res,
                         Input &input,
-                        MonoCppRuntime &runtime,
-                        MonoCppAssembly &msCorLib,
+                        MonoCppDomain &domain,
                         MonoCppAssembly &manaAssembly);
 
         ~ScriptingSystem() override = default;
@@ -51,20 +50,20 @@ namespace mana {
 
         void onKeyUp(Key key) override;
 
-        void onMouseMove(double xpos, double ypos) override;
+        void onMouseMove(double xPos, double yPos) override;
 
-        void onMouseWheelScroll(double ammount) override;
+        void onMouseWheelScroll(double amount) override;
 
         void onMouseKeyDown(MouseKey key) override;
 
         void onMouseKeyUp(MouseKey key) override;
 
-        void onTextInput(std::string text) override;
+        void onTextInput(const std::string &text) override;
 
     private:
         Resources &res;
         Input &input;
-        MonoCppRuntime &runtime;
+        MonoCppDomain domain;
         MonoCppAssembly &msCorLib;
         MonoCppAssembly &manaAssembly;
     };

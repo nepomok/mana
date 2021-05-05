@@ -21,7 +21,7 @@
 #define MANA_MONOSCRIPT_HPP
 
 #include "engine/script/script.hpp"
-#include "engine/script/mono/monocppruntime.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
 namespace mana {
     class MonoScript : public Script {

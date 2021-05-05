@@ -4,9 +4,9 @@ namespace Mana
 {
     public static class Input
     {
-        private static Dictionary<Key, KeyState> keys = new Dictionary<Key, KeyState>();
-        private static Mouse mouse = new Mouse();
-        private static List<InputListener> listeners = new List<InputListener>();
+        private static readonly Dictionary<Key, KeyState> keys = new Dictionary<Key, KeyState>();
+        private static readonly Mouse mouse = new Mouse();
+        private static readonly List<InputListener> listeners = new List<InputListener>();
 
         public static KeyState GetKey(Key key)
         {

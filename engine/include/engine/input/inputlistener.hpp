@@ -32,15 +32,15 @@ namespace mana {
 
         virtual void onKeyUp(Key key) {};
 
-        virtual void onMouseMove(double xpos, double ypos) {};
+        virtual void onMouseMove(double xPos, double yPos) {};
 
-        virtual void onMouseWheelScroll(double ammount) {};
+        virtual void onMouseWheelScroll(double amount) {};
 
         virtual void onMouseKeyDown(MouseKey key) {};
 
         virtual void onMouseKeyUp(MouseKey key) {};
 
-        virtual void onTextInput(std::string text) {};
+        virtual void onTextInput(const std::string &text) {};
 
         //Todo: Gamepad support
     };

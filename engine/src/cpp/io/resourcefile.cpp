@@ -143,11 +143,11 @@ namespace mana {
         return new TextureResource(alloc, res.getResource<ImageResource>(j["imageResourceName"]), attr);
     }
 
-    MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppRuntime &monoRuntime) {
+    MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
         return new MonoScriptResource(monoRuntime, j["assemblyFileName"], j["nameSpace"], j["className"]);
     }
 
-    Resources *parseResources(const std::string &jsonStr, RenderAllocator &allocator, MonoCppRuntime &monoRuntime) {
+    Resources *parseResources(const std::string &jsonStr, RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
         auto *ret = new Resources();
         auto json = nlohmann::json::parse(jsonStr);
         for (auto &r : json["resources"]) {
@@ -187,7 +187,7 @@ namespace mana {
         fileContents.clear();
     }
 
-    Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppRuntime &monoRuntime) {
+    Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
         return parseResources(fileContents, allocator, monoRuntime);
     }
 }

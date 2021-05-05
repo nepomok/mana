@@ -23,43 +23,48 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-config.h>
 
-#include "engine/script/mono/monocppruntime.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
 namespace mana {
-    MonoCppRuntime::MonoCppRuntime()
+    MonoCppDomain::MonoCppDomain()
             : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
+        if (domainPointer == nullptr)
+            throw std::runtime_error("Failed to create mono domain DefaultDomain");
         mono_config_parse(nullptr);
         msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
-    MonoCppRuntime::MonoCppRuntime(const std::string &domainName)
+    MonoCppDomain::MonoCppDomain(const std::string &domainName)
             : msCorLib(nullptr, nullptr) {
         domainPointer = mono_jit_init(domainName.c_str());
+        if (domainPointer == nullptr)
+            throw std::runtime_error("Failed to create mono domain " + domainName);
         mono_config_parse(nullptr);
         msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
     }
 
-    MonoCppRuntime::~MonoCppRuntime() {
+    MonoCppDomain::~MonoCppDomain() {
         mono_jit_cleanup(static_cast<MonoDomain *>(domainPointer));
     }
 
-    MonoCppAssembly &MonoCppRuntime::getMsCorLibAssembly() {
+    MonoCppAssembly &MonoCppDomain::getMsCorLibAssembly() {
         return msCorLib;
     }
 
-    MonoCppAssembly *MonoCppRuntime::loadAssembly(const std::string &filePath) {
-        return new mana::MonoCppAssembly(domainPointer,
-                                         mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer),
-                                                                   filePath.c_str()));
+    MonoCppAssembly *MonoCppDomain::loadAssembly(const std::string &filePath) {
+        auto *ap = mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer), filePath.c_str());
+        if (ap == nullptr)
+            throw std::runtime_error("Failed to load assembly " + filePath);
+        return new mana::MonoCppAssembly(domainPointer, ap);
     }
 
-    MonoCppObject MonoCppRuntime::stringFromUtf8(const std::string &str, bool pinned) {
+    MonoCppObject MonoCppDomain::stringFromUtf8(const std::string &str, bool pinned) {
         auto *p = mono_string_new(static_cast<MonoDomain *>(domainPointer), str.c_str());
         return std::move(MonoCppObject(p, pinned));
     }
 
-    std::string MonoCppRuntime::stringToUtf8(const MonoCppObject &strObject) {
+    std::string MonoCppDomain::stringToUtf8(const MonoCppObject &strObject) {
         return mono_string_to_utf8(static_cast<MonoString *>(strObject.getObjectPointer()));
     }
 }
