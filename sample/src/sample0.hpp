@@ -33,7 +33,7 @@ protected:
         ren.setClearColor(clearColor);
         manaAssembly = domain.loadAssembly("mana.dll");
         ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d, *res));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
     }
 
     void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
@@ -54,9 +54,8 @@ protected:
     }
 
     void loadScene(RenderAllocator &alloc) override {
-        TextFileResource memStr("assets/sampleScene.json");
-        scene = JsonSceneResource(memStr).getScene();
-        res = ResourceFile("assets/sampleResources.json").getResources(alloc, domain);
+        res = JsonResourceFile("assets/sampleResources.json").getResources(alloc, domain);
+        scene = JsonSceneFile("assets/sampleScene.json").loadScene(*res);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 
@@ -65,14 +64,15 @@ protected:
     }
 
 private:
+    ECS ecs;
+
     ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
 
-    ECS ecs;
-    Scene scene;
     Resources *res;
+    Scene scene;
 
     Node *cameraNode;
 };

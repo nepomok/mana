@@ -22,7 +22,7 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/script/script.hpp"
+#include "engine/resource/scriptresource.hpp"
 
 namespace mana {
     struct ScriptComponent : public Component {
@@ -36,7 +36,7 @@ namespace mana {
             return typeid(ScriptComponent);
         }
 
-        std::string scriptResourceName;
+        ScriptResource *script = nullptr;
 
         bool scriptEnabled = false;
 

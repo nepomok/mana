@@ -17,13 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <vector>
-
-#include "engine/resource/json/jsoncomponentresource.hpp"
+#include "engine/io/json/jsonscenefile.hpp"
 
 #include "extern/json.hpp"
-
-#include "engine/ecs/components.hpp"
 
 namespace mana {
     ComponentType convertComponentType(const std::string &str) {
@@ -181,8 +177,8 @@ namespace mana {
         return ret;
     }
 
-    CameraComponent* getCameraComponent(const nlohmann::json &component) {
-        auto* ret = new CameraComponent();
+    CameraComponent *getCameraComponent(const nlohmann::json &component) {
+        auto *ret = new CameraComponent();
         ret->cameraType = convertCameraType(component["cameraType"]);
         if (ret->cameraType == PERSPECTIVE) {
             ret->nearClip = component["nearClip"];
@@ -200,26 +196,26 @@ namespace mana {
         return ret;
     }
 
-    TransformComponent* getTransformComponent(const nlohmann::json &component) {
-        auto * ret = new TransformComponent();
+    TransformComponent *getTransformComponent(const nlohmann::json &component) {
+        auto *ret = new TransformComponent();
         ret->transform = convertTransform(component);
         return ret;
     }
 
-    RenderComponent* getRenderComponent(const nlohmann::json &component) {
-        auto * ret = new RenderComponent();
-        ret->shaderResourceName = component["shaderResourceName"];
+    RenderComponent *getRenderComponent(const nlohmann::json &component, Resources &res) {
+        auto *ret = new RenderComponent();
+        ret->shader = &res.getResource<ShaderResource>(component["shaderResourceName"]);
 
         for (const auto &entry : component["textureMapping"]) {
             ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
         }
 
         for (auto &mesh : component["meshes"]) {
-            ret->meshResourceNames.emplace_back(mesh["resourceName"]);
+            ret->meshBuffers.emplace_back(&res.getResource<MeshBufferResource>(mesh["resourceName"]));
         }
 
-        for (const auto &entry : component["textures"]) {
-            ret->textureResourceNames.emplace_back(entry["resourceName"]);
+        for (const auto &tex : component["textures"]) {
+            ret->textureBuffers.emplace_back(&res.getResource<TextureBufferResource>(tex["resourceName"]));
         }
 
         auto props = component["renderProperties"];
@@ -246,8 +242,8 @@ namespace mana {
         return ret;
     }
 
-    LightComponent* getLightComponent(const nlohmann::json &component) {
-        auto* ret = new LightComponent();
+    LightComponent *getLightComponent(const nlohmann::json &component) {
+        auto *ret = new LightComponent();
         ret->lightType = convertLightType(component["lightType"]);
 
         ret->ambient.x = component["ambient"]["r"];
@@ -285,48 +281,78 @@ namespace mana {
         return ret;
     }
 
-    ScriptComponent* getScriptScriptComponent(const nlohmann::json &component) {
-        auto * ret = new ScriptComponent();
-        ret->scriptResourceName = component["resourceName"];
+    ScriptComponent *getScriptComponent(const nlohmann::json &component, Resources &res) {
+        auto *ret = new ScriptComponent();
+        ret->script = &res.getResource<ScriptResource>(component["resourceName"]);
         ret->queue = component["queue"];
         return ret;
     }
 
-    Component *getComponentFromJson(const std::string &jsonText) {
-        auto component = nlohmann::json::parse(jsonText);
+    Component *getComponent(const nlohmann::json &component, Resources &res) {
+        Component *ret;
         switch (convertComponentType(component["componentType"])) {
             case TRANSFORM:
-                return getTransformComponent(component);
+                ret = getTransformComponent(component);
+                break;
             case CAMERA:
-                return getCameraComponent(component);
+                ret = getCameraComponent(component);
+                break;
             case RENDER:
-                return getRenderComponent(component);
+                ret = getRenderComponent(component, res);
+                break;
             case LIGHT:
-                return getLightComponent(component);
+                ret = getLightComponent(component);
+                break;
             case SCRIPT:
-                return getScriptScriptComponent(component);
+                ret = getScriptComponent(component, res);
+                break;
             default:
                 throw std::runtime_error("Unrecognized component type");
         }
+        ret->enabled = component["enabled"];
+        return ret;
     }
 
-    JsonComponentResource::~JsonComponentResource() = default;
-
-    JsonComponentResource::JsonComponentResource(TextResource &jsonText) : jsonText(jsonText) {}
-
-    Component *JsonComponentResource::getComponent() {
-        if (!isLoaded)
-            load();
-        return getComponentFromJson(jsonText.getText());
+    Node getNode(const nlohmann::json &node, Resources &res) {
+        Node ret;
+        ret.enabled = node["enabled"];
+        for (auto &comp : node["components"]) {
+            ret.addComponentPointer(getComponent(comp, res));
+        }
+        return ret;
     }
 
-    void JsonComponentResource::load() {
-        jsonText.load();
-        isLoaded = true;
+    Scene getSceneFromJson(const std::string &jsonText, Resources &res) {
+        Scene ret;
+        auto j = nlohmann::json::parse(jsonText);
+        ret.name = j["sceneName"];
+        for (auto &node : j["nodes"]) {
+            std::string nodeName = node["nodeName"];
+            if (ret.nodes.find(nodeName) != ret.nodes.end())
+                throw std::runtime_error("Duplicate node name");
+            ret.nodes[node["nodeName"]] = getNode(node, res);
+        }
+        return ret;
     }
 
-    void JsonComponentResource::free() {
-        jsonText.free();
-        isLoaded = false;
+    JsonSceneFile::JsonSceneFile() = default;
+
+    JsonSceneFile::JsonSceneFile(std::string filePath) {
+        this->filePath = filePath;
+        this->fileContents = File::readAllText(filePath);
+    }
+
+    void JsonSceneFile::open() {
+        fileContents = File::readAllText(filePath);
+        File::open();
+    }
+
+    void JsonSceneFile::close() {
+        fileContents.clear();
+        File::close();
+    }
+
+    Scene JsonSceneFile::loadScene(Resources &res) {
+        return getSceneFromJson(fileContents, res);
     }
 }

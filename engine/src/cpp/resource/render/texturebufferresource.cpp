@@ -17,24 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/resource/render/textureresource.hpp"
+#include "engine/resource/render/texturebufferresource.hpp"
 
 namespace mana {
-    TextureResource::TextureResource(RenderAllocator &allocator,
-                                     ImageResource &resource,
-                                     TextureBuffer::Attributes attributes)
+    TextureBufferResource::TextureBufferResource(RenderAllocator &allocator,
+                                                 ImageResource &resource,
+                                                 TextureBuffer::Attributes attributes)
             : alloc(&allocator),
               img(&resource),
               attrib(attributes),
               texture(nullptr) {
     }
 
-    TextureResource::~TextureResource() {
+    TextureBufferResource::~TextureBufferResource() {
         if (isLoaded)
             delete texture;
     }
 
-    void TextureResource::load() {
+    void TextureBufferResource::load() {
         if (isLoaded)
             return;
         attrib.size = img->getBuffer().getSize();
@@ -49,7 +49,7 @@ namespace mana {
         isLoaded = true;
     }
 
-    void TextureResource::free() {
+    void TextureBufferResource::free() {
         if (!isLoaded)
             return;
         delete texture;
@@ -57,7 +57,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    TextureBuffer *TextureResource::getTexture() {
+    TextureBuffer *TextureBufferResource::getTextureBuffer() {
         if (!isLoaded)
             load();
         return texture;

@@ -17,24 +17,33 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENTRESOURCE_HPP
-#define MANA_COMPONENTRESOURCE_HPP
+#ifndef MANA_JSONRESOURCEFILE_HPP
+#define MANA_JSONRESOURCEFILE_HPP
 
-#include "engine/resource/resource.hpp"
-#include "engine/ecs/component.hpp"
+#include "engine/io/file.hpp"
+
+#include "engine/resource/resources.hpp"
+
+#include "engine/render/renderallocator.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
 namespace mana {
-    class ComponentResource : public Resource {
+    /**
+     * A json resource file.
+     */
+    class JsonResourceFile : public File {
     public:
-        /**
-         * Allocates and returns a new Component object.
-         *
-         * The callee gains ownership of the returned pointer.
-         *
-         * @return
-         */
-        virtual Component *getComponent() = 0;
+        explicit JsonResourceFile(const std::string &filePath);
+
+        void open() override;
+
+        void close() override;
+
+        Resources* getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime);
+
+    private:
+        std::string fileContents;
     };
 }
 
-#endif //MANA_COMPONENTRESOURCE_HPP
+#endif //MANA_JSONRESOURCEFILE_HPP

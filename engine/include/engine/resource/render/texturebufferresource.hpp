@@ -17,21 +17,33 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENERESOURCE_HPP
-#define MANA_SCENERESOURCE_HPP
+#ifndef MANA_TEXTUREBUFFERRESOURCE_HPP
+#define MANA_TEXTUREBUFFERRESOURCE_HPP
 
-#include "engine/resource/resource.hpp"
-#include "engine/resource/noderesource.hpp"
-
-#include "engine/ecs/scene.hpp"
+#include "engine/resource/imageresource.hpp"
+#include "engine/render/renderallocator.hpp"
 
 namespace mana {
-    class SceneResource : public Resource {
+    class TextureBufferResource : public Resource {
     public:
-        virtual const std::string &getName() = 0;
+        TextureBufferResource();
 
-        virtual Scene getScene() = 0;
+        TextureBufferResource(RenderAllocator &allocator, ImageResource &resource, TextureBuffer::Attributes attributes);
+
+        ~TextureBufferResource() override;
+
+        void load() override;
+
+        void free() override;
+
+        TextureBuffer *getTextureBuffer();
+
+    private:
+        RenderAllocator *alloc;
+        ImageResource *img;
+        TextureBuffer::Attributes attrib;
+        TextureBuffer *texture;
     };
 }
 
-#endif //MANA_SCENERESOURCE_HPP
+#endif //MANA_TEXTUREBUFFERRESOURCE_HPP

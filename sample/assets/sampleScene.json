@@ -2,9 +2,11 @@
   "sceneName": "SampleScene",
   "nodes": [
     {
+      "enabled": true,
       "nodeName": "mainCamera",
       "components": [
         {
+          "enabled": true,
           "componentType": "transform",
           "position": {
             "x": 0,
@@ -23,6 +25,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "camera",
           "cameraType": "perspective",
           "nearClip": 0.1,
@@ -33,9 +36,11 @@
       ]
     },
     {
+      "enabled": true,
       "nodeName": "plane",
       "components": [
         {
+          "enabled": true,
           "componentType": "transform",
           "position": {
             "x": 0,
@@ -54,6 +59,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "render",
           "shaderResourceName": "Shader.default",
           "textureMapping": [
@@ -98,6 +104,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "script",
           "resourceName": "Script.inputController",
           "queue": 0
@@ -105,9 +112,11 @@
       ]
     },
     {
+      "enabled": true,
       "nodeName": "skybox",
       "components": [
         {
+          "enabled": true,
           "componentType": "transform",
           "position": {
             "x": 0,
@@ -126,6 +135,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "render",
           "shaderResourceName": "Shader.skybox",
           "textureMapping": [
@@ -166,6 +176,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "script",
           "resourceName": "Script.skyboxController",
           "queue": 1
@@ -173,9 +184,11 @@
       ]
     },
     {
+      "enabled": true,
       "nodeName": "light",
       "components": [
         {
+          "enabled": true,
           "componentType": "transform",
           "position": {
             "x": 0,
@@ -194,6 +207,7 @@
           }
         },
         {
+          "enabled": true,
           "componentType": "light",
           "lightType": "directional",
           "ambient": {

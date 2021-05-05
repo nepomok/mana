@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/resourcefile.hpp"
+#include "engine/io/json/jsonresourcefile.hpp"
 
 #include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/file/meshfileresource.hpp"
 #include "engine/resource/meshresource.hpp"
 #include "engine/resource/file/textfileresource.hpp"
 #include "engine/resource/file/imagefileresource.hpp"
-#include "engine/resource/render/textureresource.hpp"
+#include "engine/resource/render/texturebufferresource.hpp"
 #include "engine/resource/script/monoscriptresource.hpp"
 
 #include "extern/json.hpp"
@@ -131,7 +131,7 @@ namespace mana {
         }
     }
 
-    TextureResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
+    TextureBufferResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
         TextureBuffer::Attributes attr;
         attr.textureType = parseTextureType(j["textureType"]);
         attr.format = parseColorFormat(j["format"]);
@@ -140,7 +140,7 @@ namespace mana {
         attr.filterMag = parseTextureFiltering(j["filterMag"]);
         attr.generateMipmap = j["generateMipmap"];
         attr.mipmapFilter = parseMipMapFiltering(j["mipmapFilter"]);
-        return new TextureResource(alloc, res.getResource<ImageResource>(j["imageResourceName"]), attr);
+        return new TextureBufferResource(alloc, res.getResource<ImageResource>(j["imageResourceName"]), attr);
     }
 
     MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
@@ -174,20 +174,20 @@ namespace mana {
         return ret;
     }
 
-    ResourceFile::ResourceFile(const std::string &filePath)
-            : filePath(filePath), fileContents(File::readAllText(filePath)) {
+    JsonResourceFile::JsonResourceFile(const std::string &filePath)
+            : fileContents(File::readAllText(filePath)) {
+        this->filePath = filePath;
     }
 
-    void ResourceFile::open(const std::string &f) {
-        fileContents = File::readAllText(f);
-        filePath = f;
+    void JsonResourceFile::open() {
+        fileContents = File::readAllText(filePath);
     }
 
-    void ResourceFile::close() {
+    void JsonResourceFile::close() {
         fileContents.clear();
     }
 
-    Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
+    Resources *JsonResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
         return parseResources(fileContents, allocator, monoRuntime);
     }
 }

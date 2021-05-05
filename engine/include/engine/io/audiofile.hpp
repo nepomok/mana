@@ -26,8 +26,10 @@
 
 #include "engine/audio/audioformat.hpp"
 
+#include "engine/io/file.hpp"
+
 namespace mana {
-    class AudioFile {
+    class AudioFile : public File {
     public:
         AudioFile();
 
@@ -35,17 +37,21 @@ namespace mana {
 
         ~AudioFile();
 
-        void loadFile(const std::string &filePath);
-
         AudioFormat getFormat() const;
 
         int getSampleRate() const;
 
         const std::vector<uint8_t> &getBuffer() const;
 
+        void open() override;
+
+        void close() override;
+
     private:
-        AudioFormat format;
-        int sampleRate;
+        void loadFile();
+
+        AudioFormat format{};
+        int sampleRate{};
         std::vector<uint8_t> buffer;
     };
 }

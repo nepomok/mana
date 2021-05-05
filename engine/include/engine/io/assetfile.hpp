@@ -32,7 +32,7 @@ namespace mana {
 
         explicit AssetFile(const std::string &filePath);
 
-        void open(const std::string &filePath) override;
+        void open() override;
 
         void close() override;
 

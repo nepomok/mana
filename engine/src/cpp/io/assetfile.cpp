@@ -83,14 +83,18 @@ namespace mana {
 
     AssetFile::AssetFile() = default;
 
-    AssetFile::AssetFile(const std::string &filePath) : meshes(readMeshFromFile(filePath)) {}
+    AssetFile::AssetFile(const std::string &filePath) : meshes(readMeshFromFile(filePath)) {
+        this->filePath = filePath;
+    }
 
-    void AssetFile::open(const std::string &filePath) {
+    void AssetFile::open() {
         meshes = readMeshFromFile(filePath);
+        File::open();
     }
 
     void AssetFile::close() {
         meshes.clear();
+        File::close();
     }
 
     const std::map<std::string, Mesh> &AssetFile::getMeshData() {

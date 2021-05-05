@@ -245,14 +245,14 @@ namespace mana {
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
                     comp.scriptEnabled = false;
-                    res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onDisable();
+                    comp.script->getScript()->onDisable();
                 }
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onEnable();
+                comp.script->getScript()->onEnable();
             }
-            res.getResource<ScriptResource>(comp.scriptResourceName).getScript()->onUpdate();
+            comp.script->getScript()->onUpdate();
         }
 
         SceneInterface::setScene(nullptr);

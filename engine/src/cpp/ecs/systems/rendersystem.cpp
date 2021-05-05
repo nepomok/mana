@@ -27,8 +27,8 @@
 #include "engine/render/camera/orthographiccamera.hpp"
 
 namespace mana {
-    RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren, Resources &res)
-            : screenTarget(scr), ren(ren), res(res) {
+    RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren)
+            : screenTarget(scr), ren(ren) {
     }
 
     void RenderSystem::start() {
@@ -118,17 +118,17 @@ namespace mana {
 
             unit.transform = mapping[comp]->transform;
 
-            unit.command.shader = res.getResource<ShaderResource>(comp->shaderResourceName).getShader();
+            unit.command.shader = comp->shader->getShader();
             for (auto &m : comp->textureMapping) {
                 unit.command.shader->setTexture(m.first, m.second);
             }
 
-            for (auto &t : comp->textureResourceNames) {
-                unit.command.textures.emplace_back(res.getResource<TextureResource>(t).getTexture());
+            for (auto *t : comp->textureBuffers) {
+                unit.command.textures.emplace_back(t->getTextureBuffer());
             }
 
-            for (auto &m : comp->meshResourceNames) {
-                unit.command.meshBuffers.emplace_back(res.getResource<MeshBufferResource>(m).getRenderMesh());
+            for (auto *m : comp->meshBuffers) {
+                unit.command.meshBuffers.emplace_back(m->getRenderMesh());
             }
 
             unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
@@ -189,6 +189,7 @@ namespace mana {
             orthoCamera.bottom = comp.bottom;
             scene3d.camera = &orthoCamera;
         }
+
         ren.render(screenTarget, scene3d);
     }
 }

@@ -33,6 +33,7 @@ namespace mana {
      */
     class Scene {
     public:
+        std::string name;
         std::map<std::string, Node> nodes;
 
         Node &operator[](const std::string &name) {

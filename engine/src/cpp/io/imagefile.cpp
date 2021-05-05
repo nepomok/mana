@@ -43,16 +43,18 @@ namespace mana {
     ImageFile::ImageFile() = default;
 
     ImageFile::ImageFile(const std::string &filePath) {
+        this->filePath = filePath;
         buffer = readImageFile(filePath);
     }
 
-    void ImageFile::open(const std::string &filePath) {
+    void ImageFile::open() {
         buffer = readImageFile(filePath);
-
+        File::open();
     }
 
     void ImageFile::close() {
         buffer = {};
+        File::close();
     }
 
     const ImageBuffer<ColorRGBA> &ImageFile::getBuffer() {

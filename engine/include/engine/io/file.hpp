@@ -29,9 +29,21 @@ namespace mana {
 
         static void writeAllText(const std::string &filepath, const std::string &text);
 
-        virtual void open(const std::string &filePath) = 0;
+        const std::string &getFilePath() { return filePath; }
 
-        virtual void close() = 0;
+        void setFilePath(const std::string &fp) {
+            if (isOpen)
+                close();
+            filePath = fp;
+        }
+
+        virtual void open() { isOpen = true; }
+
+        virtual void close() { isOpen = false; }
+
+    protected:
+        bool isOpen = false;
+        std::string filePath;
     };
 }
 

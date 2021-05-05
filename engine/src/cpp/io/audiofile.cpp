@@ -29,12 +29,37 @@ namespace mana {
     AudioFile::AudioFile() = default;
 
     AudioFile::AudioFile(const std::string &filePath) {
-        loadFile(filePath);
+        this->filePath = filePath;
+        loadFile();
     }
 
     AudioFile::~AudioFile() = default;
 
-    void AudioFile::loadFile(const std::string &filePath) {
+    AudioFormat AudioFile::getFormat() const {
+        return format;
+    }
+
+    int AudioFile::getSampleRate() const {
+        return sampleRate;
+    }
+
+    const std::vector<uint8_t> &AudioFile::getBuffer() const {
+        return buffer;
+    }
+
+    void AudioFile::open() {
+        loadFile();
+        File::open();
+    }
+
+    void AudioFile::close() {
+        format = {};
+        sampleRate = {};
+        buffer = {};
+        File::close();
+    }
+
+    void AudioFile::loadFile() {
         //Based on this sample: https://github.com/kcat/openal-soft/blob/master/examples/alplay.c
         SF_INFO sfinfo;
         SNDFILE *sndfile = sf_open(filePath.c_str(), SFM_READ, &sfinfo);
@@ -90,17 +115,5 @@ namespace mana {
 
         free(buff);
         sf_close(sndfile);
-    }
-
-    AudioFormat AudioFile::getFormat() const {
-        return format;
-    }
-
-    int AudioFile::getSampleRate() const {
-        return sampleRate;
-    }
-
-    const std::vector<uint8_t> &AudioFile::getBuffer() const {
-        return buffer;
     }
 }

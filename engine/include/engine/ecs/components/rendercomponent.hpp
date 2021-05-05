@@ -26,7 +26,7 @@
 
 #include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/render/shaderresource.hpp"
-#include "engine/resource/render/textureresource.hpp"
+#include "engine/resource/render/texturebufferresource.hpp"
 
 namespace mana {
     struct RenderComponent : public Component {
@@ -36,15 +36,16 @@ namespace mana {
             return new RenderComponent(*this);
         }
 
-        const std::type_info& getTypeInfo() override {
+        const std::type_info &getTypeInfo() override {
             return typeid(RenderComponent);
         }
 
-        std::string shaderResourceName;
-        std::vector<std::string> textureResourceNames;
-        std::map<std::string, int> textureMapping;
+        ShaderResource *shader;
 
-        std::vector<std::string> meshResourceNames;
+        std::vector<MeshBufferResource *> meshBuffers;
+        std::vector<TextureBufferResource *> textureBuffers;
+
+        std::map<std::string, int> textureMapping;
 
         RenderProperties renderProperties;
 

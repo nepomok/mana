@@ -48,12 +48,4 @@ namespace mana {
         fos << text;
         fos.close();
     }
-
-    void File::open(const std::string &filePath) {
-
-    }
-
-    void File::close() {
-
-    }
 }

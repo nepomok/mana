@@ -31,7 +31,7 @@ namespace mana {
 
         explicit ImageFile(const std::string &filePath);
 
-        void open(const std::string &filePath) override;
+        void open() override;
 
         void close() override;
 
