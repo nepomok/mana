@@ -1,6 +1,6 @@
 #define MANA_MAX_LIGHTS 20
 
-float4x4 MANA_M;
+float4x4 Mana_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
 float4x4 MANA_MVP;
@@ -51,7 +51,7 @@ MANA_T_LIGHT_SPOT MANA_LIGHTS_SPOT[MANA_MAX_LIGHTS];
 
 int MANA_LIGHT_COUNT_SPOT;
 
-float4 MANA_F_CALCULATELIGHT_DIRECTIONAL(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+float4 mana_calculate_light_directional(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
 {
     float4 ret;
     for (int i = 0; i < MANA_LIGHT_COUNT_DIRECTIONAL; i++)
@@ -75,7 +75,7 @@ float4 MANA_F_CALCULATELIGHT_DIRECTIONAL(float3 fPos, float3 fNorm, float4 diffu
     return ret;
 }
 
-float4 MANA_F_CALCULATELIGHT_POINT(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
 {
     float4 ret;
     for (int i = 0; i < MANA_LIGHT_COUNT_POINT; i++)
@@ -105,7 +105,7 @@ float4 MANA_F_CALCULATELIGHT_POINT(float3 fPos, float3 fNorm, float4 diffuseColo
     return ret;
 }
 
-float4 MANA_F_CALCULATELIGHT_SPOT(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
 {
     float4 ret;
     for (int i = 0; i < MANA_LIGHT_COUNT_SPOT; i++)
@@ -146,7 +146,7 @@ float4 MANA_F_CALCULATELIGHT_SPOT(float3 fPos, float3 fNorm, float4 diffuseColor
     return ret;
 }
 
-float4 MANA_F_CALCULATELIGHT(float3 fPos, float3 fNorm, float4 fDiffuse, float4 fSpecular, float roughness)
+float4 mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse, float4 fSpecular, float roughness)
 {
     return MANA_F_CALCULATELIGHT_DIRECTIONAL(fPos, fNorm, fDiffuse, fSpecular, roughness)
             + MANA_F_CALCULATELIGHT_POINT(fPos, fNorm, fDiffuse, fSpecular, roughness)
