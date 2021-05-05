@@ -17,19 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MAINWINDOW_HPP
-#define MANA_MAINWINDOW_HPP
+#include "engine/render/renderallocator.hpp"
 
-#include <QMainWindow>
+#include "render/opengl/oglrenderallocator.hpp"
 
-#include "editor/qt/widgets/scenedisplaywidget.hpp"
-
-class MainWindow : public QMainWindow {
-Q_OBJECT
-public:
-    MainWindow();
-
-    ~MainWindow() override;
-};
-
-#endif //MANA_MAINWINDOW_HPP
+mana::RenderAllocator *mana::RenderAllocator::instantiate(mana::GraphicsApi api) {
+    switch (api) {
+        case OPENGL:
+            return new mana::opengl::OGLRenderAllocator();
+        case DIRECTX:
+        case VULKAN:
+        default:
+            throw std::runtime_error("Unsupported graphics api");
+    }
+}

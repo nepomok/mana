@@ -40,14 +40,21 @@ namespace mana {
 
         virtual ~Window() = default;
 
-        virtual Renderer &getRenderer() = 0;
-
-        virtual RenderAllocator &getRenderAllocator() = 0;
-
+        /**
+         * This method returns the window framebuffer render target.
+         * When rendering to the returned buffer the results are displayed in the window.
+         *
+         * @return
+         */
         virtual RenderTarget &getRenderTarget() = 0;
 
         virtual Input &getInput() = 0;
 
+        /**
+         * Calling this method ensures that further rendering calls will be forwarded to this windows context.
+         * If using only a single window this method  can be ignored.
+         * (On opengl bind window context)
+         */
         virtual void bind() = 0;
 
         virtual void swapBuffers() = 0;

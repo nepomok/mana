@@ -32,6 +32,8 @@
 namespace mana {
     class Renderer {
     public:
+        static Renderer *instantiate(GraphicsApi graphicsApi);
+
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
 
         virtual void setClear(bool clearColor, bool clearDepth, bool clearStencil) = 0;
@@ -43,7 +45,7 @@ namespace mana {
         virtual void renderBegin(const RenderTarget &target) = 0;
 
         virtual void addCommand(const RenderCommand &command) = 0;
-        
+
         virtual void renderFinish() = 0;
     };
 }

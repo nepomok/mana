@@ -20,4 +20,27 @@
 #ifndef MANA_SCENEDISPLAYWIDGET_HPP
 #define MANA_SCENEDISPLAYWIDGET_HPP
 
+#include <QOpenGLWidget>
+
+#include "engine/render/renderer3d.hpp"
+
+class SceneDisplayWidget : public QOpenGLWidget {
+public:
+    SceneDisplayWidget(int fps = 30);
+
+    ~SceneDisplayWidget();
+
+    void setScene(const mana::Renderer3D::RenderScene &scene);
+
+    mana::Renderer3D::RenderScene& getScene();
+
+
+
+private:
+    int fps;
+
+    mana::Renderer3D ren;
+    mana::Renderer3D::RenderScene scene;
+};
+
 #endif //MANA_SCENEDISPLAYWIDGET_HPP

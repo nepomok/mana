@@ -66,10 +66,6 @@ namespace mana {
 
             void glfwFrameBufferSizeCallback(Vec2i size);
 
-            Renderer &getRenderer() override;
-
-            RenderAllocator &getRenderAllocator() override;
-
             RenderTarget &getRenderTarget() override;
 
             Input &getInput() override;

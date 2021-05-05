@@ -285,14 +285,6 @@ namespace mana {
             }
         }
 
-        Renderer &GLFWWindow::getRenderer() {
-            return dynamic_cast<Renderer &>(*renderer);
-        }
-
-        RenderAllocator &GLFWWindow::getRenderAllocator() {
-            return dynamic_cast<RenderAllocator &>(*renderAllocator);
-        }
-
         RenderTarget &GLFWWindow::getRenderTarget() {
             return dynamic_cast<RenderTarget &>(*frameBuffer);
         }

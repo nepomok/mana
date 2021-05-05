@@ -35,28 +35,28 @@ public:
 
         Window *wnd = dm.createWindow(api,"Game", {640, 480}, {});
 
-        auto &alloc = wnd->getRenderAllocator();
-        auto &ren = wnd->getRenderer();
+        auto *alloc = RenderAllocator::instantiate(api);
+        auto *ren = Renderer::instantiate(api);
 
-        ren.setMultiSample(true);
+        ren->setMultiSample(true);
 
-        ren2d = Renderer2D(ren, alloc);
-        ren3d = Renderer3D(ren, alloc);
+        ren2d = Renderer2D(*ren, *alloc);
+        ren3d = Renderer3D(*ren, *alloc);
 
         Input &input = wnd->getInput();
 
-        start(*wnd, ren, alloc, input);
+        start(*wnd, *ren, *alloc, input);
 
         float deltaTime = 0;
         auto lastUpdate = std::chrono::high_resolution_clock::now();
         while (!wnd->shouldClose()) {
             auto start = std::chrono::high_resolution_clock::now();
-            update(deltaTime, *wnd, ren, alloc, input);
+            update(deltaTime, *wnd, *ren, *alloc, input);
             auto stop = std::chrono::high_resolution_clock::now();
             deltaTime = static_cast<std::chrono::duration<float>>(stop - start).count();
         }
 
-        stop(*wnd, ren, alloc, input);
+        stop(*wnd, *ren, *alloc, input);
 
         return 0;
     }
