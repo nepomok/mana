@@ -20,18 +20,20 @@
 #include <string>
 #include <set>
 
+#include <QOpenGLVertexArrayObject>
+
 #include "engine/math/matrixmath.hpp"
 #include "engine/math/rotation.hpp"
 
-#include "oglrenderer.hpp"
+#include "qtoglrenderer.hpp"
 
-#include "oglshaderprogram.hpp"
-#include "oglrendertexture.hpp"
-#include "oglmeshobject.hpp"
-#include "oglframebuffer.hpp"
+#include "qtoglshaderprogram.hpp"
+#include "qtoglrendertexture.hpp"
+#include "qtoglmeshobject.hpp"
+#include "qtoglframebuffer.hpp"
 
-#include "oglcheckerror.hpp"
-#include "ogltypeconverter.hpp"
+#include "qtoglcheckerror.hpp"
+#include "qtogltypeconverter.hpp"
 
 #include "openglinclude.hpp"
 
@@ -64,26 +66,26 @@ namespace mana {
             }
         }
 
-        void OGLRenderer::setViewport(Vec2i offset, Vec2i size) {
+        void QtOGLRenderer::setViewport(Vec2i offset, Vec2i size) {
             this->viewportOffset = offset;
             this->viewportSize = size;
         }
 
-        void OGLRenderer::setClear(bool cC, bool cD, bool cS) {
+        void QtOGLRenderer::setClear(bool cC, bool cD, bool cS) {
             this->clearColor = cC;
             this->clearDepth = cD;
             this->clearStencil = cS;
         }
 
-        void OGLRenderer::setClearColor(ColorRGBA c) {
+        void QtOGLRenderer::setClearColor(ColorRGBA c) {
             this->clearColorValue = c;
         }
 
-        void OGLRenderer::setMultiSample(bool s) {
+        void QtOGLRenderer::setMultiSample(bool s) {
             this->multiSample = s;
         }
 
-        void OGLRenderer::renderBegin(const RenderTarget &target) {
+        void QtOGLRenderer::renderBegin(const RenderTarget &target) {
             glClearColor((float) clearColorValue.r() / (float) 255,
                          (float) clearColorValue.g() / (float) 255,
                          (float) clearColorValue.b() / (float) 255,
@@ -94,14 +96,14 @@ namespace mana {
             else
                 glDisable(GL_MULTISAMPLE);
 
-            auto &fb = dynamic_cast<const OGLFrameBuffer &>(target);
+            auto &fb = dynamic_cast<const QtOGLFrameBuffer &>(target);
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
 
             glViewport(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
+            //glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO()); //No bind framebuffer in qt
 
             GLbitfield clearMask = 0;
             if (clearColor) {
@@ -119,16 +121,16 @@ namespace mana {
             glClear(clearMask);
         }
 
-        void OGLRenderer::addCommand(const RenderCommand &command) {
+        void QtOGLRenderer::addCommand(const RenderCommand &command) {
             //Bind textures
             for (int i = 0; i < command.textures.size(); i++) {
                 auto *textureObject = command.textures.at(i);
                 if (textureObject == nullptr) {
                     throw std::runtime_error("nullptr texture");
                 }
-                auto &texture = dynamic_cast<const OGLRenderTexture &>(*textureObject);
+                auto &texture = dynamic_cast<const QtOGLRenderTexture &>(*textureObject);
                 glActiveTexture(getTextureSlot(i));
-                glBindTexture(OGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
+                glBindTexture(QtOGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
             }
 
             //Bind shader program
@@ -136,13 +138,13 @@ namespace mana {
             if (sp == nullptr) {
                 throw std::runtime_error("nullptr shaderprogram");
             }
-            auto &shader = dynamic_cast<OGLShaderProgram &>(*sp);
+            auto &shader = dynamic_cast<QtOGLShaderProgram &>(*sp);
             shader.activate();
 
             //Setup per model depth, stencil, culling and blend states
             if (command.properties.enableDepthTest) {
                 glEnable(GL_DEPTH_TEST);
-                glDepthFunc(OGLTypeConverter::convert(command.properties.depthTestMode));
+                glDepthFunc(QtOGLTypeConverter::convert(command.properties.depthTestMode));
                 if (command.properties.depthTestWrite)
                     glDepthMask(GL_TRUE);
                 else
@@ -153,20 +155,20 @@ namespace mana {
 
             if (command.properties.enableStencilTest) {
                 glEnable(GL_STENCIL_TEST);
-                glStencilMask(OGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
-                glStencilFunc(OGLTypeConverter::convert(command.properties.stencilMode),
-                              OGLTypeConverter::convertPrimitive(command.properties.stencilReference),
-                              OGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
-                glStencilOp(OGLTypeConverter::convert(command.properties.stencilFail),
-                            OGLTypeConverter::convert(command.properties.stencilDepthFail),
-                            OGLTypeConverter::convert(command.properties.stencilPass));
+                glStencilMask(QtOGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
+                glStencilFunc(QtOGLTypeConverter::convert(command.properties.stencilMode),
+                              QtOGLTypeConverter::convertPrimitive(command.properties.stencilReference),
+                              QtOGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
+                glStencilOp(QtOGLTypeConverter::convert(command.properties.stencilFail),
+                            QtOGLTypeConverter::convert(command.properties.stencilDepthFail),
+                            QtOGLTypeConverter::convert(command.properties.stencilPass));
             } else {
                 glDisable(GL_STENCIL_TEST);
             }
 
             if (command.properties.enableFaceCulling) {
                 glEnable(GL_CULL_FACE);
-                glCullFace(OGLTypeConverter::convert(command.properties.faceCullMode));
+                glCullFace(QtOGLTypeConverter::convert(command.properties.faceCullMode));
                 if (command.properties.faceCullClockwiseWinding)
                     glFrontFace(GL_CW);
                 else
@@ -177,8 +179,8 @@ namespace mana {
 
             if (command.properties.enableBlending) {
                 glEnable(GL_BLEND);
-                glBlendFunc(OGLTypeConverter::convert(command.properties.blendSourceMode),
-                            OGLTypeConverter::convert(command.properties.blendDestinationMode));
+                glBlendFunc(QtOGLTypeConverter::convert(command.properties.blendSourceMode),
+                            QtOGLTypeConverter::convert(command.properties.blendDestinationMode));
             } else {
                 glDisable(GL_BLEND);
             }
@@ -188,7 +190,7 @@ namespace mana {
                 if (meshBuffer == nullptr) {
                     throw std::runtime_error("nullptr mesh");
                 }
-                auto &mesh = dynamic_cast<const OGLMeshObject &>(*meshBuffer);
+                auto &mesh = dynamic_cast<const QtOGLMeshObject &>(*meshBuffer);
 
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {
@@ -213,12 +215,12 @@ namespace mana {
                 glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
             }
 
-            checkGLError("OGLRenderer::addCommand");
+            checkQtGLError("QtOGLRenderer::addCommand");
         }
 
-        void OGLRenderer::renderFinish() {
+        void QtOGLRenderer::renderFinish() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            checkGLError("OGLRenderer::renderFinish");
+            checkQtGLError("QtOGLRenderer::renderFinish");
         }
     }
 }

@@ -25,15 +25,27 @@
 
 #include "engine/render/renderer3d.hpp"
 
-class SceneDisplayWidget : public QOpenGLWidget {
-public:
-    SceneDisplayWidget(int fps = 30);
+#include "opengl/qtogluserframebuffer.hpp"
 
-    ~SceneDisplayWidget();
+#include "opengl/qtoglrenderer.hpp"
+#include "opengl/qtoglrenderallocator.hpp"
+#include "opengl/qtogluserframebuffer.hpp"
+
+class SceneDisplayWidget : public QOpenGLWidget {
+Q_OBJECT
+public:
+    explicit SceneDisplayWidget(QWidget *parent = nullptr, int fps = 30);
+
+    ~SceneDisplayWidget() override;
 
     void setScene(const mana::Renderer3D::RenderScene &scene);
 
     mana::Renderer3D::RenderScene &getScene();
+
+protected:
+    void paintGL() override;
+
+    void resizeGL(int w, int h) override;
 
 private slots:
 
@@ -45,10 +57,12 @@ private:
 
     QTimer timer;
 
-    mana::Renderer *ren;
-    mana::RenderAllocator *alloc;
+    mana::opengl::QtOGLRenderer *ren;
+    mana::opengl::QtOGLRenderAllocator *alloc;
     mana::Renderer3D ren3d;
     mana::Renderer3D::RenderScene scene;
+
+    mana::opengl::QtOGLUserFrameBuffer frameBuffer;
 };
 
 #endif //MANA_SCENEDISPLAYWIDGET_HPP

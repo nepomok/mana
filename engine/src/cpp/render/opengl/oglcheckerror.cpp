@@ -21,7 +21,7 @@
 
 #include <stdexcept>
 
-#include "extern/glad.h"
+#include "openglinclude.hpp"
 
 void checkGLError(const std::string &source) {
     GLenum er = glGetError();

@@ -17,27 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLUSERFRAMEBUFFER_HPP
+#ifndef MANA_QTOGLUSERFRAMEBUFFER_HPP
 #define MANA_OGLUSERFRAMEBUFFER_HPP
 
-#include "oglframebuffer.hpp"
+#include "qtoglframebuffer.hpp"
+
+#include <QOpenGLFunctions_3_3_Core>
 
 typedef unsigned int GLuint;
 
 namespace mana {
     namespace opengl {
-        class OGLUserFrameBuffer : public OGLFrameBuffer {
+        class QtOGLUserFrameBuffer : public QtOGLFrameBuffer, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint FBO;
 
             int width;
             int height;
 
-            OGLUserFrameBuffer();
+            bool deleteFramebuffer = true;
 
-            OGLUserFrameBuffer(int width, int height);
+            QtOGLUserFrameBuffer();
 
-            ~OGLUserFrameBuffer() override;
+            QtOGLUserFrameBuffer(int width, int height);
+
+            ~QtOGLUserFrameBuffer() override;
 
             Vec2i getSize() const override;
 
@@ -83,4 +87,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLUSERFRAMEBUFFER_HPP
+#endif //MANA_QTOGLUSERFRAMEBUFFER_HPP

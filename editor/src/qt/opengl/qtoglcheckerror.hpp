@@ -17,16 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
+#ifndef MANA_QtOGLCHECKERROR_HPP
+#define MANA_QtOGLCHECKERROR_HPP
 
-#include <QVBoxLayout>
+#include <string>
 
-MainWindow::MainWindow() {
-    setCentralWidget(new SceneDisplayWidget(this));
-}
+void checkQtGLError(const std::string &source) ;
 
-MainWindow::~MainWindow() {
-
-}
-
-
+#endif //MANA_QtOGLCHECKERROR_HPP

@@ -19,10 +19,23 @@
 
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
-SceneDisplayWidget::SceneDisplayWidget(int fps) : fps(fps) {
+#include "opengl/qtoglrenderer.hpp"
+#include "opengl/qtoglrenderallocator.hpp"
+#include "opengl/qtogluserframebuffer.hpp"
+
+#include <QResizeEvent>
+
+SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget(parent), fps(fps) {
     makeCurrent();
-    ren = mana::Renderer::instantiate(mana::OPENGL);
-    alloc = mana::RenderAllocator::instantiate(mana::OPENGL);
+
+    frameBuffer.deleteFramebuffer = false;
+
+    frameBuffer.FBO = defaultFramebufferObject();
+    frameBuffer.width = width();
+    frameBuffer.height = height();
+
+    ren = new mana::opengl::QtOGLRenderer();
+    alloc = new mana::opengl::QtOGLRenderAllocator();
     ren3d = mana::Renderer3D(*ren, *alloc);
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
@@ -44,5 +57,20 @@ mana::Renderer3D::RenderScene &SceneDisplayWidget::getScene() {
 }
 
 void SceneDisplayWidget::onTimerUpdate() {
+}
 
+void SceneDisplayWidget::paintGL() {
+    QOpenGLWidget::paintGL();
+    ren->initializeOpenGLFunctions();
+    ren->setClearColor(mana::ColorRGBA(0, 0, 255, 255));
+    ren->setViewport({}, {frameBuffer.width, frameBuffer.height});
+    ren->renderBegin(frameBuffer);
+    ren->renderFinish();
+}
+
+void SceneDisplayWidget::resizeGL(int w, int h) {
+    QOpenGLWidget::resizeGL(w, h);
+    frameBuffer.FBO = defaultFramebufferObject();
+    frameBuffer.width = w;
+    frameBuffer.height = h;
 }

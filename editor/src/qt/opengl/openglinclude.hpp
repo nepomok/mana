@@ -17,16 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
+#ifndef MANA_OPENGLINCLUDE_HPP
+#define MANA_OPENGLINCLUDE_HPP
 
-#include <QVBoxLayout>
+#include <QOpenGLWidget>
 
-MainWindow::MainWindow() {
-    setCentralWidget(new SceneDisplayWidget(this));
-}
-
-MainWindow::~MainWindow() {
-
-}
-
-
+#endif //MANA_OPENGLINCLUDE_HPP

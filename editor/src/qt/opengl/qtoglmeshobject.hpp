@@ -17,19 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLMESHOBJECT_HPP
-#define MANA_OGLMESHOBJECT_HPP
+#ifndef MANA_QtOGLMESHOBJECT_HPP
+#define MANA_QtOGLMESHOBJECT_HPP
 
 #include "engine/render/meshbuffer.hpp"
 #include "engine/math/matrixmath.hpp"
 
-#include "oglcheckerror.hpp"
+#include "qtoglcheckerror.hpp"
 
 #include "openglinclude.hpp"
 
+#include <QOpenGLFunctions_3_3_Core>
+
 namespace mana {
     namespace opengl {
-        class OGLMeshObject : public MeshBuffer {
+        class QtOGLMeshObject : public MeshBuffer, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint VAO;
             GLuint VBO;
@@ -43,20 +45,20 @@ namespace mana {
             size_t instanceCount;
             GLuint instanceVBO;
 
-            explicit OGLMeshObject() : VAO(0),
-                                       VBO(0),
-                                       EBO(0),
-                                       elementCount(0),
-                                       indexed(false),
-                                       instanced(false),
-                                       instanceCount(0),
-                                       instanceVBO(0) {}
+            explicit QtOGLMeshObject() : VAO(0),
+                                         VBO(0),
+                                         EBO(0),
+                                         elementCount(0),
+                                         indexed(false),
+                                         instanced(false),
+                                         instanceCount(0),
+                                         instanceVBO(0) {}
 
-            OGLMeshObject(const OGLMeshObject &copy) = delete;
+            QtOGLMeshObject(const QtOGLMeshObject &copy) = delete;
 
-            OGLMeshObject &operator=(const OGLMeshObject &copy) = delete;
+            QtOGLMeshObject &operator=(const QtOGLMeshObject &copy) = delete;
 
-            ~OGLMeshObject() override {
+            ~QtOGLMeshObject() override {
                 glDeleteVertexArrays(1, &VAO);
                 glDeleteBuffers(1, &VBO);
                 if (indexed) {
@@ -68,4 +70,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLMESHOBJECT_HPP
+#endif //MANA_QtOGLMESHOBJECT_HPP

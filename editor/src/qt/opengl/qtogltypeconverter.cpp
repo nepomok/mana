@@ -19,13 +19,13 @@
 
 #include <stdexcept>
 
-#include "ogltypeconverter.hpp"
+#include "qtogltypeconverter.hpp"
 
 #include "openglinclude.hpp"
 
 namespace mana {
     namespace opengl {
-        namespace OGLTypeConverter {
+        namespace QtOGLTypeConverter {
             GLint convertPrimitive(int value) {
                 return (GLint) value;
             }

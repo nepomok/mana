@@ -17,26 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLRENDERTEXTURE_HPP
-#define MANA_OGLRENDERTEXTURE_HPP
+#ifndef MANA_QtOGLRENDERTEXTURE_HPP
+#define MANA_QtOGLRENDERTEXTURE_HPP
 
 #include "engine/render/texturebuffer.hpp"
 
 #include "openglinclude.hpp"
 
+#include <QOpenGLFunctions_3_3_Core>
+
 namespace mana {
     namespace opengl {
-        class OGLRenderTexture : public TextureBuffer {
+        class QtOGLRenderTexture : public TextureBuffer, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint handle;
 
-            explicit OGLRenderTexture(Attributes attributes);
+            explicit QtOGLRenderTexture(Attributes attributes);
 
-            OGLRenderTexture(const OGLRenderTexture &copy) = delete;
+            QtOGLRenderTexture(const QtOGLRenderTexture &copy) = delete;
 
-            OGLRenderTexture &operator=(const OGLRenderTexture &copy) = delete;
+            QtOGLRenderTexture &operator=(const QtOGLRenderTexture &copy) = delete;
 
-            ~OGLRenderTexture() override;
+            ~QtOGLRenderTexture() override;
 
             void upload(const ImageBuffer <ColorRGB> &buffer) override;
 
@@ -55,4 +57,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLRENDERTEXTURE_HPP
+#endif //MANA_QtOGLRENDERTEXTURE_HPP

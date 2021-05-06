@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLTYPECONVERTER_HPP
-#define MANA_OGLTYPECONVERTER_HPP
+#ifndef MANA_QtOGLTYPECONVERTER_HPP
+#define MANA_QtOGLTYPECONVERTER_HPP
 
 #include "engine/render/rendercommand.hpp"
 
@@ -26,7 +26,7 @@
 
 namespace mana {
     namespace opengl {
-        namespace OGLTypeConverter {
+        namespace QtOGLTypeConverter {
             GLint convertPrimitive(int value);
 
             GLuint convertPrimitive(uint value);
@@ -56,4 +56,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLTYPECONVERTER_HPP
+#endif //MANA_QtOGLTYPECONVERTER_HPP

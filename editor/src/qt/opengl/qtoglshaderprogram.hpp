@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLSHADERPROGRAM_HPP
-#define MANA_OGLSHADERPROGRAM_HPP
+#ifndef MANA_QtOGLSHADERPROGRAM_HPP
+#define MANA_QtOGLSHADERPROGRAM_HPP
 
 #include <string>
 
@@ -28,6 +28,8 @@
 #include "engine/math/matrix.hpp"
 
 #include "openglinclude.hpp"
+
+#include <QOpenGLFunctions_3_3_Core>
 
 namespace mana {
     namespace opengl {
@@ -39,17 +41,17 @@ namespace mana {
          * layout (location = 2) in vec2 uv;
          * layout (location = 3) in mat4 instanceMatrix;
          */
-        class OGLShaderProgram : public ShaderProgram {
+        class QtOGLShaderProgram : public ShaderProgram, public QOpenGLFunctions_3_3_Core {
         public:
-            OGLShaderProgram();
+            QtOGLShaderProgram();
 
-            OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader);
+            QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader);
 
-            ~OGLShaderProgram() override;
+            ~QtOGLShaderProgram() override;
 
-            OGLShaderProgram(const OGLShaderProgram &copy) = delete;
+            QtOGLShaderProgram(const QtOGLShaderProgram &copy) = delete;
 
-            OGLShaderProgram &operator=(const OGLShaderProgram &) = delete;
+            QtOGLShaderProgram &operator=(const QtOGLShaderProgram &) = delete;
 
             void activate();
 
@@ -94,4 +96,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLSHADERPROGRAM_HPP
+#endif //MANA_QtOGLSHADERPROGRAM_HPP

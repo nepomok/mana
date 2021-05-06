@@ -17,16 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
+#include "qtoglcheckerror.hpp"
 
-#include <QVBoxLayout>
+#include <stdexcept>
 
-MainWindow::MainWindow() {
-    setCentralWidget(new SceneDisplayWidget(this));
+#include "openglinclude.hpp"
+
+void checkQtGLError(const std::string &source) {
+    GLenum er = glGetError();
+    if (er != GL_NO_ERROR) {
+        std::string error = source + " GLERROR: ";
+        error += std::to_string(er);
+        throw std::runtime_error(error);
+    }
 }
-
-MainWindow::~MainWindow() {
-
-}
-
-
