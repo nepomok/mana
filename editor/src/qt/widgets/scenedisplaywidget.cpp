@@ -176,7 +176,7 @@ void SceneDisplayWidget::paintGL() {
     ren->initializeOpenGLFunctions();
     alloc->initializeOpenGLFunctions();
 
-    ren->setClearColor(mana::ColorRGBA(0, 0, 255, 255));
+    ren->setClearColor(mana::ColorRGBA(38, 38, 38, 255));
     ren->setViewport({}, {frameBuffer.width, frameBuffer.height});
 
     mana::Renderer3D::RenderScene scene3d;

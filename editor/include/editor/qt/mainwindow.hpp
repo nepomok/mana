@@ -40,6 +40,8 @@ protected:
 
     void keyReleaseEvent(QKeyEvent *event) override;
 
+    void mousePressEvent(QMouseEvent *event) override;
+
 private:
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;

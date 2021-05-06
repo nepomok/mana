@@ -67,6 +67,15 @@ namespace mana {
         return convert(glm::ortho(left, right, bottom, top, zNear, zFar));
     }
 
+    Vec3f MatrixMath::unProject(Vec2i windowCoordinates, Mat4f viewMatrix, Mat4f projectionMatrix, Vec2i viewportOffset,
+                                Vec2i viewportSize) {
+        auto ret = glm::unProject(glm::vec3(windowCoordinates.x, windowCoordinates.y, 0),
+                                  convert(viewMatrix),
+                                  convert(projectionMatrix),
+                                  glm::vec4(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y));
+        return {ret.x, ret.y, ret.z};
+    }
+
     Mat4f MatrixMath::translate(const Vec3f &translationValue) {
         Mat4f ret(1);
         ret.set(3, 0, translationValue.x);

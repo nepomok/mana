@@ -70,4 +70,8 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event) {
     QWidget::keyReleaseEvent(event);
 }
 
+void MainWindow::mousePressEvent(QMouseEvent *event) {
+    QWidget::mousePressEvent(event);
+}
+
 

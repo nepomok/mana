@@ -20,6 +20,7 @@
 #ifndef MANA_GRAPHICSMATH_HPP
 #define MANA_GRAPHICSMATH_HPP
 
+#include "engine/math/vector2.hpp"
 #include "engine/math/vector3.hpp"
 #include "engine/math/vector4.hpp"
 #include "engine/math/matrix.hpp"
@@ -57,6 +58,12 @@ namespace mana {
          * @return
          */
         Mat4f ortho(float left, float right, float bottom, float top, float zNear, float zFar);
+
+        Vec3f unProject(Vec2i windowCoordinates,
+                        Mat4f viewMatrix,
+                        Mat4f projectionMatrix,
+                        Vec2i viewportOffset,
+                        Vec2i viewportSize);
 
         /**
          * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
