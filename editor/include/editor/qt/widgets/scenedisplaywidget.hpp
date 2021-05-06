@@ -25,10 +25,9 @@
 
 #include "engine/render/renderer3d.hpp"
 
-#include "opengl/qtogluserframebuffer.hpp"
-
 #include "opengl/qtoglrenderer.hpp"
 #include "opengl/qtoglrenderallocator.hpp"
+
 #include "opengl/qtogluserframebuffer.hpp"
 
 class SceneDisplayWidget : public QOpenGLWidget {

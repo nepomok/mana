@@ -18,7 +18,7 @@
  */
 
 #ifndef MANA_QTOGLUSERFRAMEBUFFER_HPP
-#define MANA_OGLUSERFRAMEBUFFER_HPP
+#define MANA_QTOGLUSERFRAMEBUFFER_HPP
 
 #include "qtoglframebuffer.hpp"
 

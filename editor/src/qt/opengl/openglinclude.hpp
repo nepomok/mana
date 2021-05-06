@@ -17,9 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OPENGLINCLUDE_HPP
-#define MANA_OPENGLINCLUDE_HPP
+#ifndef MANA_QTOPENGLINCLUDE_HPP
+#define MANA_QTOPENGLINCLUDE_HPP
 
 #include <QOpenGLWidget>
 
-#endif //MANA_OPENGLINCLUDE_HPP
+#endif //MANA_QTOPENGLINCLUDE_HPP
