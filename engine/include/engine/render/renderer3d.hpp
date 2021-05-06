@@ -35,6 +35,12 @@ namespace mana {
 
             Transform transform;
             RenderCommand command;
+
+            //If true the renderer3d will outline the unit in the resulting render with the supplied color or optional shader.
+            bool outline = false;
+            ColorRGBA outlineColor;
+            ShaderProgram *outlineShader = nullptr;
+            float outlineScale = 1.1f;
         };
 
         struct RenderScene {
@@ -63,6 +69,8 @@ namespace mana {
     private:
         Renderer *ren;
         RenderAllocator *alloc;
+
+        ShaderProgram *singleColorShader;
     };
 }
 

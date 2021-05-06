@@ -85,7 +85,7 @@ namespace mana {
     };
 
     struct RenderProperties {
-        bool enableDepthTest = false;
+        bool enableDepthTest = true;
         bool depthTestWrite = true;
         DepthTestMode depthTestMode = DepthTestMode::DEPTH_TEST_LESS;
 

@@ -43,6 +43,8 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
 
     timer.start((int) ((1.0f / (float) fps) * 1000));
+
+    doneCurrent();
 }
 
 SceneDisplayWidget::~SceneDisplayWidget() {
@@ -137,7 +139,6 @@ void SceneDisplayWidget::onTimerUpdate() {
 }
 
 void SceneDisplayWidget::paintGL() {
-    QOpenGLWidget::paintGL();
     ren->initializeOpenGLFunctions();
     alloc->initializeOpenGLFunctions();
 
@@ -255,7 +256,7 @@ void SceneDisplayWidget::paintGL() {
         unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
         unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
         unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
-
+        
         scene3d.units.emplace_back(unit);
     }
 
@@ -268,19 +269,18 @@ void SceneDisplayWidget::paintGL() {
     scene3d.camera->transform = viewerTransform;
 
     ren3d.render(frameBuffer, scene3d);
+
+    QOpenGLWidget::paintGL();
 }
 
 void SceneDisplayWidget::resizeGL(int w, int h) {
-    QOpenGLWidget::resizeGL(w, h);
     frameBuffer.FBO = defaultFramebufferObject();
     frameBuffer.width = w;
     frameBuffer.height = h;
+    QOpenGLWidget::resizeGL(w, h);
 }
 
 void SceneDisplayWidget::keyPressEvent(QKeyEvent *event) {
-    QWidget::keyPressEvent(event);
-    if (event->isAutoRepeat())
-        return;
     Vec3f movInput = getViewerInputMovement();
     Vec3f rotInput = getViewerInputRotation();
     switch (event->key()) {
@@ -317,12 +317,11 @@ void SceneDisplayWidget::keyPressEvent(QKeyEvent *event) {
     }
     setViewerInputMovement(movInput);
     setViewerInputRotation(rotInput);
+
+    QWidget::keyPressEvent(event);
 }
 
 void SceneDisplayWidget::keyReleaseEvent(QKeyEvent *event) {
-    QWidget::keyReleaseEvent(event);
-    if (event->isAutoRepeat())
-        return;
     Vec3f movInput = getViewerInputMovement();
     Vec3f rotInput = getViewerInputRotation();
     switch (event->key()) {
@@ -369,4 +368,6 @@ void SceneDisplayWidget::keyReleaseEvent(QKeyEvent *event) {
     }
     setViewerInputMovement(movInput);
     setViewerInputRotation(rotInput);
+
+    QWidget::keyReleaseEvent(event);
 }

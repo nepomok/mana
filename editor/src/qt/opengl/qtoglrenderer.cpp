@@ -35,8 +35,6 @@
 #include "qtoglcheckerror.hpp"
 #include "qtogltypeconverter.hpp"
 
-#include "openglinclude.hpp"
-
 namespace mana {
     namespace opengl {
         GLuint getTextureSlot(int slot) {
@@ -103,7 +101,7 @@ namespace mana {
 
             glViewport(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
 
-            //glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO()); //No bind framebuffer in qt
+            glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
 
             GLbitfield clearMask = 0;
             if (clearColor) {
@@ -141,46 +139,50 @@ namespace mana {
             auto &shader = dynamic_cast<QtOGLShaderProgram &>(*sp);
             shader.activate();
 
+            glDepthFunc(QtOGLTypeConverter::convert(command.properties.depthTestMode));
+            if (command.properties.depthTestWrite)
+                glDepthMask(GL_TRUE);
+            else
+                glDepthMask(GL_FALSE);
+
             //Setup per model depth, stencil, culling and blend states
             if (command.properties.enableDepthTest) {
                 glEnable(GL_DEPTH_TEST);
-                glDepthFunc(QtOGLTypeConverter::convert(command.properties.depthTestMode));
-                if (command.properties.depthTestWrite)
-                    glDepthMask(GL_TRUE);
-                else
-                    glDepthMask(GL_FALSE);
             } else {
                 glDisable(GL_DEPTH_TEST);
             }
 
+            glStencilMask(QtOGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
+            glStencilFunc(QtOGLTypeConverter::convert(command.properties.stencilMode),
+                          QtOGLTypeConverter::convertPrimitive(command.properties.stencilReference),
+                          QtOGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
+            glStencilOp(QtOGLTypeConverter::convert(command.properties.stencilFail),
+                        QtOGLTypeConverter::convert(command.properties.stencilDepthFail),
+                        QtOGLTypeConverter::convert(command.properties.stencilPass));
+
             if (command.properties.enableStencilTest) {
                 glEnable(GL_STENCIL_TEST);
-                glStencilMask(QtOGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
-                glStencilFunc(QtOGLTypeConverter::convert(command.properties.stencilMode),
-                              QtOGLTypeConverter::convertPrimitive(command.properties.stencilReference),
-                              QtOGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
-                glStencilOp(QtOGLTypeConverter::convert(command.properties.stencilFail),
-                            QtOGLTypeConverter::convert(command.properties.stencilDepthFail),
-                            QtOGLTypeConverter::convert(command.properties.stencilPass));
             } else {
                 glDisable(GL_STENCIL_TEST);
             }
 
+            glCullFace(QtOGLTypeConverter::convert(command.properties.faceCullMode));
+            if (command.properties.faceCullClockwiseWinding)
+                glFrontFace(GL_CW);
+            else
+                glFrontFace(GL_CCW);
+
             if (command.properties.enableFaceCulling) {
                 glEnable(GL_CULL_FACE);
-                glCullFace(QtOGLTypeConverter::convert(command.properties.faceCullMode));
-                if (command.properties.faceCullClockwiseWinding)
-                    glFrontFace(GL_CW);
-                else
-                    glFrontFace(GL_CCW);
             } else {
                 glDisable(GL_CULL_FACE);
             }
 
+            glBlendFunc(QtOGLTypeConverter::convert(command.properties.blendSourceMode),
+                        QtOGLTypeConverter::convert(command.properties.blendDestinationMode));
+
             if (command.properties.enableBlending) {
                 glEnable(GL_BLEND);
-                glBlendFunc(QtOGLTypeConverter::convert(command.properties.blendSourceMode),
-                            QtOGLTypeConverter::convert(command.properties.blendDestinationMode));
             } else {
                 glDisable(GL_BLEND);
             }
@@ -214,6 +216,10 @@ namespace mana {
                 glBindTexture(GL_TEXTURE_2D, 0);
                 glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
             }
+
+            //Reset Stencil mask
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
 
             checkQtGLError("QtOGLRenderer::addCommand");
         }

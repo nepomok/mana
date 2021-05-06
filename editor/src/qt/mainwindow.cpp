@@ -39,7 +39,7 @@ MainWindow::MainWindow() {
     leftLayout = new QVBoxLayout();
     rightLayout = new QVBoxLayout();
     rootLayout->addLayout(leftLayout, 1);
-    rootLayout->addLayout(rightLayout);
+    rootLayout->addLayout(rightLayout, 0);
 
     sceneDisplay = new SceneDisplayWidget(this);
 

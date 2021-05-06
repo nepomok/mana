@@ -80,7 +80,7 @@ namespace mana {
             if (!success) {
                 char infoLog[512];
                 glGetProgramInfoLog(programID, 512, NULL, infoLog);
-                std::string error = "Failed to compile shader program: ";
+                std::string error = "Failed to link shader program: ";
                 error.append(infoLog);
                 throw std::runtime_error(error);
             }

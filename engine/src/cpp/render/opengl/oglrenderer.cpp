@@ -139,46 +139,50 @@ namespace mana {
             auto &shader = dynamic_cast<OGLShaderProgram &>(*sp);
             shader.activate();
 
+            glDepthFunc(OGLTypeConverter::convert(command.properties.depthTestMode));
+            if (command.properties.depthTestWrite)
+                glDepthMask(GL_TRUE);
+            else
+                glDepthMask(GL_FALSE);
+
             //Setup per model depth, stencil, culling and blend states
             if (command.properties.enableDepthTest) {
                 glEnable(GL_DEPTH_TEST);
-                glDepthFunc(OGLTypeConverter::convert(command.properties.depthTestMode));
-                if (command.properties.depthTestWrite)
-                    glDepthMask(GL_TRUE);
-                else
-                    glDepthMask(GL_FALSE);
             } else {
                 glDisable(GL_DEPTH_TEST);
             }
 
+            glStencilMask(OGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
+            glStencilFunc(OGLTypeConverter::convert(command.properties.stencilMode),
+                          OGLTypeConverter::convertPrimitive(command.properties.stencilReference),
+                          OGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
+            glStencilOp(OGLTypeConverter::convert(command.properties.stencilFail),
+                        OGLTypeConverter::convert(command.properties.stencilDepthFail),
+                        OGLTypeConverter::convert(command.properties.stencilPass));
+
             if (command.properties.enableStencilTest) {
                 glEnable(GL_STENCIL_TEST);
-                glStencilMask(OGLTypeConverter::convertPrimitive(command.properties.stencilTestMask));
-                glStencilFunc(OGLTypeConverter::convert(command.properties.stencilMode),
-                              OGLTypeConverter::convertPrimitive(command.properties.stencilReference),
-                              OGLTypeConverter::convertPrimitive(command.properties.stencilFunctionMask));
-                glStencilOp(OGLTypeConverter::convert(command.properties.stencilFail),
-                            OGLTypeConverter::convert(command.properties.stencilDepthFail),
-                            OGLTypeConverter::convert(command.properties.stencilPass));
             } else {
                 glDisable(GL_STENCIL_TEST);
             }
 
+            glCullFace(OGLTypeConverter::convert(command.properties.faceCullMode));
+            if (command.properties.faceCullClockwiseWinding)
+                glFrontFace(GL_CW);
+            else
+                glFrontFace(GL_CCW);
+
             if (command.properties.enableFaceCulling) {
                 glEnable(GL_CULL_FACE);
-                glCullFace(OGLTypeConverter::convert(command.properties.faceCullMode));
-                if (command.properties.faceCullClockwiseWinding)
-                    glFrontFace(GL_CW);
-                else
-                    glFrontFace(GL_CCW);
             } else {
                 glDisable(GL_CULL_FACE);
             }
 
+            glBlendFunc(OGLTypeConverter::convert(command.properties.blendSourceMode),
+                        OGLTypeConverter::convert(command.properties.blendDestinationMode));
+
             if (command.properties.enableBlending) {
                 glEnable(GL_BLEND);
-                glBlendFunc(OGLTypeConverter::convert(command.properties.blendSourceMode),
-                            OGLTypeConverter::convert(command.properties.blendDestinationMode));
             } else {
                 glDisable(GL_BLEND);
             }
@@ -212,6 +216,10 @@ namespace mana {
                 glBindTexture(GL_TEXTURE_2D, 0);
                 glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
             }
+
+            //Reset Stencil mask
+            glStencilMask(0xFF);
+            glStencilFunc(GL_ALWAYS, 0, 0xFF);
 
             checkGLError("OGLRenderer::addCommand");
         }
