@@ -23,7 +23,7 @@
 #include <QOpenGLWidget>
 #include <QTimer>
 
-#include "engine/render/renderer3d.hpp"
+#include "mana.hpp"
 
 #include "opengl/qtoglrenderer.hpp"
 #include "opengl/qtoglrenderallocator.hpp"
@@ -37,9 +37,15 @@ public:
 
     ~SceneDisplayWidget() override;
 
-    void setScene(const mana::Renderer3D::RenderScene &scene);
+    void setScene(const mana::Scene &scene);
 
-    mana::Renderer3D::RenderScene &getScene();
+    mana::Scene &getScene();
+
+    void setViewer(mana::Camera *camera);
+
+    mana::Renderer &getRenderer();
+
+    mana::RenderAllocator &getAllocator();
 
 protected:
     void paintGL() override;
@@ -51,7 +57,6 @@ private slots:
     void onTimerUpdate();
 
 private:
-
     int fps;
 
     QTimer timer;
@@ -59,9 +64,15 @@ private:
     mana::opengl::QtOGLRenderer *ren;
     mana::opengl::QtOGLRenderAllocator *alloc;
     mana::Renderer3D ren3d;
-    mana::Renderer3D::RenderScene scene;
+
+    mana::Scene scene;
+
+    mana::Camera *viewerCamera;
 
     mana::opengl::QtOGLUserFrameBuffer frameBuffer;
+
+    mana::PerspectiveCamera perspectiveCamera;
+    mana::OrthographicCamera orthoCamera;
 };
 
 #endif //MANA_SCENEDISPLAYWIDGET_HPP

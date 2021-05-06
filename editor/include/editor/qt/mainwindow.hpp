@@ -24,6 +24,8 @@
 
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
+#include "mana.hpp"
+
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:
@@ -31,8 +33,21 @@ public:
 
     ~MainWindow() override;
 
+protected:
+    void keyPressEvent(QKeyEvent *event) override;
+
+    void keyReleaseEvent(QKeyEvent *event) override;
+
 private:
-    SceneDisplayWidget* sceneDisplay;
+    SceneDisplayWidget *sceneDisplay;
+
+    mana::Resources *resources;
+    mana::Scene scene;
+
+    mana::MonoCppDomain domain;
+
+    mana::PerspectiveCamera viewerPerspective;
+    mana::OrthographicCamera viewerOrthographic;
 };
 
 #endif //MANA_MAINWINDOW_HPP

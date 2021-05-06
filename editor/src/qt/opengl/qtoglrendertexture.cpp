@@ -25,6 +25,8 @@ using namespace mana;
 using namespace mana::opengl;
 
 QtOGLRenderTexture::QtOGLRenderTexture(Attributes attributes) : TextureBuffer(attributes), handle() {
+    initializeOpenGLFunctions();
+
     GLenum type = QtOGLTypeConverter::convert(attributes.textureType);
 
     glGenTextures(1, &handle);

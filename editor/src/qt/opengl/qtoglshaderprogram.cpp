@@ -34,6 +34,8 @@ namespace mana {
 
         QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
+            initializeOpenGLFunctions();
+            
             std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader, "main", {});;
             std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", {});;
 
