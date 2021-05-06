@@ -197,7 +197,8 @@ void SceneDisplayWidget::paintGL() {
     scene3d.camera = viewerCamera;
 
     if (viewerCamera != nullptr && viewerCamera->type == mana::PERSPECTIVE) {
-        perspectiveCamera.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());
+        dynamic_cast<mana::PerspectiveCamera *>(viewerCamera)->aspectRatio =
+                static_cast<float>(width()) / static_cast<float>(height());
     }
 
     ren3d.render(frameBuffer, scene3d);

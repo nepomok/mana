@@ -70,9 +70,6 @@ private:
     mana::Camera *viewerCamera;
 
     mana::opengl::QtOGLUserFrameBuffer frameBuffer;
-
-    mana::PerspectiveCamera perspectiveCamera;
-    mana::OrthographicCamera orthoCamera;
 };
 
 #endif //MANA_SCENEDISPLAYWIDGET_HPP
