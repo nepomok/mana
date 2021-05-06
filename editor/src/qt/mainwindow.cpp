@@ -58,6 +58,12 @@ MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     QWidget::keyPressEvent(event);
+    if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
+        if (sceneDisplay->getHighlightedNodes().empty())
+            sceneDisplay->setHighlightedNodes({"plane"});
+        else
+            sceneDisplay->setHighlightedNodes({});
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event) {

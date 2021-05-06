@@ -55,6 +55,18 @@ public:
 
     mana::Transform &getViewerTransform();
 
+    void setHighlightColor(mana::ColorRGB color);
+
+    mana::ColorRGB getHighlightColor();
+
+    void setHighlightScale(float scale);
+
+    float getHighlightScale();
+
+    void setHighlightedNodes(const std::vector<std::string> &nodeNames);
+
+    const std::vector<std::string> &getHighlightedNodes();
+
     void setViewerMovementSpeed(float speed);
 
     float getViewerMovementSpeed();
@@ -110,6 +122,12 @@ private:
     float rotSpeed = 50;
 
     mana::opengl::QtOGLUserFrameBuffer frameBuffer;
+
+    std::vector<std::string> highlightedNodes;
+
+    mana::ColorRGB highlightColor = {10, 210, 50};
+
+    float highlightScale = 1.01f;
 };
 
 #endif //MANA_SCENEDISPLAYWIDGET_HPP

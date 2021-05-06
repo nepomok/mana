@@ -38,7 +38,7 @@ namespace mana {
 
             //If true the renderer3d will outline the unit in the resulting render with the supplied color or optional shader.
             bool outline = false;
-            ColorRGBA outlineColor;
+            ColorRGB outlineColor;
             ShaderProgram *outlineShader = nullptr;
             float outlineScale = 1.1f;
         };

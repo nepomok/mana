@@ -24,6 +24,7 @@
 #include "opengl/qtogluserframebuffer.hpp"
 
 #include <QResizeEvent>
+#include <utility>
 
 using namespace mana;
 
@@ -66,6 +67,30 @@ void SceneDisplayWidget::setViewerType(mana::CameraType cameraType) {
 
 mana::Transform &SceneDisplayWidget::getViewerTransform() {
     return viewerTransform;
+}
+
+void SceneDisplayWidget::setHighlightColor(mana::ColorRGB color) {
+    highlightColor = color;
+}
+
+mana::ColorRGB SceneDisplayWidget::getHighlightColor() {
+    return highlightColor;
+}
+
+void SceneDisplayWidget::setHighlightScale(float scale) {
+    highlightScale = scale;
+}
+
+float SceneDisplayWidget::getHighlightScale() {
+    return highlightScale;
+}
+
+void SceneDisplayWidget::setHighlightedNodes(const std::vector<std::string> &nodeNames) {
+    highlightedNodes = nodeNames;
+}
+
+const std::vector<std::string> &SceneDisplayWidget::getHighlightedNodes() {
+    return highlightedNodes;
 }
 
 mana::Renderer &SceneDisplayWidget::getRenderer() {
@@ -138,6 +163,15 @@ void SceneDisplayWidget::onTimerUpdate() {
     update();
 }
 
+struct RenderData {
+    RenderData() = default;
+
+    RenderData(std::string name, Node *node) : name(std::move(name)), node(node) {}
+
+    std::string name;
+    Node *node;
+};
+
 void SceneDisplayWidget::paintGL() {
     ren->initializeOpenGLFunctions();
     alloc->initializeOpenGLFunctions();
@@ -193,13 +227,15 @@ void SceneDisplayWidget::paintGL() {
         }
     }
 
-    std::map<mana::RenderComponent *, mana::TransformComponent *> mapping;
-    std::vector<mana::RenderComponent *> renderComponents;
-    nodes = scene.findNodesWithComponent<mana::RenderComponent>();
-    for (auto &nodePointer : nodes) {
-        auto &node = *nodePointer;
+
+    std::vector<RenderData> data;
+    for (auto &nodePointer : scene.nodes) {
+        auto &node = nodePointer.second;
         if (!node.enabled)
             continue;
+
+        if (!node.hasComponent<mana::RenderComponent>())
+            continue;;
 
         auto &comp = node.getComponent<mana::RenderComponent>();
         if (!comp.enabled)
@@ -209,19 +245,21 @@ void SceneDisplayWidget::paintGL() {
         if (!tcomp.enabled)
             continue;
 
-        renderComponents.emplace_back(&comp);
-        mapping[&comp] = &tcomp;
+        data.emplace_back(RenderData(nodePointer.first, &node));
     }
 
-    std::sort(renderComponents.begin(), renderComponents.end(),
-              [](const mana::RenderComponent *a, const mana::RenderComponent *b) -> bool {
-                  return a->renderOrder < b->renderOrder;
+    std::sort(data.begin(), data.end(),
+              [](const RenderData &a, const RenderData &b) -> bool {
+                  return a.node->getComponent<RenderComponent>().renderOrder <
+                         b.node->getComponent<RenderComponent>().renderOrder;
               });
 
-    for (auto *comp : renderComponents) {
+    for (auto &p : data) {
         mana::Renderer3D::Unit unit;
 
-        unit.transform = mapping[comp]->transform;
+        auto *comp = &p.node->getComponent<RenderComponent>();
+
+        unit.transform = p.node->getComponent<TransformComponent>().transform;
 
         unit.command.shader = comp->shader->getShader();
         for (auto &m : comp->textureMapping) {
@@ -256,7 +294,13 @@ void SceneDisplayWidget::paintGL() {
         unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
         unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
         unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
-        
+
+        if (std::find(highlightedNodes.begin(), highlightedNodes.end(), p.name) != highlightedNodes.end()) {
+            unit.outline = true;
+            unit.outlineScale = highlightScale;
+            unit.outlineColor = highlightColor;
+        }
+
         scene3d.units.emplace_back(unit);
     }
 
