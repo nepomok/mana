@@ -115,7 +115,7 @@ namespace mana {
             }
 
             if (clearStencil) {
-                clearStencil |= GL_STENCIL_BUFFER_BIT;
+                clearMask |= GL_STENCIL_BUFFER_BIT;
             }
 
             glClear(clearMask);
