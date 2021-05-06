@@ -21,6 +21,8 @@
 #define MANA_MAINWINDOW_HPP
 
 #include <QMainWindow>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
@@ -39,15 +41,17 @@ protected:
     void keyReleaseEvent(QKeyEvent *event) override;
 
 private:
+    QWidget *rootWidget;
+    QHBoxLayout *rootLayout;
+    QVBoxLayout *leftLayout;
+    QVBoxLayout *rightLayout;
+
     SceneDisplayWidget *sceneDisplay;
 
     mana::Resources *resources;
     mana::Scene scene;
 
     mana::MonoCppDomain domain;
-
-    mana::PerspectiveCamera viewerPerspective;
-    mana::OrthographicCamera viewerOrthographic;
 };
 
 #endif //MANA_MAINWINDOW_HPP

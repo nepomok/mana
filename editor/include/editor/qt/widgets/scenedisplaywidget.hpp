@@ -31,6 +31,7 @@
 
 #include "opengl/qtogluserframebuffer.hpp"
 
+//TODO: Deallocate render resources (The destructors have to be called from paintGl)
 class SceneDisplayWidget : public QOpenGLWidget {
 Q_OBJECT
 public:

@@ -24,21 +24,37 @@
 
 #include <QVBoxLayout>
 #include <QKeyEvent>
+#include <QMenuBar>
 
 using namespace mana;
 
 MainWindow::MainWindow() {
+    menuBar()->addMenu("File");
+
+    rootWidget = new QWidget(this);
+
+    setCentralWidget(rootWidget);
+
+    rootLayout = new QHBoxLayout();
+    leftLayout = new QVBoxLayout();
+    rightLayout = new QVBoxLayout();
+    rootLayout->addLayout(leftLayout, 1);
+    rootLayout->addLayout(rightLayout);
+
     sceneDisplay = new SceneDisplayWidget(this);
-    setCentralWidget(sceneDisplay);
+
+    leftLayout->addWidget(sceneDisplay);
+
+    rootWidget->setLayout(rootLayout);
+
     resources = JsonResourceFile("./assets/resources.json").getResources(sceneDisplay->getAllocator(), domain);
     scene = JsonSceneFile("./assets/scene.json").loadScene(*resources);
+
     sceneDisplay->setScene(scene);
-    sceneDisplay->setFocus();
+    sceneDisplay->setFocusPolicy(Qt::ClickFocus);
 }
 
-MainWindow::~MainWindow() {
-
-}
+MainWindow::~MainWindow() = default;
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     QWidget::keyPressEvent(event);
