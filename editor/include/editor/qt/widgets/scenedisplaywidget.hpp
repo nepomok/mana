@@ -22,6 +22,7 @@
 
 #include <QOpenGLWidget>
 #include <QTimer>
+#include <QElapsedTimer>
 
 #include "mana.hpp"
 
@@ -37,20 +38,46 @@ public:
 
     ~SceneDisplayWidget() override;
 
+    mana::Renderer &getRenderer();
+
+    mana::RenderAllocator &getAllocator();
+
+    void setFps(int fps);
+
+    int getFps();
+
     void setScene(const mana::Scene &scene);
 
     mana::Scene &getScene();
 
-    void setViewer(mana::Camera *camera);
+    void setViewerType(mana::CameraType cameraType);
 
-    mana::Renderer &getRenderer();
+    mana::Transform &getViewerTransform();
 
-    mana::RenderAllocator &getAllocator();
+    void setViewerMovementSpeed(float speed);
+
+    float getViewerMovementSpeed();
+
+    void setViewerRotationSpeed(float speed);
+
+    float getViewerRotationSpeed();
+
+    void setViewerInputMovement(const mana::Vec3f &movement);
+
+    const mana::Vec3f &getViewerInputMovement();
+
+    void setViewerInputRotation(const mana::Vec3f &rotation);
+
+    const mana::Vec3f &getViewerInputRotation();
 
 protected:
     void paintGL() override;
 
     void resizeGL(int w, int h) override;
+
+    void keyPressEvent(QKeyEvent *event) override;
+
+    void keyReleaseEvent(QKeyEvent *event) override;
 
 private slots:
 
@@ -61,13 +88,25 @@ private:
 
     QTimer timer;
 
+    QElapsedTimer delta;
+
     mana::opengl::QtOGLRenderer *ren;
     mana::opengl::QtOGLRenderAllocator *alloc;
     mana::Renderer3D ren3d;
 
     mana::Scene scene;
 
-    mana::Camera *viewerCamera;
+    mana::Vec3f inputMovement;
+    mana::Vec3f inputRotation;
+
+    mana::Transform viewerTransform;
+
+    mana::CameraType camType = mana::CameraType::PERSPECTIVE;
+    mana::PerspectiveCamera pCam;
+    mana::OrthographicCamera oCam;
+
+    float movSpeed = 5;
+    float rotSpeed = 50;
 
     mana::opengl::QtOGLUserFrameBuffer frameBuffer;
 };

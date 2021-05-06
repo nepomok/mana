@@ -25,6 +25,8 @@
 
 #include <QResizeEvent>
 
+using namespace mana;
+
 SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget(parent), fps(fps) {
     makeCurrent();
 
@@ -56,8 +58,12 @@ mana::Scene &SceneDisplayWidget::getScene() {
     return scene;
 }
 
-void SceneDisplayWidget::setViewer(mana::Camera *camera) {
-    viewerCamera = camera;
+void SceneDisplayWidget::setViewerType(mana::CameraType cameraType) {
+    camType = cameraType;
+}
+
+mana::Transform &SceneDisplayWidget::getViewerTransform() {
+    return viewerTransform;
 }
 
 mana::Renderer &SceneDisplayWidget::getRenderer() {
@@ -68,7 +74,66 @@ mana::RenderAllocator &SceneDisplayWidget::getAllocator() {
     return *alloc;
 }
 
+void SceneDisplayWidget::setFps(int f) {
+    fps = f;
+}
+
+int SceneDisplayWidget::getFps() {
+    return fps;
+}
+
+void SceneDisplayWidget::setViewerMovementSpeed(float speed) {
+    movSpeed = speed;
+}
+
+float SceneDisplayWidget::getViewerMovementSpeed() {
+    return movSpeed;
+}
+
+void SceneDisplayWidget::setViewerRotationSpeed(float speed) {
+    rotSpeed = speed;
+}
+
+float SceneDisplayWidget::getViewerRotationSpeed() {
+    return rotSpeed;
+}
+
+void SceneDisplayWidget::setViewerInputMovement(const mana::Vec3f &movement) {
+    inputMovement = movement;
+}
+
+const mana::Vec3f &SceneDisplayWidget::getViewerInputMovement() {
+    return inputMovement;
+}
+
+void SceneDisplayWidget::setViewerInputRotation(const mana::Vec3f &rotation) {
+    inputRotation = rotation;
+}
+
+const mana::Vec3f &SceneDisplayWidget::getViewerInputRotation() {
+    return inputRotation;
+}
+
 void SceneDisplayWidget::onTimerUpdate() {
+    float deltaTime = (float) delta.restart() / 1000;
+
+    mana::Mat4f mat = MatrixMath::inverse(MatrixMath::rotate(viewerTransform.rotation));
+    Vec4f tmp = mat * Vec4f(0, 0, 1, 0);
+    Vec3f forward(tmp.x, tmp.y, tmp.z);
+    tmp = mat * Vec4f(1, 0, 0, 0);
+    Vec3f left(tmp.x, tmp.y, tmp.z);
+    tmp = mat * Vec4f(0, 1, 0, 0);
+    Vec3f up(tmp.x, tmp.y, tmp.z);
+
+    viewerTransform.position += forward * movSpeed * deltaTime * inputMovement.z;
+    viewerTransform.position += left * movSpeed * deltaTime * inputMovement.x;
+    viewerTransform.position += up * movSpeed * deltaTime * inputMovement.y;
+
+    viewerTransform.rotation += Vec3f(1, 0, 0) * rotSpeed * deltaTime * inputRotation.x;
+    viewerTransform.rotation += Vec3f(0, 1, 0) * rotSpeed * deltaTime * inputRotation.y;
+    viewerTransform.rotation += Vec3f(0, 0, 1) * rotSpeed * deltaTime * inputRotation.z;
+
+    update();
 }
 
 void SceneDisplayWidget::paintGL() {
@@ -194,12 +259,13 @@ void SceneDisplayWidget::paintGL() {
         scene3d.units.emplace_back(unit);
     }
 
-    scene3d.camera = viewerCamera;
+    pCam.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());
+    if (camType == mana::PERSPECTIVE)
+        scene3d.camera = &pCam;
+    else
+        scene3d.camera = &oCam;
 
-    if (viewerCamera != nullptr && viewerCamera->type == mana::PERSPECTIVE) {
-        dynamic_cast<mana::PerspectiveCamera *>(viewerCamera)->aspectRatio =
-                static_cast<float>(width()) / static_cast<float>(height());
-    }
+    scene3d.camera->transform = viewerTransform;
 
     ren3d.render(frameBuffer, scene3d);
 }
@@ -209,4 +275,98 @@ void SceneDisplayWidget::resizeGL(int w, int h) {
     frameBuffer.FBO = defaultFramebufferObject();
     frameBuffer.width = w;
     frameBuffer.height = h;
+}
+
+void SceneDisplayWidget::keyPressEvent(QKeyEvent *event) {
+    QWidget::keyPressEvent(event);
+    if (event->isAutoRepeat())
+        return;
+    Vec3f movInput = getViewerInputMovement();
+    Vec3f rotInput = getViewerInputRotation();
+    switch (event->key()) {
+        case Qt::Key_W:
+            movInput.z = -1;
+            break;
+        case Qt::Key_S:
+            movInput.z = 1;
+            break;
+        case Qt::Key_A:
+            movInput.x = -1;
+            break;
+        case Qt::Key_D:
+            movInput.x = 1;
+            break;
+        case Qt::Key_Q:
+            movInput.y = -1;
+            break;
+        case Qt::Key_E:
+            movInput.y = 1;
+            break;
+        case Qt::Key_Up:
+            rotInput.x = 1;
+            break;
+        case Qt::Key_Down:
+            rotInput.x = -1;
+            break;
+        case Qt::Key_Left:
+            rotInput.y = -1;
+            break;
+        case Qt::Key_Right:
+            rotInput.y = 1;
+            break;
+    }
+    setViewerInputMovement(movInput);
+    setViewerInputRotation(rotInput);
+}
+
+void SceneDisplayWidget::keyReleaseEvent(QKeyEvent *event) {
+    QWidget::keyReleaseEvent(event);
+    if (event->isAutoRepeat())
+        return;
+    Vec3f movInput = getViewerInputMovement();
+    Vec3f rotInput = getViewerInputRotation();
+    switch (event->key()) {
+        case Qt::Key_W:
+            if (movInput.z == -1)
+                movInput.z = 0;
+            break;
+        case Qt::Key_S:
+            if (movInput.z == 1)
+                movInput.z = 0;
+            break;
+        case Qt::Key_A:
+            if (movInput.x == -1)
+                movInput.x = 0;
+            break;
+        case Qt::Key_D:
+            if (movInput.x == 1)
+                movInput.x = 0;
+            break;
+        case Qt::Key_Q:
+            if (movInput.y == -1)
+                movInput.y = 0;
+            break;
+        case Qt::Key_E:
+            if (movInput.y == 1)
+                movInput.y = 0;
+            break;
+        case Qt::Key_Up:
+            if (rotInput.x == 1)
+                rotInput.x = 0;
+            break;
+        case Qt::Key_Down:
+            if (rotInput.x == -1)
+                rotInput.x = 0;
+            break;
+        case Qt::Key_Left:
+            if (rotInput.y == -1)
+                rotInput.y = 0;
+            break;
+        case Qt::Key_Right:
+            if (rotInput.y == 1)
+                rotInput.y = 0;
+            break;
+    }
+    setViewerInputMovement(movInput);
+    setViewerInputRotation(rotInput);
 }
