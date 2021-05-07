@@ -17,31 +17,32 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_JSONSCENEFILE_HPP
-#define MANA_JSONSCENEFILE_HPP
+#ifndef MANA_RESOURCEFILE_HPP
+#define MANA_RESOURCEFILE_HPP
 
 #include "engine/io/file.hpp"
 
-#include "engine/ecs/scene.hpp"
-
 #include "engine/resource/resources.hpp"
 
-namespace mana {
-    class JsonSceneFile : public File {
-    public:
-        JsonSceneFile();
+#include "engine/render/renderallocator.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
-        explicit JsonSceneFile(std::string filePath);
+namespace mana {
+    class ResourceFile : public File {
+    public:
+        ResourceFile() = default;
+
+        explicit ResourceFile(const std::string &filePath);
 
         void open() override;
 
         void close() override;
 
-        Scene loadScene(Resources &res);
+        Resources *getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime);
 
     private:
         std::string fileContents;
     };
 }
 
-#endif //MANA_JSONSCENEFILE_HPP
+#endif //MANA_RESOURCEFILE_HPP

@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/json/jsonresourcefile.hpp"
+#include "engine/io/resourcefile.hpp"
 
 #include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/file/meshfileresource.hpp"
@@ -174,20 +174,20 @@ namespace mana {
         return ret;
     }
 
-    JsonResourceFile::JsonResourceFile(const std::string &filePath)
+    ResourceFile::ResourceFile(const std::string &filePath)
             : fileContents(File::readAllText(filePath)) {
         this->filePath = filePath;
     }
 
-    void JsonResourceFile::open() {
+    void ResourceFile::open() {
         fileContents = File::readAllText(filePath);
     }
 
-    void JsonResourceFile::close() {
+    void ResourceFile::close() {
         fileContents.clear();
     }
 
-    Resources *JsonResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
+    Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
         return parseResources(fileContents, allocator, monoRuntime);
     }
 }

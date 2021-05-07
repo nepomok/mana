@@ -19,8 +19,8 @@
 
 #include "editor/qt/mainwindow.hpp"
 
-#include "engine/io/json/jsonscenefile.hpp"
-#include "engine/io/json/jsonresourcefile.hpp"
+#include "engine/io/scenefile.hpp"
+#include "engine/io/resourcefile.hpp"
 
 #include <QVBoxLayout>
 #include <QKeyEvent>
@@ -47,8 +47,8 @@ MainWindow::MainWindow() {
 
     rootWidget->setLayout(rootLayout);
 
-    resources = JsonResourceFile("./assets/resources.json").getResources(sceneDisplay->getAllocator(), domain);
-    scene = JsonSceneFile("./assets/scene.json").loadScene(*resources);
+    resources = ResourceFile("./assets/resources.json").getResources(sceneDisplay->getAllocator(), domain);
+    scene = SceneFile("./assets/scene.json").loadScene(*resources);
 
     sceneDisplay->setScene(scene);
     sceneDisplay->setFocusPolicy(Qt::ClickFocus);

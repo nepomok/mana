@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/json/jsonscenefile.hpp"
+#include "engine/io/scenefile.hpp"
 
 #include "extern/json.hpp"
 
@@ -335,24 +335,22 @@ namespace mana {
         return ret;
     }
 
-    JsonSceneFile::JsonSceneFile() = default;
-
-    JsonSceneFile::JsonSceneFile(std::string filePath) {
+    SceneFile::SceneFile(const std::string &filePath) {
         this->filePath = filePath;
         this->fileContents = File::readAllText(filePath);
     }
 
-    void JsonSceneFile::open() {
+    void SceneFile::open() {
         fileContents = File::readAllText(filePath);
         File::open();
     }
 
-    void JsonSceneFile::close() {
+    void SceneFile::close() {
         fileContents.clear();
         File::close();
     }
 
-    Scene JsonSceneFile::loadScene(Resources &res) {
+    Scene SceneFile::loadScene(Resources &res) {
         return getSceneFromJson(fileContents, res);
     }
 }
