@@ -1,4 +1,5 @@
 {
+  "resourcesName": "SampleResources",
   "resources": [
     {
       "name": "Mesh.Plane",

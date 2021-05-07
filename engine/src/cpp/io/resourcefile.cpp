@@ -187,6 +187,11 @@ namespace mana {
         fileContents.clear();
     }
 
+    std::string ResourceFile::getResourcesName() {
+        auto json = nlohmann::json::parse(fileContents);
+        return json["resourcesName"];
+    }
+
     Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
         return parseResources(fileContents, allocator, monoRuntime);
     }

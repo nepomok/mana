@@ -325,7 +325,6 @@ namespace mana {
     Scene getSceneFromJson(const std::string &jsonText, Resources &res) {
         Scene ret;
         auto j = nlohmann::json::parse(jsonText);
-        ret.name = j["sceneName"];
         for (auto &node : j["nodes"]) {
             std::string nodeName = node["nodeName"];
             if (ret.nodes.find(nodeName) != ret.nodes.end())
@@ -335,22 +334,38 @@ namespace mana {
         return ret;
     }
 
-    SceneFile::SceneFile(const std::string &filePath) {
-        this->filePath = filePath;
-        this->fileContents = File::readAllText(filePath);
+    SceneFile::SceneFile(const std::string &fp) {
+        filePath = fp;
+        sceneJsonSource = File::readAllText(filePath);
+        auto json = nlohmann::json::parse(sceneJsonSource);
+        sceneName = json["sceneName"];
+        sceneResources = json["sceneResources"];
     }
 
     void SceneFile::open() {
-        fileContents = File::readAllText(filePath);
+        sceneJsonSource = File::readAllText(filePath);
+        auto json = nlohmann::json::parse(sceneJsonSource);
+        sceneName = json["sceneName"];
+        sceneResources = json["sceneResources"];
         File::open();
     }
 
     void SceneFile::close() {
-        fileContents.clear();
+        sceneJsonSource.clear();
+        sceneName.clear();
+        sceneResources.clear();
         File::close();
     }
 
-    Scene SceneFile::loadScene(Resources &res) {
-        return getSceneFromJson(fileContents, res);
+    const std::string &SceneFile::getSceneName() {
+        return sceneName;
+    }
+
+    const std::string &SceneFile::getSceneResourcesName() {
+        return sceneResources;
+    }
+
+    Scene SceneFile::getScene(Resources &res) {
+        return getSceneFromJson(sceneJsonSource, res);
     }
 }

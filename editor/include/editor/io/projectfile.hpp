@@ -17,36 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENEFILE_HPP
-#define MANA_SCENEFILE_HPP
+#ifndef MANA_PROJECTFILE_HPP
+#define MANA_PROJECTFILE_HPP
 
-#include "engine/io/file.hpp"
-
-#include "engine/ecs/scene.hpp"
-#include "engine/resource/resources.hpp"
+#include "engine/io/resourcefile.hpp"
+#include "engine/io/scenefile.hpp"
 
 namespace mana {
-    class SceneFile : public File {
-    public:
-        SceneFile() = default;
+    namespace editor {
+        class ProjectFile : public File {
+        public:
+            ProjectFile();
 
-        explicit SceneFile(const std::string &filePath);
+            const std::string &getProjectName();
 
-        void open() override;
+            const std::string &getLaunchScene();
 
-        void close() override;
+            const std::vector<ResourceFile> &getResourceFiles();
 
-        const std::string &getSceneName();
+            const std::vector<SceneFile> &getSceneFiles();
 
-        const std::string &getSceneResourcesName();
-
-        Scene getScene(Resources &res);
-
-    private:
-        std::string sceneName;
-        std::string sceneResources;
-        std::string sceneJsonSource;
-    };
+        private:
+            std::vector<ResourceFile> resourceFiles;
+            std::vector<SceneFile> sceneFiles;
+        };
+    }
 }
 
-#endif //MANA_SCENEFILE_HPP
+#endif //MANA_PROJECTFILE_HPP

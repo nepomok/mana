@@ -38,6 +38,8 @@ namespace mana {
 
         void close() override;
 
+        std::string getResourcesName();
+
         Resources *getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime);
 
     private:

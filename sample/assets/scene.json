@@ -1,5 +1,6 @@
 {
   "sceneName": "SampleScene",
+  "sceneResources": "SampleResources",
   "nodes": [
     {
       "enabled": true,

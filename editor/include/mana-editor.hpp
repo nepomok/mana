@@ -17,36 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENEFILE_HPP
-#define MANA_SCENEFILE_HPP
+#ifndef MANA_MANA_EDITOR_HPP
+#define MANA_MANA_EDITOR_HPP
 
-#include "engine/io/file.hpp"
+#include "editor/io/projectfile.hpp"
 
-#include "engine/ecs/scene.hpp"
-#include "engine/resource/resources.hpp"
-
-namespace mana {
-    class SceneFile : public File {
-    public:
-        SceneFile() = default;
-
-        explicit SceneFile(const std::string &filePath);
-
-        void open() override;
-
-        void close() override;
-
-        const std::string &getSceneName();
-
-        const std::string &getSceneResourcesName();
-
-        Scene getScene(Resources &res);
-
-    private:
-        std::string sceneName;
-        std::string sceneResources;
-        std::string sceneJsonSource;
-    };
-}
-
-#endif //MANA_SCENEFILE_HPP
+#endif //MANA_MANA_EDITOR_HPP

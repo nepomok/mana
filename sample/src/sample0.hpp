@@ -55,7 +55,7 @@ protected:
 
     void loadScene(RenderAllocator &alloc) override {
         res = ResourceFile("assets/resources.json").getResources(alloc, domain);
-        scene = SceneFile("assets/scene.json").loadScene(*res);
+        scene = SceneFile("assets/scene.json").getScene(*res);
         cameraNode = &scene.nodes.at("mainCamera");
     }
 

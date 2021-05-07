@@ -27,6 +27,7 @@
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
 #include "mana.hpp"
+#include "mana-editor.hpp"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
