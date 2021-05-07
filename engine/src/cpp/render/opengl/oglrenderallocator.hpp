@@ -35,7 +35,8 @@ namespace mana {
             MeshBuffer *allocateInstancedMeshBuffer(const Mesh &mesh,
                                                     const std::vector<Transform> &offsets) override;
 
-            ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) override;
+            ShaderProgram *allocateShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+                                                 const std::map<std::string, std::string> &macros) override;
         };
     }
 }

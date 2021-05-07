@@ -39,8 +39,9 @@ namespace mana {
     void ShaderResource::load() {
         if (isLoaded)
             return;
-        shader = alloc->allocateShaderProgram(Renderer3D::preprocessHlsl(vertexShader->getText()),
-                                              Renderer3D::preprocessHlsl(fragmentShader->getText()));
+        shader = alloc->allocateShaderProgram(vertexShader->getText(),
+                                              fragmentShader->getText(),
+                                              Renderer3D::getShaderMacros());
         isLoaded = true;
     }
 

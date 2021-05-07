@@ -1,4 +1,4 @@
-#include "mana.hlsl"
+MANA_INCLUDE
 
 TextureCube skybox;
 

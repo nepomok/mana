@@ -26,9 +26,7 @@
  * The hlsl source packaged with the binary which is injected when SHADER_INCLUDE is found in a user shader,
  * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
  */
- const char *SHADER_INJECT = R"###(
-#define MANA_MAX_LIGHTS 20
-
+ const char *SHADER_MANA = R"###(
 float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
@@ -37,7 +35,7 @@ float4x4 MANA_MVP;
 float4x4 MANA_M_INVERT;
 
 float3 MANA_VIEWPOS;
-float4x4 MANA_VIEW_POSITION_MAT; //A transformation matrix which applies only the view position.
+float4x4 MANA_VIEW_POSITION_MAT;
 
 struct MANA_T_LIGHT_DIRECTIONAL {
     float3 direction;
@@ -142,28 +140,23 @@ float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor,
     {
         float3 lightDir = normalize(MANA_LIGHTS_SPOT[i].position - fPos);
 
-        // ambient
         float3 ambient = MANA_LIGHTS_SPOT[i].ambient * diffuseColor.rgb;
 
-        // diffuse
         float3 norm = normalize(fNorm);
         float diff = max(dot(norm, lightDir), 0.0);
         float3 diffuse = MANA_LIGHTS_SPOT[i].diffuse * diff * diffuseColor.rgb;
 
-        // specular
         float3 viewDir = normalize(MANA_VIEWPOS - fPos);
         float3 reflectDir = reflect(-lightDir, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
         float3 specular = MANA_LIGHTS_SPOT[i].specular * spec * specularColor.rgb;
 
-        // spotlight (soft edges)
         float theta = dot(lightDir, normalize(-MANA_LIGHTS_SPOT[i].direction));
         float epsilon = (MANA_LIGHTS_SPOT[i].cutOff - MANA_LIGHTS_SPOT[i].outerCutOff);
         float intensity = clamp((theta - MANA_LIGHTS_SPOT[i].outerCutOff) / epsilon, 0.0, 1.0);
         diffuse  *= intensity;
         specular *= intensity;
 
-        // attenuation
         float distance    = length(MANA_LIGHTS_SPOT[i].position - fPos);
         float attenuation = 1.0 / (MANA_LIGHTS_SPOT[i].constantValue + MANA_LIGHTS_SPOT[i].linearValue * distance + MANA_LIGHTS_SPOT[i].quadraticValue * (distance * distance));
 

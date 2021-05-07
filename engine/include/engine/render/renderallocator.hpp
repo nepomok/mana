@@ -20,6 +20,8 @@
 #ifndef MANA_RENDERALLOCATOR_HPP
 #define MANA_RENDERALLOCATOR_HPP
 
+#include <map>
+
 #include "engine/render/geometry/mesh.hpp"
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/meshbuffer.hpp"
@@ -42,7 +44,9 @@ namespace mana {
 
         virtual MeshBuffer *allocateInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
 
-        virtual ShaderProgram *allocateShaderProgram(std::string vertexShader, std::string fragmentShader) = 0;
+        virtual ShaderProgram *allocateShaderProgram(const std::string &vertexShader,
+                                                     const std::string &fragmentShader,
+                                                     const std::map<std::string, std::string> &macros) = 0;
     };
 }
 

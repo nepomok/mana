@@ -1,5 +1,5 @@
 //https://gamedev.net/forums/topic/566320-hlsl-cel-toon-shader-in-xna/4624466/
-#include "mana.hlsl"
+MANA_INCLUDE
 
 struct VS_INPUT
 {

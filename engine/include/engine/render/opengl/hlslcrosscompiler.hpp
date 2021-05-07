@@ -25,10 +25,26 @@
 
 namespace mana {
     namespace HlslCrossCompiler {
+        /**
+         * Compile the hlsl vertex shader text into glsl.
+         *
+         * @param source The hlsl vertex shader source
+         * @param entryPoint The name of the entry point function in the source
+         * @param macros A mapping of macro names to macro values which are applied in the processing of the source string.
+         * @return The cross compiled glsl source code
+         */
         std::string compileVertexShader(const std::string &source,
                                         const std::string &entryPoint,
                                         const std::map<std::string, std::string> &macros);
 
+        /**
+         * Compile the hlsl fragment shader text into glsl.
+         *
+         * @param source The hlsl fragment shader source
+         * @param entryPoint The name of the entry point function in the source
+         * @param macros A mapping of macro names to macro values which are applied in the processing of the source string.
+         * @return The cross compiled glsl source code
+         */
         std::string compileFragmentShader(const std::string &source,
                                           const std::string &entryPoint,
                                           const std::map<std::string, std::string> &macros);

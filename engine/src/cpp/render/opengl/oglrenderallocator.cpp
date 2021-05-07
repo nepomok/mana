@@ -327,6 +327,8 @@ MeshBuffer *OGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, co
     return ret;
 }
 
-ShaderProgram *OGLRenderAllocator::allocateShaderProgram(std::string vertexShader, std::string fragmentShader) {
-    return new OGLShaderProgram(vertexShader, fragmentShader);
+ShaderProgram *OGLRenderAllocator::allocateShaderProgram(const std::string &vertexShader,
+                                                         const std::string &fragmentShader,
+                                                         const std::map<std::string, std::string> &macros) {
+    return new OGLShaderProgram(vertexShader, fragmentShader, macros);
 }

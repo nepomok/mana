@@ -1,5 +1,5 @@
 //https://gamedev.net/forums/topic/566320-hlsl-cel-toon-shader-in-xna/4624466/
-#include "mana.hlsl"
+MANA_INCLUDE
 
 sampler2D tex0 : register(s0);
 sampler1D diffuseRamp : register(s1);

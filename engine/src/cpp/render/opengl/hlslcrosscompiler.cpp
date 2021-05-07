@@ -23,8 +23,7 @@
 
 #include <ShaderConductor/ShaderConductor.hpp>
 
-std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &source,
-                                                         const std::string &entryPoint,
+std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &source, const std::string &entryPoint,
                                                          const std::map<std::string, std::string> &macros) {
     ShaderConductor::Compiler::SourceDesc sourceDesc{};
     ShaderConductor::Compiler::Options options{};
@@ -71,8 +70,7 @@ std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &sour
     return s;
 }
 
-std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &source,
-                                                           const std::string &entryPoint,
+std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &source, const std::string &entryPoint,
                                                            const std::map<std::string, std::string> &macros) {
     ShaderConductor::Compiler::SourceDesc sourceDesc{};
     ShaderConductor::Compiler::Options options{};
@@ -91,6 +89,7 @@ std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &so
 
     sourceDesc.entryPoint = entryPoint.c_str();
     sourceDesc.defines = macro;
+    sourceDesc.numDefines = macros.size();
 
     sourceDesc.source = source.c_str();
     sourceDesc.stage = ShaderConductor::ShaderStage::PixelShader;

@@ -32,10 +32,15 @@ namespace mana {
     namespace opengl {
         OGLShaderProgram::OGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 
-        OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader)
+        OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+                                           const std::map<std::string, std::string> &macros)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader, "main", {});;
-            std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", {});;
+            std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader,
+                                                                    "main",
+                                                                    macros);;
+            std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader,
+                                                                      "main",
+                                                                      macros);;
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();

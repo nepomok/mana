@@ -51,7 +51,7 @@ namespace mana {
             std::vector<SpotLight> spot;
         };
 
-        static std::string preprocessHlsl(std::string shader);
+        static const std::map<std::string, std::string>& getShaderMacros();
 
         Renderer3D();
 

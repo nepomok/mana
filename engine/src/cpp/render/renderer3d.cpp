@@ -22,6 +22,8 @@
 
 #include "hlslinject.hpp"
 
+#include <algorithm>
+
 const char *SHADER_VERT_OUTLINE_DEFAULT = R"###(
 float4x4 MANA_M;
 float4x4 MANA_V;
@@ -90,14 +92,17 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    std::string Renderer3D::preprocessHlsl(std::string shader) {
-        auto index = shader.find(SHADER_INCLUDE);
-        if (index != std::string::npos) {
-            std::string start = shader.substr(0, index);
-            std::string end = shader.substr(index + SHADER_INCLUDE.length());
-            return start + SHADER_INJECT + end;
-        }
-        return shader;
+    std::string stripNewline(const std::string &src) {
+        std::string ret = src;
+        std::replace(ret.begin(), ret.end(), '\n', ' ');
+        return ret;
+    }
+
+    const std::map<std::string, std::string> gMacros = {{"MANA_INCLUDE",    stripNewline(SHADER_MANA)},
+                                                        {"MANA_MAX_LIGHTS", "20"}};
+
+    const std::map<std::string, std::string> &Renderer3D::getShaderMacros() {
+        return gMacros;
     }
 
     Renderer3D::Renderer3D() : ren(nullptr), alloc(nullptr) {};
@@ -123,9 +128,8 @@ namespace mana {
         projection = scene.camera->projection();
         camPosTransformMat = MatrixMath::translate(scene.camera->transform.position);
         if (outline) {
-            ShaderProgram *defaultOutlineShader = alloc->allocateShaderProgram(
-                    preprocessHlsl(SHADER_VERT_OUTLINE_DEFAULT),
-                    preprocessHlsl(SHADER_FRAG_OUTLINE_DEFAULT));
+            ShaderProgram *defaultOutlineShader = alloc->allocateShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
+                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {});
             RenderScene sceneCopy = scene;
             ren->renderBegin(target);
             for (auto &unit : sceneCopy.units) {

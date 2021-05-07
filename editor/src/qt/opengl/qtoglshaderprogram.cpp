@@ -32,12 +32,14 @@ namespace mana {
     namespace opengl {
         QtOGLShaderProgram::QtOGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 
-        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader)
+        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader,
+                                               const std::string &fragmentShader,
+                                               const std::map<std::string, std::string> &macros)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
             initializeOpenGLFunctions();
-            
-            std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader, "main", {});;
-            std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", {});;
+
+            std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader, "main", macros);;
+            std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", macros);;
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();
@@ -98,6 +100,7 @@ namespace mana {
             glUseProgram(programID);
             checkQtGLError("");
         }
+
         bool QtOGLShaderProgram::setTexture(const std::string &name, int slot) {
             // ShaderConductor(SPIRV) merges hlsl texture objects names
             // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
