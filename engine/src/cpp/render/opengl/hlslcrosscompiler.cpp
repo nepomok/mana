@@ -23,96 +23,150 @@
 
 #include <ShaderConductor/ShaderConductor.hpp>
 
-std::string mana::HlslCrossCompiler::compileVertexShader(const std::string &source, const std::string &entryPoint,
-                                                         const std::map<std::string, std::string> &macros) {
-    ShaderConductor::Compiler::SourceDesc sourceDesc{};
-    ShaderConductor::Compiler::Options options{};
-    ShaderConductor::Compiler::TargetDesc targetDesc{};
+struct FunctionWrapper {
+    std::function<std::string(const char *)> func;
 
-    auto *macro = new ShaderConductor::MacroDefine[macros.size()];
-
-    int i = 0;
-    for (auto &m : macros) {
-        macro[i].name = m.first.c_str();
-        macro[i].value = m.second.c_str();
-        i++;
+    ShaderConductor::Blob getBlob(const char *name) const {
+        std::string s = func(name);
+        return ShaderConductor::Blob(s.data(), s.size());
     }
+};
 
-    options.disableOptimizations = true;
-
-    sourceDesc.entryPoint = entryPoint.c_str();
-    sourceDesc.defines = macro;
-    sourceDesc.numDefines = macros.size();
-
-    sourceDesc.source = source.c_str();
-    sourceDesc.stage = ShaderConductor::ShaderStage::VertexShader;
-
-    targetDesc.language = ShaderConductor::ShadingLanguage::Glsl;
-    targetDesc.version = "130"; //Use glsl version 130 to avoid the cross compiler creating uniform block globals.
-
-    ShaderConductor::Compiler::ResultDesc result = ShaderConductor::Compiler::Compile(sourceDesc,
-                                                                                      options,
-                                                                                      targetDesc);
-    delete[] macro;
-    if (result.hasError) {
-        throw std::runtime_error(std::string("Compile failed: ") + (const char *) result.errorWarningMsg.Data());
-    }
-    std::string s;
-    for (i = 0; i < result.target.Size(); i++) {
-        s += ((char) ((const char *) result.target.Data())[i]);
-    }
-
-    //Patch version manually back to 330 because otherwise the glsl compiler throws an error.
-    std::string v = "#version 330";
-
-    s.replace(0, v.size(), v);
-
-    return s;
+std::function<ShaderConductor::Blob(const char *)> wrap(FunctionWrapper &func) {
+    return std::bind(&FunctionWrapper::getBlob, &func, std::placeholders::_1);
 }
 
-std::string mana::HlslCrossCompiler::compileFragmentShader(const std::string &source, const std::string &entryPoint,
-                                                           const std::map<std::string, std::string> &macros) {
-    ShaderConductor::Compiler::SourceDesc sourceDesc{};
-    ShaderConductor::Compiler::Options options{};
-    ShaderConductor::Compiler::TargetDesc targetDesc{};
+namespace mana {
 
-    auto *macro = new ShaderConductor::MacroDefine[macros.size()];
+    std::string HlslCrossCompiler::compileVertexShader(const std::string &source, const std::string &entryPoint) {
+        ::ShaderConductor::Compiler::SourceDesc sourceDesc{};
+        ::ShaderConductor::Compiler::Options options{};
+        ::ShaderConductor::Compiler::TargetDesc targetDesc{};
 
-    int i = 0;
-    for (auto &m : macros) {
-        macro[i].name = m.first.c_str();
-        macro[i].value = m.second.c_str();
-        i++;
+        auto *macro = new ::ShaderConductor::MacroDefine[macros.size()];
+
+        int i = 0;
+        for (auto &m : macros) {
+            macro[i].name = m.first.c_str();
+            macro[i].value = m.second.c_str();
+            i++;
+        }
+
+        options.disableOptimizations = true;
+
+        sourceDesc.entryPoint = entryPoint.c_str();
+        sourceDesc.defines = macro;
+        sourceDesc.numDefines = macros.size();
+
+        FunctionWrapper w;
+        w.func = std::bind(&HlslCrossCompiler::includeHandler, this, std::placeholders::_1);
+        sourceDesc.loadIncludeCallback = wrap(w);
+
+        sourceDesc.source = source.c_str();
+        sourceDesc.stage = ::ShaderConductor::ShaderStage::VertexShader;
+
+        targetDesc.language = ::ShaderConductor::ShadingLanguage::Glsl;
+        targetDesc.version = "130"; //Use glsl version 130 to avoid the cross compiler creating uniform block globals.
+
+        ::ShaderConductor::Compiler::ResultDesc result = ::ShaderConductor::Compiler::Compile(sourceDesc,
+                                                                                              options,
+                                                                                              targetDesc);
+        delete[] macro;
+        if (result.hasError) {
+            throw std::runtime_error(std::string("Compile failed: ") + (const char *) result.errorWarningMsg.Data());
+        }
+        std::string s;
+        for (i = 0; i < result.target.Size(); i++) {
+            s += ((char) ((const char *) result.target.Data())[i]);
+        }
+
+        //Patch version manually back to 330 because otherwise the glsl compiler throws an error.
+        std::string v = "#version 330";
+
+        s.replace(0, v.size(), v);
+
+        return s;
     }
 
-    options.disableOptimizations = true;
+    std::string HlslCrossCompiler::compileFragmentShader(const std::string &source, const std::string &entryPoint) {
+        ::ShaderConductor::Compiler::SourceDesc sourceDesc{};
+        ::ShaderConductor::Compiler::Options options{};
+        ::ShaderConductor::Compiler::TargetDesc targetDesc{};
 
-    sourceDesc.entryPoint = entryPoint.c_str();
-    sourceDesc.defines = macro;
-    sourceDesc.numDefines = macros.size();
+        auto *macro = new ::ShaderConductor::MacroDefine[macros.size()];
 
-    sourceDesc.source = source.c_str();
-    sourceDesc.stage = ShaderConductor::ShaderStage::PixelShader;
+        int i = 0;
+        for (auto &m : macros) {
+            macro[i].name = m.first.c_str();
+            macro[i].value = m.second.c_str();
+            i++;
+        }
 
-    targetDesc.language = ShaderConductor::ShadingLanguage::Glsl;
-    targetDesc.version = "130";
+        options.disableOptimizations = true;
 
-    ShaderConductor::Compiler::ResultDesc result = ShaderConductor::Compiler::Compile(sourceDesc,
-                                                                                      options,
-                                                                                      targetDesc);
-    delete[] macro;
-    if (result.hasError) {
-        throw std::runtime_error(std::string("Compile failed: ") + (const char *) result.errorWarningMsg.Data());
+        sourceDesc.entryPoint = entryPoint.c_str();
+        sourceDesc.defines = macro;
+        sourceDesc.numDefines = macros.size();
+
+        FunctionWrapper w;
+        w.func = std::bind(&HlslCrossCompiler::includeHandler, this, std::placeholders::_1);
+        sourceDesc.loadIncludeCallback = wrap(w);
+
+        sourceDesc.source = source.c_str();
+        sourceDesc.stage = ::ShaderConductor::ShaderStage::PixelShader;
+
+        targetDesc.language = ::ShaderConductor::ShadingLanguage::Glsl;
+        targetDesc.version = "130";
+
+        ::ShaderConductor::Compiler::ResultDesc result = ::ShaderConductor::Compiler::Compile(sourceDesc,
+                                                                                              options,
+                                                                                              targetDesc);
+        delete[] macro;
+        if (result.hasError) {
+            throw std::runtime_error(std::string("Compile failed: ") + (const char *) result.errorWarningMsg.Data());
+        }
+
+        std::string s;
+        for (i = 0; i < result.target.Size(); i++) {
+            s += ((char) ((const char *) result.target.Data())[i]);
+        }
+
+        std::string v = "#version 330";
+
+        s.replace(0, v.size(), v);
+
+        return s;
     }
 
-    std::string s;
-    for (i = 0; i < result.target.Size(); i++) {
-        s += ((char) ((const char *) result.target.Data())[i]);
+    void HlslCrossCompiler::setMacros(const std::map<std::string, std::string> &m) {
+        macros = m;
     }
 
-    std::string v = "#version 330";
+    const std::map<std::string, std::string> &HlslCrossCompiler::getMacros() {
+        return macros;
+    }
 
-    s.replace(0, v.size(), v);
+    void HlslCrossCompiler::setInclude(const std::map<std::string, std::string> &inc) {
+        include = inc;
+    }
 
-    return s;
+    const std::map<std::string, std::string> &HlslCrossCompiler::getInclude() {
+        return include;
+    }
+
+    void HlslCrossCompiler::setIncludeCallback(const std::function<std::string(const char *)> &func) {
+        userCallback = func;
+    }
+
+    std::string HlslCrossCompiler::includeHandler(const char *name) {
+        if (userCallback) {
+            return userCallback(name);
+        } else {
+            if (include.find(name) != include.end()) {
+                return include.at(name);
+            } else {
+                throw std::runtime_error("Include not found: " + std::string(name));
+            }
+        }
+    }
 }

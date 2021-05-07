@@ -22,33 +22,49 @@
 
 #include <map>
 #include <string>
+#include <functional>
 
 namespace mana {
-    namespace HlslCrossCompiler {
+    class HlslCrossCompiler {
+    public:
         /**
          * Compile the hlsl vertex shader text into glsl.
          *
          * @param source The hlsl vertex shader source
          * @param entryPoint The name of the entry point function in the source
-         * @param macros A mapping of macro names to macro values which are applied in the processing of the source string.
          * @return The cross compiled glsl source code
          */
         std::string compileVertexShader(const std::string &source,
-                                        const std::string &entryPoint,
-                                        const std::map<std::string, std::string> &macros);
+                                        const std::string &entryPoint);
 
         /**
          * Compile the hlsl fragment shader text into glsl.
          *
          * @param source The hlsl fragment shader source
          * @param entryPoint The name of the entry point function in the source
-         * @param macros A mapping of macro names to macro values which are applied in the processing of the source string.
          * @return The cross compiled glsl source code
          */
         std::string compileFragmentShader(const std::string &source,
-                                          const std::string &entryPoint,
-                                          const std::map<std::string, std::string> &macros);
-    }
+                                          const std::string &entryPoint);
+
+        void setMacros(const std::map<std::string, std::string> &macros);
+
+        const std::map<std::string, std::string> &getMacros();
+
+        void setInclude(const std::map<std::string, std::string> &include);
+
+        const std::map<std::string, std::string> &getInclude();
+
+        void setIncludeCallback(const std::function<std::string(const char *)> &func);
+
+    private:
+        std::string includeHandler(const char *name);
+
+        std::map<std::string, std::string> macros;
+        std::map<std::string, std::string> include;
+
+        std::function<std::string(const char *)> userCallback;
+    };
 }
 
 #endif //MANA_HLSLCROSSCOMPILER_HPP
