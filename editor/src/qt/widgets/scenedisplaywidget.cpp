@@ -179,7 +179,7 @@ void SceneDisplayWidget::paintGL() {
     ren->setClearColor(mana::ColorRGBA(38, 38, 38, 255));
     ren->setViewport({}, {frameBuffer.width, frameBuffer.height});
 
-    mana::Renderer3D::RenderScene scene3d;
+    RenderScene scene3d;
 
     auto nodes = scene.findNodesWithComponent<mana::LightComponent>();
     for (auto *nodePointer : nodes) {
@@ -255,7 +255,7 @@ void SceneDisplayWidget::paintGL() {
               });
 
     for (auto &p : data) {
-        mana::Renderer3D::Unit unit;
+        RenderUnit unit;
 
         auto *comp = &p.node->getComponent<RenderComponent>();
 
