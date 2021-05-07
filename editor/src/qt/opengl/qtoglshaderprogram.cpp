@@ -32,14 +32,18 @@ namespace mana {
     namespace opengl {
         QtOGLShaderProgram::QtOGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 
-        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader,
-                                               const std::string &fragmentShader,
-                                               const std::map<std::string, std::string> &macros)
+        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+                                               const std::map<std::string, std::string> &macros,
+                                               const std::function<std::string(const char *)> &includeCallback)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
             initializeOpenGLFunctions();
 
-            std::string vs = HlslCrossCompiler::compileVertexShader(vertexShader, "main", macros);;
-            std::string fs = HlslCrossCompiler::compileFragmentShader(fragmentShader, "main", macros);;
+            HlslCrossCompiler compiler;
+            compiler.setMacros(macros);
+            compiler.setIncludeCallback(includeCallback);
+
+            std::string vs = compiler.compileVertexShader(vertexShader, "main");;
+            std::string fs = compiler.compileFragmentShader(fragmentShader, "main");;
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();

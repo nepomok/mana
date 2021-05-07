@@ -92,17 +92,25 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    std::string stripNewline(const std::string &src) {
-        std::string ret = src;
-        std::replace(ret.begin(), ret.end(), '\n', ' ');
-        return ret;
+    std::string includeCallback(const char *n) {
+        std::string name(n);
+        if (name == "mana.hlsl") {
+            return SHADER_MANA;
+        } else {
+            throw std::runtime_error("Invalid name: " + name);
+        }
     }
+    
+    const std::map<std::string, std::string> gMacros = {{"MANA_MAX_LIGHTS", "20"}};
 
-    const std::map<std::string, std::string> gMacros = {{"MANA_INCLUDE",    stripNewline(SHADER_MANA)},
-                                                        {"MANA_MAX_LIGHTS", "20"}};
+    const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};
 
     const std::map<std::string, std::string> &Renderer3D::getShaderMacros() {
         return gMacros;
+    }
+
+    const std::function<std::string(const char *)> &Renderer3D::getShaderIncludeCallback() {
+        return gIncludeFunc;
     }
 
     Renderer3D::Renderer3D() : ren(nullptr), alloc(nullptr) {};
@@ -129,7 +137,7 @@ namespace mana {
         camPosTransformMat = MatrixMath::translate(scene.camera->transform.position);
         if (outline) {
             ShaderProgram *defaultOutlineShader = alloc->allocateShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {});
+                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
             RenderScene sceneCopy = scene;
             ren->renderBegin(target);
             for (auto &unit : sceneCopy.units) {

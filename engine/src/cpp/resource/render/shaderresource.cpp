@@ -41,7 +41,8 @@ namespace mana {
             return;
         shader = alloc->allocateShaderProgram(vertexShader->getText(),
                                               fragmentShader->getText(),
-                                              Renderer3D::getShaderMacros());
+                                              Renderer3D::getShaderMacros(),
+                                              Renderer3D::getShaderIncludeCallback());
         isLoaded = true;
     }
 

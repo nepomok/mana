@@ -22,6 +22,7 @@
 
 #include <string>
 #include <map>
+#include <functional>
 
 #include "engine/render/shaderprogram.hpp"
 #include "engine/math/vector2.hpp"
@@ -44,9 +45,9 @@ namespace mana {
         public:
             OGLShaderProgram();
 
-            OGLShaderProgram(const std::string &vertexShader,
-                             const std::string &fragmentShader,
-                             const std::map<std::string, std::string> &macros);
+            OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+                             const std::map<std::string, std::string> &macros,
+                             const std::function<std::string(const char *)> &includeCallback);
 
             ~OGLShaderProgram() override;
 

@@ -327,7 +327,9 @@ MeshBuffer *QtOGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, 
 
 ShaderProgram *QtOGLRenderAllocator::allocateShaderProgram(const std::string &vertexShader,
                                                            const std::string &fragmentShader,
-                                                           const std::map<std::string, std::string> &macros) {
-    return new QtOGLShaderProgram(vertexShader, fragmentShader, macros);
+                                                           const std::map<std::string, std::string> &macros,
+                                                           const std::function<std::string(
+                                                                   const char *)> &includeCallback) {
+    return new QtOGLShaderProgram(vertexShader, fragmentShader, macros, includeCallback);
 }
 

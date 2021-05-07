@@ -21,6 +21,7 @@
 #define MANA_RENDERALLOCATOR_HPP
 
 #include <map>
+#include <functional>
 
 #include "engine/render/geometry/mesh.hpp"
 #include "engine/render/rendertarget.hpp"
@@ -46,7 +47,8 @@ namespace mana {
 
         virtual ShaderProgram *allocateShaderProgram(const std::string &vertexShader,
                                                      const std::string &fragmentShader,
-                                                     const std::map<std::string, std::string> &macros) = 0;
+                                                     const std::map<std::string, std::string> &macros,
+                                                     const std::function<std::string(const char *)> &includeCallback) = 0;
     };
 }
 

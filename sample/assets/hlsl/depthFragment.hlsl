@@ -1,4 +1,4 @@
-MANA_INCLUDE
+#include "mana.hlsl"
 
 Texture2D diffuse;
 

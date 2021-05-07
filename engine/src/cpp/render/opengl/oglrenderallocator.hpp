@@ -36,7 +36,9 @@ namespace mana {
                                                     const std::vector<Transform> &offsets) override;
 
             ShaderProgram *allocateShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
-                                                 const std::map<std::string, std::string> &macros) override;
+                                                 const std::map<std::string, std::string> &macros,
+                                                 const std::function<std::string(
+                                                         const char *)> &includeCallback) override;
         };
     }
 }

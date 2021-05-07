@@ -45,9 +45,9 @@ namespace mana {
         public:
             QtOGLShaderProgram();
 
-            QtOGLShaderProgram(const std::string &vertexShader,
-                               const std::string &fragmentShader,
-                               const std::map<std::string, std::string> &macros);
+            QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+                               const std::map<std::string, std::string> &macros,
+                               const std::function<std::string(const char *)> &includeCallback);
 
             ~QtOGLShaderProgram() override;
 

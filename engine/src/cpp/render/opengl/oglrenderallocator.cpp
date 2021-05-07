@@ -17,6 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <functional>
 #include "oglrenderallocator.hpp"
 #include "oglrendertexture.hpp"
 #include "ogluserframebuffer.hpp"
@@ -329,6 +330,8 @@ MeshBuffer *OGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, co
 
 ShaderProgram *OGLRenderAllocator::allocateShaderProgram(const std::string &vertexShader,
                                                          const std::string &fragmentShader,
-                                                         const std::map<std::string, std::string> &macros) {
-    return new OGLShaderProgram(vertexShader, fragmentShader, macros);
+                                                         const std::map<std::string, std::string> &macros,
+                                                         const std::function<std::string(
+                                                                 const char *)> &includeCallback) {
+    return new OGLShaderProgram(vertexShader, fragmentShader, macros, includeCallback);
 }

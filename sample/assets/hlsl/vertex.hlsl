@@ -1,4 +1,4 @@
-MANA_INCLUDE
+#include "mana.hlsl"
 
 struct VS_INPUT
 {
