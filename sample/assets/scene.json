@@ -174,12 +174,6 @@
             "blendDestinationMode": "zero",
             "renderOrder": 0
           }
-        },
-        {
-          "enabled": true,
-          "componentType": "script",
-          "resourceName": "Script.skyboxController",
-          "queue": 1
         }
       ]
     },

@@ -8,6 +8,7 @@ float4x4 MANA_MVP;
 float4x4 MANA_M_INVERT;
 
 float3 MANA_VIEWPOS;
+float4x4 MANA_VIEW_POSITION_MAT; //A transformation matrix which applies only the view position.
 
 struct MANA_T_LIGHT_DIRECTIONAL {
     float3 direction;
@@ -148,7 +149,7 @@ float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor,
 
 float4 mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse, float4 fSpecular, float roughness)
 {
-    return MANA_F_CALCULATELIGHT_DIRECTIONAL(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + MANA_F_CALCULATELIGHT_POINT(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + MANA_F_CALCULATELIGHT_SPOT(fPos, fNorm, fDiffuse, fSpecular, roughness);
+    return mana_calculate_light_directional(fPos, fNorm, fDiffuse, fSpecular, roughness)
+            + mana_calculate_light_point(fPos, fNorm, fDiffuse, fSpecular, roughness)
+            + mana_calculate_light_spot(fPos, fNorm, fDiffuse, fSpecular, roughness);
 }

@@ -98,8 +98,7 @@ namespace mana {
             glUseProgram(programID);
             checkQtGLError("");
         }
-
-        void QtOGLShaderProgram::setTexture(const std::string &name, int slot) {
+        bool QtOGLShaderProgram::setTexture(const std::string &name, int slot) {
             // ShaderConductor(SPIRV) merges hlsl texture objects names
             // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
             // Therefore the user is required to define and use a separate SampleState structure for every texture object.
@@ -107,150 +106,192 @@ namespace mana {
             std::string globName = "SPIRV_Cross_Combined" + name + "samplerState_" + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, (int) slot);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, (int) slot);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setBool(const std::string &name, bool value) {
+        bool QtOGLShaderProgram::setBool(const std::string &name, bool value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, (int) value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, (int) value);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setInt(const std::string &name, int value) {
+        bool QtOGLShaderProgram::setInt(const std::string &name, int value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, value);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setFloat(const std::string &name, float value) {
+        bool QtOGLShaderProgram::setFloat(const std::string &name, float value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1f(i, value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1f(i, value);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
+        bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2i(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2i(i, value.x, value.y);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
+        bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2i(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2i(i, value.x, value.y);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
+        bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2f(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2f(i, value.x, value.y);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
+        bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3i(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3i(i, value.x, value.y, value.z);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
+        bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3i(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3i(i, value.x, value.y, value.z);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
+        bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3f(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3f(i, value.x, value.y, value.z);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
+        bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4i(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4i(i, value.x, value.y, value.z, value.w);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
+        bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4i(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4i(i, value.x, value.y, value.z, value.w);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
+        bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4f(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4f(i, value.x, value.y, value.z, value.w);
+            }
             checkQtGLError("");
+            return ret;
         }
 
-        void QtOGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
+        bool QtOGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        void QtOGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
+        bool QtOGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        void QtOGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
+        bool QtOGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniformMatrix4fv(i, 1, GL_FALSE, (GLfloat *) &value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniformMatrix4fv(i, 1, GL_FALSE, (GLfloat *) &value);
+            }
             checkQtGLError("");
+            return ret;
         }
     }
 }

@@ -37,6 +37,7 @@ float4x4 MANA_MVP;
 float4x4 MANA_M_INVERT;
 
 float3 MANA_VIEWPOS;
+float4x4 MANA_VIEW_POSITION_MAT; //A transformation matrix which applies only the view position.
 
 struct MANA_T_LIGHT_DIRECTIONAL {
     float3 direction;

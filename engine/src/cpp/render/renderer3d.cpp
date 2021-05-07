@@ -118,9 +118,10 @@ namespace mana {
                 outline = true;
         }
 
-        Mat4f model, view, projection;
+        Mat4f model, view, projection, camPosTransformMat;
         view = scene.camera->view();
         projection = scene.camera->projection();
+        camPosTransformMat = MatrixMath::translate(scene.camera->transform.position);
         if (outline) {
             ShaderProgram *defaultOutlineShader = alloc->allocateShaderProgram(
                     preprocessHlsl(SHADER_VERT_OUTLINE_DEFAULT),
@@ -139,6 +140,7 @@ namespace mana {
                 shader.setMat4("MANA_P", projection);
                 shader.setMat4("MANA_MVP", projection * view * model);
                 shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+                shader.setMat4("MANA_VIEW_POSITION_MAT", camPosTransformMat);
 
                 int i = 0;
                 for (auto &light : scene.dir) {
@@ -231,8 +233,8 @@ namespace mana {
                     shader.setMat4("MANA_MVP", projection * view * model);
                     shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
                     shader.setVec3("COLOR_OUTLINE", Vec3f((float) unit.outlineColor.r() / 255,
-                                                   (float) unit.outlineColor.g() / 255,
-                                                   (float) unit.outlineColor.b() / 255));
+                                                          (float) unit.outlineColor.g() / 255,
+                                                          (float) unit.outlineColor.b() / 255));
 
                     ren->addCommand(unit.command);
                 }
@@ -253,6 +255,7 @@ namespace mana {
                 shader.setMat4("MANA_P", projection);
                 shader.setMat4("MANA_MVP", projection * view * model);
                 shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+                shader.setMat4("MANA_VIEW_POSITION_MAT", camPosTransformMat);
 
                 int i = 0;
                 for (auto &light : scene.dir) {

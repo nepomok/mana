@@ -97,7 +97,7 @@ namespace mana {
             checkGLError("");
         }
 
-        void OGLShaderProgram::setTexture(const std::string &name, int slot) {
+        bool OGLShaderProgram::setTexture(const std::string &name, int slot) {
             // ShaderConductor(SPIRV) merges hlsl texture objects names
             // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
             // Therefore the user is required to define and use a separate SampleState structure for every texture object.
@@ -105,150 +105,192 @@ namespace mana {
             std::string globName = "SPIRV_Cross_Combined" + name + "samplerState_" + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, (int) slot);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, (int) slot);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setBool(const std::string &name, bool value) {
+        bool OGLShaderProgram::setBool(const std::string &name, bool value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, (int) value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, (int) value);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setInt(const std::string &name, int value) {
+        bool OGLShaderProgram::setInt(const std::string &name, int value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1i(i, value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1i(i, value);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setFloat(const std::string &name, float value) {
+        bool OGLShaderProgram::setFloat(const std::string &name, float value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform1f(i, value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform1f(i, value);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2i(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2i(i, value.x, value.y);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2i(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2i(i, value.x, value.y);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform2f(i, value.x, value.y);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform2f(i, value.x, value.y);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3i(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3i(i, value.x, value.y, value.z);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3i(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3i(i, value.x, value.y, value.z);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform3f(i, value.x, value.y, value.z);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform3f(i, value.x, value.y, value.z);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4i(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4i(i, value.x, value.y, value.z, value.w);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4i(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4i(i, value.x, value.y, value.z, value.w);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniform4f(i, value.x, value.y, value.z, value.w);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniform4f(i, value.x, value.y, value.z, value.w);
+            }
             checkGLError("");
+            return ret;
         }
 
-        void OGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
+        bool OGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        void OGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
+        bool OGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        void OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
+        bool OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
-            if (i == -1)
-                throw std::runtime_error("Uniform not found " + name);
-            glUniformMatrix4fv(i, 1, GL_FALSE, (GLfloat *) &value);
+            bool ret = false;
+            if (i != -1) {
+                ret = true;
+                glUniformMatrix4fv(i, 1, GL_FALSE, (GLfloat *) &value);
+            }
             checkGLError("");
+            return ret;
         }
     }
 }
