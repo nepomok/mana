@@ -17,28 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PERSPECTIVECAMERA_HPP
-#define MANA_PERSPECTIVECAMERA_HPP
+#ifndef MANA_RENDERSCENE_HPP
+#define MANA_RENDERSCENE_HPP
 
-#include "engine/render/camera/camera.hpp"
-
-#include "engine/math/matrixmath.hpp"
+#include "engine/render/3d/renderunit.hpp"
+#include "engine/render/3d/camera/camera.hpp"
+#include "engine/render/3d/lighting/light.hpp"
 
 namespace mana {
-    class PerspectiveCamera : public Camera {
-    public:
-        PerspectiveCamera() : Camera(PERSPECTIVE) {}
-
-        Mat4f projection() const override {
-            return MatrixMath::perspective(fov,
-                                           aspectRatio,
-                                           nearClip,
-                                           farClip);
-        }
-
-        float fov = 60;
-        float aspectRatio = 4.0f / 3.0f;
+    struct RenderScene {
+        Camera *camera;
+        std::vector <RenderUnit> units;
+        std::vector <DirectionalLight> dir;
+        std::vector <PointLight> point;
+        std::vector <SpotLight> spot;
     };
 }
 
-#endif //MANA_PERSPECTIVECAMERA_HPP
+#endif //MANA_RENDERSCENE_HPP

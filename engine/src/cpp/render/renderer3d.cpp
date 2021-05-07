@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 #include "engine/math/rotation.hpp"
 
 #include "hlslinject.hpp"
@@ -100,7 +100,7 @@ namespace mana {
             throw std::runtime_error("Invalid name: " + name);
         }
     }
-    
+
     const std::map<std::string, std::string> gMacros = {{"MANA_MAX_LIGHTS", "20"}};
 
     const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};

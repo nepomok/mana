@@ -23,8 +23,8 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/camera/perspectivecamera.hpp"
-#include "engine/render/camera/orthographiccamera.hpp"
+#include "engine/render/3d/camera/perspectivecamera.hpp"
+#include "engine/render/3d/camera/orthographiccamera.hpp"
 
 namespace mana {
     RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren)
@@ -40,7 +40,7 @@ namespace mana {
     }
 
     void RenderSystem::update(float deltaTime, Scene &scene) {
-        Renderer3D::RenderScene scene3d;
+        RenderScene scene3d;
 
         auto nodes = scene.findNodesWithComponent<LightComponent>();
         for (auto *nodePointer : nodes) {
@@ -114,7 +114,7 @@ namespace mana {
                   });
 
         for (auto *comp : renderComponents) {
-            Renderer3D::Unit unit;
+            RenderUnit unit;
 
             unit.transform = mapping[comp]->transform;
 

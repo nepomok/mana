@@ -22,10 +22,10 @@
 
 #include "engine/ecs/system.hpp"
 
-#include "engine/render/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
-#include "engine/render/camera/perspectivecamera.hpp"
-#include "engine/render/camera/orthographiccamera.hpp"
+#include "engine/render/3d/camera/perspectivecamera.hpp"
+#include "engine/render/3d/camera/orthographiccamera.hpp"
 
 #include "engine/resource/resources.hpp"
 

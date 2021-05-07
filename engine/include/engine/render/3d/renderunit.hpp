@@ -17,40 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTCOMPONENT_HPP
-#define MANA_LIGHTCOMPONENT_HPP
-
-#include "engine/ecs/component.hpp"
-
-#include "engine/render/3d/lighting/light.hpp"
+#ifndef MANA_RENDERUNIT_HPP
+#define MANA_RENDERUNIT_HPP
 
 namespace mana {
-    struct LightComponent : public Component {
-        LightComponent() : Component(LIGHT) {}
+    struct RenderUnit {
+        RenderUnit() : transform(), command() {}
 
-        Component *clone() override {
-            return new LightComponent(*this);
-        }
+        RenderUnit(Transform t, RenderCommand command) : transform(t), command(std::move(command)) {}
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(LightComponent);
-        }
+        Transform transform;
+        RenderCommand command;
 
-        LightType lightType = LIGHT_DIRECTIONAL;
-
-        Vec3f ambient = Vec3f(0.1f);
-        Vec3f diffuse = Vec3f(1.0f);
-        Vec3f specular = Vec3f(1.0f);
-
-        Vec3f direction;
-
-        float cutOff = 10;
-        float outerCutOff = 14;
-
-        float constant = 1;
-        float linear = 1;
-        float quadratic = 1;
+        //If true the renderer3d will outline the unit in the resulting render with the supplied color or optional shader.
+        bool outline = false;
+        ColorRGB outlineColor;
+        ShaderProgram *outlineShader = nullptr;
+        float outlineScale = 1.1f;
     };
 }
 
-#endif //MANA_LIGHTCOMPONENT_HPP
+#endif //MANA_RENDERUNIT_HPP

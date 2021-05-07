@@ -17,40 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTCOMPONENT_HPP
-#define MANA_LIGHTCOMPONENT_HPP
+#ifndef MANA_ORTHOGRAPHICCAMERA_HPP
+#define MANA_ORTHOGRAPHICCAMERA_HPP
 
-#include "engine/ecs/component.hpp"
-
-#include "engine/render/3d/lighting/light.hpp"
+#include "camera.hpp"
+#include "engine/math/matrixmath.hpp"
 
 namespace mana {
-    struct LightComponent : public Component {
-        LightComponent() : Component(LIGHT) {}
+    class OrthographicCamera : public Camera {
+    public:
+        OrthographicCamera() : Camera(ORTHOGRAPHIC) {}
 
-        Component *clone() override {
-            return new LightComponent(*this);
+        Mat4f projection() const override {
+            return MatrixMath::ortho(left,
+                                     right,
+                                     bottom,
+                                     top,
+                                     nearClip,
+                                     farClip);
         }
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(LightComponent);
-        }
-
-        LightType lightType = LIGHT_DIRECTIONAL;
-
-        Vec3f ambient = Vec3f(0.1f);
-        Vec3f diffuse = Vec3f(1.0f);
-        Vec3f specular = Vec3f(1.0f);
-
-        Vec3f direction;
-
-        float cutOff = 10;
-        float outerCutOff = 14;
-
-        float constant = 1;
-        float linear = 1;
-        float quadratic = 1;
+        float left = -10;
+        float top = 10;
+        float right = 10;
+        float bottom = -10;
     };
 }
 
-#endif //MANA_LIGHTCOMPONENT_HPP
+#endif //MANA_ORTHOGRAPHICCAMERA_HPP

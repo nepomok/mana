@@ -25,32 +25,11 @@
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderallocator.hpp"
 
+#include "engine/render/3d/renderscene.hpp"
+
 namespace mana {
     class Renderer3D {
     public:
-        struct Unit {
-            Unit() : transform(), command() {}
-
-            Unit(Transform t, RenderCommand command) : transform(t), command(std::move(command)) {}
-
-            Transform transform;
-            RenderCommand command;
-
-            //If true the renderer3d will outline the unit in the resulting render with the supplied color or optional shader.
-            bool outline = false;
-            ColorRGB outlineColor;
-            ShaderProgram *outlineShader = nullptr;
-            float outlineScale = 1.1f;
-        };
-
-        struct RenderScene {
-            Camera *camera;
-            std::vector<Unit> units;
-            std::vector<DirectionalLight> dir;
-            std::vector<PointLight> point;
-            std::vector<SpotLight> spot;
-        };
-
         static const std::map<std::string, std::string> &getShaderMacros();
 
         static const std::function<std::string(const char *)> &getShaderIncludeCallback();

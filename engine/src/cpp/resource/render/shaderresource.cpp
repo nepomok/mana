@@ -19,7 +19,7 @@
 
 #include "engine/resource/render/shaderresource.hpp"
 
-#include "engine/render/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 
 namespace mana {
     ShaderResource::ShaderResource()
