@@ -21,7 +21,6 @@
 
 #include "render/opengl/oglrenderer.hpp"
 
-
 mana::Renderer *mana::Renderer::instantiate(mana::GraphicsApi graphicsApi) {
     switch (graphicsApi) {
         case OPENGL:
