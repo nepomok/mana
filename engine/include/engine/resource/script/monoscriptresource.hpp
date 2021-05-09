@@ -46,6 +46,7 @@ namespace mana {
         std::string nameSpace;
         std::string className;
         MonoScript *script;
+        bool isLoaded = false;
     };
 }
 

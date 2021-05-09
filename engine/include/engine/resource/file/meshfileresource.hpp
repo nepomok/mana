@@ -44,6 +44,7 @@ namespace mana {
         AssetFile assetFile;
         std::string meshName;
         Mesh mesh;
+        bool isLoaded = false;
     };
 }
 

@@ -20,6 +20,8 @@
 #include "engine/resource/render/texturebufferresource.hpp"
 
 namespace mana {
+    TextureBufferResource::TextureBufferResource() = default;
+
     TextureBufferResource::TextureBufferResource(RenderAllocator &allocator,
                                                  Resource<ImageBuffer<ColorRGBA>> &resource,
                                                  TextureBuffer::Attributes attributes)

@@ -29,8 +29,8 @@ namespace mana {
         ShaderResource();
 
         ShaderResource(RenderAllocator &alloc,
-                       Resource <std::string> &vertexShader,
-                       Resource <std::string> &fragmentShader);
+                       Resource<std::string> &vertexShader,
+                       Resource<std::string> &fragmentShader);
 
         ~ShaderResource() override;
 
@@ -42,9 +42,10 @@ namespace mana {
 
     private:
         RenderAllocator *alloc;
-        Resource <std::string> *vertexShader;
-        Resource <std::string> *fragmentShader;
+        Resource<std::string> *vertexShader;
+        Resource<std::string> *fragmentShader;
         ShaderProgram *shader;
+        bool isLoaded = false;
     };
 }
 #endif //MANA_SHADERRESOURCE_HPP

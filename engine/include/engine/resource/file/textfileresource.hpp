@@ -40,6 +40,7 @@ namespace mana {
     private:
         std::string filePath;
         std::string text;
+        bool isLoaded = false;
     };
 }
 

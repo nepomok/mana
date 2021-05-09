@@ -30,7 +30,7 @@ namespace mana {
         TextureBufferResource();
 
         TextureBufferResource(RenderAllocator &allocator,
-                              Resource <ImageBuffer<ColorRGBA>> &resource,
+                              Resource<ImageBuffer<ColorRGBA>> &resource,
                               TextureBuffer::Attributes attributes);
 
         ~TextureBufferResource() override;
@@ -43,9 +43,10 @@ namespace mana {
 
     private:
         RenderAllocator *alloc;
-        Resource <ImageBuffer<ColorRGBA>> *img;
+        Resource<ImageBuffer<ColorRGBA>> *img;
         TextureBuffer::Attributes attrib;
         TextureBuffer *texture;
+        bool isLoaded = false;
     };
 }
 

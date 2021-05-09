@@ -34,19 +34,16 @@ namespace mana {
         ~Resource() override = default;
 
         virtual void load() {
-            isLoaded = true;
+            throw std::runtime_error("Resource load not implemented");
         }
 
         virtual void free() {
-            isLoaded = false;
+            throw std::runtime_error("Resource free not implemented");
         }
 
         virtual const T &get() {
             throw std::runtime_error("Resource get not implemented");
         }
-
-    protected:
-        bool isLoaded = false;
     };
 }
 

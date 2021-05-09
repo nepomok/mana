@@ -48,6 +48,7 @@ namespace mana {
         std::vector<Transform> instanceOffsets;
         bool instanced;
         MeshBuffer *mesh;
+        bool isLoaded = false;
     };
 }
 
