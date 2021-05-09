@@ -29,6 +29,14 @@
 
 namespace mana {
     struct Physics3DComponent : public Component {
+        Component *clone() override {
+            return new Physics3DComponent(*this);
+        }
+
+        const std::type_info &getTypeInfo() override {
+            return typeid(typeof(Physics3DComponent));
+        }
+
         Resource<Rigidbody3D> *rigidbody;
         Resource<Collider3D> *collider;
     };
