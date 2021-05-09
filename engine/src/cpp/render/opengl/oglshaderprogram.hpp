@@ -55,39 +55,39 @@ namespace mana {
 
             OGLShaderProgram &operator=(const OGLShaderProgram &) = delete;
 
-            void activate();
+            void activate() const;
 
-            bool setTexture(const std::string &name, int slot) override;
+            bool setTexture(const std::string &name, int slot) const override;
 
-            bool setBool(const std::string &name, bool value) override;
+            bool setBool(const std::string &name, bool value) const override;
 
-            bool setInt(const std::string &name, int value) override;
+            bool setInt(const std::string &name, int value) const override;
 
-            bool setFloat(const std::string &name, float value) override;
+            bool setFloat(const std::string &name, float value) const override;
 
-            bool setVec2(const std::string &name, const Vec2b &value) override;
+            bool setVec2(const std::string &name, const Vec2b &value) const override;
 
-            bool setVec2(const std::string &name, const Vec2i &value) override;
+            bool setVec2(const std::string &name, const Vec2i &value) const override;
 
-            bool setVec2(const std::string &name, const Vec2f &value) override;
+            bool setVec2(const std::string &name, const Vec2f &value) const override;
 
-            bool setVec3(const std::string &name, const Vec3b &value) override;
+            bool setVec3(const std::string &name, const Vec3b &value) const override;
 
-            bool setVec3(const std::string &name, const Vec3i &value) override;
+            bool setVec3(const std::string &name, const Vec3i &value) const override;
 
-            bool setVec3(const std::string &name, const Vec3f &value) override;
+            bool setVec3(const std::string &name, const Vec3f &value) const override;
 
-            bool setVec4(const std::string &name, const Vec4b &value) override;
+            bool setVec4(const std::string &name, const Vec4b &value) const override;
 
-            bool setVec4(const std::string &name, const Vec4i &value) override;
+            bool setVec4(const std::string &name, const Vec4i &value) const override;
 
-            bool setVec4(const std::string &name, const Vec4f &value) override;
+            bool setVec4(const std::string &name, const Vec4f &value) const override;
 
-            bool setMat2(const std::string &name, const Mat2f &value) override;
+            bool setMat2(const std::string &name, const Mat2f &value) const override;
 
-            bool setMat3(const std::string &name, const Mat3f &value) override;
+            bool setMat3(const std::string &name, const Mat3f &value) const override;
 
-            bool setMat4(const std::string &name, const Mat4f &value) override;
+            bool setMat4(const std::string &name, const Mat4f &value) const override;
 
         private:
             GLuint programID;

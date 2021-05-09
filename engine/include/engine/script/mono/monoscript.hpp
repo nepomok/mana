@@ -34,11 +34,11 @@ namespace mana {
 
         ~MonoScript();
 
-        void onEnable() override;
+        void onEnable() const override;
 
-        void onDisable() override;
+        void onDisable() const override;
 
-        void onUpdate() override;
+        void onUpdate() const override;
 
     private:
         MonoCppAssembly *assembly;

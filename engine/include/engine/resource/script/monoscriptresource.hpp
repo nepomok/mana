@@ -20,12 +20,12 @@
 #ifndef MANA_MONOSCRIPTRESOURCE_HPP
 #define MANA_MONOSCRIPTRESOURCE_HPP
 
-#include "engine/resource/scriptresource.hpp"
+#include "engine/resource/resource.hpp"
 
 #include "engine/script/mono/monoscript.hpp"
 
 namespace mana {
-    class MonoScriptResource : public ScriptResource {
+    class MonoScriptResource : public Resource<Script> {
     public:
         MonoScriptResource(MonoCppDomain &monoRuntime,
                            std::string assemblyFileName,
@@ -38,7 +38,7 @@ namespace mana {
 
         void free() override;
 
-        Script *getScript() override;
+        const Script &get() override;
 
     private:
         MonoCppDomain *monoCppRuntime;

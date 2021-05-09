@@ -21,7 +21,7 @@
 
 namespace mana {
     TextureBufferResource::TextureBufferResource(RenderAllocator &allocator,
-                                                 ImageResource &resource,
+                                                 Resource<ImageBuffer<ColorRGBA>> &resource,
                                                  TextureBuffer::Attributes attributes)
             : alloc(&allocator),
               img(&resource),
@@ -37,14 +37,14 @@ namespace mana {
     void TextureBufferResource::load() {
         if (isLoaded)
             return;
-        attrib.size = img->getBuffer().getSize();
+        attrib.size = img->get().getSize();
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;
         texture = alloc->allocateTextureBuffer(attrib);
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP) {
-            texture->uploadCubeMap(img->getBuffer());
+            texture->uploadCubeMap(img->get());
         } else {
-            texture->upload(img->getBuffer());
+            texture->upload(img->get());
         }
         isLoaded = true;
     }
@@ -57,9 +57,9 @@ namespace mana {
         isLoaded = false;
     }
 
-    TextureBuffer *TextureBufferResource::getTextureBuffer() {
+    const TextureBuffer &TextureBufferResource::get() {
         if (!isLoaded)
             load();
-        return texture;
+        return *texture;
     }
 }

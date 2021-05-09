@@ -21,10 +21,10 @@
 
 #include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/file/meshfileresource.hpp"
-#include "engine/resource/meshresource.hpp"
 #include "engine/resource/file/textfileresource.hpp"
 #include "engine/resource/file/imagefileresource.hpp"
 #include "engine/resource/render/texturebufferresource.hpp"
+#include "engine/resource/render/shaderresource.hpp"
 #include "engine/resource/script/monoscriptresource.hpp"
 
 #include "extern/json.hpp"
@@ -113,10 +113,10 @@ namespace mana {
         return new ImageFileResource(j["filePath"]);
     }
 
-    ShaderResource *parseShader(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
+    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
         return new ShaderResource(alloc,
-                                  res.getResource<TextResource>(j["vertexShaderResourceName"]),
-                                  res.getResource<TextResource>(j["fragmentShaderResourceName"]));
+                                  res.getResource<std::string>(j["vertexShaderResourceName"]),
+                                  res.getResource<std::string>(j["fragmentShaderResourceName"]));
     }
 
     MeshBufferResource *parseMeshBuffer(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
@@ -125,9 +125,9 @@ namespace mana {
             for (auto &t : j["instanceOffsets"]) {
                 offsets.emplace_back(parseTransform(t));
             }
-            return new MeshBufferResource(alloc, res.getResource<MeshResource>(j["meshResourceName"]), offsets);
+            return new MeshBufferResource(alloc, res.getResource<Mesh>(j["meshResourceName"]), offsets);
         } else {
-            return new MeshBufferResource(alloc, res.getResource<MeshResource>(j["meshResourceName"]));
+            return new MeshBufferResource(alloc, res.getResource<Mesh>(j["meshResourceName"]));
         }
     }
 
@@ -140,7 +140,7 @@ namespace mana {
         attr.filterMag = parseTextureFiltering(j["filterMag"]);
         attr.generateMipmap = j["generateMipmap"];
         attr.mipmapFilter = parseMipMapFiltering(j["mipmapFilter"]);
-        return new TextureBufferResource(alloc, res.getResource<ImageResource>(j["imageResourceName"]), attr);
+        return new TextureBufferResource(alloc, res.getResource<ImageBuffer<ColorRGBA>>(j["imageResourceName"]), attr);
     }
 
     MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
@@ -152,24 +152,24 @@ namespace mana {
         auto json = nlohmann::json::parse(jsonStr);
         for (auto &r : json["resources"]) {
             std::string type = r["type"];
-            Resource *resource = nullptr;
+            std::string name = r["name"];
+            ResourceBase *resource = nullptr;
             if (type == "meshfile")
-                resource = parseMeshFile(r);
+                ret->addResource<Mesh>(name, parseMeshFile(r));
             else if (type == "textfile")
-                resource = parseTextFile(r);
+                ret->addResource<std::string>(name, parseTextFile(r));
             else if (type == "imagefile")
-                resource = parseImageFile(r);
+                ret->addResource<ImageBuffer<ColorRGBA>>(name, parseImageFile(r));
             else if (type == "shader")
-                resource = parseShader(r, *ret, allocator);
+                ret->addResource<ShaderProgram>(name, parseShader(r, *ret, allocator));
             else if (type == "meshbuffer")
-                resource = parseMeshBuffer(r, *ret, allocator);
+                ret->addResource<MeshBuffer>(name, parseMeshBuffer(r, *ret, allocator));
             else if (type == "texture")
-                resource = parseTexture(r, *ret, allocator);
+                ret->addResource<TextureBuffer>(name, parseTexture(r, *ret, allocator));
             else if (type == "monoscript")
-                resource = parseMonoScript(r, monoRuntime);
+                ret->addResource<Script>(name, parseMonoScript(r, monoRuntime));
             else
                 throw std::runtime_error("Invalid resource type " + type);
-            ret->addResource(r["name"], resource);
         }
         return ret;
     }

@@ -25,7 +25,7 @@
 
 #include "script/sceneinterface.hpp"
 
-#include "engine/resource/scriptresource.hpp"
+#include "engine/resource/resource.hpp"
 
 //TODO: Refactor script scene interface
 namespace mana {
@@ -245,14 +245,14 @@ namespace mana {
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
                     comp.scriptEnabled = false;
-                    comp.script->getScript()->onDisable();
+                    comp.script->get().onDisable();
                 }
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                comp.script->getScript()->onEnable();
+                comp.script->get().onEnable();
             }
-            comp.script->getScript()->onUpdate();
+            comp.script->get().onUpdate();
         }
 
         SceneInterface::setScene(nullptr);

@@ -145,7 +145,7 @@ namespace mana {
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                ShaderProgram &shader = *unit.command.shader;
+                const ShaderProgram &shader = *unit.command.shader;
 
                 shader.setMat4("MANA_M", model);
                 shader.setMat4("MANA_V", view);
@@ -237,7 +237,7 @@ namespace mana {
                     model = model * MatrixMath::scale(unit.transform.scale);
                     model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                    ShaderProgram &shader = *unit.command.shader;
+                    const ShaderProgram &shader = *unit.command.shader;
 
                     shader.setMat4("MANA_M", model);
                     shader.setMat4("MANA_V", view);
@@ -260,7 +260,7 @@ namespace mana {
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                ShaderProgram &shader = *unit.command.shader;
+                const ShaderProgram &shader = *unit.command.shader;
 
                 shader.setMat4("MANA_M", model);
                 shader.setMat4("MANA_V", view);

@@ -23,11 +23,11 @@
 namespace mana {
     class Script {
     public:
-        virtual void onEnable() {};
+        virtual void onEnable() const {};
 
-        virtual void onDisable() {};
+        virtual void onDisable() const {};
 
-        virtual void onUpdate() {};
+        virtual void onUpdate() const {};
     };
 }
 

@@ -20,15 +20,18 @@
 #ifndef MANA_TEXTUREBUFFERRESOURCE_HPP
 #define MANA_TEXTUREBUFFERRESOURCE_HPP
 
-#include "engine/resource/imageresource.hpp"
 #include "engine/render/renderallocator.hpp"
 
+#include "engine/resource/resource.hpp"
+
 namespace mana {
-    class TextureBufferResource : public Resource {
+    class TextureBufferResource : public Resource<TextureBuffer> {
     public:
         TextureBufferResource();
 
-        TextureBufferResource(RenderAllocator &allocator, ImageResource &resource, TextureBuffer::Attributes attributes);
+        TextureBufferResource(RenderAllocator &allocator,
+                              Resource <ImageBuffer<ColorRGBA>> &resource,
+                              TextureBuffer::Attributes attributes);
 
         ~TextureBufferResource() override;
 
@@ -36,11 +39,11 @@ namespace mana {
 
         void free() override;
 
-        TextureBuffer *getTextureBuffer();
+        const TextureBuffer &get() override;
 
     private:
         RenderAllocator *alloc;
-        ImageResource *img;
+        Resource <ImageBuffer<ColorRGBA>> *img;
         TextureBuffer::Attributes attrib;
         TextureBuffer *texture;
     };

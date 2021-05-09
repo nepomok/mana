@@ -20,15 +20,17 @@
 #ifndef MANA_SHADERRESOURCE_HPP
 #define MANA_SHADERRESOURCE_HPP
 
-#include "engine/resource/textresource.hpp"
+#include "engine/resource/resource.hpp"
 #include "engine/render/renderallocator.hpp"
 
 namespace mana {
-    class ShaderResource : public Resource {
+    class ShaderResource : public Resource<ShaderProgram> {
     public:
         ShaderResource();
 
-        ShaderResource(RenderAllocator &alloc, TextResource &vertexShader, TextResource &fragmentShader);
+        ShaderResource(RenderAllocator &alloc,
+                       Resource <std::string> &vertexShader,
+                       Resource <std::string> &fragmentShader);
 
         ~ShaderResource() override;
 
@@ -36,12 +38,12 @@ namespace mana {
 
         void free() override;
 
-        ShaderProgram *getShader();
+        const ShaderProgram &get() override;
 
     private:
         RenderAllocator *alloc;
-        TextResource *vertexShader;
-        TextResource *fragmentShader;
+        Resource <std::string> *vertexShader;
+        Resource <std::string> *fragmentShader;
         ShaderProgram *shader;
     };
 }

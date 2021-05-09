@@ -54,9 +54,9 @@ namespace mana {
         isLoaded = false;
     }
 
-    Script *MonoScriptResource::getScript() {
+    const Script &MonoScriptResource::get() {
         if (!isLoaded)
             load();
-        return script;
+        return *script;
     }
 }

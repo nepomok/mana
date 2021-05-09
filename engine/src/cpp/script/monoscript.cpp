@@ -35,15 +35,15 @@ namespace mana {
         delete assembly;
     }
 
-    void MonoScript::onEnable() {
+    void MonoScript::onEnable() const {
         object.invokeMethod("OnEnable");
     }
 
-    void MonoScript::onDisable() {
+    void MonoScript::onDisable() const {
         object.invokeMethod("OnDisable");
     }
 
-    void MonoScript::onUpdate() {
+    void MonoScript::onUpdate() const {
         object.invokeMethod("OnUpdate");
     }
 }

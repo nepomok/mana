@@ -27,7 +27,8 @@ namespace mana {
 
     }
 
-    ShaderResource::ShaderResource(RenderAllocator &alloc, TextResource &vertexShader, TextResource &fragmentShader)
+    ShaderResource::ShaderResource(RenderAllocator &alloc, Resource<std::string> &vertexShader,
+                                   Resource<std::string> &fragmentShader)
             : alloc(&alloc), vertexShader(&vertexShader), fragmentShader(&fragmentShader), shader(nullptr) {
     }
 
@@ -39,8 +40,8 @@ namespace mana {
     void ShaderResource::load() {
         if (isLoaded)
             return;
-        shader = alloc->allocateShaderProgram(vertexShader->getText(),
-                                              fragmentShader->getText(),
+        shader = alloc->allocateShaderProgram(vertexShader->get(),
+                                              fragmentShader->get(),
                                               Renderer3D::getShaderMacros(),
                                               Renderer3D::getShaderIncludeCallback());
         isLoaded = true;
@@ -54,9 +55,9 @@ namespace mana {
         isLoaded = false;
     }
 
-    ShaderProgram *ShaderResource::getShader() {
+    const ShaderProgram &ShaderResource::get() {
         if (!isLoaded)
             load();
-        return shader;
+        return *shader;
     }
 }

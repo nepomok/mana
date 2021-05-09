@@ -20,10 +20,10 @@
 #ifndef MANA_TEXTFILERESOURCE_HPP
 #define MANA_TEXTFILERESOURCE_HPP
 
-#include "engine/resource/textresource.hpp"
+#include "engine/resource/resource.hpp"
 
 namespace mana {
-    class TextFileResource : public TextResource {
+    class TextFileResource : public Resource<std::string> {
     public:
         TextFileResource();
 
@@ -35,7 +35,7 @@ namespace mana {
 
         void free() override;
 
-        const std::string &getText() override;
+        const std::string &get() override;
 
     private:
         std::string filePath;

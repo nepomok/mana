@@ -132,11 +132,11 @@ namespace mana {
             }
 
             //Bind shader program
-            ShaderProgram *sp = command.shader;
+            const ShaderProgram *sp = command.shader;
             if (sp == nullptr) {
                 throw std::runtime_error("nullptr shaderprogram");
             }
-            auto &shader = dynamic_cast<OGLShaderProgram &>(*sp);
+            auto &shader = dynamic_cast<const OGLShaderProgram &>(*sp);
             shader.activate();
 
             glDepthFunc(OGLTypeConverter::convert(command.properties.depthTestMode));

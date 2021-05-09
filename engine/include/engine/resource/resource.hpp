@@ -20,14 +20,30 @@
 #ifndef MANA_RESOURCE_HPP
 #define MANA_RESOURCE_HPP
 
+#include <stdexcept>
+
 namespace mana {
-    class Resource {
+    class ResourceBase {
     public:
-        virtual ~Resource() = default;
+        virtual ~ResourceBase() = default;
+    };
 
-        virtual void load() = 0;
+    template<typename T>
+    class Resource : public ResourceBase {
+    public:
+        ~Resource() override = default;
 
-        virtual void free() = 0;
+        virtual void load() {
+            isLoaded = true;
+        }
+
+        virtual void free() {
+            isLoaded = false;
+        }
+
+        virtual const T &get() {
+            throw std::runtime_error("Resource get not implemented");
+        }
 
     protected:
         bool isLoaded = false;

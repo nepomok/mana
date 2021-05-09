@@ -23,16 +23,12 @@
 #include <string>
 #include <map>
 
-#include "engine/resource/imageresource.hpp"
-#include "engine/resource/meshresource.hpp"
-#include "engine/resource/render/meshbufferresource.hpp"
-#include "engine/resource/render/shaderresource.hpp"
-#include "engine/resource/textresource.hpp"
+#include "engine/resource/resource.hpp"
 
 namespace mana {
     class Resources {
     public:
-        std::map<std::string, Resource *> resources;
+        std::map<std::string, ResourceBase *> resources;
 
         Resources() : resources() {}
 
@@ -51,7 +47,8 @@ namespace mana {
             throw std::runtime_error("Resources cannot be copied");
         }
 
-        void addResource(const std::string &name, Resource *r) {
+        template<typename T>
+        void addResource(const std::string &name, Resource<T> *r) {
             if (resources.find(name) != resources.end())
                 throw std::runtime_error("Resource with name " + name + " already exists");
             resources[name] = r;
@@ -64,10 +61,10 @@ namespace mana {
         }
 
         template<typename T>
-        T &getResource(const std::string &name) const {
+        Resource<T> &getResource(const std::string &name) const {
             if (resources.find(name) == resources.end())
                 throw std::runtime_error("Resource with name " + name + " not found");
-            return *dynamic_cast<T *>(resources.at(name));
+            return *dynamic_cast<Resource<T> *>(resources.at(name));
         }
     };
 }

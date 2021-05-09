@@ -42,8 +42,7 @@ namespace mana {
     void RenderSystem::update(float deltaTime, Scene &scene) {
         RenderScene scene3d;
 
-        auto nodes = scene.findNodesWithComponent<LightComponent>();
-        for (auto *nodePointer : nodes) {
+        for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
             auto &node = *nodePointer;
             if (!node.enabled)
                 continue;
@@ -90,8 +89,7 @@ namespace mana {
 
         std::map<RenderComponent *, TransformComponent *> mapping;
         std::vector<RenderComponent *> renderComponents;
-        nodes = scene.findNodesWithComponent<RenderComponent>();
-        for (auto &nodePointer : nodes) {
+        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
             auto &node = *nodePointer;
             if (!node.enabled)
                 continue;
@@ -118,17 +116,17 @@ namespace mana {
 
             unit.transform = mapping[comp]->transform;
 
-            unit.command.shader = comp->shader->getShader();
+            unit.command.shader = &comp->shader->get();
             for (auto &m : comp->textureMapping) {
                 unit.command.shader->setTexture(m.first, m.second);
             }
 
             for (auto *t : comp->textureBuffers) {
-                unit.command.textures.emplace_back(t->getTextureBuffer());
+                unit.command.textures.emplace_back(&t->get());
             }
 
             for (auto *m : comp->meshBuffers) {
-                unit.command.meshBuffers.emplace_back(m->getRenderMesh());
+                unit.command.meshBuffers.emplace_back(&m->get());
             }
 
             unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
@@ -155,9 +153,8 @@ namespace mana {
             scene3d.units.emplace_back(unit);
         }
 
-        nodes = scene.findNodesWithComponent<CameraComponent>();
         Node *cameraNode;
-        for (auto &node : nodes) {
+        for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
             if (!node->enabled)
                 continue;
             auto &comp = node->getComponent<CameraComponent>();

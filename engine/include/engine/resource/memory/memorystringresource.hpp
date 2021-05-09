@@ -20,10 +20,10 @@
 #ifndef MANA_MEMSTRINGRESOURCE_HPP
 #define MANA_MEMSTRINGRESOURCE_HPP
 
-#include "engine/resource/textresource.hpp"
+#include "engine/resource/resource.hpp"
 
 namespace mana {
-    class MemoryStringResource : public TextResource {
+    class MemoryStringResource : public Resource<std::string> {
     public:
         std::string text;
 
@@ -35,7 +35,7 @@ namespace mana {
 
         void free() override {}
 
-        const std::string &getText() override {
+        const std::string &get() override {
             return text;
         }
     };

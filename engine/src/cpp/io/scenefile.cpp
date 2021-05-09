@@ -204,18 +204,18 @@ namespace mana {
 
     RenderComponent *getRenderComponent(const nlohmann::json &component, Resources &res) {
         auto *ret = new RenderComponent();
-        ret->shader = &res.getResource<ShaderResource>(component["shaderResourceName"]);
+        ret->shader = &res.getResource<ShaderProgram>(component["shaderResourceName"]);
 
         for (const auto &entry : component["textureMapping"]) {
             ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
         }
 
         for (auto &mesh : component["meshes"]) {
-            ret->meshBuffers.emplace_back(&res.getResource<MeshBufferResource>(mesh["resourceName"]));
+            ret->meshBuffers.emplace_back(&res.getResource<MeshBuffer>(mesh["resourceName"]));
         }
 
         for (const auto &tex : component["textures"]) {
-            ret->textureBuffers.emplace_back(&res.getResource<TextureBufferResource>(tex["resourceName"]));
+            ret->textureBuffers.emplace_back(&res.getResource<TextureBuffer>(tex["resourceName"]));
         }
 
         auto props = component["renderProperties"];
@@ -283,7 +283,7 @@ namespace mana {
 
     ScriptComponent *getScriptComponent(const nlohmann::json &component, Resources &res) {
         auto *ret = new ScriptComponent();
-        ret->script = &res.getResource<ScriptResource>(component["resourceName"]);
+        ret->script = &res.getResource<Script>(component["resourceName"]);
         ret->queue = component["queue"];
         return ret;
     }

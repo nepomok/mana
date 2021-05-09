@@ -22,11 +22,11 @@
 
 #include <string>
 
-#include "engine/resource/meshresource.hpp"
+#include "engine/resource/resource.hpp"
 #include "engine/io/assetfile.hpp"
 
 namespace mana {
-    class MeshFileResource : public MeshResource {
+    class MeshFileResource : public Resource<Mesh> {
     public:
         MeshFileResource();
 
@@ -38,7 +38,7 @@ namespace mana {
 
         void free() override;
 
-        const Mesh &getMesh() override;
+        const Mesh &get() override;
 
     private:
         AssetFile assetFile;

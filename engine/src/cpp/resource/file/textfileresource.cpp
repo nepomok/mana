@@ -40,7 +40,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const std::string &TextFileResource::getText() {
+    const std::string &TextFileResource::get() {
         if (!isLoaded)
             load();
         return text;
