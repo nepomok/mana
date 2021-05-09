@@ -27,9 +27,9 @@
 namespace mana {
     class World2D;
 
-    class RigidBody2D {
+    class Rigidbody2D {
     public:
-        virtual ~RigidBody2D() = 0;
+        virtual ~Rigidbody2D() = 0;
 
         virtual World2D *getWorld() = 0;
 

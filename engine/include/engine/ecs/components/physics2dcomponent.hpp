@@ -17,21 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RIGIDBODYCOMPONENT_HPP
-#define MANA_RIGIDBODYCOMPONENT_HPP
+#ifndef MANA_PHYSICS2DCOMPONENT_HPP
+#define MANA_PHYSICS2DCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
-namespace mana {
-    struct RigidBodyComponent : public Component {
-        Component *clone() override {
-            return new RigidBodyComponent(*this);
-        }
+#include "engine/physics/2d/collider2d.hpp"
+#include "engine/physics/2d/rigidbody2d.hpp"
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(RigidBodyComponent);
-        }
+#include "engine/resource/resource.hpp"
+
+namespace mana {
+    struct Physics2DComponent : public Component {
+        Resource<Rigidbody2D> *rigidbody;
+        Resource<Collider2D> *collider;
     };
 }
 
-#endif //MANA_RIGIDBODYCOMPONENT_HPP
+#endif //MANA_PHYSICS2DCOMPONENT_HPP

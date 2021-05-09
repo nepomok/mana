@@ -27,15 +27,15 @@
 namespace mana {
     class World3D;
 
-    class RigidBody3D {
+    class Rigidbody3D {
     public:
-        virtual ~RigidBody3D() = 0;
+        virtual ~Rigidbody3D() = 0;
 
         virtual World3D *getWorld() = 0;
 
-        virtual void setRigidBodyType(RigidBodyType type) = 0;
+        virtual void setRigidbodyType(RigidBodyType type) = 0;
 
-        virtual RigidBodyType getRigidBodyType() = 0;
+        virtual RigidBodyType getRigidbodyType() = 0;
 
         virtual void setPosition(const Vec3f &position) = 0;
 

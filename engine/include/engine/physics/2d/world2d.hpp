@@ -30,9 +30,9 @@ namespace mana {
     public:
         virtual ~World2D() = 0;
 
-        virtual std::vector<RigidBody2D *> getRigidBodies() = 0;
+        virtual std::vector<Rigidbody2D *> getRigidbodies() = 0;
 
-        virtual RigidBody2D *createRigidBody(const Vec2f &position) = 0;
+        virtual Rigidbody2D *createRigidbody(const Vec2f &position) = 0;
 
         virtual void setGravity(const Vec2f &gravity) = 0;
     };

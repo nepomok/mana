@@ -17,21 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COLLIDERCOMPONENT_HPP
-#define MANA_COLLIDERCOMPONENT_HPP
+#ifndef MANA_PHYSICS3DCOMPONENT_HPP
+#define MANA_PHYSICS3DCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
-namespace mana {
-    struct ColliderComponent : public Component {
-        Component *clone() override {
-            return new ColliderComponent(*this);
-        }
+#include "engine/physics/3d/collider3d.hpp"
+#include "engine/physics/3d/rigidbody3d.hpp"
 
-        const std::type_info& getTypeInfo() override {
-            return typeid(ColliderComponent);
-        }
+#include "engine/resource/resource.hpp"
+
+namespace mana {
+    struct Physics3DComponent : public Component {
+        Resource<Rigidbody3D> *rigidbody;
+        Resource<Collider3D> *collider;
     };
 }
 
-#endif //MANA_COLLIDERCOMPONENT_HPP
+#endif //MANA_PHYSICS3DCOMPONENT_HPP
