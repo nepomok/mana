@@ -114,7 +114,7 @@ namespace mana {
         for (auto *comp : renderComponents) {
             RenderUnit unit;
 
-            unit.transform = mapping[comp]->transform;
+            unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
 
             unit.command.shader = &comp->shader->get();
             for (auto &m : comp->textureMapping) {

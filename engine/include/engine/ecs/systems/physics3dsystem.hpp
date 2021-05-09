@@ -17,7 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYSICSSYSTEM3D_HPP
-#define MANA_PHYSICSSYSTEM3D_HPP
+#ifndef MANA_PHYISCS3DSYSTEM_HPP
+#define MANA_PHYISCS3DSYSTEM_HPP
 
-#endif //MANA_PHYSICSSYSTEM3D_HPP
+#include "engine/ecs/system.hpp"
+
+namespace mana {
+    class Physics3DSystem : public System {
+    public:
+        explicit Physics3DSystem(const World3D &world);
+
+        ~Physics3DSystem() override = default;
+
+        void start() override;
+
+        void stop() override;
+
+        void update(float deltaTime, Scene &scene) override;
+
+    private:
+        const World3D *world;
+    };
+}
+
+#endif //MANA_PHYISCS3DSYSTEM_HPP

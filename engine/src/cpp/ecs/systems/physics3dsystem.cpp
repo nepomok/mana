@@ -17,30 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TRANSFORM_HPP
-#define MANA_TRANSFORM_HPP
+#include "engine/ecs/systems/physics3dsystem.hpp"
 
-#include "engine/math/vector3.hpp"
+#include "engine/ecs/components/physics3dcomponent.hpp"
+
+#include "engine/physics/3d/world3d.hpp"
 
 namespace mana {
-    struct Transform {
-        Vec3f position;
-        Vec3f rotation;
-        Vec3f scale = Vec3f(1);
+    Physics3DSystem::Physics3DSystem(const World3D &world) : world(&world) {}
 
-        Transform() = default;
+    void Physics3DSystem::start() {}
 
-        Transform(Vec3f position, Vec3f rotation, Vec3f scale) : position(position),
-                                                                 rotation(rotation),
-                                                                 scale(scale) {}
+    void Physics3DSystem::stop() {}
 
-        Transform &operator+=(const Transform &other) {
-            position += other.position;
-            rotation += other.rotation;
-            scale += other.scale;
-            return *this;
+    void Physics3DSystem::update(float deltaTime, Scene &scene) {
+        world->step(deltaTime);
+        for (auto &node : scene.findNodesWithComponent<Physics3DComponent>()) {
+            auto &transform = node->getComponent<TransformComponent>();
+            auto &physicsComponent = node->getComponent<Physics3DComponent>();
+            transform.transform.position = physicsComponent.rigidbody->get().getPosition();
+            transform.transform.rotation = physicsComponent.rigidbody->get().getRotation();
         }
-    };
+    }
 }
-
-#endif //MANA_TRANSFORM_HPP

@@ -17,34 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TRANSFORMCOMPONENT_HPP
-#define MANA_TRANSFORMCOMPONENT_HPP
+#ifndef MANA_PHYSICSSYSTEM3D_HPP
+#define MANA_PHYSICSSYSTEM3D_HPP
 
-#include "engine/ecs/component.hpp"
-#include "engine/math/transform.hpp"
+#include "engine/ecs/system.hpp"
 
 namespace mana {
-    struct TransformComponent : public Component {
-        static Transform walkTransformHierarchy(const TransformComponent &comp) {
-            Transform ret = comp.transform;
-            if (comp.parent != nullptr)
-                ret += walkTransformHierarchy(*comp.parent);
-            return ret;
-        }
+    class Physics2DSystem : public System {
+    public:
+        explicit Physics2DSystem(const World2D &world);
 
-        TransformComponent() : Component(TRANSFORM) {}
+        ~Physics2DSystem() override = default;
 
-        Component *clone() override {
-            return new TransformComponent(*this);
-        }
+        void start() override;
 
-        const std::type_info &getTypeInfo() override {
-            return typeid(TransformComponent);
-        }
+        void stop() override;
 
-        Transform transform;
-        TransformComponent *parent = nullptr;
+        void update(float deltaTime, Scene &scene) override;
+
+    private:
+        const World2D *world;
     };
 }
 
-#endif //MANA_TRANSFORMCOMPONENT_HPP
+#endif //MANA_PHYSICSSYSTEM3D_HPP

@@ -35,6 +35,8 @@ namespace mana {
         virtual Rigidbody3D *createRigidbody(const Vec3f &position) = 0;
 
         virtual void setGravity(const Vec3f &gravity) = 0;
+
+        virtual void step(float deltaTime) const = 0;
     };
 }
 

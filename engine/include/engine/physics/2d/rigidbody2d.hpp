@@ -31,25 +31,29 @@ namespace mana {
     public:
         virtual ~Rigidbody2D() = 0;
 
-        virtual World2D *getWorld() = 0;
+        virtual World2D *getWorld() const = 0;
 
-        virtual void setRigidbodyType(RigidBodyType type) = 0;
+        virtual void setRigidbodyType(RigidBodyType type) const = 0;
 
-        virtual RigidBodyType getRigidbodyType() = 0;
+        virtual RigidBodyType getRigidbodyType() const = 0;
 
-        virtual void setPosition(const Vec2f &position) = 0;
+        virtual void setPosition(const Vec2f &position) const = 0;
 
-        virtual Vec2f getPosition() = 0;
+        virtual Vec2f getPosition() const = 0;
 
-        virtual void setVelocity(const Vec2f &velocity) = 0;
+        virtual void setRotation(float degrees) const = 0;
 
-        virtual Vec2f getVelocity() = 0;
+        virtual float getRotation() const = 0;
 
-        virtual void setAngularVelocity(float angularVelocity) = 0;
+        virtual void setVelocity(const Vec2f &velocity) const = 0;
 
-        virtual float getAngularVelocity() = 0;
+        virtual Vec2f getVelocity() const = 0;
 
-        virtual void setColliders(const std::vector<Collider2D> &collider) = 0;
+        virtual void setAngularVelocity(float angularVelocity) const = 0;
+
+        virtual float getAngularVelocity() const = 0;
+
+        virtual void setColliders(const std::vector<Collider2D> &collider) const = 0;
     };
 }
 

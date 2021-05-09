@@ -31,25 +31,29 @@ namespace mana {
     public:
         virtual ~Rigidbody3D() = 0;
 
-        virtual World3D *getWorld() = 0;
+        virtual World3D *getWorld() const = 0;
 
-        virtual void setRigidbodyType(RigidBodyType type) = 0;
+        virtual void setRigidbodyType(RigidBodyType type) const = 0;
 
-        virtual RigidBodyType getRigidbodyType() = 0;
+        virtual RigidBodyType getRigidbodyType() const = 0;
 
-        virtual void setPosition(const Vec3f &position) = 0;
+        virtual void setPosition(const Vec3f &position) const = 0;
 
-        virtual Vec3f getPosition() = 0;
+        virtual const Vec3f &getPosition() const = 0;
 
-        virtual void setVelocity(const Vec3f &velocity) = 0;
+        virtual void setVelocity(const Vec3f &velocity) const = 0;
 
-        virtual Vec3f getVelocity() = 0;
+        virtual const Vec3f &getVelocity() const = 0;
 
-        virtual void setAngularVelocity(const Vec3f &angularVelocity) = 0;
+        virtual void setRotation(const Vec3f &rotation) const = 0;
 
-        virtual Vec3f getAngularVelocity() = 0;
+        virtual const Vec3f &getRotation() const = 0;
 
-        virtual void setColliders(const std::vector<Collider3D> &collider) = 0;
+        virtual void setAngularVelocity(const Vec3f &angularVelocity) const = 0;
+
+        virtual const Vec3f &getAngularVelocity() const = 0;
+
+        virtual void setColliders(const std::vector<Collider3D> &collider) const = 0;
     };
 }
 
