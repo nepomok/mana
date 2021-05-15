@@ -26,8 +26,6 @@
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 
-#include "engine/math/transform.hpp"
-
 namespace mana {
     enum DepthTestMode {
         DEPTH_TEST_ALWAYS,

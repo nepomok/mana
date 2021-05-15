@@ -20,6 +20,9 @@
 #ifndef MANA_RENDERUNIT_HPP
 #define MANA_RENDERUNIT_HPP
 
+#include "engine/math/transform.hpp"
+#include "engine/render/rendercommand.hpp"
+
 namespace mana {
     struct RenderUnit {
         RenderUnit() : transform(), command() {}

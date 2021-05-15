@@ -28,7 +28,7 @@
 
 namespace mana {
     /**
-     * Stores 2d pixels in row major format.
+     * Stores 2d image data in row major format.
      *
      * @tparam T The type to use for a pixel
      */
@@ -89,7 +89,7 @@ namespace mana {
         }
 
         void blit(const Recti &targetRect, const ImageBuffer<T> &source) {
-            if (!(source.size == targetRect.dimensions)) {
+            if (source.size != targetRect.dimensions) {
                 throw std::runtime_error("Invalid blit source size");
             }
             for (int x = 0; x < targetRect.dimensions.x; x++) {

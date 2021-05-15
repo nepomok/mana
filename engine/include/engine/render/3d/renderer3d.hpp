@@ -50,8 +50,6 @@ namespace mana {
     private:
         Renderer *ren;
         RenderAllocator *alloc;
-
-        ShaderProgram *singleColorShader;
     };
 }
 

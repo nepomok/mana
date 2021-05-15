@@ -27,10 +27,10 @@
 namespace mana {
     struct RenderScene {
         Camera *camera;
-        std::vector <RenderUnit> units;
-        std::vector <DirectionalLight> dir;
-        std::vector <PointLight> point;
-        std::vector <SpotLight> spot;
+        std::vector<RenderUnit> units;
+        std::vector<DirectionalLight> dir;
+        std::vector<PointLight> point;
+        std::vector<SpotLight> spot;
     };
 }
 
