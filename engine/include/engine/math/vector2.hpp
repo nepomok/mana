@@ -106,6 +106,10 @@ namespace mana {
             return lhs.x == rhs.x && lhs.y == rhs.y;
         }
 
+        friend bool operator!=(const Vector2<T> &lhs, const Vector2<T> &rhs) {
+            return lhs.x != rhs.x && lhs.y != rhs.y;
+        }
+
         //https://en.wikipedia.org/wiki/Euclidean_distance
         static double distance(const Vector2<T> &start, const Vector2<T> end) {
             return std::sqrt(std::pow(start.x - end.x, 2) + std::pow(start.y - end.y, 2));
