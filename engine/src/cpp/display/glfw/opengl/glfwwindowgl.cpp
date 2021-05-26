@@ -174,11 +174,10 @@ namespace mana {
                 throw std::runtime_error("Failed to initialize glad");
             }
 
-            input = new GLFWInput(*wndH);
-            renderTarget = new GLFWRenderTargetGL(wndH);
-
             renderDevice = new opengl::OGLRenderDevice();
             renderTarget = new GLFWRenderTargetGL(wndH);
+
+            input = new GLFWInput(*wndH);
 
             _windowMapping[wndH] = this;
 
@@ -215,7 +214,6 @@ namespace mana {
             renderTarget = new GLFWRenderTargetGL(wndH);
 
             input = new GLFWInput(*wndH);
-            renderTarget = new GLFWRenderTargetGL(wndH);
 
             _windowMapping[wndH] = this;
 
@@ -227,7 +225,6 @@ namespace mana {
             delete renderTarget;
             delete renderDevice;
             delete input;
-            delete renderTarget;
             GLFWCounter::leave();
         }
 

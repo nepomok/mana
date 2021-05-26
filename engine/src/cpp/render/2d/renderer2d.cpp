@@ -22,9 +22,7 @@
 namespace mana {
     Renderer2D::Renderer2D() = default;
 
-    Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device), renderer(nullptr) {
-        renderer = device.createRenderer();
-    }
+    Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {}
 
     void Renderer2D::setEnableAlphaBlending(bool enable) {
 
@@ -118,9 +116,5 @@ namespace mana {
 
     const RenderDevice &Renderer2D::getRenderDevice() {
         return *renderDevice;
-    }
-
-    const Renderer &Renderer2D::getRenderer() {
-        return *renderer;
     }
 }

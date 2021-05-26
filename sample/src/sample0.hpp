@@ -28,33 +28,36 @@ public:
     ~Sample0() override = default;
 
 protected:
-    void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
-        Game::start(window, ren, alloc, input);
-        ren.setClearColor(clearColor);
+    void start(Window &window, RenderDevice &device, Input &input) override {
+        Game::start(window, device, input);
+
+        device.getRenderer().setClearColor(clearColor);
+
         manaAssembly = domain.loadAssembly("mana.dll");
+
         ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
     }
 
-    void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) override {
+    void stop(Window &window, RenderDevice &device, Input &input) override {
         delete manaAssembly;
-        Game::stop(window, renderApi, alloc, input);
+        Game::stop(window, device, input);
     }
 
-    void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) override {
+    void update(float deltaTime, Window &window, RenderDevice &device, Input &input) override {
         cameraNode->getComponent<CameraComponent>().aspectRatio =
                 (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
         window.update();
 
-        ren.setViewport({}, window.getFramebufferSize());
+        device.getRenderer().setViewport({}, window.getFramebufferSize());
         ecs.update(deltaTime, scene);
 
         window.swapBuffers();
     }
 
-    void loadScene(RenderAllocator &alloc) override {
-        res = ResourceFile("assets/resources.json").getResources(alloc, domain);
+    void loadScene(RenderDevice &device) override {
+        res = ResourceFile("assets/resources.json").getResources(device, domain);
         scene = SceneFile("assets/scene.json").getScene(*res);
         cameraNode = &scene.nodes.at("mainCamera");
     }

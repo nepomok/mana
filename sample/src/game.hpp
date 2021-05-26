@@ -33,39 +33,40 @@ public:
     virtual int loop(GraphicsApi api) {
         DisplayManager dm(mana::GLFW);
 
-        Window *wnd = dm.createWindow(api,"Game", {640, 480}, {});
+        Window *wnd = dm.createWindow(api, "Game", {640, 480}, {});
 
-        auto *alloc = RenderAllocator::instantiate(api);
-        auto *ren = Renderer::instantiate(api);
+        auto &device = wnd->getRenderDevice();
 
-        ren->setMultiSample(true);
+        device.getRenderer().setMultiSample(true);
 
-        ren2d = Renderer2D(*ren, *alloc);
-        ren3d = Renderer3D(*ren, *alloc);
+        ren2d = Renderer2D(device);
+        ren3d = Renderer3D(device);
 
         Input &input = wnd->getInput();
 
-        start(*wnd, *ren, *alloc, input);
+        start(*wnd, device, input);
 
         float deltaTime = 0;
         auto lastUpdate = std::chrono::high_resolution_clock::now();
         while (!wnd->shouldClose()) {
             auto start = std::chrono::high_resolution_clock::now();
-            update(deltaTime, *wnd, *ren, *alloc, input);
+            update(deltaTime, *wnd, device, input);
             auto stop = std::chrono::high_resolution_clock::now();
             deltaTime = static_cast<std::chrono::duration<float>>(stop - start).count();
         }
 
-        stop(*wnd, *ren, *alloc, input);
+        stop(*wnd, device, input);
+
+        delete wnd;
 
         return 0;
     }
 
 protected:
-    virtual void start(Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) {
+    virtual void start(Window &window, RenderDevice &device, Input &input) {
         window.registerListener(*this);
         input.registerListener(*this);
-        loadScene(alloc);
+        loadScene(device);
     }
 
     /**
@@ -75,16 +76,15 @@ protected:
      * @param ren
      * @param input
      */
-    virtual void update(float deltaTime, Window &window, Renderer &ren, RenderAllocator &alloc, Input &input) {
-    }
+    virtual void update(float deltaTime, Window &window, RenderDevice &device, Input &input) {}
 
-    virtual void stop(Window &window, Renderer &renderApi, RenderAllocator &alloc, Input &input) {
+    virtual void stop(Window &window, RenderDevice &device, Input &input) {
         window.unregisterListener(*this);
         input.unregisterListener(*this);
         destroyScene();
     }
 
-    virtual void loadScene(RenderAllocator &alloc) = 0;
+    virtual void loadScene(RenderDevice &device) = 0;
 
     virtual void destroyScene() = 0;
 

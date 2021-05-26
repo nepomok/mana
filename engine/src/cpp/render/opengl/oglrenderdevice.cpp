@@ -26,12 +26,10 @@
 #include "render/opengl/oglmeshobject.hpp"
 #include "render/opengl/oglshaderprogram.hpp"
 
-#include "render/opengl/oglrenderer.hpp"
-
 namespace mana {
     namespace opengl {
-        Renderer *OGLRenderDevice::createRenderer() {
-            return new OGLRenderer();
+        Renderer &OGLRenderDevice::getRenderer() {
+            return dynamic_cast<Renderer &>(renderer);
         }
 
         RenderTarget *OGLRenderDevice::createRenderTarget(Vec2i size, int samples) {

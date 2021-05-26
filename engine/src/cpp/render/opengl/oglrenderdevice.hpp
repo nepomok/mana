@@ -22,15 +22,17 @@
 
 #include <mana.hpp>
 
-#include "engine/render/renderdevice.hpp"
+#include "render/opengl/oglrenderer.hpp"
 
 namespace mana {
     namespace opengl {
         class OGLRenderDevice : public RenderDevice {
         public:
+            OGLRenderDevice() = default;
+
             ~OGLRenderDevice() override = default;
 
-            Renderer *createRenderer() override;
+            Renderer &getRenderer() override;
 
             RenderTarget *createRenderTarget(Vec2i size, int samples) override;
 
@@ -45,6 +47,9 @@ namespace mana {
                                                const std::map<std::string, std::string> &macros,
                                                const std::function<std::string(
                                                        const char *)> &includeCallback) override;
+
+        private:
+            OGLRenderer renderer;
         };
     }
 }

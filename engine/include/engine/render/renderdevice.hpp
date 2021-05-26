@@ -33,7 +33,7 @@ namespace mana {
     public:
         virtual ~RenderDevice() = default;
 
-        virtual Renderer *createRenderer() = 0;
+        virtual Renderer &getRenderer() = 0;
 
         virtual RenderTarget *createRenderTarget(Vec2i size, int samples) = 0;
 

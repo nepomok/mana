@@ -46,12 +46,9 @@ namespace mana {
                     RenderScene &scene);
 
         const RenderDevice &getRenderDevice();
-
-        const Renderer &getRenderer();
-
+        
     private:
         RenderDevice *device;
-        Renderer *ren;
     };
 }
 

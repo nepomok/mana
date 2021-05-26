@@ -113,10 +113,9 @@ namespace mana {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D() : device(nullptr), ren(nullptr) {};
+    Renderer3D::Renderer3D() : device(nullptr) {};
 
-    Renderer3D::Renderer3D(RenderDevice &device) : device(&device), ren(nullptr) {
-        ren = device.createRenderer();
+    Renderer3D::Renderer3D(RenderDevice &device) : device(&device) {
     }
 
     void Renderer3D::setEnableShadowMapping(bool shadowMapping) {
@@ -124,7 +123,7 @@ namespace mana {
 
     void Renderer3D::render(RenderTarget &target,
                             RenderScene &scene) {
-        if (device == nullptr || ren == nullptr)
+        if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
         bool outline = false;
@@ -141,7 +140,7 @@ namespace mana {
             ShaderProgram *defaultOutlineShader = device->createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
             RenderScene sceneCopy = scene;
-            ren->renderBegin(target);
+            device->getRenderer().renderBegin(target);
             for (auto &unit : sceneCopy.units) {
                 model = MatrixMath::translate(unit.transform.position);
                 model = model * MatrixMath::scale(unit.transform.scale);
@@ -216,7 +215,7 @@ namespace mana {
                     unit.command.properties.stencilMode = STENCIL_NEVER;
                 }
 
-                ren->addCommand(unit.command);
+                device->getRenderer().addCommand(unit.command);
             }
             for (auto &unit : sceneCopy.units) {
                 if (unit.outline) {
@@ -250,13 +249,13 @@ namespace mana {
                                                           (float) unit.outlineColor.g() / 255,
                                                           (float) unit.outlineColor.b() / 255));
 
-                    ren->addCommand(unit.command);
+                    device->getRenderer().addCommand(unit.command);
                 }
             }
-            ren->renderFinish();
+            device->getRenderer().renderFinish();
             delete defaultOutlineShader;
         } else {
-            ren->renderBegin(target);
+            device->getRenderer().renderBegin(target);
             for (auto &unit : scene.units) {
                 model = MatrixMath::translate(unit.transform.position);
                 model = model * MatrixMath::scale(unit.transform.scale);
@@ -312,9 +311,9 @@ namespace mana {
 
                 shader.setVec3("MANA_VIEWPOS", unit.transform.position);
 
-                ren->addCommand(unit.command);
+                device->getRenderer().addCommand(unit.command);
             }
-            ren->renderFinish();
+            device->getRenderer().renderFinish();
         }
     }
 
@@ -322,11 +321,5 @@ namespace mana {
         if (device == nullptr)
             throw std::runtime_error("Renderer3D not initialized");
         return *device;
-    }
-
-    const Renderer &Renderer3D::getRenderer() {
-        if (ren == nullptr)
-            throw std::runtime_error("Renderer3D not initialized");
-        return *ren;
     }
 }

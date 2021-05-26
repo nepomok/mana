@@ -91,11 +91,8 @@ namespace mana {
 
         const RenderDevice &getRenderDevice();
 
-        const Renderer &getRenderer();
-
     private:
         RenderDevice *renderDevice = nullptr;
-        Renderer *renderer = nullptr;
     };
 }
 

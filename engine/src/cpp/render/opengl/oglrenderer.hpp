@@ -22,8 +22,6 @@
 
 #include "engine/render/renderer.hpp"
 
-#include "render/opengl/oglrenderdevice.hpp"
-
 namespace mana {
     namespace opengl {
         class OGLRenderer : public Renderer {
