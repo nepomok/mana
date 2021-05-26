@@ -73,7 +73,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const MeshBuffer &MeshBufferResource::get() {
+    MeshBuffer &MeshBufferResource::get() {
         if (!isLoaded)
             load();
         return *mesh;

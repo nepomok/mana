@@ -35,7 +35,7 @@ namespace mana {
 
         void free() override;
 
-        const std::string &get() override;
+        std::string &get() override;
 
     private:
         std::string filePath;

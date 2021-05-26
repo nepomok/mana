@@ -41,7 +41,7 @@ namespace mana {
         void setEnableShadowMapping(bool shadowMapping);
 
         void render(const RenderTarget &target,
-                    const RenderScene &scene);
+                    RenderScene &scene);
 
         const Renderer &getRenderer();
 

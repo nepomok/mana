@@ -121,7 +121,7 @@ namespace mana {
     }
 
     void Renderer3D::render(const RenderTarget &target,
-                            const RenderScene &scene) {
+                            RenderScene &scene) {
         if (ren == nullptr || alloc == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
@@ -145,7 +145,7 @@ namespace mana {
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                const ShaderProgram &shader = *unit.command.shader;
+                ShaderProgram &shader = *unit.command.shader;
 
                 shader.setMat4("MANA_M", model);
                 shader.setMat4("MANA_V", view);
@@ -237,7 +237,7 @@ namespace mana {
                     model = model * MatrixMath::scale(unit.transform.scale);
                     model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                    const ShaderProgram &shader = *unit.command.shader;
+                    ShaderProgram &shader = *unit.command.shader;
 
                     shader.setMat4("MANA_M", model);
                     shader.setMat4("MANA_V", view);
@@ -260,7 +260,7 @@ namespace mana {
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                const ShaderProgram &shader = *unit.command.shader;
+                ShaderProgram &shader = *unit.command.shader;
 
                 shader.setMat4("MANA_M", model);
                 shader.setMat4("MANA_V", view);

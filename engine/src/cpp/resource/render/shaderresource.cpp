@@ -55,7 +55,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const ShaderProgram &ShaderResource::get() {
+    ShaderProgram &ShaderResource::get() {
         if (!isLoaded)
             load();
         return *shader;

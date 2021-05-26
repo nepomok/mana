@@ -28,10 +28,10 @@ namespace mana {
     public:
         MeshBufferResource();
 
-        MeshBufferResource(RenderAllocator &alloc, Resource<Mesh> &meshResource);
+        MeshBufferResource(RenderAllocator &alloc, Resource <Mesh> &meshResource);
 
         MeshBufferResource(RenderAllocator &alloc,
-                           Resource<Mesh> &meshResource,
+                           Resource <Mesh> &meshResource,
                            std::vector<Transform> instanceOffsets);
 
         ~MeshBufferResource() override;
@@ -40,11 +40,11 @@ namespace mana {
 
         void free() override;
 
-        const MeshBuffer &get() override;
+        MeshBuffer &get() override;
 
     private:
         RenderAllocator *alloc;
-        Resource<Mesh> *meshResource;
+        Resource <Mesh> *meshResource;
         std::vector<Transform> instanceOffsets;
         bool instanced;
         MeshBuffer *mesh;

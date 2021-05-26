@@ -60,7 +60,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const ImageBuffer<ColorRGBA> &ImageFileResource::get() {
+    ImageBuffer<ColorRGBA> &ImageFileResource::get() {
         if (!isLoaded)
             load();
         return buffer;

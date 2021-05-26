@@ -36,7 +36,7 @@ namespace mana {
 
         void free() override;
 
-        const ImageBuffer<ColorRGBA> &get() override;
+        ImageBuffer<ColorRGBA> &get() override;
 
     private:
         std::string filePath;

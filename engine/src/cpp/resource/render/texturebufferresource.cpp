@@ -59,7 +59,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const TextureBuffer &TextureBufferResource::get() {
+    TextureBuffer &TextureBufferResource::get() {
         if (!isLoaded)
             load();
         return *texture;

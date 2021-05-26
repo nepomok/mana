@@ -38,7 +38,7 @@ namespace mana {
 
         void free() override;
 
-        const Mesh &get() override;
+        Mesh &get() override;
 
     private:
         AssetFile assetFile;

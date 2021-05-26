@@ -31,41 +31,41 @@ namespace mana {
     public:
         ~ShaderProgram() override = default;
 
-        virtual bool setTexture(const std::string &name, int slot) const = 0;
+        virtual bool setTexture(const std::string &name, int slot) = 0;
 
-        virtual bool setBool(const std::string &name, bool value) const = 0;
+        virtual bool setBool(const std::string &name, bool value) = 0;
 
-        virtual bool setInt(const std::string &name, int value) const = 0;
+        virtual bool setInt(const std::string &name, int value) = 0;
 
-        virtual bool setFloat(const std::string &name, float value) const = 0;
-
-
-        virtual bool setVec2(const std::string &name, const Vec2b &value) const = 0;
-
-        virtual bool setVec2(const std::string &name, const Vec2i &value) const = 0;
-
-        virtual bool setVec2(const std::string &name, const Vec2f &value) const = 0;
+        virtual bool setFloat(const std::string &name, float value) = 0;
 
 
-        virtual bool setVec3(const std::string &name, const Vec3b &value) const = 0;
+        virtual bool setVec2(const std::string &name, const Vec2b &value) = 0;
 
-        virtual bool setVec3(const std::string &name, const Vec3i &value) const = 0;
+        virtual bool setVec2(const std::string &name, const Vec2i &value) = 0;
 
-        virtual bool setVec3(const std::string &name, const Vec3f &value) const = 0;
-
-
-        virtual bool setVec4(const std::string &name, const Vec4b &value) const = 0;
-
-        virtual bool setVec4(const std::string &name, const Vec4i &value) const = 0;
-
-        virtual bool setVec4(const std::string &name, const Vec4f &value) const = 0;
+        virtual bool setVec2(const std::string &name, const Vec2f &value) = 0;
 
 
-        virtual bool setMat2(const std::string &name, const Mat2f &value) const = 0;
+        virtual bool setVec3(const std::string &name, const Vec3b &value) = 0;
 
-        virtual bool setMat3(const std::string &name, const Mat3f &value) const = 0;
+        virtual bool setVec3(const std::string &name, const Vec3i &value) = 0;
 
-        virtual bool setMat4(const std::string &name, const Mat4f &value) const = 0;
+        virtual bool setVec3(const std::string &name, const Vec3f &value) = 0;
+
+
+        virtual bool setVec4(const std::string &name, const Vec4b &value) = 0;
+
+        virtual bool setVec4(const std::string &name, const Vec4i &value) = 0;
+
+        virtual bool setVec4(const std::string &name, const Vec4f &value) = 0;
+
+
+        virtual bool setMat2(const std::string &name, const Mat2f &value) = 0;
+
+        virtual bool setMat3(const std::string &name, const Mat3f &value) = 0;
+
+        virtual bool setMat4(const std::string &name, const Mat4f &value) = 0;
     };
 }
 

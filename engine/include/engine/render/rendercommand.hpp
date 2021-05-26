@@ -106,9 +106,9 @@ namespace mana {
     };
 
     struct RenderCommand {
-        const ShaderProgram *shader;
-        std::vector<const TextureBuffer *> textures;
-        std::vector<const MeshBuffer *> meshBuffers;
+        ShaderProgram *shader;
+        std::vector<TextureBuffer *> textures;
+        std::vector<MeshBuffer *> meshBuffers;
         RenderProperties properties;
     };
 }

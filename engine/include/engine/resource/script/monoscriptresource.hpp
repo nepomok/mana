@@ -38,7 +38,7 @@ namespace mana {
 
         void free() override;
 
-        const Script &get() override;
+        Script &get() override;
 
     private:
         MonoCppDomain *monoCppRuntime;

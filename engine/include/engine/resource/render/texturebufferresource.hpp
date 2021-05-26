@@ -39,11 +39,11 @@ namespace mana {
 
         void free() override;
 
-        const TextureBuffer &get() override;
+        TextureBuffer &get() override;
 
     private:
         RenderAllocator *alloc;
-        Resource<ImageBuffer<ColorRGBA>> *img;
+        Resource <ImageBuffer<ColorRGBA>> *img;
         TextureBuffer::Attributes attrib;
         TextureBuffer *texture;
         bool isLoaded = false;

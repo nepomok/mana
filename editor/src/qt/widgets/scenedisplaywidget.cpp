@@ -261,17 +261,17 @@ void SceneDisplayWidget::paintGL() {
 
         unit.transform = p.node->getComponent<TransformComponent>().transform;
 
-        unit.command.shader = comp->shader->getShader();
+        unit.command.shader = &comp->shader->get();
         for (auto &m : comp->textureMapping) {
             unit.command.shader->setTexture(m.first, m.second);
         }
 
         for (auto *t : comp->textureBuffers) {
-            unit.command.textures.emplace_back(t->getTextureBuffer());
+            unit.command.textures.emplace_back(&t->get());
         }
 
         for (auto *m : comp->meshBuffers) {
-            unit.command.meshBuffers.emplace_back(m->getRenderMesh());
+            unit.command.meshBuffers.emplace_back(&m->get());
         }
 
         unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;

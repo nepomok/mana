@@ -103,7 +103,7 @@ namespace mana {
             checkGLError("");
         }
 
-        bool OGLShaderProgram::setTexture(const std::string &name, int slot) const {
+        bool OGLShaderProgram::setTexture(const std::string &name, int slot) {
             // ShaderConductor(SPIRV) merges hlsl texture objects names
             // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
             // Therefore the user is required to define and use a separate SampleState structure for every texture object.
@@ -120,7 +120,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setBool(const std::string &name, bool value) const {
+        bool OGLShaderProgram::setBool(const std::string &name, bool value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -133,7 +133,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setInt(const std::string &name, int value) const {
+        bool OGLShaderProgram::setInt(const std::string &name, int value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -146,7 +146,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setFloat(const std::string &name, float value) const {
+        bool OGLShaderProgram::setFloat(const std::string &name, float value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -159,7 +159,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) const {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -172,7 +172,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) const {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -185,7 +185,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) const {
+        bool OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -198,7 +198,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) const {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -211,7 +211,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) const {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -224,7 +224,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) const {
+        bool OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -237,7 +237,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) const {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -250,7 +250,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) const {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -263,7 +263,7 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) const {
+        bool OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
@@ -276,17 +276,17 @@ namespace mana {
             return ret;
         }
 
-        bool OGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) const {
+        bool OGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        bool OGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) const {
+        bool OGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
             std::string globName = "_Globals." + name;
             throw std::runtime_error("Not Implemented");
         }
 
-        bool OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) const {
+        bool OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
             std::string globName = "_Globals." + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());

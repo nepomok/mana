@@ -47,7 +47,7 @@ namespace mana {
         isLoaded = false;
     }
 
-    const Mesh &MeshFileResource::get() {
+    Mesh &MeshFileResource::get() {
         if (!isLoaded)
             load();
         return mesh;

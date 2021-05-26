@@ -41,7 +41,7 @@ namespace mana {
             throw std::runtime_error("Resource free not implemented");
         }
 
-        virtual const T &get() {
+        virtual T &get() {
             throw std::runtime_error("Resource get not implemented");
         }
     };
