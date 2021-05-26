@@ -26,11 +26,6 @@
 #include "engine/ecs/node.hpp"
 
 namespace mana {
-    /**
-     * A scene object in the form of a vector of nodes.
-     *
-     * Node hierarchy only exists at component level with transform parenting.
-     */
     class Scene {
     public:
         std::map<std::string, Node> nodes;

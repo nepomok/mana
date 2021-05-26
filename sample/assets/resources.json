@@ -97,13 +97,6 @@
       "assemblyFileName": "assets/scripts/script.dll",
       "nameSpace": "",
       "className": "InputController"
-    },
-    {
-      "name": "Script.skyboxController",
-      "type": "monoscript",
-      "assemblyFileName": "assets/scripts/script.dll",
-      "nameSpace": "",
-      "className": "SkyboxController"
     }
   ]
 }
