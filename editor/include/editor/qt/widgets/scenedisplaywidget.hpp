@@ -35,7 +35,7 @@
 class SceneDisplayWidget : public QOpenGLWidget {
 Q_OBJECT
 public:
-    explicit SceneDisplayWidget(QWidget *parent = nullptr, int fps = 30);
+    explicit SceneDisplayWidget(QWidget *parent = nullptr, int fps = 60);
 
     ~SceneDisplayWidget() override;
 
