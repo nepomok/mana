@@ -17,33 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "qtoglrenderallocator.hpp"
+#include "qtoglrenderdevice.hpp"
 #include "qtoglrendertexture.hpp"
 #include "qtoglcheckerror.hpp"
 #include "qtoglmeshobject.hpp"
 #include "qtoglshaderprogram.hpp"
-#include "qtogluserframebuffer.hpp"
+#include "qtoglrendertarget.hpp"
 
 #include "engine/math/matrixmath.hpp"
 
 using namespace mana;
 using namespace mana::opengl;
 
-RenderTarget *QtOGLRenderAllocator::allocateRenderTarget(int width, int height) {
-    auto *ret = new QtOGLUserFrameBuffer(width, height);
+Renderer &QtOGLRenderDevice::getRenderer() {
+    return renderer;
+}
+
+RenderTarget *QtOGLRenderDevice::createRenderTarget(Vec2i size, int samples) {
+    auto *ret = new QtOGLRenderTarget(size, samples);
 
     glGenFramebuffers(1, &ret->FBO);
 
-    checkQtGLError("QtOGLRenderAllocator::allocateRenderTarget");
+    checkQtGLError("QtOGLRenderAllocator::createRenderTarget");
 
     return ret;
 }
 
-TextureBuffer *QtOGLRenderAllocator::allocateTextureBuffer(TextureBuffer::Attributes attributes) {
+TextureBuffer *QtOGLRenderDevice::createTextureBuffer(TextureBuffer::Attributes attributes) {
     return new QtOGLRenderTexture(attributes);
 }
 
-MeshBuffer *QtOGLRenderAllocator::allocateMeshBuffer(const Mesh &mesh) {
+MeshBuffer *QtOGLRenderDevice::createMeshBuffer(const Mesh &mesh) {
     if (mesh.primitive != TRI) {
         throw std::runtime_error("Unsupported primitive");
     }
@@ -174,12 +178,12 @@ MeshBuffer *QtOGLRenderAllocator::allocateMeshBuffer(const Mesh &mesh) {
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    checkQtGLError("QtOGLRenderAllocator::allocateMeshBuffer");
+    checkQtGLError("QtOGLRenderAllocator::createMeshBuffer");
 
     return ret;
 }
 
-MeshBuffer *QtOGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
+MeshBuffer *QtOGLRenderDevice::createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
     if (mesh.primitive != TRI) {
         throw std::runtime_error("Unsupported primitive");
     }
@@ -320,16 +324,20 @@ MeshBuffer *QtOGLRenderAllocator::allocateInstancedMeshBuffer(const Mesh &mesh, 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
-    checkQtGLError("QtOGLRenderAllocator::allocateMeshInstanced");
+    checkQtGLError("QtOGLRenderAllocator::createMeshInstanced");
 
     return ret;
 }
 
-ShaderProgram *QtOGLRenderAllocator::allocateShaderProgram(const std::string &vertexShader,
-                                                           const std::string &fragmentShader,
-                                                           const std::map<std::string, std::string> &macros,
-                                                           const std::function<std::string(
-                                                                   const char *)> &includeCallback) {
+ShaderProgram *QtOGLRenderDevice::createShaderProgram(const std::string &vertexShader,
+                                                      const std::string &fragmentShader,
+                                                      const std::map<std::string, std::string> &macros,
+                                                      const std::function<std::string(
+                                                              const char *)> &includeCallback) {
     return new QtOGLShaderProgram(vertexShader, fragmentShader, macros, includeCallback);
 }
 
+bool QtOGLRenderDevice::initializeOpenGLFunctions() {
+    renderer.initializeOpenGLFunctions();
+    return QOpenGLFunctions_3_3_Core::initializeOpenGLFunctions();
+}

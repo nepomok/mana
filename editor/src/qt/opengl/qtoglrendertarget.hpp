@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_QTOGLUSERFRAMEBUFFER_HPP
-#define MANA_QTOGLUSERFRAMEBUFFER_HPP
+#ifndef MANA_QTOGLRENDERTARGET_HPP
+#define MANA_QTOGLRENDERTARGET_HPP
 
-#include "qtoglframebuffer.hpp"
+#include "engine/render/rendertarget.hpp"
 
 #include <QOpenGLFunctions_3_3_Core>
 
@@ -28,63 +28,62 @@ typedef unsigned int GLuint;
 
 namespace mana {
     namespace opengl {
-        class QtOGLUserFrameBuffer : public QtOGLFrameBuffer, public QOpenGLFunctions_3_3_Core {
+        class QtOGLRenderTarget : public RenderTarget, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint FBO;
 
-            int width;
-            int height;
+            Vec2i size;
 
             bool deleteFramebuffer = true;
 
-            QtOGLUserFrameBuffer();
+            QtOGLRenderTarget();
 
-            QtOGLUserFrameBuffer(int width, int height);
+            QtOGLRenderTarget(Vec2i size, int samples);
 
-            ~QtOGLUserFrameBuffer() override;
+            ~QtOGLRenderTarget() override;
 
-            Vec2i getSize() const override;
+            Vec2i getSize() override;
 
-            void blitColor(const RenderTarget &source,
+            void blitColor(RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
                            TextureBuffer::TextureFiltering filter) override;
 
-            void blitDepth(const RenderTarget &source,
+            void blitDepth(RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
                            TextureBuffer::TextureFiltering filter) override;
 
-            void blitStencil(const RenderTarget &source,
+            void blitStencil(RenderTarget &source,
                              Vec2i sourceOffset,
                              Vec2i targetOffset,
                              Vec2i sourceRect,
                              Vec2i targetRect,
                              TextureBuffer::TextureFiltering filter) override;
 
-            void attachColor(const TextureBuffer &texture) override;
+            void attachColor(TextureBuffer &texture) override;
 
-            void attachDepth(const TextureBuffer &texture) override;
+            void attachDepth(TextureBuffer &texture) override;
 
-            void attachStencil(const TextureBuffer &texture) override;
+            void attachStencil(TextureBuffer &texture) override;
 
-            void attachDepthStencil(const TextureBuffer &texture) override;
+            void attachDepthStencil(TextureBuffer &texture) override;
 
-            void attachColor(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) override;
+            void attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
-            void attachDepth(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) override;
+            void attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
-            void attachStencil(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) override;
+            void attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
-            void attachDepthStencil(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) override;
+            void attachDepthStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
-            GLuint getFBO() const override;
+            GLuint getFBO() const;
         };
     }
 }
 
-#endif //MANA_QTOGLUSERFRAMEBUFFER_HPP
+#endif //MANA_QTOGLRENDERTARGET_HPP

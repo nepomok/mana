@@ -20,8 +20,8 @@
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
 #include "opengl/qtoglrenderer.hpp"
-#include "opengl/qtoglrenderallocator.hpp"
-#include "opengl/qtogluserframebuffer.hpp"
+#include "opengl/qtoglrenderdevice.hpp"
+#include "opengl/qtoglrendertarget.hpp"
 
 #include <QResizeEvent>
 #include <utility>
@@ -34,12 +34,9 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     frameBuffer.deleteFramebuffer = false;
 
     frameBuffer.FBO = defaultFramebufferObject();
-    frameBuffer.width = width();
-    frameBuffer.height = height();
+    frameBuffer.size = {width(), height()};
 
-    ren = new mana::opengl::QtOGLRenderer();
-    alloc = new mana::opengl::QtOGLRenderAllocator();
-    ren3d = mana::Renderer3D(*ren, *alloc);
+    ren3d = mana::Renderer3D(device);
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
 
@@ -49,8 +46,6 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
 }
 
 SceneDisplayWidget::~SceneDisplayWidget() {
-    delete alloc;
-    delete ren;
 }
 
 void SceneDisplayWidget::setScene(const mana::Scene &s) {
@@ -93,12 +88,8 @@ const std::vector<std::string> &SceneDisplayWidget::getHighlightedNodes() {
     return highlightedNodes;
 }
 
-mana::Renderer &SceneDisplayWidget::getRenderer() {
-    return *ren;
-}
-
-mana::RenderAllocator &SceneDisplayWidget::getAllocator() {
-    return *alloc;
+mana::RenderDevice &SceneDisplayWidget::getDevice() {
+    return device;
 }
 
 void SceneDisplayWidget::setFps(int f) {
@@ -173,11 +164,10 @@ struct RenderData {
 };
 
 void SceneDisplayWidget::paintGL() {
-    ren->initializeOpenGLFunctions();
-    alloc->initializeOpenGLFunctions();
+    device.initializeOpenGLFunctions();
 
-    ren->setClearColor(mana::ColorRGBA(38, 38, 38, 255));
-    ren->setViewport({}, {frameBuffer.width, frameBuffer.height});
+    device.getRenderer().setClearColor(mana::ColorRGBA(38, 38, 38, 255));
+    device.getRenderer().setViewport({}, frameBuffer.size);
 
     RenderScene scene3d;
 
@@ -319,8 +309,7 @@ void SceneDisplayWidget::paintGL() {
 
 void SceneDisplayWidget::resizeGL(int w, int h) {
     frameBuffer.FBO = defaultFramebufferObject();
-    frameBuffer.width = w;
-    frameBuffer.height = h;
+    frameBuffer.size = {w, h};
     QOpenGLWidget::resizeGL(w, h);
 }
 

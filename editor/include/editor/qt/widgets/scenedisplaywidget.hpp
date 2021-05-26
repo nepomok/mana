@@ -27,9 +27,9 @@
 #include "mana.hpp"
 
 #include "opengl/qtoglrenderer.hpp"
-#include "opengl/qtoglrenderallocator.hpp"
+#include "opengl/qtoglrenderdevice.hpp"
 
-#include "opengl/qtogluserframebuffer.hpp"
+#include "opengl/qtoglrendertarget.hpp"
 
 //TODO: Deallocate render resources (The destructors have to be called from paintGl)
 class SceneDisplayWidget : public QOpenGLWidget {
@@ -39,9 +39,7 @@ public:
 
     ~SceneDisplayWidget() override;
 
-    mana::Renderer &getRenderer();
-
-    mana::RenderAllocator &getAllocator();
+    mana::RenderDevice &getDevice();
 
     void setFps(int fps);
 
@@ -103,8 +101,8 @@ private:
 
     QElapsedTimer delta;
 
-    mana::opengl::QtOGLRenderer *ren;
-    mana::opengl::QtOGLRenderAllocator *alloc;
+    mana::opengl::QtOGLRenderDevice device;
+
     mana::Renderer3D ren3d;
 
     mana::Scene scene;
@@ -121,7 +119,7 @@ private:
     float movSpeed = 5;
     float rotSpeed = 50;
 
-    mana::opengl::QtOGLUserFrameBuffer frameBuffer;
+    mana::opengl::QtOGLRenderTarget frameBuffer;
 
     std::vector<std::string> highlightedNodes;
 

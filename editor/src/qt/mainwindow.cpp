@@ -47,7 +47,7 @@ MainWindow::MainWindow() {
 
     rootWidget->setLayout(rootLayout);
 
-    resources = ResourceFile("./assets/resources.json").getResources(sceneDisplay->getAllocator(), domain);
+    resources = ResourceFile("./assets/resources.json").getResources(sceneDisplay->getDevice(), domain);
     scene = SceneFile("./assets/scene.json").getScene(*resources);
 
     sceneDisplay->setScene(scene);

@@ -36,9 +36,9 @@ namespace mana {
 
             void setMultiSample(bool multiSample) override;
 
-            void renderBegin(const RenderTarget &target) override;
+            void renderBegin(RenderTarget &target) override;
 
-            void addCommand(const RenderCommand &command) override;
+            void addCommand(RenderCommand &command) override;
 
             void renderFinish() override;
 

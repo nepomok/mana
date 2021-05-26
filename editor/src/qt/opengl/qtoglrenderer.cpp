@@ -30,7 +30,7 @@
 #include "qtoglshaderprogram.hpp"
 #include "qtoglrendertexture.hpp"
 #include "qtoglmeshobject.hpp"
-#include "qtoglframebuffer.hpp"
+#include "qtoglrendertarget.hpp"
 
 #include "qtoglcheckerror.hpp"
 #include "qtogltypeconverter.hpp"
@@ -83,7 +83,7 @@ namespace mana {
             this->multiSample = s;
         }
 
-        void QtOGLRenderer::renderBegin(const RenderTarget &target) {
+        void QtOGLRenderer::renderBegin(RenderTarget &target) {
             glClearColor((float) clearColorValue.r() / (float) 255,
                          (float) clearColorValue.g() / (float) 255,
                          (float) clearColorValue.b() / (float) 255,
@@ -94,7 +94,7 @@ namespace mana {
             else
                 glDisable(GL_MULTISAMPLE);
 
-            auto &fb = dynamic_cast<const QtOGLFrameBuffer &>(target);
+            auto &fb = dynamic_cast<const QtOGLRenderTarget &>(target);
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
@@ -119,7 +119,7 @@ namespace mana {
             glClear(clearMask);
         }
 
-        void QtOGLRenderer::addCommand(const RenderCommand &command) {
+        void QtOGLRenderer::addCommand(RenderCommand &command) {
             //Bind textures
             for (int i = 0; i < command.textures.size(); i++) {
                 auto *textureObject = command.textures.at(i);
