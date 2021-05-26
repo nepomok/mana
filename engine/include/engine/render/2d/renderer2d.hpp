@@ -21,7 +21,7 @@
 #define MANA_RENDERER2D_HPP
 
 #include "engine/render/renderer.hpp"
-#include "engine/render/renderallocator.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
     /**
@@ -39,7 +39,7 @@ namespace mana {
     public:
         Renderer2D();
 
-        Renderer2D(Renderer &ren, RenderAllocator &alloc);
+        explicit Renderer2D(RenderDevice &device);
 
         void setEnableAlphaBlending(bool enable);
 
@@ -49,13 +49,14 @@ namespace mana {
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, const ShaderProgram& shader, Vec2f center, float rotation);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, const ShaderProgram &shader, Vec2f center,
+                  float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, const ShaderProgram& shader);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, const ShaderProgram &shader);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture, Vec2f center, float rotation);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, Vec2f center, float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer& texture);
+        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture);
 
         void draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation);
 
@@ -67,13 +68,14 @@ namespace mana {
 
         void draw(Vec2f point, ColorRGBA color = {});
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, const ShaderProgram& shader, Vec2i center, float rotation);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, const ShaderProgram &shader, Vec2i center,
+                  float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, const ShaderProgram& shader);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, const ShaderProgram &shader);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture, Vec2i center, float rotation);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, Vec2i center, float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer& texture);
+        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture);
 
         void draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation);
 
@@ -87,9 +89,13 @@ namespace mana {
 
         void renderPresent();
 
+        const RenderDevice &getRenderDevice();
+
+        const Renderer &getRenderer();
+
     private:
-        Renderer *ren = nullptr;
-        RenderAllocator *alloc = nullptr;
+        RenderDevice *renderDevice = nullptr;
+        Renderer *renderer = nullptr;
     };
 }
 

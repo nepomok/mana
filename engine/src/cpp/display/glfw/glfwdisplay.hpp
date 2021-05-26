@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "glfwwindow.hpp"
+#include "display/glfw/opengl/glfwwindowgl.hpp"
 #include "glfwmonitor.hpp" //Has to come after glfwwindow because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
 
 namespace mana {
@@ -46,8 +46,8 @@ namespace mana {
             Window *ret;
             switch (api) {
                 case OPENGL:
-                    ret = dynamic_cast<Window *>(new GLFWWindow("Window GLFW", Vec2i(600, 300),
-                                                                WindowAttributes()));
+                    ret = dynamic_cast<Window *>(new GLFWWindowGL("Window GLFW", Vec2i(600, 300),
+                                                                  WindowAttributes()));
                     break;
                 default:
                     throw std::runtime_error("Unsupported graphics api");
@@ -62,7 +62,7 @@ namespace mana {
             Window *ret;
             switch (api) {
                 case OPENGL:
-                    ret = dynamic_cast<Window *>(new GLFWWindow(title, size, attributes));
+                    ret = dynamic_cast<Window *>(new GLFWWindowGL(title, size, attributes));
                     break;
                 default:
                     throw std::runtime_error("Unsupported graphics api");
@@ -79,10 +79,10 @@ namespace mana {
             Window *ret;
             switch (api) {
                 case OPENGL:
-                    ret = dynamic_cast<Window *>(new GLFWWindow(title,
-                                                                size,
-                                                                attributes,
-                                                                dynamic_cast<GLFWMonitor &>(monitor)));
+                    ret = dynamic_cast<Window *>(new GLFWWindowGL(title,
+                                                                  size,
+                                                                  attributes,
+                                                                  dynamic_cast<GLFWMonitor &>(monitor)));
                     break;
                 default:
                     throw std::runtime_error("Unsupported graphics api");

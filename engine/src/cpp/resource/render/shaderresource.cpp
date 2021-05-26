@@ -23,13 +23,13 @@
 
 namespace mana {
     ShaderResource::ShaderResource()
-            : alloc(nullptr), vertexShader(nullptr), fragmentShader(nullptr), shader(nullptr) {
+            : device(nullptr), vertexShader(nullptr), fragmentShader(nullptr), shader(nullptr) {
 
     }
 
-    ShaderResource::ShaderResource(RenderAllocator &alloc, Resource<std::string> &vertexShader,
+    ShaderResource::ShaderResource(RenderDevice &device, Resource<std::string> &vertexShader,
                                    Resource<std::string> &fragmentShader)
-            : alloc(&alloc), vertexShader(&vertexShader), fragmentShader(&fragmentShader), shader(nullptr) {
+            : device(&device), vertexShader(&vertexShader), fragmentShader(&fragmentShader), shader(nullptr) {
     }
 
     ShaderResource::~ShaderResource() {
@@ -40,10 +40,10 @@ namespace mana {
     void ShaderResource::load() {
         if (isLoaded)
             return;
-        shader = alloc->allocateShaderProgram(vertexShader->get(),
-                                              fragmentShader->get(),
-                                              Renderer3D::getShaderMacros(),
-                                              Renderer3D::getShaderIncludeCallback());
+        shader = device->createShaderProgram(vertexShader->get(),
+                                               fragmentShader->get(),
+                                               Renderer3D::getShaderMacros(),
+                                               Renderer3D::getShaderIncludeCallback());
         isLoaded = true;
     }
 

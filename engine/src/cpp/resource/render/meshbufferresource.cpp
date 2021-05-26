@@ -23,25 +23,25 @@
 
 namespace mana {
     MeshBufferResource::MeshBufferResource()
-            : alloc(nullptr),
+            : device(nullptr),
               meshResource(),
               instanceOffsets(),
               instanced(false),
               mesh(nullptr) {
     }
 
-    MeshBufferResource::MeshBufferResource(RenderAllocator &alloc, Resource<Mesh> &meshResource)
-            : alloc(&alloc),
+    MeshBufferResource::MeshBufferResource(RenderDevice &device, Resource<Mesh> &meshResource)
+            : device(&device),
               meshResource(&meshResource),
               instanceOffsets(),
               instanced(false),
               mesh(nullptr) {
     }
 
-    MeshBufferResource::MeshBufferResource(RenderAllocator &alloc,
+    MeshBufferResource::MeshBufferResource(RenderDevice &device,
                                            Resource<Mesh> &meshResource,
                                            std::vector<Transform> instanceOffsets)
-            : alloc(&alloc),
+            : device(&device),
               meshResource(&meshResource),
               instanceOffsets(std::move(instanceOffsets)),
               instanced(true),
@@ -58,9 +58,9 @@ namespace mana {
             return;
 
         if (instanced)
-            mesh = alloc->allocateInstancedMeshBuffer(meshResource->get(), instanceOffsets);
+            mesh = device->createInstancedMeshBuffer(meshResource->get(), instanceOffsets);
         else
-            mesh = alloc->allocateMeshBuffer(meshResource->get());
+            mesh = device->createMeshBuffer(meshResource->get());
 
         isLoaded = true;
     }

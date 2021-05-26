@@ -28,7 +28,7 @@
 #include "oglshaderprogram.hpp"
 #include "oglrendertexture.hpp"
 #include "oglmeshobject.hpp"
-#include "oglframebuffer.hpp"
+#include "oglrendertarget.hpp"
 
 #include "oglcheckerror.hpp"
 #include "ogltypeconverter.hpp"
@@ -83,7 +83,7 @@ namespace mana {
             this->multiSample = s;
         }
 
-        void OGLRenderer::renderBegin(const RenderTarget &target) {
+        void OGLRenderer::renderBegin(RenderTarget &target) {
             glClearColor((float) clearColorValue.r() / (float) 255,
                          (float) clearColorValue.g() / (float) 255,
                          (float) clearColorValue.b() / (float) 255,
@@ -94,7 +94,7 @@ namespace mana {
             else
                 glDisable(GL_MULTISAMPLE);
 
-            auto &fb = dynamic_cast<const OGLFrameBuffer &>(target);
+            auto &fb = dynamic_cast<OGLRenderTarget &>(target);
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
@@ -119,7 +119,7 @@ namespace mana {
             glClear(clearMask);
         }
 
-        void OGLRenderer::addCommand(const RenderCommand &command) {
+        void OGLRenderer::addCommand(RenderCommand &command) {
             //Bind textures
             for (int i = 0; i < command.textures.size(); i++) {
                 auto *textureObject = command.textures.at(i);

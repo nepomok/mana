@@ -21,14 +21,14 @@
 #define MANA_SHADERRESOURCE_HPP
 
 #include "engine/resource/resource.hpp"
-#include "engine/render/renderallocator.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
     class ShaderResource : public Resource<ShaderProgram> {
     public:
         ShaderResource();
 
-        ShaderResource(RenderAllocator &alloc,
+        ShaderResource(RenderDevice &device,
                        Resource <std::string> &vertexShader,
                        Resource <std::string> &fragmentShader);
 
@@ -41,7 +41,7 @@ namespace mana {
         ShaderProgram &get() override;
 
     private:
-        RenderAllocator *alloc;
+        RenderDevice *device;
         Resource <std::string> *vertexShader;
         Resource <std::string> *fragmentShader;
         ShaderProgram *shader;

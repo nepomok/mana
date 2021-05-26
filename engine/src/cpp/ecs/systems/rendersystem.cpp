@@ -27,7 +27,7 @@
 #include "engine/render/3d/camera/orthographiccamera.hpp"
 
 namespace mana {
-    RenderSystem::RenderSystem(const RenderTarget &scr, Renderer3D &ren)
+    RenderSystem::RenderSystem(RenderTarget &scr, Renderer3D &ren)
             : screenTarget(scr), ren(ren) {
     }
 

@@ -113,25 +113,25 @@ namespace mana {
         return new ImageFileResource(j["filePath"]);
     }
 
-    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
-        return new ShaderResource(alloc,
+    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
+        return new ShaderResource(device,
                                   res.getResource<std::string>(j["vertexShaderResourceName"]),
                                   res.getResource<std::string>(j["fragmentShaderResourceName"]));
     }
 
-    MeshBufferResource *parseMeshBuffer(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
+    MeshBufferResource *parseMeshBuffer(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
         if (j["instanced"]) {
             std::vector<Transform> offsets;
             for (auto &t : j["instanceOffsets"]) {
                 offsets.emplace_back(parseTransform(t));
             }
-            return new MeshBufferResource(alloc, res.getResource<Mesh>(j["meshResourceName"]), offsets);
+            return new MeshBufferResource(device, res.getResource<Mesh>(j["meshResourceName"]), offsets);
         } else {
-            return new MeshBufferResource(alloc, res.getResource<Mesh>(j["meshResourceName"]));
+            return new MeshBufferResource(device, res.getResource<Mesh>(j["meshResourceName"]));
         }
     }
 
-    TextureBufferResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderAllocator &alloc) {
+    TextureBufferResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
         TextureBuffer::Attributes attr;
         attr.textureType = parseTextureType(j["textureType"]);
         attr.format = parseColorFormat(j["format"]);
@@ -140,14 +140,14 @@ namespace mana {
         attr.filterMag = parseTextureFiltering(j["filterMag"]);
         attr.generateMipmap = j["generateMipmap"];
         attr.mipmapFilter = parseMipMapFiltering(j["mipmapFilter"]);
-        return new TextureBufferResource(alloc, res.getResource<ImageBuffer<ColorRGBA>>(j["imageResourceName"]), attr);
+        return new TextureBufferResource(device, res.getResource<ImageBuffer<ColorRGBA>>(j["imageResourceName"]), attr);
     }
 
     MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
         return new MonoScriptResource(monoRuntime, j["assemblyFileName"], j["nameSpace"], j["className"]);
     }
 
-    Resources *parseResources(const std::string &jsonStr, RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
+    Resources *parseResources(const std::string &jsonStr, RenderDevice &device, MonoCppDomain &monoRuntime) {
         auto *ret = new Resources();
         auto json = nlohmann::json::parse(jsonStr);
         for (auto &r : json["resources"]) {
@@ -161,11 +161,11 @@ namespace mana {
             else if (type == "imagefile")
                 ret->addResource<ImageBuffer<ColorRGBA>>(name, parseImageFile(r));
             else if (type == "shader")
-                ret->addResource<ShaderProgram>(name, parseShader(r, *ret, allocator));
+                ret->addResource<ShaderProgram>(name, parseShader(r, *ret, device));
             else if (type == "meshbuffer")
-                ret->addResource<MeshBuffer>(name, parseMeshBuffer(r, *ret, allocator));
+                ret->addResource<MeshBuffer>(name, parseMeshBuffer(r, *ret, device));
             else if (type == "texture")
-                ret->addResource<TextureBuffer>(name, parseTexture(r, *ret, allocator));
+                ret->addResource<TextureBuffer>(name, parseTexture(r, *ret, device));
             else if (type == "monoscript")
                 ret->addResource<Script>(name, parseMonoScript(r, monoRuntime));
             else
@@ -192,7 +192,7 @@ namespace mana {
         return json["resourcesName"];
     }
 
-    Resources *ResourceFile::getResources(RenderAllocator &allocator, MonoCppDomain &monoRuntime) {
-        return parseResources(fileContents, allocator, monoRuntime);
+    Resources *ResourceFile::getResources(RenderDevice &device, MonoCppDomain &monoRuntime) {
+        return parseResources(fileContents, device, monoRuntime);
     }
 }

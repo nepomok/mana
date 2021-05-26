@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GLFWWINDOW_HPP
-#define MANA_GLFWWINDOW_HPP
+#ifndef MANA_GLFWWINDOWGL_HPP
+#define MANA_GLFWWINDOWGL_HPP
 
 #include <set>
 
@@ -27,51 +27,34 @@
 #include "engine/display/window.hpp"
 #include "engine/display/windowattributes.hpp"
 
-#include "render/opengl/oglrenderer.hpp"
-#include "render/opengl/oglrenderallocator.hpp"
-#include "render/opengl/oglframebuffer.hpp"
+#include "render/opengl/oglrenderdevice.hpp"
+#include "render/opengl/oglrendertarget.hpp"
 
-#include "glfwmonitor.hpp"
-#include "glfwwindowframebuffer.hpp"
+#include "display/glfw/glfwmonitor.hpp"
+#include "display/glfw/opengl/glfwrendertargetgl.hpp"
 
 #include "input/glfw/glfwinput.hpp"
 
 namespace mana {
     namespace glfw {
-        class GLFWWindow : public Window {
+        class GLFWWindowGL : public Window {
         public:
-            GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes);
+            GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes);
 
-            GLFWWindow(const std::string &title,
-                       Vec2i size,
-                       WindowAttributes attributes,
-                       GLFWMonitor &monitor);
+            GLFWWindowGL(const std::string &title,
+                         Vec2i size,
+                         WindowAttributes attributes,
+                         GLFWMonitor &monitor);
 
-            ~GLFWWindow() override;
+            ~GLFWWindowGL() override;
 
-            void glfwWindowCloseCallback();
-
-            void glfwWindowMoveCallback(Vec2i pos);
-
-            void glfwWindowSizeCallback(int width, int height);
-
-            void glfwWindowRefreshCallback();
-
-            void glfwWindowFocusCallback(bool focused);
-
-            void glfwWindowMinimizeCallback();
-
-            void glfwWindowMaximizeCallback();
-
-            void glfwWindowContentScaleCallback(Vec2f scale);
-
-            void glfwFrameBufferSizeCallback(Vec2i size);
+            RenderDevice &getRenderDevice() override;
 
             RenderTarget &getRenderTarget() override;
 
             Input &getInput() override;
 
-            void bind() override;
+            void makeCurrent() override;
 
             void swapBuffers() override;
 
@@ -139,18 +122,35 @@ namespace mana {
 
             void setWindowFocusOnShow(bool focusOnShow) override;
 
+            void glfwWindowCloseCallback();
+
+            void glfwWindowMoveCallback(Vec2i pos);
+
+            void glfwWindowSizeCallback(int width, int height);
+
+            void glfwWindowRefreshCallback();
+
+            void glfwWindowFocusCallback(bool focused);
+
+            void glfwWindowMinimizeCallback();
+
+            void glfwWindowMaximizeCallback();
+
+            void glfwWindowContentScaleCallback(Vec2f scale);
+
+            void glfwFrameBufferSizeCallback(Vec2i size);
+
         private:
             GLFWwindow *wndH;
 
-            opengl::OGLRenderer *renderer;
-            opengl::OGLRenderAllocator *renderAllocator;
-
             GLFWInput *input;
-            GLFWWindowFrameBuffer *frameBuffer;
+
+            opengl::OGLRenderDevice *renderDevice;
+            GLFWRenderTargetGL *renderTarget;
 
             std::set<WindowListener *> listeners;
         };
     }
 }
 
-#endif //MANA_GLFWWINDOW_HPP
+#endif //MANA_GLFWWINDOWGL_HPP

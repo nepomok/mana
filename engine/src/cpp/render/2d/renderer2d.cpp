@@ -20,12 +20,10 @@
 #include "engine/render/2d/renderer2d.hpp"
 
 namespace mana {
-    Renderer2D::Renderer2D() {
+    Renderer2D::Renderer2D() = default;
 
-    }
-
-    Renderer2D::Renderer2D(Renderer &ren, RenderAllocator &alloc) {
-
+    Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device), renderer(nullptr) {
+        renderer = device.createRenderer();
     }
 
     void Renderer2D::setEnableAlphaBlending(bool enable) {
@@ -116,5 +114,13 @@ namespace mana {
 
     void Renderer2D::renderPresent() {
 
+    }
+
+    const RenderDevice &Renderer2D::getRenderDevice() {
+        return *renderDevice;
+    }
+
+    const Renderer &Renderer2D::getRenderer() {
+        return *renderer;
     }
 }

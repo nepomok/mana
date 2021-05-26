@@ -22,6 +22,8 @@
 
 #include "engine/render/renderer.hpp"
 
+#include "render/opengl/oglrenderdevice.hpp"
+
 namespace mana {
     namespace opengl {
         class OGLRenderer : public Renderer {
@@ -34,16 +36,19 @@ namespace mana {
 
             void setMultiSample(bool multiSample) override;
 
-            void renderBegin(const RenderTarget &target) override;
+            void renderBegin(RenderTarget &target) override;
 
-            void addCommand(const RenderCommand &command) override;
-            
+            void addCommand(RenderCommand &command) override;
+
             void renderFinish() override;
 
         private:
-            Vec2i viewportOffset = {}, viewportSize = {};
+            Vec2i viewportOffset = {};
+            Vec2i viewportSize = {};
             ColorRGBA clearColorValue = {};
-            bool clearColor = true, clearDepth = true, clearStencil = true;
+            bool clearColor = true;
+            bool clearDepth = true;
+            bool clearStencil = true;
             bool multiSample = false;
         };
     }

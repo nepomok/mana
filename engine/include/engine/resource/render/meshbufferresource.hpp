@@ -21,16 +21,16 @@
 #define MANA_MESHBUFFERRESOURCE_HPP
 
 #include "engine/resource/resource.hpp"
-#include "engine/render/renderallocator.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
     class MeshBufferResource : public Resource<MeshBuffer> {
     public:
         MeshBufferResource();
 
-        MeshBufferResource(RenderAllocator &alloc, Resource <Mesh> &meshResource);
+        MeshBufferResource(RenderDevice &alloc, Resource <Mesh> &meshResource);
 
-        MeshBufferResource(RenderAllocator &alloc,
+        MeshBufferResource(RenderDevice &alloc,
                            Resource <Mesh> &meshResource,
                            std::vector<Transform> instanceOffsets);
 
@@ -43,7 +43,7 @@ namespace mana {
         MeshBuffer &get() override;
 
     private:
-        RenderAllocator *alloc;
+        RenderDevice *device;
         Resource <Mesh> *meshResource;
         std::vector<Transform> instanceOffsets;
         bool instanced;

@@ -19,7 +19,7 @@
 
 #include <stdexcept>
 
-#include "glfwwindow.hpp"
+#include "glfwwindowgl.hpp"
 
 class GLFWCounter {
 public:
@@ -42,7 +42,7 @@ int GLFWCounter::counter = 0;
 
 namespace mana {
     namespace glfw {
-        std::map<GLFWwindow *, GLFWWindow *> _windowMapping;
+        std::map<GLFWwindow *, GLFWWindowGL *> _windowMapping;
 
         void glfwWindowCloseCallback(GLFWwindow *window) {
             if (_windowMapping.find(window) != _windowMapping.end()) {
@@ -151,7 +151,7 @@ namespace mana {
             glfwSetFramebufferSizeCallback(wndH, glfwFrameBufferSizeCallback);
         }
 
-        GLFWWindow::GLFWWindow(const std::string &title, Vec2i size, WindowAttributes attributes) : Window(OPENGL) {
+        GLFWWindowGL::GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes) {
             GLFWCounter::join();
 
             glfwDefaultWindowHints();
@@ -174,21 +174,21 @@ namespace mana {
                 throw std::runtime_error("Failed to initialize glad");
             }
 
-            renderer = new opengl::OGLRenderer();
-            renderAllocator = new opengl::OGLRenderAllocator();
-
             input = new GLFWInput(*wndH);
-            frameBuffer = new GLFWWindowFrameBuffer(wndH);
+            renderTarget = new GLFWRenderTargetGL(wndH);
+
+            renderDevice = new opengl::OGLRenderDevice();
+            renderTarget = new GLFWRenderTargetGL(wndH);
 
             _windowMapping[wndH] = this;
 
             setCallbacks(wndH);
         }
 
-        GLFWWindow::GLFWWindow(const std::string &title,
-                               Vec2i size,
-                               WindowAttributes attributes,
-                               GLFWMonitor &monitor) : Window(OPENGL) {
+        GLFWWindowGL::GLFWWindowGL(const std::string &title,
+                                   Vec2i size,
+                                   WindowAttributes attributes,
+                                   GLFWMonitor &monitor) {
             GLFWCounter::join();
 
             glfwDefaultWindowHints();
@@ -211,212 +211,216 @@ namespace mana {
                 throw std::runtime_error("Failed to initialize glad");
             }
 
-            renderer = new opengl::OGLRenderer();
-            renderAllocator = new opengl::OGLRenderAllocator();
+            renderDevice = new opengl::OGLRenderDevice();
+            renderTarget = new GLFWRenderTargetGL(wndH);
 
             input = new GLFWInput(*wndH);
-            frameBuffer = new GLFWWindowFrameBuffer(wndH);
+            renderTarget = new GLFWRenderTargetGL(wndH);
 
             _windowMapping[wndH] = this;
 
             setCallbacks(wndH);
         }
 
-        GLFWWindow::~GLFWWindow() {
+        GLFWWindowGL::~GLFWWindowGL() {
             _windowMapping.erase(wndH);
-            delete renderer;
-            delete renderAllocator;
+            delete renderTarget;
+            delete renderDevice;
             delete input;
-            delete frameBuffer;
+            delete renderTarget;
             GLFWCounter::leave();
         }
 
-        void GLFWWindow::glfwWindowCloseCallback() {
+        void GLFWWindowGL::glfwWindowCloseCallback() {
             for (auto listener : listeners) {
                 listener->onWindowClose();
             }
         }
 
-        void GLFWWindow::glfwWindowMoveCallback(Vec2i pos) {
+        void GLFWWindowGL::glfwWindowMoveCallback(Vec2i pos) {
             for (auto listener : listeners) {
                 listener->onWindowMove(pos);
             }
         }
 
-        void GLFWWindow::glfwWindowSizeCallback(int width, int height) {
+        void GLFWWindowGL::glfwWindowSizeCallback(int width, int height) {
             for (auto listener : listeners) {
                 listener->onWindowResize(Vec2i(width, height));
             }
         }
 
-        void GLFWWindow::glfwWindowRefreshCallback() {
+        void GLFWWindowGL::glfwWindowRefreshCallback() {
             for (auto listener : listeners) {
                 listener->onWindowRefresh();
             }
         }
 
-        void GLFWWindow::glfwWindowFocusCallback(bool focused) {
+        void GLFWWindowGL::glfwWindowFocusCallback(bool focused) {
             for (auto listener : listeners) {
                 listener->onWindowFocus(focused);
             }
         }
 
-        void GLFWWindow::glfwWindowMinimizeCallback() {
+        void GLFWWindowGL::glfwWindowMinimizeCallback() {
             for (auto listener : listeners) {
                 listener->onWindowMinimize();
             }
         }
 
-        void GLFWWindow::glfwWindowMaximizeCallback() {
+        void GLFWWindowGL::glfwWindowMaximizeCallback() {
             for (auto listener : listeners) {
                 listener->onWindowMaximize();
             }
         }
 
-        void GLFWWindow::glfwWindowContentScaleCallback(Vec2f scale) {
+        void GLFWWindowGL::glfwWindowContentScaleCallback(Vec2f scale) {
             for (auto listener : listeners) {
                 listener->onWindowContentScale(scale);
             }
         }
 
-        void GLFWWindow::glfwFrameBufferSizeCallback(Vec2i size) {
+        void GLFWWindowGL::glfwFrameBufferSizeCallback(Vec2i size) {
             for (auto listener : listeners) {
                 listener->onFramebufferResize(size);
             }
         }
 
-        RenderTarget &GLFWWindow::getRenderTarget() {
-            return dynamic_cast<RenderTarget &>(*frameBuffer);
+        RenderDevice &GLFWWindowGL::getRenderDevice() {
+            return dynamic_cast<RenderDevice &>(*renderDevice);
         }
 
-        Input &GLFWWindow::getInput() {
+        RenderTarget &GLFWWindowGL::getRenderTarget() {
+            return dynamic_cast<RenderTarget &>(*renderTarget);
+        }
+
+        Input &GLFWWindowGL::getInput() {
             return dynamic_cast<Input &>(*input);
         }
 
-        void GLFWWindow::bind() {
+        void GLFWWindowGL::makeCurrent() {
             glfwMakeContextCurrent(wndH);
         }
 
-        void GLFWWindow::swapBuffers() {
+        void GLFWWindowGL::swapBuffers() {
             glfwSwapBuffers(wndH);
         }
 
-        void GLFWWindow::update() {
+        void GLFWWindowGL::update() {
             glfwPollEvents();
         }
 
-        bool GLFWWindow::shouldClose() {
+        bool GLFWWindowGL::shouldClose() {
             return glfwWindowShouldClose(wndH);
         }
 
-        void GLFWWindow::registerListener(WindowListener &listener) {
+        void GLFWWindowGL::registerListener(WindowListener &listener) {
             if (listeners.find(&listener) != listeners.end())
                 throw std::runtime_error("Listener already registered");
             listeners.insert(&listener);
         }
 
-        void GLFWWindow::unregisterListener(WindowListener &listener) {
+        void GLFWWindowGL::unregisterListener(WindowListener &listener) {
             listeners.erase(&listener);
         }
 
-        void GLFWWindow::maximize() {
+        void GLFWWindowGL::maximize() {
             glfwMaximizeWindow(wndH);
         }
 
-        void GLFWWindow::minimize() {
+        void GLFWWindowGL::minimize() {
             glfwIconifyWindow(wndH);
         }
 
-        void GLFWWindow::restore() {
+        void GLFWWindowGL::restore() {
             glfwRestoreWindow(wndH);
         }
 
-        void GLFWWindow::show() {
+        void GLFWWindowGL::show() {
             glfwShowWindow(wndH);
         }
 
-        void GLFWWindow::hide() {
+        void GLFWWindowGL::hide() {
             glfwHideWindow(wndH);
         }
 
-        void GLFWWindow::focus() {
+        void GLFWWindowGL::focus() {
             glfwFocusWindow(wndH);
         }
 
-        void GLFWWindow::requestAttention() {
+        void GLFWWindowGL::requestAttention() {
             glfwRequestWindowAttention(wndH);
         }
 
-        void GLFWWindow::setTitle(std::string title) {
+        void GLFWWindowGL::setTitle(std::string title) {
             glfwSetWindowTitle(wndH, title.c_str());
         }
 
-        void GLFWWindow::setIcon(ImageBuffer<ColorRGBA> &buffer) {
+        void GLFWWindowGL::setIcon(ImageBuffer<ColorRGBA> &buffer) {
             throw std::runtime_error("Not Implemented");
         }
 
-        void GLFWWindow::setWindowPosition(Vec2i position) {
+        void GLFWWindowGL::setWindowPosition(Vec2i position) {
             glfwSetWindowPos(wndH, position.x, position.y);
         }
 
-        Vec2i GLFWWindow::getWindowPosition() {
+        Vec2i GLFWWindowGL::getWindowPosition() {
             int x, y;
             glfwGetWindowPos(wndH, &x, &y);
             return {x, y};
         }
 
-        void GLFWWindow::setWindowSize(Vec2i size) {
+        void GLFWWindowGL::setWindowSize(Vec2i size) {
             glfwSetWindowSize(wndH, size.x, size.y);
         }
 
-        Vec2i GLFWWindow::getWindowSize() {
+        Vec2i GLFWWindowGL::getWindowSize() {
             int x, y;
             glfwGetWindowSize(wndH, &x, &y);
             return {x, y};
         }
 
-        void GLFWWindow::setWindowSizeLimit(Vec2i sizeMin, Vec2i sizeMax) {
+        void GLFWWindowGL::setWindowSizeLimit(Vec2i sizeMin, Vec2i sizeMax) {
             glfwSetWindowSizeLimits(wndH, sizeMin.x, sizeMin.y, sizeMax.x, sizeMax.y);
         }
 
-        void GLFWWindow::setWindowAspectRatio(Vec2i ratio) {
+        void GLFWWindowGL::setWindowAspectRatio(Vec2i ratio) {
             glfwSetWindowAspectRatio(wndH, ratio.x, ratio.y);
         }
 
-        Vec2i GLFWWindow::getFramebufferSize() {
+        Vec2i GLFWWindowGL::getFramebufferSize() {
             int x, y;
             glfwGetFramebufferSize(wndH, &x, &y);
             return {x, y};
         }
 
-        Vec4i GLFWWindow::getFrameSize() {
+        Vec4i GLFWWindowGL::getFrameSize() {
             int x, y, z, w;
             glfwGetWindowFrameSize(wndH, &x, &y, &z, &w);
             return {x, y, z, w};
         }
 
-        Vec2f GLFWWindow::getWindowContentScale() {
+        Vec2f GLFWWindowGL::getWindowContentScale() {
             float x, y;
             glfwGetWindowContentScale(wndH, &x, &y);
             return {x, y};
         }
 
-        float GLFWWindow::getWindowOpacity() {
+        float GLFWWindowGL::getWindowOpacity() {
             float ret = glfwGetWindowOpacity(wndH);
             return ret;
         }
 
-        void GLFWWindow::setWindowOpacity(float opacity) {
+        void GLFWWindowGL::setWindowOpacity(float opacity) {
             glfwSetWindowOpacity(wndH, opacity);
         }
 
-        Monitor *GLFWWindow::getMonitor() {
+        Monitor *GLFWWindowGL::getMonitor() {
             auto *ret = new GLFWMonitor();
             ret->monH = glfwGetWindowMonitor(wndH);
             return ret;
         }
 
-        void GLFWWindow::setMonitor(Monitor *monitor, Recti rect, int refreshRate) {
+        void GLFWWindowGL::setMonitor(Monitor *monitor, Recti rect, int refreshRate) {
             auto &mon = dynamic_cast<GLFWMonitor &>(*monitor);
             glfwSetWindowMonitor(wndH,
                                  mon.monH,
@@ -427,27 +431,27 @@ namespace mana {
                                  refreshRate);
         }
 
-        void GLFWWindow::setWindowed() {
+        void GLFWWindowGL::setWindowed() {
             glfwSetWindowMonitor(wndH, NULL, 0, 0, 0, 0, 0);
         }
 
-        void GLFWWindow::setWindowDecorated(bool decorated) {
+        void GLFWWindowGL::setWindowDecorated(bool decorated) {
             glfwSetWindowAttrib(wndH, GLFW_DECORATED, decorated);
         }
 
-        void GLFWWindow::setWindowResizable(bool resizable) {
+        void GLFWWindowGL::setWindowResizable(bool resizable) {
             glfwSetWindowAttrib(wndH, GLFW_RESIZABLE, resizable);
         }
 
-        void GLFWWindow::setWindowAlwaysOnTop(bool alwaysOnTop) {
+        void GLFWWindowGL::setWindowAlwaysOnTop(bool alwaysOnTop) {
             glfwSetWindowAttrib(wndH, GLFW_FLOATING, alwaysOnTop);
         }
 
-        void GLFWWindow::setWindowAutoMinimize(bool autoMinimize) {
+        void GLFWWindowGL::setWindowAutoMinimize(bool autoMinimize) {
             glfwSetWindowAttrib(wndH, GLFW_AUTO_ICONIFY, autoMinimize);
         }
 
-        void GLFWWindow::setWindowFocusOnShow(bool focusOnShow) {
+        void GLFWWindowGL::setWindowFocusOnShow(bool focusOnShow) {
             glfwSetWindowAttrib(wndH, GLFW_FOCUS_ON_SHOW, focusOnShow);
         }
     }

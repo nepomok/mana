@@ -17,17 +17,33 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/renderallocator.hpp"
+#ifndef MANA_GLFWRENDERTARGETGL_HPP
+#define MANA_GLFWRENDERTARGETGL_HPP
 
-#include "render/opengl/oglrenderallocator.hpp"
+#include "render/opengl/oglrendertarget.hpp"
 
-mana::RenderAllocator *mana::RenderAllocator::instantiate(mana::GraphicsApi api) {
-    switch (api) {
-        case OPENGL:
-            return new mana::opengl::OGLRenderAllocator();
-        case DIRECTX:
-        case VULKAN:
-        default:
-            throw std::runtime_error("Unsupported graphics api");
+#include "render/opengl/ogltypeconverter.hpp"
+#include "render/opengl/oglcheckerror.hpp"
+
+namespace mana {
+    namespace glfw {
+        class GLFWRenderTargetGL : public opengl::OGLRenderTarget {
+        public:
+            GLFWwindow *wndH;
+
+            explicit GLFWRenderTargetGL(GLFWwindow *wndH) : wndH(wndH) {}
+
+            Vec2i getSize() override {
+                Vec2i ret;
+                glfwGetWindowSize(wndH, &ret.x, &ret.y);
+                return ret;
+            };
+
+            GLuint getFBO() override {
+                return 0;
+            };
+        };
     }
 }
+
+#endif //MANA_GLFWRENDERTARGETGL_HPP

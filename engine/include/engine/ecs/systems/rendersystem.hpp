@@ -34,7 +34,7 @@ namespace mana {
 
     class RenderSystem : public System {
     public:
-        explicit RenderSystem(const RenderTarget &screenTarget, Renderer3D &ren);
+        explicit RenderSystem(RenderTarget &screenTarget, Renderer3D &ren);
 
         ~RenderSystem() override = default;
 
@@ -45,7 +45,7 @@ namespace mana {
         void update(float deltaTime, Scene &scene) override;
 
     private:
-        const RenderTarget &screenTarget;
+        RenderTarget &screenTarget;
         Renderer3D &ren;
 
         PerspectiveCamera perspectiveCamera;

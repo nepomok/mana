@@ -113,16 +113,18 @@ namespace mana {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D() : ren(nullptr), alloc(nullptr) {};
+    Renderer3D::Renderer3D() : device(nullptr), ren(nullptr) {};
 
-    Renderer3D::Renderer3D(Renderer &r, RenderAllocator &a) : ren(&r), alloc(&a) {}
+    Renderer3D::Renderer3D(RenderDevice &device) : device(&device), ren(nullptr) {
+        ren = device.createRenderer();
+    }
 
     void Renderer3D::setEnableShadowMapping(bool shadowMapping) {
     }
 
-    void Renderer3D::render(const RenderTarget &target,
+    void Renderer3D::render(RenderTarget &target,
                             RenderScene &scene) {
-        if (ren == nullptr || alloc == nullptr)
+        if (device == nullptr || ren == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
         bool outline = false;
@@ -136,8 +138,8 @@ namespace mana {
         projection = scene.camera->projection();
         camPosTransformMat = MatrixMath::translate(scene.camera->transform.position);
         if (outline) {
-            ShaderProgram *defaultOutlineShader = alloc->allocateShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
+            ShaderProgram *defaultOutlineShader = device->createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
+                                                                              SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
             RenderScene sceneCopy = scene;
             ren->renderBegin(target);
             for (auto &unit : sceneCopy.units) {
@@ -316,13 +318,15 @@ namespace mana {
         }
     }
 
-    const Renderer &Renderer3D::getRenderer() {
-        assert(ren != nullptr);
-        return *ren;
+    const RenderDevice &Renderer3D::getRenderDevice() {
+        if (device == nullptr)
+            throw std::runtime_error("Renderer3D not initialized");
+        return *device;
     }
 
-    const RenderAllocator &Renderer3D::getAllocator() {
-        assert(alloc != nullptr);
-        return *alloc;
+    const Renderer &Renderer3D::getRenderer() {
+        if (ren == nullptr)
+            throw std::runtime_error("Renderer3D not initialized");
+        return *ren;
     }
 }

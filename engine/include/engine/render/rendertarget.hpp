@@ -28,44 +28,44 @@ namespace mana {
     public:
         ~RenderTarget() override = default;
 
-        virtual Vec2i getSize() const = 0;
+        virtual Vec2i getSize() = 0;
 
-        virtual void blitColor(const RenderTarget &source,
+        virtual void blitColor(RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
                                TextureBuffer::TextureFiltering filter) = 0;
 
-        virtual void blitDepth(const RenderTarget &source,
+        virtual void blitDepth(RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
                                Vec2i sourceRect,
                                Vec2i targetRect,
                                TextureBuffer::TextureFiltering filter) = 0;
 
-        virtual void blitStencil(const RenderTarget &source,
+        virtual void blitStencil(RenderTarget &source,
                                  Vec2i sourceOffset,
                                  Vec2i targetOffset,
                                  Vec2i sourceRect,
                                  Vec2i targetRect,
                                  TextureBuffer::TextureFiltering filter) = 0;
 
-        virtual void attachColor(const TextureBuffer &texture) = 0;
+        virtual void attachColor(TextureBuffer &texture) = 0;
 
-        virtual void attachDepth(const TextureBuffer &texture) = 0;
+        virtual void attachDepth(TextureBuffer &texture) = 0;
 
-        virtual void attachStencil(const TextureBuffer &texture) = 0;
+        virtual void attachStencil(TextureBuffer &texture) = 0;
 
-        virtual void attachDepthStencil(const TextureBuffer &texture) = 0;
+        virtual void attachDepthStencil(TextureBuffer &texture) = 0;
 
-        virtual void attachColor(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) = 0;
+        virtual void attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
-        virtual void attachDepth(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) = 0;
+        virtual void attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
-        virtual void attachStencil(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) = 0;
+        virtual void attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
-        virtual void attachDepthStencil(TextureBuffer::CubeMapFace face, const TextureBuffer &texture) = 0;
+        virtual void attachDepthStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
     };
 }
 

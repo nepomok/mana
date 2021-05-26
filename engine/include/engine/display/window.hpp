@@ -20,29 +20,33 @@
 #ifndef MANA_WINDOW_HPP
 #define MANA_WINDOW_HPP
 
+#include "engine/render/renderdevice.hpp"
 #include "engine/render/rendertarget.hpp"
-#include "engine/render/renderer.hpp"
-#include "engine/render/renderallocator.hpp"
+#include "engine/render/imagebuffer.hpp"
+
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/monitor.hpp"
-#include "engine/render/imagebuffer.hpp"
+#include "engine/display/windowattributes.hpp"
+
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
-#include "engine/display/windowattributes.hpp"
-#include "engine/render/graphicsapi.hpp"
 
 namespace mana {
     class Window {
     public:
-        const GraphicsApi graphicsApi;
-
-        explicit Window(GraphicsApi graphicsApi) : graphicsApi(graphicsApi) {}
-
         virtual ~Window() = default;
 
         /**
-         * This method returns the window framebuffer render target.
-         * When rendering to the returned buffer the results are displayed in the window.
+         * Return the render device associated with this window.
+         *
+         * @return
+         */
+        virtual RenderDevice &getRenderDevice() = 0;
+
+        /**
+         * Return the render target associated with the window contents.
+         *
+         * When rendering to the returned target the results are displayed in the window.
          *
          * @return
          */
@@ -51,11 +55,13 @@ namespace mana {
         virtual Input &getInput() = 0;
 
         /**
-         * Calling this method ensures that further rendering calls will be forwarded to this windows context.
-         * If using only a single window this method  can be ignored.
-         * (On opengl bind window context)
+         * When using multiple windows or multiple threads call this method before using
+         * any rendering related api including RenderObject destructors.
+         *
+         * Unfortunately needed to be a user call when using OpenGL graphics api because of the tight coupling
+         * between opengl and the window system and the per thread static context binding based api of opengl.
          */
-        virtual void bind() = 0;
+        virtual void makeCurrent() = 0;
 
         virtual void swapBuffers() = 0;
 

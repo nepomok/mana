@@ -30,8 +30,6 @@
 namespace mana {
     class Renderer {
     public:
-        static Renderer *instantiate(GraphicsApi graphicsApi);
-
         virtual ~Renderer() = default;
 
         virtual void setViewport(Vec2i offset, Vec2i size) = 0;
@@ -42,9 +40,9 @@ namespace mana {
 
         virtual void setMultiSample(bool multiSample) = 0;
 
-        virtual void renderBegin(const RenderTarget &target) = 0;
+        virtual void renderBegin(RenderTarget &target) = 0;
 
-        virtual void addCommand(const RenderCommand &command) = 0;
+        virtual void addCommand(RenderCommand &command) = 0;
 
         virtual void renderFinish() = 0;
     };

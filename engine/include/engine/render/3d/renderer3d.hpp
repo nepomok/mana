@@ -21,9 +21,11 @@
 #define MANA_RENDERER3D_HPP
 
 #include <utility>
+#include <map>
+#include <functional>
 
 #include "engine/render/renderer.hpp"
-#include "engine/render/renderallocator.hpp"
+#include "engine/render/renderdevice.hpp"
 
 #include "engine/render/3d/renderscene.hpp"
 
@@ -36,20 +38,20 @@ namespace mana {
 
         Renderer3D();
 
-        Renderer3D(Renderer &ren, RenderAllocator &alloc);
+        explicit Renderer3D(RenderDevice &device);
 
         void setEnableShadowMapping(bool shadowMapping);
 
-        void render(const RenderTarget &target,
+        void render(RenderTarget &target,
                     RenderScene &scene);
+
+        const RenderDevice &getRenderDevice();
 
         const Renderer &getRenderer();
 
-        const RenderAllocator &getAllocator();
-
     private:
+        RenderDevice *device;
         Renderer *ren;
-        RenderAllocator *alloc;
     };
 }
 
