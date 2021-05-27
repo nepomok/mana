@@ -41,7 +41,11 @@ namespace mana {
 
         Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes);
 
+        Renderer3D(Renderer3D &&other) noexcept;
+
         ~Renderer3D();
+
+        Renderer3D &operator=(Renderer3D &&other) noexcept ;
 
         void setRenderDevice(RenderDevice *device);
 

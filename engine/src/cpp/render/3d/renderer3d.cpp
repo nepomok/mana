@@ -52,9 +52,24 @@ namespace mana {
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
                                                                                      passes(std::move(passes)) {}
 
+    Renderer3D::Renderer3D(Renderer3D &&other) noexcept {
+        device = other.device;
+        passes = other.passes;
+        other.device = nullptr;
+        other.passes.clear();
+    }
+
     Renderer3D::~Renderer3D() {
         for (auto *pass : passes)
             delete pass;
+    }
+
+    Renderer3D &Renderer3D::operator=(Renderer3D &&other) noexcept {
+        device = other.device;
+        passes = other.passes;
+        other.device = nullptr;
+        other.passes.clear();
+        return *this;
     }
 
     void Renderer3D::setRenderDevice(RenderDevice *dev) {

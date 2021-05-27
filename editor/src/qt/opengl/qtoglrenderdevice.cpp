@@ -34,13 +34,7 @@ Renderer &QtOGLRenderDevice::getRenderer() {
 }
 
 RenderTarget *QtOGLRenderDevice::createRenderTarget(Vec2i size, int samples) {
-    auto *ret = new QtOGLRenderTarget(size, samples);
-
-    glGenFramebuffers(1, &ret->FBO);
-
-    checkQtGLError("QtOGLRenderAllocator::createRenderTarget");
-
-    return ret;
+    return new QtOGLRenderTarget(size, samples);
 }
 
 TextureBuffer *QtOGLRenderDevice::createTextureBuffer(TextureBuffer::Attributes attributes) {

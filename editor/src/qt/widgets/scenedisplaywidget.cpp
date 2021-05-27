@@ -36,7 +36,7 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     frameBuffer.FBO = defaultFramebufferObject();
     frameBuffer.size = {width(), height()};
 
-    ren3d = mana::Renderer3D(device);
+    ren3d = std::move(mana::Renderer3D(device, {new ForwardPass()}));
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
 
@@ -45,8 +45,7 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     doneCurrent();
 }
 
-SceneDisplayWidget::~SceneDisplayWidget() {
-}
+SceneDisplayWidget::~SceneDisplayWidget() = default;
 
 void SceneDisplayWidget::setScene(const mana::Scene &s) {
     scene = s;
@@ -217,7 +216,6 @@ void SceneDisplayWidget::paintGL() {
         }
     }
 
-
     std::vector<RenderData> data;
     for (auto &nodePointer : scene.nodes) {
         auto &node = nodePointer.second;
@@ -291,7 +289,7 @@ void SceneDisplayWidget::paintGL() {
             unit.outlineColor = highlightColor;
         }
 
-        scene3d.deferredPass.emplace_back(unit);
+        scene3d.forwardPass.emplace_back(unit);
     }
 
     pCam.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());

@@ -31,8 +31,11 @@ namespace mana {
         class QtOGLRenderTarget : public RenderTarget, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint FBO;
+            GLuint colorRBO;
+            GLuint depthStencilRBO;
 
             Vec2i size;
+            int samples;
 
             bool deleteFramebuffer = true;
 
@@ -43,6 +46,8 @@ namespace mana {
             ~QtOGLRenderTarget() override;
 
             Vec2i getSize() override;
+
+            int getSamples() override;
 
             void blitColor(RenderTarget &source,
                            Vec2i sourceOffset,
@@ -80,6 +85,14 @@ namespace mana {
             void attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
             void attachDepthStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
+
+            void detachColor(int index) override;
+
+            void detachDepth() override;
+
+            void detachStencil() override;
+
+            void detachDepthStencil() override;
 
             GLuint getFBO() const;
         };

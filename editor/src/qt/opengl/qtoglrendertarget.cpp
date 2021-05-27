@@ -21,6 +21,7 @@
 #include "qtogltypeconverter.hpp"
 #include "qtoglcheckerror.hpp"
 #include "qtoglrendertexture.hpp"
+#include "qtoglcheckerror.hpp"
 
 using namespace mana;
 using namespace mana::opengl;
@@ -29,7 +30,31 @@ opengl::QtOGLRenderTarget::QtOGLRenderTarget() : FBO(0),
                                                  size() {}
 
 opengl::QtOGLRenderTarget::QtOGLRenderTarget(Vec2i size, int samples) : size(size),
-                                                                        FBO(0) {}
+                                                                        FBO(0) {
+    glGenFramebuffers(1, &FBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+    glGenRenderbuffers(1, &colorRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, colorRBO);
+
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_RGBA, size.x, size.y);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, colorRBO);
+
+    glGenRenderbuffers(1, &depthStencilRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthStencilRBO);
+
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, samples, GL_DEPTH24_STENCIL8, size.x, size.y);
+
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilRBO);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        throw std::runtime_error("Failed to setup framebuffer");
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    checkQtGLError("OGLRenderAllocator::allocateFrameBuffer");
+}
 
 opengl::QtOGLRenderTarget::~QtOGLRenderTarget() {
     if (deleteFramebuffer)
@@ -235,4 +260,32 @@ void opengl::QtOGLRenderTarget::attachDepthStencil(TextureBuffer::CubeMapFace fa
 
 GLuint opengl::QtOGLRenderTarget::getFBO() const {
     return FBO;
+}
+
+int QtOGLRenderTarget::getSamples() {
+    return 0;
+}
+
+void QtOGLRenderTarget::detachColor(int index) {
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void QtOGLRenderTarget::detachDepth() {
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void QtOGLRenderTarget::detachStencil() {
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void QtOGLRenderTarget::detachDepthStencil() {
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
