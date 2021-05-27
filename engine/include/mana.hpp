@@ -127,5 +127,7 @@
 #include "engine/math/rotation.hpp"
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector3.hpp"
+#include "engine/common/threadpool.hpp"
+#include "engine/common/task.hpp"
 
 #endif // MANA_MANA_HPP
