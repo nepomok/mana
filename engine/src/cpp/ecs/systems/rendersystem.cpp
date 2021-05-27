@@ -25,10 +25,11 @@
 
 #include "engine/render/3d/camera/perspectivecamera.hpp"
 #include "engine/render/3d/camera/orthographiccamera.hpp"
+#include "engine/render/3d/passes/forwardpass.hpp"
 
 namespace mana {
-    RenderSystem::RenderSystem(RenderTarget &scr, Renderer3D &ren)
-            : screenTarget(scr), ren(ren) {
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
+            : screenTarget(scr), ren(device, {new ForwardPass()}) {
     }
 
     void RenderSystem::start() {
@@ -150,7 +151,7 @@ namespace mana {
             unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
             unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
-            scene3d.deferredPass.emplace_back(unit);
+            scene3d.forwardPass.emplace_back(unit);
         }
 
         Node *cameraNode;

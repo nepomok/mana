@@ -39,7 +39,7 @@ namespace mana {
 
         Renderer3D();
 
-        explicit Renderer3D(RenderDevice &device);
+        Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes);
 
         ~Renderer3D();
 
@@ -47,7 +47,7 @@ namespace mana {
 
         const RenderDevice &getRenderDevice();
 
-        void addRenderPass(RenderPass *pass);
+        void setRenderPasses(std::vector<RenderPass *> passes);
 
         const std::vector<RenderPass *> &getRenderPasses();
 

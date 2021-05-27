@@ -23,73 +23,7 @@
 #include "hlslinject.hpp"
 
 #include <algorithm>
-
-const char *SHADER_VERT_OUTLINE_DEFAULT = R"###(
-float4x4 MANA_M;
-float4x4 MANA_V;
-float4x4 MANA_P;
-float4x4 MANA_MVP;
-float4x4 MANA_M_INVERT;
-float3 COLOR_OUTLINE;
-
-struct VS_INPUT
-{
-    float3 position : POSITION0;
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-    float4 instanceRow0 : POSITION1;
-    float4 instanceRow1 : POSITION2;
-    float4 instanceRow2 : POSITION3;
-    float4 instanceRow3 : POSITION4;
-};
-
-struct VS_OUTPUT
-{
-    float3  fPos : POSITION;
-    float3  fNorm : NORMAL;
-    float2  fUv : TEXCOORD0;
-    float4 vPos : SV_Position;
-};
-
-VS_OUTPUT main(const VS_INPUT v)
-{
-    VS_OUTPUT ret;
-
-    float4x4 instanceMatrix = float4x4(v.instanceRow0, v.instanceRow1, v.instanceRow2, v.instanceRow3);
-
-    ret.vPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_MVP));
-    ret.fPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_M)).xyz;
-    ret.fNorm = mul(float4(v.normal, 1), transpose(mul(MANA_M_INVERT, instanceMatrix))).xyz;
-    ret.fUv = v.uv;
-
-    return ret;
-}
-)###";
-
-const char *SHADER_FRAG_OUTLINE_DEFAULT = R"###(
-float4x4 MANA_M;
-float4x4 MANA_V;
-float4x4 MANA_P;
-float4x4 MANA_MVP;
-float4x4 MANA_M_INVERT;
-float3 COLOR_OUTLINE;
-
-struct PS_INPUT {
-    float3 fPos: POSITION;
-    float3 fNorm: NORMAL;
-    float2 fUv: TEXCOORD0;
-};
-
-struct PS_OUTPUT {
-    float4 FragColor: SV_TARGET;
-};
-
-PS_OUTPUT main(PS_INPUT v) {
-    PS_OUTPUT ret;
-    ret.FragColor = float4(COLOR_OUTLINE.x, COLOR_OUTLINE.y, COLOR_OUTLINE.z, 1.0);
-    return ret;
-}
-)###";
+#include <utility>
 
 namespace mana {
     std::string includeCallback(const char *n) {
@@ -115,11 +49,12 @@ namespace mana {
 
     Renderer3D::Renderer3D() : device(nullptr) {};
 
-    Renderer3D::Renderer3D(RenderDevice &device) : device(&device) {
-    }
+    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
+                                                                                     passes(std::move(passes)) {}
 
     Renderer3D::~Renderer3D() {
-
+        for (auto *pass : passes)
+            delete pass;
     }
 
     void Renderer3D::setRenderDevice(RenderDevice *dev) {
@@ -132,8 +67,8 @@ namespace mana {
         return *device;
     }
 
-    void Renderer3D::addRenderPass(RenderPass *pass) {
-        passes.emplace_back(pass);
+    void Renderer3D::setRenderPasses(std::vector<RenderPass *> p) {
+        passes = std::move(p);
     }
 
     const std::vector<RenderPass *> &Renderer3D::getRenderPasses() {
@@ -145,194 +80,8 @@ namespace mana {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
-        bool outline = false;
-        for (const auto &unit : scene.deferredPass) {
-            if (unit.outline)
-                outline = true;
-        }
-
-        Mat4f model, view, projection, camPosTransformMat;
-        view = scene.camera->view();
-        projection = scene.camera->projection();
-        camPosTransformMat = MatrixMath::translate(scene.camera->transform.position);
-        if (outline) {
-            ShaderProgram *defaultOutlineShader = device->createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                                                              SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
-            RenderScene sceneCopy = scene;
-            device->getRenderer().renderBegin(target);
-            for (auto &unit : sceneCopy.deferredPass) {
-                model = MatrixMath::translate(unit.transform.position);
-                model = model * MatrixMath::scale(unit.transform.scale);
-                model = model * MatrixMath::rotate(unit.transform.rotation);
-
-                ShaderProgram &shader = *unit.command.shader;
-
-                shader.setMat4("MANA_M", model);
-                shader.setMat4("MANA_V", view);
-                shader.setMat4("MANA_P", projection);
-                shader.setMat4("MANA_MVP", projection * view * model);
-                shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-                shader.setMat4("MANA_VIEW_POSITION_MAT", camPosTransformMat);
-
-                int i = 0;
-                for (auto &light : scene.dir) {
-                    std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "direction", light.direction);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-
-                i = 0;
-                for (auto &light : scene.point) {
-                    std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "position", light.transform.position);
-                    shader.setFloat(name + "constantValue", light.constant);
-                    shader.setFloat(name + "linearValue", light.linear);
-                    shader.setFloat(name + "quadraticValue", light.quadratic);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-                i = 0;
-                for (auto &light : scene.spot) {
-                    std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "position", light.transform.position);
-                    shader.setVec3(name + "direction", light.direction);
-                    shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
-                    shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                    shader.setFloat(name + "constantValue", light.constant);
-                    shader.setFloat(name + "linearValue", light.linear);
-                    shader.setFloat(name + "quadraticValue", light.quadratic);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-
-                shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", scene.dir.size());
-                shader.setInt("MANA_LIGHT_COUNT_POINT", scene.point.size());
-                shader.setInt("MANA_LIGHT_COUNT_SPOT", scene.spot.size());
-
-                shader.setVec3("MANA_VIEWPOS", unit.transform.position);
-
-                if (unit.outline) {
-                    unit.command.properties.enableDepthTest = true;
-                    unit.command.properties.enableStencilTest = true;
-                    unit.command.properties.stencilFail = STENCIL_KEEP;
-                    unit.command.properties.stencilDepthFail = STENCIL_KEEP;
-                    unit.command.properties.stencilPass = STENCIL_REPLACE;
-                    unit.command.properties.stencilTestMask = 0xFF;
-                    unit.command.properties.stencilMode = STENCIL_ALWAYS;
-                    unit.command.properties.stencilReference = 1;
-                    unit.command.properties.stencilFunctionMask = 0xFF;
-                } else {
-                    unit.command.properties.enableStencilTest = false;
-                    unit.command.properties.stencilTestMask = 0x00;
-                    unit.command.properties.stencilFail = STENCIL_KEEP;
-                    unit.command.properties.stencilDepthFail = STENCIL_KEEP;
-                    unit.command.properties.stencilPass = STENCIL_KEEP;
-                    unit.command.properties.stencilMode = STENCIL_NEVER;
-                }
-
-                device->getRenderer().addCommand(unit.command);
-            }
-            for (auto &unit : sceneCopy.deferredPass) {
-                if (unit.outline) {
-                    unit.transform.scale *= unit.outlineScale;
-                    if (unit.outlineShader == nullptr) {
-                        unit.command.shader = defaultOutlineShader;
-                    } else {
-                        unit.command.shader = unit.outlineShader;
-                    }
-
-                    unit.command.properties.enableDepthTest = false;
-
-                    unit.command.properties.stencilMode = STENCIL_NOTEQUAL;
-                    unit.command.properties.stencilReference = 1;
-                    unit.command.properties.stencilFunctionMask = 0xFF;
-
-                    unit.command.properties.stencilTestMask = 0x00;
-
-                    model = MatrixMath::translate(unit.transform.position);
-                    model = model * MatrixMath::scale(unit.transform.scale);
-                    model = model * MatrixMath::rotate(unit.transform.rotation);
-
-                    ShaderProgram &shader = *unit.command.shader;
-
-                    shader.setMat4("MANA_M", model);
-                    shader.setMat4("MANA_V", view);
-                    shader.setMat4("MANA_P", projection);
-                    shader.setMat4("MANA_MVP", projection * view * model);
-                    shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-                    shader.setVec3("COLOR_OUTLINE", Vec3f((float) unit.outlineColor.r() / 255,
-                                                          (float) unit.outlineColor.g() / 255,
-                                                          (float) unit.outlineColor.b() / 255));
-
-                    device->getRenderer().addCommand(unit.command);
-                }
-            }
-            device->getRenderer().renderFinish();
-            delete defaultOutlineShader;
-        } else {
-            device->getRenderer().renderBegin(target);
-            for (auto &unit : scene.deferredPass) {
-                model = MatrixMath::translate(unit.transform.position);
-                model = model * MatrixMath::scale(unit.transform.scale);
-                model = model * MatrixMath::rotate(unit.transform.rotation);
-
-                ShaderProgram &shader = *unit.command.shader;
-
-                shader.setMat4("MANA_M", model);
-                shader.setMat4("MANA_V", view);
-                shader.setMat4("MANA_P", projection);
-                shader.setMat4("MANA_MVP", projection * view * model);
-                shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-                shader.setMat4("MANA_VIEW_POSITION_MAT", camPosTransformMat);
-
-                int i = 0;
-                for (auto &light : scene.dir) {
-                    std::string name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "direction", light.direction);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-
-                i = 0;
-                for (auto &light : scene.point) {
-                    std::string name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "position", light.transform.position);
-                    shader.setFloat(name + "constantValue", light.constant);
-                    shader.setFloat(name + "linearValue", light.linear);
-                    shader.setFloat(name + "quadraticValue", light.quadratic);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-                i = 0;
-                for (auto &light : scene.spot) {
-                    std::string name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
-                    shader.setVec3(name + "position", light.transform.position);
-                    shader.setVec3(name + "direction", light.direction);
-                    shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
-                    shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                    shader.setFloat(name + "constantValue", light.constant);
-                    shader.setFloat(name + "linearValue", light.linear);
-                    shader.setFloat(name + "quadraticValue", light.quadratic);
-                    shader.setVec3(name + "ambient", light.ambient);
-                    shader.setVec3(name + "diffuse", light.diffuse);
-                    shader.setVec3(name + "specular", light.specular);
-                }
-
-                shader.setInt("MANA_LIGHT_COUNT_DIRECTIONAL", scene.dir.size());
-                shader.setInt("MANA_LIGHT_COUNT_POINT", scene.point.size());
-                shader.setInt("MANA_LIGHT_COUNT_SPOT", scene.spot.size());
-
-                shader.setVec3("MANA_VIEWPOS", unit.transform.position);
-
-                device->getRenderer().addCommand(unit.command);
-            }
-            device->getRenderer().renderFinish();
+        for (auto *pass : passes) {
+            pass->render(*device, target, scene);
         }
     }
 }

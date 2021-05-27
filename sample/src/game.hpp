@@ -39,9 +39,6 @@ public:
 
         device.getRenderer().setMultiSample(true);
 
-        ren2d = Renderer2D(device);
-        ren3d = Renderer3D(device);
-
         Input &input = wnd->getInput();
 
         start(*wnd, device, input);
@@ -87,9 +84,6 @@ protected:
     virtual void loadScene(RenderDevice &device) = 0;
 
     virtual void destroyScene() = 0;
-
-    Renderer2D ren2d;
-    Renderer3D ren3d;
 };
 
 #endif //MANA_GAME_HPP

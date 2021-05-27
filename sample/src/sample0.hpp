@@ -36,7 +36,7 @@ protected:
         manaAssembly = domain.loadAssembly("mana.dll");
 
         ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), ren3d));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), device));
     }
 
     void stop(Window &window, RenderDevice &device, Input &input) override {

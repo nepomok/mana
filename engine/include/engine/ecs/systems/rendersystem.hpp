@@ -34,7 +34,7 @@ namespace mana {
 
     class RenderSystem : public System {
     public:
-        explicit RenderSystem(RenderTarget &screenTarget, Renderer3D &ren);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device);
 
         ~RenderSystem() override = default;
 
@@ -46,7 +46,7 @@ namespace mana {
 
     private:
         RenderTarget &screenTarget;
-        Renderer3D &ren;
+        Renderer3D ren;
 
         PerspectiveCamera perspectiveCamera;
         OrthographicCamera orthoCamera;
