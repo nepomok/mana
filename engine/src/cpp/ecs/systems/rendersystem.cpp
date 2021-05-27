@@ -150,7 +150,7 @@ namespace mana {
             unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
             unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
-            scene3d.units.emplace_back(unit);
+            scene3d.deferredPass.emplace_back(unit);
         }
 
         Node *cameraNode;

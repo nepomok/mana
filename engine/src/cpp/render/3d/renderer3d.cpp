@@ -118,7 +118,26 @@ namespace mana {
     Renderer3D::Renderer3D(RenderDevice &device) : device(&device) {
     }
 
-    void Renderer3D::setEnableShadowMapping(bool shadowMapping) {
+    Renderer3D::~Renderer3D() {
+
+    }
+
+    void Renderer3D::setRenderDevice(RenderDevice *dev) {
+        device = dev;
+    }
+
+    const RenderDevice &Renderer3D::getRenderDevice() {
+        if (device == nullptr)
+            throw std::runtime_error("Renderer3D not initialized");
+        return *device;
+    }
+
+    void Renderer3D::addRenderPass(RenderPass *pass) {
+        passes.emplace_back(pass);
+    }
+
+    const std::vector<RenderPass *> &Renderer3D::getRenderPasses() {
+        return passes;
     }
 
     void Renderer3D::render(RenderTarget &target,
@@ -127,7 +146,7 @@ namespace mana {
             throw std::runtime_error("Renderer 3d not initialized");
 
         bool outline = false;
-        for (const auto &unit : scene.units) {
+        for (const auto &unit : scene.deferredPass) {
             if (unit.outline)
                 outline = true;
         }
@@ -141,7 +160,7 @@ namespace mana {
                                                                               SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
             RenderScene sceneCopy = scene;
             device->getRenderer().renderBegin(target);
-            for (auto &unit : sceneCopy.units) {
+            for (auto &unit : sceneCopy.deferredPass) {
                 model = MatrixMath::translate(unit.transform.position);
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
@@ -217,7 +236,7 @@ namespace mana {
 
                 device->getRenderer().addCommand(unit.command);
             }
-            for (auto &unit : sceneCopy.units) {
+            for (auto &unit : sceneCopy.deferredPass) {
                 if (unit.outline) {
                     unit.transform.scale *= unit.outlineScale;
                     if (unit.outlineShader == nullptr) {
@@ -256,7 +275,7 @@ namespace mana {
             delete defaultOutlineShader;
         } else {
             device->getRenderer().renderBegin(target);
-            for (auto &unit : scene.units) {
+            for (auto &unit : scene.deferredPass) {
                 model = MatrixMath::translate(unit.transform.position);
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
@@ -315,11 +334,5 @@ namespace mana {
             }
             device->getRenderer().renderFinish();
         }
-    }
-
-    const RenderDevice &Renderer3D::getRenderDevice() {
-        if (device == nullptr)
-            throw std::runtime_error("Renderer3D not initialized");
-        return *device;
     }
 }

@@ -27,6 +27,8 @@
 namespace mana {
     namespace opengl {
         namespace OGLTypeConverter {
+            GLenum getColorAttachment(int index);
+
             GLint convertPrimitive(int value);
 
             GLuint convertPrimitive(uint value);

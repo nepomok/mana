@@ -17,24 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERSCENE_HPP
-#define MANA_RENDERSCENE_HPP
+#ifndef MANA_RENDERPASS_HPP
+#define MANA_RENDERPASS_HPP
 
-#include "engine/render/3d/renderunit.hpp"
-#include "engine/render/3d/camera/camera.hpp"
-#include "engine/render/3d/lighting/light.hpp"
+#include "engine/render/3d/renderpass.hpp"
+#include "engine/render/3d/renderscene.hpp"
+#include "engine/render/renderer.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
-    struct RenderScene {
-        Camera *camera;
+    class RenderPass {
+    public:
+        virtual ~RenderPass() = default;
 
-        std::vector<RenderUnit> deferredPass;
-        std::vector<RenderUnit> forwardPass;
-
-        std::vector<DirectionalLight> dir;
-        std::vector<PointLight> point;
-        std::vector<SpotLight> spot;
+        virtual void render(RenderDevice &device, RenderTarget &target, RenderScene &scene) = 0;
     };
 }
 
-#endif //MANA_RENDERSCENE_HPP
+#endif //MANA_RENDERPASS_HPP

@@ -30,6 +30,8 @@ namespace mana {
 
         virtual Vec2i getSize() = 0;
 
+        virtual int getSamples() = 0;
+
         virtual void blitColor(RenderTarget &source,
                                Vec2i sourceOffset,
                                Vec2i targetOffset,
@@ -51,7 +53,7 @@ namespace mana {
                                  Vec2i targetRect,
                                  TextureBuffer::TextureFiltering filter) = 0;
 
-        virtual void attachColor(TextureBuffer &texture) = 0;
+        virtual void attachColor(int index, TextureBuffer &texture) = 0;
 
         virtual void attachDepth(TextureBuffer &texture) = 0;
 
@@ -59,13 +61,21 @@ namespace mana {
 
         virtual void attachDepthStencil(TextureBuffer &texture) = 0;
 
-        virtual void attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
+        virtual void attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
         virtual void attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
         virtual void attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
 
         virtual void attachDepthStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) = 0;
+
+        virtual void detachColor(int index) = 0;
+
+        virtual void detachDepth() = 0;
+
+        virtual void detachStencil() = 0;
+
+        virtual void detachDepthStencil() = 0;
     };
 }
 

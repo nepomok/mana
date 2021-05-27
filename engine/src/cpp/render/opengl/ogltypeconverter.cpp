@@ -26,6 +26,10 @@
 namespace mana {
     namespace opengl {
         namespace OGLTypeConverter {
+            GLenum getColorAttachment(int index) {
+                return GL_COLOR_ATTACHMENT0 + index;
+            }
+
             GLint convertPrimitive(int value) {
                 return (GLint) value;
             }

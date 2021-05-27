@@ -28,6 +28,7 @@
 #include "engine/render/renderdevice.hpp"
 
 #include "engine/render/3d/renderscene.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace mana {
     class Renderer3D {
@@ -40,15 +41,22 @@ namespace mana {
 
         explicit Renderer3D(RenderDevice &device);
 
-        void setEnableShadowMapping(bool shadowMapping);
+        ~Renderer3D();
+
+        void setRenderDevice(RenderDevice *device);
+
+        const RenderDevice &getRenderDevice();
+
+        void addRenderPass(RenderPass *pass);
+
+        const std::vector<RenderPass *> &getRenderPasses();
 
         void render(RenderTarget &target,
                     RenderScene &scene);
 
-        const RenderDevice &getRenderDevice();
-        
     private:
         RenderDevice *device;
+        std::vector<RenderPass *> passes;
     };
 }
 

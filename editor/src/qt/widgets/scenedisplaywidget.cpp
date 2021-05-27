@@ -291,7 +291,7 @@ void SceneDisplayWidget::paintGL() {
             unit.outlineColor = highlightColor;
         }
 
-        scene3d.units.emplace_back(unit);
+        scene3d.deferredPass.emplace_back(unit);
     }
 
     pCam.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());

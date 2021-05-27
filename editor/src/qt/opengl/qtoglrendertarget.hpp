@@ -65,7 +65,7 @@ namespace mana {
                              Vec2i targetRect,
                              TextureBuffer::TextureFiltering filter) override;
 
-            void attachColor(TextureBuffer &texture) override;
+            void attachColor(int index, TextureBuffer &texture) override;
 
             void attachDepth(TextureBuffer &texture) override;
 
@@ -73,7 +73,7 @@ namespace mana {
 
             void attachDepthStencil(TextureBuffer &texture) override;
 
-            void attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
+            void attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
             void attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 

@@ -36,6 +36,8 @@ namespace mana {
 
             Vec2i getSize() override;
 
+            int getSamples() override;
+
             void blitColor(RenderTarget &source,
                            Vec2i sourceOffset,
                            Vec2i targetOffset,
@@ -57,7 +59,7 @@ namespace mana {
                              Vec2i targetRect,
                              TextureBuffer::TextureFiltering filter) override;
 
-            void attachColor(TextureBuffer &texture) override;
+            void attachColor(int index, TextureBuffer &texture) override;
 
             void attachDepth(TextureBuffer &texture) override;
 
@@ -65,13 +67,21 @@ namespace mana {
 
             void attachDepthStencil(TextureBuffer &texture) override;
 
-            void attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
+            void attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
             void attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
             void attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
 
             void attachDepthStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) override;
+
+            void detachColor(int index) override;
+
+            void detachDepth() override;
+
+            void detachStencil() override;
+
+            void detachDepthStencil() override;
 
             virtual GLuint getFBO();
 
@@ -80,6 +90,7 @@ namespace mana {
             GLuint colorRBO;
             GLuint depthStencilRBO;
             Vec2i size;
+            int samples;
         };
     }
 }

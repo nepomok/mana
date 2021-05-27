@@ -23,10 +23,10 @@
 #include "render/opengl/oglrendertexture.hpp"
 
 namespace mana {
-    opengl::OGLRenderTarget::OGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size() {}
+    opengl::OGLRenderTarget::OGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size(), samples() {}
 
     opengl::OGLRenderTarget::OGLRenderTarget(Vec2i size, int samples)
-            : FBO(), colorRBO(), depthStencilRBO(), size(size) {
+            : FBO(), colorRBO(), depthStencilRBO(), size(size), samples(samples) {
         glGenFramebuffers(1, &FBO);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
@@ -58,6 +58,10 @@ namespace mana {
 
     Vec2i opengl::OGLRenderTarget::getSize() {
         return size;
+    }
+
+    int opengl::OGLRenderTarget::getSamples() {
+        return samples;
     }
 
     void opengl::OGLRenderTarget::blitColor(RenderTarget &source,
@@ -192,7 +196,7 @@ namespace mana {
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
 
-    void opengl::OGLRenderTarget::attachColor(TextureBuffer &texture) {
+    void opengl::OGLRenderTarget::attachColor(int index, TextureBuffer &texture) {
         auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
@@ -224,7 +228,7 @@ namespace mana {
         checkGLError("");
     }
 
-    void opengl::OGLRenderTarget::attachColor(TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
+    void opengl::OGLRenderTarget::attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
         auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, OGLTypeConverter::convert(face), tex.handle, 0);
@@ -260,5 +264,29 @@ namespace mana {
 
     GLuint opengl::OGLRenderTarget::getFBO() {
         return FBO;
+    }
+
+    void opengl::OGLRenderTarget::detachColor(int index) {
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, colorRBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void opengl::OGLRenderTarget::detachDepth() {
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthStencilRBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void opengl::OGLRenderTarget::detachStencil() {
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilRBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void opengl::OGLRenderTarget::detachDepthStencil() {
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilRBO);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
