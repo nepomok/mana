@@ -21,7 +21,7 @@
  */
 
 #include "render/opengl/oglrenderdevice.hpp"
-#include "render/opengl/oglrendertexture.hpp"
+#include "render/opengl/ogltexturebuffer.hpp"
 #include "render/opengl/oglcheckerror.hpp"
 #include "render/opengl/oglmeshobject.hpp"
 #include "render/opengl/oglshaderprogram.hpp"
@@ -37,11 +37,11 @@ namespace mana {
         }
 
         TextureBuffer *OGLRenderDevice::createTextureBuffer(TextureBuffer::Attributes attributes) {
-            return new OGLRenderTexture(attributes);
+            return new OGLTextureBuffer(attributes);
         }
 
         MeshBuffer *OGLRenderDevice::createMeshBuffer(const Mesh &mesh) {
-            if (mesh.primitive != TRI) {
+            if (mesh.primitive != Mesh::TRI) {
                 throw std::runtime_error("Unsupported primitive");
             }
 
@@ -178,7 +178,7 @@ namespace mana {
 
         MeshBuffer *
         OGLRenderDevice::createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
-            if (mesh.primitive != TRI) {
+            if (mesh.primitive != Mesh::TRI) {
                 throw std::runtime_error("Unsupported primitive");
             }
 

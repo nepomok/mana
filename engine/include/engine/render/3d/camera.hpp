@@ -33,11 +33,10 @@ namespace mana {
     /**
      * A camera provides a view and projection matrix.
      */
-    class Camera {
-    public:
-        explicit Camera(CameraType type) : type(type) {}
+    struct Camera {
+        Camera() : type() {}
 
-        virtual ~Camera() = default;
+        explicit Camera(CameraType type) : type(type) {}
 
         virtual Mat4f view() const {
             Mat4f ret = MatrixMath::rotate(transform.rotation);
@@ -45,7 +44,24 @@ namespace mana {
             return ret * MatrixMath::translate(transform.position * -1);
         }
 
-        virtual Mat4f projection() const = 0;
+        virtual Mat4f projection() const {
+            switch (type) {
+                case ORTHOGRAPHIC:
+                    return MatrixMath::ortho(left,
+                                             right,
+                                             bottom,
+                                             top,
+                                             nearClip,
+                                             farClip);
+                case PERSPECTIVE:
+                    return MatrixMath::perspective(fov,
+                                                   aspectRatio,
+                                                   nearClip,
+                                                   farClip);
+                default:
+                    throw std::runtime_error("Unsupported camera type");
+            }
+        }
 
         CameraType type;
 
@@ -53,6 +69,16 @@ namespace mana {
 
         float nearClip = 0.1f;
         float farClip = 1000.0f;
+
+        //Perspective
+        float fov = 60;
+        float aspectRatio = 4.0f / 3.0f;
+
+        //Orthographic
+        float left = -10;
+        float top = 10;
+        float right = 10;
+        float bottom = -10;
     };
 }
 

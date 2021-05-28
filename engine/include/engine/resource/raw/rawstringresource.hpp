@@ -17,31 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ORTHOGRAPHICCAMERA_HPP
-#define MANA_ORTHOGRAPHICCAMERA_HPP
+#ifndef MANA_MEMSTRINGRESOURCE_HPP
+#define MANA_MEMSTRINGRESOURCE_HPP
 
-#include "engine/render/3d/camera/camera.hpp"
-#include "engine/math/matrixmath.hpp"
+#include "engine/resource/resource.hpp"
 
 namespace mana {
-    class OrthographicCamera : public Camera {
+    class RawStringResource : public Resource<std::string> {
     public:
-        OrthographicCamera() : Camera(ORTHOGRAPHIC) {}
+        std::string text;
 
-        Mat4f projection() const override {
-            return MatrixMath::ortho(left,
-                                     right,
-                                     bottom,
-                                     top,
-                                     nearClip,
-                                     farClip);
+        RawStringResource() : text() {}
+
+        RawStringResource(std::string text) : text(std::move(text)) {}
+
+        void load() override {}
+
+        void free() override {}
+
+        std::string &get() override {
+            return text;
         }
-
-        float left = -10;
-        float top = 10;
-        float right = 10;
-        float bottom = -10;
     };
 }
 
-#endif //MANA_ORTHOGRAPHICCAMERA_HPP
+#endif //MANA_MEMSTRINGRESOURCE_HPP

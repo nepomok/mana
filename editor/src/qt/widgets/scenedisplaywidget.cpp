@@ -188,7 +188,7 @@ void SceneDisplayWidget::paintGL() {
 
             light.direction = comp.direction;
 
-            scene3d.dir.emplace_back(light);
+            scene3d.directionalLights.emplace_back(light);
         } else if (comp.lightType == mana::LIGHT_POINT) {
             mana::PointLight light;
             light.ambient = comp.ambient;
@@ -199,7 +199,7 @@ void SceneDisplayWidget::paintGL() {
             light.linear = comp.linear;
             light.quadratic = comp.quadratic;
 
-            scene3d.point.emplace_back(light);
+            scene3d.pointLights.emplace_back(light);
         } else if (comp.lightType == mana::LIGHT_SPOT) {
             mana::SpotLight light;
             light.ambient = comp.ambient;
@@ -212,7 +212,7 @@ void SceneDisplayWidget::paintGL() {
             light.linear = comp.linear;
             light.quadratic = comp.quadratic;
 
-            scene3d.spot.emplace_back(light);
+            scene3d.spotLights.emplace_back(light);
         }
     }
 

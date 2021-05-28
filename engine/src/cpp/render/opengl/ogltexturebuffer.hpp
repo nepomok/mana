@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLRENDERTEXTURE_HPP
-#define MANA_OGLRENDERTEXTURE_HPP
+#ifndef MANA_OGLTEXTUREBUFFER_HPP
+#define MANA_OGLTEXTUREBUFFER_HPP
 
 #include "engine/render/texturebuffer.hpp"
 
@@ -26,17 +26,17 @@
 
 namespace mana {
     namespace opengl {
-        class OGLRenderTexture : public TextureBuffer {
+        class OGLTextureBuffer : public TextureBuffer {
         public:
             GLuint handle;
 
-            explicit OGLRenderTexture(Attributes attributes);
+            explicit OGLTextureBuffer(Attributes attributes);
 
-            OGLRenderTexture(const OGLRenderTexture &copy) = delete;
+            OGLTextureBuffer(const OGLTextureBuffer &copy) = delete;
 
-            OGLRenderTexture &operator=(const OGLRenderTexture &copy) = delete;
+            OGLTextureBuffer &operator=(const OGLTextureBuffer &copy) = delete;
 
-            ~OGLRenderTexture() override;
+            ~OGLTextureBuffer() override;
 
             void upload(const ImageBuffer <ColorRGB> &buffer) override;
 
@@ -55,4 +55,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLRENDERTEXTURE_HPP
+#endif //MANA_OGLTEXTUREBUFFER_HPP

@@ -17,37 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TEXTUREBUFFERRESOURCE_HPP
-#define MANA_TEXTUREBUFFERRESOURCE_HPP
+#ifndef MANA_MATERIAL_HPP
+#define MANA_MATERIAL_HPP
 
-#include "engine/render/renderdevice.hpp"
+#include "engine/render/imagebuffer.hpp"
+#include "engine/render/shaderprogram.hpp"
 
 #include "engine/resource/resource.hpp"
 
 namespace mana {
-    class TextureBufferResource : public Resource<TextureBuffer> {
-    public:
-        TextureBufferResource();
+    struct Material {
+        ShaderProgram *shader = nullptr;
 
-        TextureBufferResource(RenderDevice &allocator,
-                              Resource<ImageBuffer<ColorRGBA>> &resource,
-                              TextureBuffer::Attributes attributes);
+        std::string name;
 
-        ~TextureBufferResource() override;
+        ColorRGBA diffuseColor;
+        ColorRGBA specularColor;
+        ColorRGBA ambientColor;
 
-        void load() override;
+        ImageBuffer<ColorRGBA> *diffuseTex = nullptr;
+        ImageBuffer<ColorRGBA> *specularTex = nullptr;
+        ImageBuffer<ColorRGBA> *ambientTex = nullptr;
+        ImageBuffer<ColorRGBA> *emissiveTex = nullptr;
+        ImageBuffer<ColorRGBA> *normalTex = nullptr;
+        ImageBuffer<ColorRGBA> *roughnessTex = nullptr;
 
-        void free() override;
+        bool wireframe;
+        bool twosided;
 
-        TextureBuffer &get() override;
-
-    private:
-        RenderDevice *alloc;
-        Resource <ImageBuffer<ColorRGBA>> *img;
-        TextureBuffer::Attributes attrib;
-        TextureBuffer *texture;
-        bool isLoaded = false;
+        float opacity;
+        float roughness;
     };
 }
 
-#endif //MANA_TEXTUREBUFFERRESOURCE_HPP
+#endif //MANA_MATERIAL_HPP

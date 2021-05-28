@@ -53,6 +53,8 @@ namespace mana {
                                  Vec2i targetRect,
                                  TextureBuffer::TextureFiltering filter) = 0;
 
+        virtual void setNumberOfColorAttachments(int count) = 0;
+
         virtual void attachColor(int index, TextureBuffer &texture) = 0;
 
         virtual void attachDepth(TextureBuffer &texture) = 0;

@@ -17,6 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <mana.hpp>
 #include "engine/io/scenefile.hpp"
 
 #include "extern/json.hpp"
@@ -25,8 +26,10 @@ namespace mana {
     ComponentType convertComponentType(const std::string &str) {
         if (str == "transform")
             return TRANSFORM;
-        else if (str == "render")
-            return RENDER;
+        else if (str == "mesh")
+            return MESH;
+        else if (str == "material")
+            return MATERIAL;
         else if (str == "camera")
             return CAMERA;
         else if (str == "light")
@@ -179,19 +182,19 @@ namespace mana {
 
     CameraComponent *getCameraComponent(const nlohmann::json &component) {
         auto *ret = new CameraComponent();
-        ret->cameraType = convertCameraType(component["cameraType"]);
-        if (ret->cameraType == PERSPECTIVE) {
-            ret->nearClip = component["nearClip"];
-            ret->farClip = component["farClip"];
-            ret->fov = component["fov"];
-            ret->aspectRatio = component["aspectRatio"];
+        ret->camera.type = convertCameraType(component["cameraType"]);
+        if (ret->camera.type == PERSPECTIVE) {
+            ret->camera.nearClip = component["nearClip"];
+            ret->camera.farClip = component["farClip"];
+            ret->camera.fov = component["fov"];
+            ret->camera.aspectRatio = component["aspectRatio"];
         } else {
-            ret->nearClip = component["nearClip"];
-            ret->farClip = component["farClip"];
-            ret->left = component["left"];
-            ret->right = component["right"];
-            ret->top = component["top"];
-            ret->bottom = component["bottom"];
+            ret->camera.nearClip = component["nearClip"];
+            ret->camera.farClip = component["farClip"];
+            ret->camera.left = component["left"];
+            ret->camera.right = component["right"];
+            ret->camera.top = component["top"];
+            ret->camera.bottom = component["bottom"];
         }
         return ret;
     }
@@ -202,80 +205,50 @@ namespace mana {
         return ret;
     }
 
-    RenderComponent *getRenderComponent(const nlohmann::json &component, Resources &res) {
-        auto *ret = new RenderComponent();
-        ret->shader = &res.getResource<ShaderProgram>(component["shaderResourceName"]);
+    MeshComponent *getMeshComponent(const nlohmann::json &component, Resources &res) {
+        auto *ret = new MeshComponent();
+        throw std::runtime_error("Not Implemented");
+    }
 
-        for (const auto &entry : component["textureMapping"]) {
-            ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
-        }
-
-        for (auto &mesh : component["meshes"]) {
-            ret->meshBuffers.emplace_back(&res.getResource<MeshBuffer>(mesh["resourceName"]));
-        }
-
-        for (const auto &tex : component["textures"]) {
-            ret->textureBuffers.emplace_back(&res.getResource<TextureBuffer>(tex["resourceName"]));
-        }
-
-        auto props = component["renderProperties"];
-        ret->renderProperties.enableDepthTest = props["enableDepthTest"];
-        ret->renderProperties.depthTestWrite = props["depthTestWrite"];
-        ret->renderProperties.depthTestMode = convertDepthTestMode(props["depthTestMode"]);
-        ret->renderProperties.enableStencilTest = props["enableStencilTest"];
-        ret->renderProperties.stencilTestMask = props["stencilTestMask"];
-        ret->renderProperties.stencilMode = convertStencilMode(props["stencilMode"]);
-        ret->renderProperties.stencilReference = props["stencilReference"];
-        ret->renderProperties.stencilFunctionMask = props["stencilFunctionMask"];
-        ret->renderProperties.stencilFail = convertStencilAction(props["stencilFail"]);
-        ret->renderProperties.stencilDepthFail = convertStencilAction(props["stencilDepthFail"]);
-        ret->renderProperties.stencilPass = convertStencilAction(props["stencilPass"]);
-        ret->renderProperties.enableFaceCulling = props["enableFaceCulling"];
-        ret->renderProperties.faceCullMode = convertFaceCullMode(props["faceCullMode"]);
-        ret->renderProperties.faceCullClockwiseWinding = props["faceCullClockwiseWinding"];
-        ret->renderProperties.enableBlending = props["enableBlending"];
-        ret->renderProperties.blendSourceMode = convertBlendMode(props["blendSourceMode"]);
-        ret->renderProperties.blendDestinationMode = convertBlendMode(props["blendDestinationMode"]);
-
-        ret->renderOrder = props["renderOrder"];
-
-        return ret;
+    MaterialComponent *getMaterialComponent(const nlohmann::json &component, Resources &res) {
+        auto *ret = new MaterialComponent();
+        throw std::runtime_error("Not Implemented");
     }
 
     LightComponent *getLightComponent(const nlohmann::json &component) {
         auto *ret = new LightComponent();
-        ret->lightType = convertLightType(component["lightType"]);
+        ret->light.type = convertLightType(component["lightType"]);
 
-        ret->ambient.x = component["ambient"]["r"];
-        ret->ambient.y = component["ambient"]["g"];
-        ret->ambient.z = component["ambient"]["b"];
-        ret->diffuse.x = component["diffuse"]["r"];
-        ret->diffuse.y = component["diffuse"]["g"];
-        ret->diffuse.z = component["diffuse"]["b"];
-        ret->specular.x = component["specular"]["r"];
-        ret->specular.y = component["specular"]["g"];
-        ret->specular.z = component["specular"]["b"];
+        ret->light.ambient.x = component["ambient"]["r"];
+        ret->light.ambient.y = component["ambient"]["g"];
+        ret->light.ambient.z = component["ambient"]["b"];
+        ret->light.diffuse.x = component["diffuse"]["r"];
+        ret->light.diffuse.y = component["diffuse"]["g"];
+        ret->light.diffuse.z = component["diffuse"]["b"];
+        ret->light.specular.x = component["specular"]["r"];
+        ret->light.specular.y = component["specular"]["g"];
+        ret->light.specular.z = component["specular"]["b"];
 
-        switch (ret->lightType) {
+        switch (ret->light.type) {
             case LIGHT_POINT:
-                ret->constant = component["constant"];
-                ret->linear = component["linear"];
-                ret->quadratic = component["quadratic"];
+                ret->light.constant = component["constant"];
+                ret->light.linear = component["linear"];
+                ret->light.quadratic = component["quadratic"];
                 break;
             case LIGHT_SPOT:
-                ret->direction.x = component["direction"]["x"];
-                ret->direction.y = component["direction"]["y"];
-                ret->direction.z = component["direction"]["z"];
-                ret->cutOff = component["cutOff"];
-                ret->outerCutOff = component["outerCutOff"];
-                ret->constant = component["constant"];
-                ret->linear = component["linear"];
-                ret->quadratic = component["quadratic"];
+                ret->light.direction.x = component["direction"]["x"];
+                ret->light.direction.y = component["direction"]["y"];
+                ret->light.direction.z = component["direction"]["z"];
+                ret->light.cutOff = component["cutOff"];
+                ret->light.outerCutOff = component["outerCutOff"];
+                ret->light.constant = component["constant"];
+                ret->light.linear = component["linear"];
+                ret->light.quadratic = component["quadratic"];
                 break;
             case LIGHT_DIRECTIONAL:
-                ret->direction.x = component["direction"]["x"];
-                ret->direction.y = component["direction"]["y"];
-                ret->direction.z = component["direction"]["z"];
+                ret->light.direction.x = component["direction"]["x"];
+                ret->light.direction.y = component["direction"]["y"];
+                ret->light.direction.z = component["direction"]["z"];
                 break;
         }
         return ret;
@@ -283,7 +256,7 @@ namespace mana {
 
     ScriptComponent *getScriptComponent(const nlohmann::json &component, Resources &res) {
         auto *ret = new ScriptComponent();
-        ret->script = &res.getResource<Script>(component["resourceName"]);
+        ret->script = &res.getResource<Script>(component["resourceName"]).get();
         ret->queue = component["queue"];
         return ret;
     }
@@ -297,8 +270,11 @@ namespace mana {
             case CAMERA:
                 ret = getCameraComponent(component);
                 break;
-            case RENDER:
-                ret = getRenderComponent(component, res);
+            case MESH:
+                ret = getMeshComponent(component, res);
+                break;
+            case MATERIAL:
+                ret = getMaterialComponent(component, res);
                 break;
             case LIGHT:
                 ret = getLightComponent(component);

@@ -20,7 +20,7 @@
 #include "render/opengl/oglrendertarget.hpp"
 #include "render/opengl/ogltypeconverter.hpp"
 #include "render/opengl/oglcheckerror.hpp"
-#include "render/opengl/oglrendertexture.hpp"
+#include "render/opengl/ogltexturebuffer.hpp"
 
 namespace mana {
     opengl::OGLRenderTarget::OGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size(), samples() {}
@@ -196,8 +196,19 @@ namespace mana {
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
 
+    void opengl::OGLRenderTarget::setNumberOfColorAttachments(int count) {
+        unsigned int attachments[count];
+        for (int i = 0; i < count; i++) {
+            attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+        }
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        glDrawBuffers(count, attachments);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        checkGLError();
+    }
+
     void opengl::OGLRenderTarget::attachColor(int index, TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -205,7 +216,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachDepth(TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -213,7 +224,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachStencil(TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -221,7 +232,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachDepthStencil(TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -229,7 +240,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, OGLTypeConverter::convert(face), tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -237,7 +248,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -245,7 +256,7 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -254,7 +265,7 @@ namespace mana {
 
     void opengl::OGLRenderTarget::attachDepthStencil(TextureBuffer::CubeMapFace face,
                                                      TextureBuffer &texture) {
-        auto &tex = dynamic_cast< OGLRenderTexture &>(texture);
+        auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, OGLTypeConverter::convert(face), tex.handle,
                                0);

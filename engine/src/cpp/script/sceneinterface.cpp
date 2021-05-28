@@ -30,8 +30,10 @@ namespace mana {
                     return new TransformComponent();
                 case CAMERA:
                     return new CameraComponent();
-                case RENDER:
-                    return new RenderComponent();
+                case MESH:
+                    return new MeshComponent();
+                case MATERIAL:
+                    return new MaterialComponent();
                 case LIGHT:
                     return new LightComponent();
                 case SCRIPT:

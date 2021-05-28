@@ -17,38 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMPONENT_HPP
-#define MANA_RENDERCOMPONENT_HPP
+#ifndef MANA_MATERIALCOMPONENT_HPP
+#define MANA_MATERIALCOMPONENT_HPP
 
+#include "engine/render/3d/material.hpp"
+#include "engine/resource/resource.hpp"
 #include "engine/ecs/component.hpp"
 
-#include "engine/render/rendercommand.hpp"
-
-#include "engine/resource/resource.hpp"
-
 namespace mana {
-    struct RenderComponent : public Component {
-        RenderComponent() : Component(RENDER) {}
+    struct MaterialComponent : public Component {
+        MaterialComponent() : Component(MATERIAL) {}
 
         Component *clone() override {
-            return new RenderComponent(*this);
+            return new MaterialComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(RenderComponent);
+            return typeid(MaterialComponent);
         }
 
-        Resource<ShaderProgram> *shader{};
-
-        std::vector<Resource<MeshBuffer> *> meshBuffers;
-        std::vector<Resource<TextureBuffer> *> textureBuffers;
-
-        std::map<std::string, int> textureMapping;
-
-        RenderProperties renderProperties;
-
-        int renderOrder = 0;
+        Material *material = nullptr;
     };
 }
 
-#endif //MANA_RENDERCOMPONENT_HPP
+#endif //MANA_MATERIALCOMPONENT_HPP

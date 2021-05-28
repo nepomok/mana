@@ -49,33 +49,33 @@ namespace mana {
     MonoCppObject uploadCamera(Component &c, MonoCppAssembly &manaAssembly) {
         auto &cam = dynamic_cast<CameraComponent &>(c);
         auto ret = manaAssembly.createObject("Mana", "Camera");
-        ret.setField("cameraType", &cam.cameraType);
-        ret.setField("nearClip", &cam.nearClip);
-        ret.setField("farClip", &cam.farClip);
-        ret.setField("left", &cam.left);;
-        ret.setField("top", &cam.top);
-        ret.setField("right", &cam.right);
-        ret.setField("bottom", &cam.bottom);
-        ret.setField("fov", &cam.fov);
-        ret.setField("aspectRatio", &cam.aspectRatio);
+        ret.setField("cameraType", &cam.camera.type);
+        ret.setField("nearClip", &cam.camera.nearClip);
+        ret.setField("farClip", &cam.camera.farClip);
+        ret.setField("left", &cam.camera.left);;
+        ret.setField("top", &cam.camera.top);
+        ret.setField("right", &cam.camera.right);
+        ret.setField("bottom", &cam.camera.bottom);
+        ret.setField("fov", &cam.camera.fov);
+        ret.setField("aspectRatio", &cam.camera.aspectRatio);
         return std::move(ret);
     }
 
     MonoCppObject uploadLight(Component &c, MonoCppAssembly &manaAssembly) {
         auto &l = dynamic_cast<LightComponent &>(c);
         auto ret = manaAssembly.createObject("Mana", "Light");
-        ret.setField("lightType", &l.lightType);
+        ret.setField("lightType", &l.light.type);
 
-        ret.setField("ambient", uploadVector(manaAssembly, l.ambient).getObjectPointer());
-        ret.setField("diffuse", uploadVector(manaAssembly, l.diffuse).getObjectPointer());
-        ret.setField("specular", uploadVector(manaAssembly, l.specular).getObjectPointer());
-        ret.setField("direction", uploadVector(manaAssembly, l.direction).getObjectPointer());
+        ret.setField("ambient", uploadVector(manaAssembly, l.light.ambient).getObjectPointer());
+        ret.setField("diffuse", uploadVector(manaAssembly, l.light.diffuse).getObjectPointer());
+        ret.setField("specular", uploadVector(manaAssembly, l.light.specular).getObjectPointer());
+        ret.setField("direction", uploadVector(manaAssembly, l.light.direction).getObjectPointer());
 
-        ret.setField("cutOff", &l.cutOff);
-        ret.setField("outerCutOff", &l.outerCutOff);
-        ret.setField("constant", &l.constant);
-        ret.setField("linear", &l.linear);
-        ret.setField("quadratic", &l.quadratic);
+        ret.setField("cutOff", &l.light.cutOff);
+        ret.setField("outerCutOff", &l.light.outerCutOff);
+        ret.setField("constant", &l.light.constant);
+        ret.setField("linear", &l.light.linear);
+        ret.setField("quadratic", &l.light.quadratic);
 
         return std::move(ret);
     }
@@ -88,7 +88,8 @@ namespace mana {
                 return std::move(uploadCamera(c, manaAssembly));
             case ComponentType::LIGHT:
                 return std::move(uploadLight(c, manaAssembly));
-            case ComponentType::RENDER:
+            case ComponentType::MESH:
+            case ComponentType::MATERIAL:
             case ComponentType::SCRIPT:
             default:
                 return std::move(manaAssembly.createObject("Mana", "Component"));
@@ -111,39 +112,39 @@ namespace mana {
     }
 
     void downloadCamera(MonoCppObject &o, CameraComponent &c) {
-        c.cameraType = o.getField<CameraType>("cameraType");
-        c.nearClip = o.getField<float>("nearClip");
-        c.farClip = o.getField<float>("farClip");
+        c.camera.type = o.getField<CameraType>("cameraType");
+        c.camera.nearClip = o.getField<float>("nearClip");
+        c.camera.farClip = o.getField<float>("farClip");
 
-        c.left = o.getField<float>("left");
-        c.top = o.getField<float>("top");
-        c.right = o.getField<float>("right");
-        c.bottom = o.getField<float>("bottom");
+        c.camera.left = o.getField<float>("left");
+        c.camera.top = o.getField<float>("top");
+        c.camera.right = o.getField<float>("right");
+        c.camera.bottom = o.getField<float>("bottom");
 
-        c.fov = o.getField<float>("fov");
-        c.aspectRatio = o.getField<float>("aspectRatio");
+        c.camera.fov = o.getField<float>("fov");
+        c.camera.aspectRatio = o.getField<float>("aspectRatio");
     }
 
     void downloadLight(MonoCppObject &o, LightComponent &c) {
-        c.lightType = o.getField<LightType>("lightType");
+        c.light.type = o.getField<LightType>("lightType");
 
         auto ot = o.getField("ambient");
-        downloadVector(ot, c.ambient);
+        downloadVector(ot, c.light.ambient);
 
         ot = o.getField("diffuse");
-        downloadVector(ot, c.diffuse);
+        downloadVector(ot, c.light.diffuse);
 
         ot = o.getField("specular");
-        downloadVector(ot, c.specular);
+        downloadVector(ot, c.light.specular);
 
         ot = o.getField("direction");
-        downloadVector(ot, c.direction);
+        downloadVector(ot, c.light.direction);
 
-        c.cutOff = o.getField<float>("cutOff");
-        c.outerCutOff = o.getField<float>("outerCutOff");
-        c.constant = o.getField<float>("constant");
-        c.linear = o.getField<float>("linear");
-        c.quadratic = o.getField<float>("quadratic");
+        c.light.cutOff = o.getField<float>("cutOff");
+        c.light.outerCutOff = o.getField<float>("outerCutOff");
+        c.light.constant = o.getField<float>("constant");
+        c.light.linear = o.getField<float>("linear");
+        c.light.quadratic = o.getField<float>("quadratic");
     }
 
     void downloadComponent(MonoCppObject &o, Component &c) {
@@ -157,7 +158,8 @@ namespace mana {
             case ComponentType::LIGHT:
                 downloadLight(o, (LightComponent &) c);
                 break;
-            case ComponentType::RENDER:
+            case ComponentType::MESH:
+            case ComponentType::MATERIAL:
             case ComponentType::SCRIPT:
             default:
                 break;
@@ -245,14 +247,14 @@ namespace mana {
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
                     comp.scriptEnabled = false;
-                    comp.script->get().onDisable();
+                    comp.script->onDisable();
                 }
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                comp.script->get().onEnable();
+                comp.script->onEnable();
             }
-            comp.script->get().onUpdate();
+            comp.script->onUpdate();
         }
 
         SceneInterface::setScene(nullptr);

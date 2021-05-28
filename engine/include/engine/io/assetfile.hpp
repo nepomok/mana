@@ -23,7 +23,7 @@
 #include <map>
 
 #include "engine/io/file.hpp"
-#include "engine/render/geometry/mesh.hpp"
+#include "engine/render/mesh.hpp"
 
 namespace mana {
     class AssetFile : public File {

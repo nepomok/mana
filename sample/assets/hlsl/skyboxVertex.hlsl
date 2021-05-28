@@ -14,7 +14,7 @@ struct VS_OUTPUT {
 VS_OUTPUT main(const VS_INPUT v) {
     VS_OUTPUT ret;
 
-    ret.vPos = mul(float4(v.position, 1), mul(MANA_VIEW_POSITION_MAT, mul(MANA_V, MANA_P)));
+    ret.vPos = mul(float4(v.position, 1), mul(MANA_VIEW_TRANSLATION, mul(MANA_V, MANA_P)));
     ret.texCoords = v.position;
 
     return ret;

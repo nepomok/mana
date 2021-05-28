@@ -22,22 +22,39 @@
 
 #include <vector>
 
-#include "engine/render/geometry/primitive.hpp"
-#include "engine/render/geometry/vertex.hpp"
+#include "engine/math/vector3.hpp"
+#include "engine/math/vector2.hpp"
 
 namespace mana {
-    /**
-     * The graphics api independent low level mesh definition, describing a mesh consisting of identical primitives.
-     *
-     * Defines a mesh with vertices and optionally indices which are drawn as the specified primitive.
-     *
-     * When using a non indexed mesh the vertices are red starting from index 0 using the specified primitive.
-     * (Eg. TRI = { vertices[0] vertices[1] vertices[2] } , { vertices[3]...).
-     *
-     * Optionally users may pass a indices vector which is red starting from index 0 using the specified primitive.
-     * (Eg. TRI = { vertices[indices[0]] vertices[indices[1]] vertices[indices[2]] } , { vertices[indices[3]]...).
-     */
+    struct Vertex {
+        float data[8];
+
+        Vertex(Vec3f position, Vec3f normal, Vec2f uv) : data() {
+            data[0] = position.x;
+            data[1] = position.y;
+            data[2] = position.z;
+            data[3] = normal.x;
+            data[4] = normal.y;
+            data[5] = normal.z;
+            data[6] = uv.x;
+            data[7] = uv.y;
+        }
+
+        Vertex(Vec3f position, Vec2f uv) : Vertex(position, {}, uv) {}
+
+        explicit Vertex(Vec3f position) : Vertex(position, {}, {}) {}
+
+        Vertex() = default;
+    };
+
     struct Mesh {
+        enum Primitive {
+            POINT,
+            LINE,
+            TRI,
+            QUAD
+        };
+
         bool indexed = false;
         Primitive primitive = POINT;
         std::vector<Vertex> vertices;

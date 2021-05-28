@@ -24,8 +24,6 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
-#include "engine/render/3d/camera/perspectivecamera.hpp"
-#include "engine/render/3d/camera/orthographiccamera.hpp"
 
 #include "engine/resource/resources.hpp"
 
@@ -44,12 +42,13 @@ namespace mana {
 
         void update(float deltaTime, Scene &scene) override;
 
+        Renderer3D &getRenderer();
+
     private:
         RenderTarget &screenTarget;
         Renderer3D ren;
 
-        PerspectiveCamera perspectiveCamera;
-        OrthographicCamera orthoCamera;
+        Camera camera;
     };
 }
 

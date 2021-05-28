@@ -21,8 +21,6 @@
 
 #include <stdexcept>
 
-#include "engine/render/geometry/vertex.hpp"
-
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
@@ -30,7 +28,7 @@
 namespace mana {
     Mesh convertMesh(const aiMesh &assMesh) {
         Mesh ret;
-        ret.primitive = TRI;
+        ret.primitive = Mesh::TRI;
         ret.indexed = true;
         for (int y = 0; y < assMesh.mNumFaces; y++) {
             const auto &face = dynamic_cast<const aiFace &>(assMesh.mFaces[y]);

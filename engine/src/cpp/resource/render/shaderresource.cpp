@@ -17,6 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+/*
 #include "engine/resource/render/shaderresource.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
@@ -61,3 +62,4 @@ namespace mana {
         return *shader;
     }
 }
+ */

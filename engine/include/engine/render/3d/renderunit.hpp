@@ -20,22 +20,27 @@
 #ifndef MANA_RENDERUNIT_HPP
 #define MANA_RENDERUNIT_HPP
 
+#include <utility>
+
 #include "engine/math/transform.hpp"
-#include "engine/render/rendercommand.hpp"
+#include "engine/render/mesh.hpp"
+#include "engine/render/3d/material.hpp"
 
 namespace mana {
     struct RenderUnit {
-        RenderUnit() : transform(), command() {}
+        RenderUnit() : transform(), material(), meshes() {}
 
-        RenderUnit(Transform t, RenderCommand command) : transform(t), command(std::move(command)) {}
+        RenderUnit(Transform t, Material *material, std::vector<Mesh *> meshes) : transform(t),
+                                                                                  material(material),
+                                                                                  meshes(std::move(meshes)) {}
 
         Transform transform;
-        RenderCommand command;
 
-        //If true the renderer3d will outline the unit in the resulting render with the supplied color or optional shader.
+        Material *material;
+        std::vector<Mesh *> meshes;
+
         bool outline = false;
         ColorRGB outlineColor;
-        ShaderProgram *outlineShader = nullptr;
         float outlineScale = 1.1f;
     };
 }

@@ -30,40 +30,28 @@ namespace mana {
     };
 
     struct Light {
+        Light() : type() {}
+        
         explicit Light(LightType type) : type(type) {}
 
-        virtual ~Light() = default;
-
         LightType type;
+
         Transform transform;
+
         Vec3f ambient = Vec3f(0.1f);
         Vec3f diffuse = Vec3f(1.0f);
         Vec3f specular = Vec3f(1.0f);
-    };
 
-    struct DirectionalLight : public Light {
-        DirectionalLight() : Light(LIGHT_DIRECTIONAL) {}
+        //Directional / Spot
+        Vec3f direction = Vec3f(0);
 
-        Vec3f direction;
-    };
+        float cutOff = 10;
+        float outerCutOff = 14;
 
-    struct PointLight : public Light {
-        PointLight() : Light(LIGHT_POINT) {}
-
+        //Point / Spot
         float constant = 1;
         float linear = 1;
         float quadratic = 1;
-    };
-
-    struct SpotLight : public Light {
-        SpotLight() : Light(LIGHT_SPOT) {}
-
-        Vec3f direction = Vec3f(0, -1, 0);
-        float cutOff = 10;
-        float outerCutOff = 14;
-        float constant = 0.1;
-        float linear = 0.1;
-        float quadratic = 0.1;
     };
 }
 

@@ -45,7 +45,7 @@ protected:
     }
 
     void update(float deltaTime, Window &window, RenderDevice &device, Input &input) override {
-        cameraNode->getComponent<CameraComponent>().aspectRatio =
+        cameraNode->getComponent<CameraComponent>().camera.aspectRatio =
                 (float) window.getFramebufferSize().x / (float) window.getFramebufferSize().y;
 
         window.update();

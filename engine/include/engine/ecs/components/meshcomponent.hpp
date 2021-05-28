@@ -17,37 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONOSCRIPTRESOURCE_HPP
-#define MANA_MONOSCRIPTRESOURCE_HPP
+#ifndef MANA_MESHCOMPONENT_HPP
+#define MANA_MESHCOMPONENT_HPP
 
+#include <vector>
+
+#include "engine/render/mesh.hpp"
 #include "engine/resource/resource.hpp"
-
-#include "engine/script/mono/monoscript.hpp"
+#include "engine/ecs/component.hpp"
 
 namespace mana {
-    class MonoScriptResource : public Resource<Script> {
-    public:
-        MonoScriptResource(MonoCppDomain &monoRuntime,
-                           std::string assemblyFileName,
-                           std::string nameSpace,
-                           std::string className);
+    struct MeshComponent : public Component {
+        MeshComponent() : Component(MESH) {}
 
-        ~MonoScriptResource() override;
+        Component *clone() override {
+            return new MeshComponent(*this);
+        }
 
-        void load() override;
+        const std::type_info &getTypeInfo() override {
+            return typeid(MeshComponent);
+        }
 
-        void free() override;
-
-        Script &get() override;
-
-    private:
-        MonoCppDomain *monoCppRuntime;
-        std::string assemblyFileName;
-        std::string nameSpace;
-        std::string className;
-        MonoScript *script;
-        bool isLoaded = false;
+        std::vector<Mesh *> meshes;
     };
 }
 
-#endif //MANA_MONOSCRIPTRESOURCE_HPP
+#endif //MANA_MESHCOMPONENT_HPP

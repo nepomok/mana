@@ -17,21 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PRIMITIVE_HPP
-#define MANA_PRIMITIVE_HPP
+#ifndef MANA_GEOMETRYBUFFER_HPP
+#define MANA_GEOMETRYBUFFER_HPP
+
+#include "engine/render/texturebuffer.hpp"
 
 namespace mana {
-    /**
-     * The geometric primitives supported by the graphics api abstraction.
-     * Note that individual faces in the meshes have to consist of the identical primitive (Triangulate, etc.).
-     * Triangulation is the responsibility of the mesh loader.
-     */
-    enum Primitive {
-        POINT,
-        LINE,
-        TRI,
-        QUAD
+    struct GeometryBuffer {
+        TextureBuffer *position;
+        TextureBuffer *normal;
+        TextureBuffer *diffuseSpecular;
+        TextureBuffer *ambientRoughness;
     };
 }
 
-#endif //MANA_PRIMITIVE_HPP
+#endif //MANA_GEOMETRYBUFFER_HPP

@@ -21,19 +21,20 @@
 #define MANA_RENDERSCENE_HPP
 
 #include "engine/render/3d/renderunit.hpp"
-#include "engine/render/3d/camera/camera.hpp"
-#include "engine/render/3d/lighting/light.hpp"
+#include "engine/render/3d/camera.hpp"
+#include "engine/render/3d/light.hpp"
+#include "engine/render/3d/skybox.hpp"
 
 namespace mana {
     struct RenderScene {
-        Camera *camera;
+        Camera camera;
+
+        Skybox skybox;
 
         std::vector<RenderUnit> deferredPass;
         std::vector<RenderUnit> forwardPass;
 
-        std::vector<DirectionalLight> dir;
-        std::vector<PointLight> point;
-        std::vector<SpotLight> spot;
+        std::vector<Light> lights;
     };
 }
 

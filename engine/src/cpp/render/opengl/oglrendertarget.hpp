@@ -59,6 +59,8 @@ namespace mana {
                              Vec2i targetRect,
                              TextureBuffer::TextureFiltering filter) override;
 
+            void setNumberOfColorAttachments(int count) override;
+
             void attachColor(int index, TextureBuffer &texture) override;
 
             void attachDepth(TextureBuffer &texture) override;

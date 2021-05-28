@@ -26,7 +26,7 @@
 #include "oglrenderer.hpp"
 
 #include "oglshaderprogram.hpp"
-#include "oglrendertexture.hpp"
+#include "ogltexturebuffer.hpp"
 #include "oglmeshobject.hpp"
 #include "oglrendertarget.hpp"
 
@@ -126,7 +126,7 @@ namespace mana {
                 if (textureObject == nullptr) {
                     throw std::runtime_error("nullptr texture");
                 }
-                auto &texture = dynamic_cast<const OGLRenderTexture &>(*textureObject);
+                auto &texture = dynamic_cast<const OGLTextureBuffer &>(*textureObject);
                 glActiveTexture(getTextureSlot(i));
                 glBindTexture(OGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
             }

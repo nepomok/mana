@@ -19,13 +19,9 @@
 
 #include "engine/io/resourcefile.hpp"
 
-#include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/file/meshfileresource.hpp"
 #include "engine/resource/file/textfileresource.hpp"
 #include "engine/resource/file/imagefileresource.hpp"
-#include "engine/resource/render/texturebufferresource.hpp"
-#include "engine/resource/render/shaderresource.hpp"
-#include "engine/resource/script/monoscriptresource.hpp"
 
 #include "extern/json.hpp"
 
@@ -113,7 +109,7 @@ namespace mana {
         return new ImageFileResource(j["filePath"]);
     }
 
-    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
+  /*  Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
         return new ShaderResource(device,
                                   res.getResource<std::string>(j["vertexShaderResourceName"]),
                                   res.getResource<std::string>(j["fragmentShaderResourceName"]));
@@ -146,7 +142,7 @@ namespace mana {
     MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
         return new MonoScriptResource(monoRuntime, j["assemblyFileName"], j["nameSpace"], j["className"]);
     }
-
+*/
     Resources *parseResources(const std::string &jsonStr, RenderDevice &device, MonoCppDomain &monoRuntime) {
         auto *ret = new Resources();
         auto json = nlohmann::json::parse(jsonStr);
@@ -160,14 +156,14 @@ namespace mana {
                 ret->addResource<std::string>(name, parseTextFile(r));
             else if (type == "imagefile")
                 ret->addResource<ImageBuffer<ColorRGBA>>(name, parseImageFile(r));
-            else if (type == "shader")
+         /*   else if (type == "shader")
                 ret->addResource<ShaderProgram>(name, parseShader(r, *ret, device));
             else if (type == "meshbuffer")
                 ret->addResource<MeshBuffer>(name, parseMeshBuffer(r, *ret, device));
             else if (type == "texture")
                 ret->addResource<TextureBuffer>(name, parseTexture(r, *ret, device));
             else if (type == "monoscript")
-                ret->addResource<Script>(name, parseMonoScript(r, monoRuntime));
+                ret->addResource<Script>(name, parseMonoScript(r, monoRuntime));*/
             else
                 throw std::runtime_error("Invalid resource type " + type);
         }

@@ -22,7 +22,7 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/render/3d/camera/camera.hpp"
+#include "engine/render/3d/camera.hpp"
 
 namespace mana {
     struct CameraComponent : public Component {
@@ -32,22 +32,11 @@ namespace mana {
             return new CameraComponent(*this);
         }
 
-        const std::type_info& getTypeInfo() override {
+        const std::type_info &getTypeInfo() override {
             return typeid(CameraComponent);
         }
 
-        CameraType cameraType = PERSPECTIVE;
-
-        float nearClip = 0.1f;
-        float farClip = 1000.0f;
-
-        float left = -10;
-        float top = 10;
-        float right = 10;
-        float bottom = -10;
-
-        float fov = 60;
-        float aspectRatio = 4.0f / 3.0f;
+        Camera camera;
     };
 }
 

@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "oglrendertexture.hpp"
+#include "ogltexturebuffer.hpp"
 #include "oglcheckerror.hpp"
 #include "ogltypeconverter.hpp"
 
 using namespace mana;
 using namespace mana::opengl;
 
-OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attributes), handle() {
+OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
     glGenTextures(1, &handle);
@@ -32,7 +32,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attrib
 
     glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
     glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
-    checkGLError("OGLRenderTexture::OGLRenderTexture()");
+    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
     glTexParameteri(type,
                     GL_TEXTURE_MIN_FILTER,
@@ -40,7 +40,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attrib
     glTexParameteri(type,
                     GL_TEXTURE_MAG_FILTER,
                     OGLTypeConverter::convert(attributes.filterMag));
-    checkGLError("OGLRenderTexture::OGLRenderTexture()");
+    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
     if (attributes.textureType == TEXTURE_2D) {
         glTexImage2D(type,
@@ -65,7 +65,7 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attrib
                          NULL);
         }
     }
-    checkGLError("OGLRenderTexture::OGLRenderTexture()");
+    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
     if (attributes.generateMipmap) {
         glGenerateMipmap(type);
@@ -77,14 +77,14 @@ OGLRenderTexture::OGLRenderTexture(Attributes attributes) : TextureBuffer(attrib
 
     glBindTexture(type, 0);
 
-    checkGLError("OGLRenderTexture::OGLRenderTexture()");
+    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 }
 
-OGLRenderTexture::~OGLRenderTexture() {
+OGLTextureBuffer::~OGLTextureBuffer() {
     glDeleteTextures(1, &handle);
 }
 
-void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
+void OGLTextureBuffer::upload(const ImageBuffer<ColorRGB> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("Invalid texture type");
     if (!(buffer.getSize() == attributes.size))
@@ -107,10 +107,10 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLRenderTexture::upload(RGB)");
+    checkGLError("OGLTextureBuffer::upload(RGB)");
 }
 
-void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::upload(const ImageBuffer<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -133,10 +133,10 @@ void OGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLRenderTexture::upload(RGBA)");
+    checkGLError("OGLTextureBuffer::upload(RGBA)");
 }
 
-mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
+mana::ImageBuffer<ColorRGBA> OGLTextureBuffer::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 
@@ -144,11 +144,11 @@ mana::ImageBuffer<ColorRGBA> OGLRenderTexture::download() {
     glBindTexture(GL_TEXTURE_2D, handle);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *) output.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
-    checkGLError("OGLRenderTexture::download");
+    checkGLError("OGLTextureBuffer::download");
     return output;
 }
 
-void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
     if (!(buffer.getSize() == attributes.size))
@@ -171,17 +171,17 @@ void OGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    checkGLError("OGLRenderTexture::upload(CUBEMAP)");
+    checkGLError("OGLTextureBuffer::upload(CUBEMAP)");
 }
 
-ImageBuffer<ColorRGBA> OGLRenderTexture::download(TextureBuffer::CubeMapFace face) {
+ImageBuffer<ColorRGBA> OGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
 
     throw std::runtime_error("Not Implemented");
 }
 
-void OGLRenderTexture::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
     auto faceSize = buffer.getSize();
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
@@ -193,7 +193,7 @@ void OGLRenderTexture::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
     }
 }
 
-ImageBuffer<ColorRGBA> OGLRenderTexture::downloadCubeMap() {
+ImageBuffer<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
     auto size = attributes.size;
     size.x = size.x * 6;
     ImageBuffer<ColorRGBA> ret(size);
