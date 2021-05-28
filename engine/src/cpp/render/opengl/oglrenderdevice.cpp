@@ -23,7 +23,7 @@
 #include "render/opengl/oglrenderdevice.hpp"
 #include "render/opengl/ogltexturebuffer.hpp"
 #include "render/opengl/oglcheckerror.hpp"
-#include "render/opengl/oglmeshobject.hpp"
+#include "render/opengl/oglmeshbuffer.hpp"
 #include "render/opengl/oglshaderprogram.hpp"
 
 namespace mana {
@@ -45,7 +45,7 @@ namespace mana {
                 throw std::runtime_error("Unsupported primitive");
             }
 
-            auto *ret = new OGLMeshObject();
+            auto *ret = new OGLMeshBuffer();
 
             ret->indexed = mesh.indexed;
             ret->instanced = false;
@@ -182,7 +182,7 @@ namespace mana {
                 throw std::runtime_error("Unsupported primitive");
             }
 
-            auto *ret = new OGLMeshObject();
+            auto *ret = new OGLMeshBuffer();
 
             ret->indexed = mesh.indexed;
 

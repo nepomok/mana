@@ -32,12 +32,12 @@ namespace mana {
         };
 
         enum CubeMapFace {
-            RIGHT,
-            LEFT,
-            TOP,
-            BOTTOM,
-            FRONT,
-            BACK
+            POSITIVE_X,
+            NEGATIVE_X,
+            POSITIVE_Y,
+            NEGATIVE_Y,
+            POSITIVE_Z,
+            NEGATIVE_Z
         };
 
         enum ColorFormat {

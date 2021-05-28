@@ -192,6 +192,17 @@ void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source, Vec2i sourceOf
     checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
 }
 
+void QtOGLRenderTarget::setNumberOfColorAttachments(int count) {
+    unsigned int attachments[count];
+    for (int i = 0; i < count; i++) {
+        attachments[i] = GL_COLOR_ATTACHMENT0 + i;
+    }
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    glDrawBuffers(count, attachments);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    checkQtGLError("");
+}
+
 void opengl::QtOGLRenderTarget::attachColor(int index, TextureBuffer &texture) {
     auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);

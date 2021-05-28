@@ -113,8 +113,7 @@ private:
     mana::Transform viewerTransform;
 
     mana::CameraType camType = mana::CameraType::PERSPECTIVE;
-    mana::PerspectiveCamera pCam;
-    mana::OrthographicCamera oCam;
+    mana::Camera pCam;
 
     float movSpeed = 5;
     float rotSpeed = 50;

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OGLMESHOBJECT_HPP
-#define MANA_OGLMESHOBJECT_HPP
+#ifndef MANA_OGLMESHBUFFER_HPP
+#define MANA_OGLMESHBUFFER_HPP
 
 #include "engine/render/meshbuffer.hpp"
 #include "engine/math/matrixmath.hpp"
@@ -29,7 +29,7 @@
 
 namespace mana {
     namespace opengl {
-        class OGLMeshObject : public MeshBuffer {
+        class OGLMeshBuffer : public MeshBuffer {
         public:
             GLuint VAO;
             GLuint VBO;
@@ -43,7 +43,7 @@ namespace mana {
             size_t instanceCount;
             GLuint instanceVBO;
 
-            explicit OGLMeshObject() : VAO(0),
+            explicit OGLMeshBuffer() : VAO(0),
                                        VBO(0),
                                        EBO(0),
                                        elementCount(0),
@@ -52,11 +52,11 @@ namespace mana {
                                        instanceCount(0),
                                        instanceVBO(0) {}
 
-            OGLMeshObject(const OGLMeshObject &copy) = delete;
+            OGLMeshBuffer(const OGLMeshBuffer &copy) = delete;
 
-            OGLMeshObject &operator=(const OGLMeshObject &copy) = delete;
+            OGLMeshBuffer &operator=(const OGLMeshBuffer &copy) = delete;
 
-            ~OGLMeshObject() override {
+            ~OGLMeshBuffer() override {
                 glDeleteVertexArrays(1, &VAO);
                 glDeleteBuffers(1, &VBO);
                 if (indexed) {
@@ -68,4 +68,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_OGLMESHOBJECT_HPP
+#endif //MANA_OGLMESHBUFFER_HPP

@@ -27,7 +27,7 @@
 
 #include "oglshaderprogram.hpp"
 #include "ogltexturebuffer.hpp"
-#include "oglmeshobject.hpp"
+#include "oglmeshbuffer.hpp"
 #include "oglrendertarget.hpp"
 
 #include "oglcheckerror.hpp"
@@ -192,7 +192,7 @@ namespace mana {
                 if (meshBuffer == nullptr) {
                     throw std::runtime_error("nullptr mesh");
                 }
-                auto &mesh = dynamic_cast<const OGLMeshObject &>(*meshBuffer);
+                auto &mesh = dynamic_cast<const OGLMeshBuffer &>(*meshBuffer);
 
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {

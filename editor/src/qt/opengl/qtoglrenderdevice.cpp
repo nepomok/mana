@@ -42,7 +42,7 @@ TextureBuffer *QtOGLRenderDevice::createTextureBuffer(TextureBuffer::Attributes 
 }
 
 MeshBuffer *QtOGLRenderDevice::createMeshBuffer(const Mesh &mesh) {
-    if (mesh.primitive != TRI) {
+    if (mesh.primitive != Mesh::TRI) {
         throw std::runtime_error("Unsupported primitive");
     }
 
@@ -178,7 +178,7 @@ MeshBuffer *QtOGLRenderDevice::createMeshBuffer(const Mesh &mesh) {
 }
 
 MeshBuffer *QtOGLRenderDevice::createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
-    if (mesh.primitive != TRI) {
+    if (mesh.primitive != Mesh::TRI) {
         throw std::runtime_error("Unsupported primitive");
     }
 

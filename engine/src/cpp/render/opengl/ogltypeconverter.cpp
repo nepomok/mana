@@ -161,18 +161,18 @@ namespace mana {
 
             GLenum convert(TextureBuffer::CubeMapFace face) {
                 switch (face) {
-                    case TextureBuffer::FRONT:
-                        return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-                    case TextureBuffer::BACK:
-                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-                    case TextureBuffer::LEFT:
-                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-                    case TextureBuffer::RIGHT:
+                    case TextureBuffer::POSITIVE_X:
                         return GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-                    case TextureBuffer::TOP:
+                    case TextureBuffer::NEGATIVE_X:
+                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+                    case TextureBuffer::POSITIVE_Y:
                         return GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-                    case TextureBuffer::BOTTOM:
+                    case TextureBuffer::NEGATIVE_Y:
                         return GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+                    case TextureBuffer::POSITIVE_Z:
+                        return GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+                    case TextureBuffer::NEGATIVE_Z:
+                        return GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
                     default:
                         throw std::runtime_error("Unrecognized cube map face");
                 }
