@@ -31,8 +31,8 @@ namespace mana {
 
         Skybox skybox;
 
-        std::vector<RenderUnit> deferredPass;
-        std::vector<RenderUnit> forwardPass;
+        std::vector<RenderUnit> deferred;
+        std::vector<RenderUnit> forward;
 
         std::vector<Light> lights;
     };

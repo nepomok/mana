@@ -36,8 +36,8 @@ namespace mana {
         ColorRGBA ambientColor;
 
         ImageBuffer<ColorRGBA> *diffuseTex = nullptr;
-        ImageBuffer<ColorRGBA> *specularTex = nullptr;
         ImageBuffer<ColorRGBA> *ambientTex = nullptr;
+        ImageBuffer<ColorRGBA> *specularTex = nullptr;
         ImageBuffer<ColorRGBA> *emissiveTex = nullptr;
         ImageBuffer<ColorRGBA> *normalTex = nullptr;
         ImageBuffer<ColorRGBA> *roughnessTex = nullptr;

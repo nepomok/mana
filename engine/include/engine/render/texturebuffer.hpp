@@ -41,14 +41,77 @@ namespace mana {
         };
 
         enum ColorFormat {
+            //Base Formats
+            DEPTH,
+            DEPTH_STENCIL,
+            R,
+            RG,
             RGB,
             RGBA,
 
-            DEPTH,
-            DEPTH_STENCIL,
-
+            //Compressed Formats
+            R_COMPRESSED,
+            RG_COMPRESSED,
             RGB_COMPRESSED,
-            RGBA_COMPRESSED
+            RGBA_COMPRESSED,
+
+            //Sized normalized float
+            R8,
+            RG8,
+            RGB8,
+            RGBA8,
+
+            R16,
+            RG16,
+            RGB16,
+            RGBA16,
+
+            RGB12,
+            RGBA12,
+            RGB10,
+
+            //Sized float
+            R16F,
+            RG16F,
+            RGB16F,
+            RGBA16F,
+
+            R32F,
+            RG32F,
+            RGB32F,
+            RGBA32F,
+
+            //Sized integer
+            R8I,
+            RG8I,
+            RGB8I,
+            RGBA8I,
+
+            R16I,
+            RG16I,
+            RGB16I,
+            RGBA16I,
+
+            R32I,
+            RG32I,
+            RGB32I,
+            RGBA32I,
+
+            //Sized unsigned integer
+            R8UI,
+            RG8UI,
+            RGB8UI,
+            RGBA8UI,
+
+            R16UI,
+            RG16UI,
+            RGB16UI,
+            RGBA16UI,
+
+            R32UI,
+            RG32UI,
+            RGB32UI,
+            RGBA32UI,
         };
 
         enum TextureWrapping {
@@ -93,8 +156,7 @@ namespace mana {
 
         virtual ImageBuffer<ColorRGBA> download() = 0;
 
-        virtual void upload(CubeMapFace face,
-                            const ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual ImageBuffer<ColorRGBA> download(CubeMapFace face) = 0;
 

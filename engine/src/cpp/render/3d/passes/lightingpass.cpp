@@ -19,9 +19,8 @@
 
 #include "engine/render/3d/passes/lightingpass.hpp"
 
-namespace mana
-{
-    void LightingPass::render(mana::RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+namespace mana {
+    void LightingPass::render(GeometryBuffer &target, RenderScene &scene) {
 
     }
 

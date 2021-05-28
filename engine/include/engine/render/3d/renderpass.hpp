@@ -22,6 +22,7 @@
 
 #include "engine/render/3d/renderpass.hpp"
 #include "engine/render/3d/renderscene.hpp"
+#include "engine/render/3d/geometrybuffer.hpp"
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
 
@@ -30,7 +31,7 @@ namespace mana {
     public:
         virtual ~RenderPass() = default;
 
-        virtual void render(RenderDevice &device, RenderTarget &target, RenderScene &scene) = 0;
+        virtual void render(GeometryBuffer &gBuffer, RenderScene &scene) = 0;
     };
 }
 

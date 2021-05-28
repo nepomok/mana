@@ -23,11 +23,9 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/3d/passes/forwardpass.hpp"
-
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {new ForwardPass()}) {
+            : screenTarget(scr), ren(device, {}) {
     }
 
     void RenderSystem::start() {
@@ -77,7 +75,7 @@ namespace mana {
                 unit.meshes.emplace_back(m);
             }
 
-            scene3d.forwardPass.emplace_back(unit);
+            scene3d.forward.emplace_back(unit);
         }
 
         Node *cameraNode;

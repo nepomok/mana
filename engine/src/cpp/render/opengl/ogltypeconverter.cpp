@@ -180,18 +180,112 @@ namespace mana {
 
             GLenum convert(TextureBuffer::ColorFormat format) {
                 switch (format) {
-                    case TextureBuffer::RGB:
-                        return GL_RGB;
-                    case TextureBuffer::RGBA:
-                        return GL_RGBA;
                     case TextureBuffer::DEPTH:
                         return GL_DEPTH_COMPONENT;
                     case TextureBuffer::DEPTH_STENCIL:
                         return GL_DEPTH_STENCIL;
+                    case TextureBuffer::R:
+                        return GL_RED;
+                    case TextureBuffer::RG:
+                        return GL_RG;
+                    case TextureBuffer::RGB:
+                        return GL_RGB;
+                    case TextureBuffer::RGBA:
+                        return GL_RGBA;
+                    case TextureBuffer::R_COMPRESSED:
+                        return GL_COMPRESSED_RED;
+                    case TextureBuffer::RG_COMPRESSED:
+                        return GL_COMPRESSED_RG;
                     case TextureBuffer::RGB_COMPRESSED:
                         return GL_COMPRESSED_RGB;
                     case TextureBuffer::RGBA_COMPRESSED:
                         return GL_COMPRESSED_RGBA;
+                    case TextureBuffer::R8:
+                        return GL_R8;
+                    case TextureBuffer::RG8:
+                        return GL_RG8;
+                    case TextureBuffer::RGB8:
+                        return GL_RGB8;
+                    case TextureBuffer::RGBA8:
+                        return GL_RGBA8;
+                    case TextureBuffer::R16:
+                        return GL_R16;
+                    case TextureBuffer::RG16:
+                        return GL_RG16;
+                    case TextureBuffer::RGB16:
+                        return GL_RGB16;
+                    case TextureBuffer::RGBA16:
+                        return GL_RGBA16;
+                    case TextureBuffer::RGB12:
+                        return GL_RGB12;
+                    case TextureBuffer::RGBA12:
+                        return GL_RGBA12;
+                    case TextureBuffer::RGB10:
+                        return GL_RGB10;
+                    case TextureBuffer::R16F:
+                        return GL_R16F;
+                    case TextureBuffer::RG16F:
+                        return GL_RG16F;
+                    case TextureBuffer::RGB16F:
+                        return GL_RGB16F;
+                    case TextureBuffer::RGBA16F:
+                        return GL_RGBA16F;
+                    case TextureBuffer::R32F:
+                        return GL_R32F;
+                    case TextureBuffer::RG32F:
+                        return GL_RG32F;
+                    case TextureBuffer::RGB32F:
+                        return GL_RGB32F;
+                    case TextureBuffer::RGBA32F:
+                        return GL_RGBA32F;
+                    case TextureBuffer::R8I:
+                        return GL_R8I;
+                    case TextureBuffer::RG8I:
+                        return GL_RG8I;
+                    case TextureBuffer::RGB8I:
+                        return GL_RGB8I;
+                    case TextureBuffer::RGBA8I:
+                        return GL_RGBA8I;
+                    case TextureBuffer::R16I:
+                        return GL_R16I;
+                    case TextureBuffer::RG16I:
+                        return GL_RG16I;
+                    case TextureBuffer::RGB16I:
+                        return GL_RGB16I;
+                    case TextureBuffer::RGBA16I:
+                        return GL_RGBA16I;
+                    case TextureBuffer::R32I:
+                        return GL_R32I;
+                    case TextureBuffer::RG32I:
+                        return GL_RG32I;
+                    case TextureBuffer::RGB32I:
+                        return GL_RGB32I;
+                    case TextureBuffer::RGBA32I:
+                        return GL_RGBA32I;
+                    case TextureBuffer::R8UI:
+                        return GL_R8UI;
+                    case TextureBuffer::RG8UI:
+                        return GL_RG8UI;
+                    case TextureBuffer::RGB8UI:
+                        return GL_RGB8UI;
+                    case TextureBuffer::RGBA8UI:
+                        return GL_RGBA8UI;
+                    case TextureBuffer::R16UI:
+                        return GL_R16UI;
+                    case TextureBuffer::RG16UI:
+                        return GL_RG16UI;
+                    case TextureBuffer::RGB16UI:
+                        return GL_RGB16UI;
+                    case TextureBuffer::RGBA16UI:
+                        return GL_RGBA16UI;
+                    case TextureBuffer::R32UI:
+                        return GL_R32UI;
+                    case TextureBuffer::RG32UI:
+                        return GL_RG32UI;
+                    case TextureBuffer::RGB32UI:
+                        return GL_RGB32UI;
+                    case TextureBuffer::RGBA32UI:
+                        return GL_RGBA32UI;
                     default:
                         throw std::runtime_error("Unrecognized color format");
                 }

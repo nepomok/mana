@@ -47,14 +47,15 @@ namespace mana {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D() : device(nullptr) {};
+    Renderer3D::Renderer3D() : device(nullptr), gBuffer() {};
 
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
-                                                                                     passes(std::move(passes)) {}
+                                                                                     passes(std::move(passes)),
+                                                                                     gBuffer(device) {}
 
-    Renderer3D::Renderer3D(Renderer3D &&other) noexcept {
-        device = other.device;
-        passes = other.passes;
+    Renderer3D::Renderer3D(Renderer3D &&other) noexcept: device(other.device),
+                                                         passes(std::move(other.passes)),
+                                                         gBuffer(*other.device) {
         other.device = nullptr;
         other.passes.clear();
     }
@@ -72,31 +73,21 @@ namespace mana {
         return *this;
     }
 
-    void Renderer3D::setRenderDevice(RenderDevice *dev) {
-        device = dev;
-    }
-
-    const RenderDevice &Renderer3D::getRenderDevice() {
-        if (device == nullptr)
-            throw std::runtime_error("Renderer3D not initialized");
-        return *device;
-    }
-
-    void Renderer3D::setRenderPasses(std::vector<RenderPass *> p) {
-        passes = std::move(p);
-    }
-
-    const std::vector<RenderPass *> &Renderer3D::getRenderPasses() {
-        return passes;
-    }
-
     void Renderer3D::render(RenderTarget &target,
                             RenderScene &scene) {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
+        gBuffer.setSize(target.getSize());
+
         for (auto *pass : passes) {
-            pass->render(*device, target, scene);
+            pass->render(gBuffer, scene);
         }
+
+        target.blitColor(gBuffer.getRenderTarget(), {}, {}, target.getSize(), target.getSize(), TextureBuffer::LINEAR);
+        target.blitDepth(gBuffer.getRenderTarget(), {}, {}, target.getSize(), target.getSize(), TextureBuffer::LINEAR);
+
+        fRen.render(*device, target, scene);
     }
+
 }

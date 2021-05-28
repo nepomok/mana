@@ -19,9 +19,8 @@
 
 #include "engine/render/3d/passes/geometrypass.hpp"
 
-namespace mana
-{
-    void GeometryPass::render(mana::RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+namespace mana {
+    void GeometryPass::render(GeometryBuffer &target, RenderScene &scene) {
 
     }
 

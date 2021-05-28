@@ -19,9 +19,8 @@
 
 #include "engine/render/3d/passes/outlinepass.hpp"
 
-namespace mana
-{
-    void OutlinePass::render(mana::RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+namespace mana {
+    void OutlinePass::render(GeometryBuffer &target, RenderScene &scene) {
 
     }
 

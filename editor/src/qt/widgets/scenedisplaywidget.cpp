@@ -206,7 +206,7 @@ void SceneDisplayWidget::paintGL() {
             unit.meshes.emplace_back(m);
         }
 
-        scene3d.forwardPass.emplace_back(unit);
+        scene3d.forward.emplace_back(unit);
     }
 
     Node *cameraNode;

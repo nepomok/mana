@@ -19,9 +19,8 @@
 
 #include "engine/render/3d/passes/shadowpass.hpp"
 
-namespace mana
-{
-    void ShadowPass::render(mana::RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+namespace mana {
+    void ShadowPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
 
     }
 

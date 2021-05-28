@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/forwardpass.hpp"
+#include "engine/render/3d/forwardrenderer.hpp"
 
 #include "engine/math/rotation.hpp"
 
@@ -89,13 +89,17 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    void ForwardPass::render(mana::RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+    void ForwardRenderer::setEnableShadowMapping() {
+
+    }
+
+    void ForwardRenderer::render(RenderDevice &device, RenderTarget &target, RenderScene &scene) {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
-        for (auto &unit : scene.forwardPass) {
+        for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);
             model = model * MatrixMath::scale(unit.transform.scale);
             model = model * MatrixMath::rotate(unit.transform.rotation);
@@ -184,11 +188,12 @@ namespace mana {
         }
 
         ShaderProgram *defaultOutlineShader = device.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                                                         SHADER_FRAG_OUTLINE_DEFAULT, {}, {});
+                                                                         SHADER_FRAG_OUTLINE_DEFAULT,
+                                                                         {}, {});
 
         RenderScene sceneCopy = scene;
 
-        for (auto &unit : sceneCopy.forwardPass) {
+        for (auto &unit : sceneCopy.forward) {
             if (unit.outline) {
                 unit.transform.scale *= unit.outlineScale;
                 unit.material->shader = defaultOutlineShader;

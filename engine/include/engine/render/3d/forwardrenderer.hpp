@@ -17,18 +17,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDPASS_HPP
-#define MANA_FORWARDPASS_HPP
+#ifndef MANA_FORWARDRENDERER_HPP
+#define MANA_FORWARDRENDERER_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include "engine/render/renderdevice.hpp"
+#include "engine/render/3d/renderscene.hpp"
 
 namespace mana {
-    class ForwardPass : public RenderPass {
+    class ForwardRenderer {
     public:
-        ~ForwardPass() override = default;
+        void setEnableShadowMapping();
 
-        void render(RenderDevice &device, RenderTarget &target, RenderScene &scene) override;
+        void render(RenderDevice &device, RenderTarget &target, RenderScene &scene);
     };
 }
 
-#endif //MANA_FORWARDPASS_HPP
+#endif //MANA_FORWARDRENDERER_HPP

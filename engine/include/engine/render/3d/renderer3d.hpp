@@ -29,10 +29,16 @@
 
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
+#include "engine/render/3d/forwardrenderer.hpp"
 
 namespace mana {
     class Renderer3D {
     public:
+        RenderDevice *device;
+        std::vector<RenderPass *> passes;
+        GeometryBuffer gBuffer;
+        ForwardRenderer fRen;
+
         static const std::map<std::string, std::string> &getShaderMacros();
 
         static const std::function<std::string(const char *)> &getShaderIncludeCallback();
@@ -45,22 +51,9 @@ namespace mana {
 
         ~Renderer3D();
 
-        Renderer3D &operator=(Renderer3D &&other) noexcept ;
+        Renderer3D &operator=(Renderer3D &&other) noexcept;
 
-        void setRenderDevice(RenderDevice *device);
-
-        const RenderDevice &getRenderDevice();
-
-        void setRenderPasses(std::vector<RenderPass *> passes);
-
-        const std::vector<RenderPass *> &getRenderPasses();
-
-        void render(RenderTarget &target,
-                    RenderScene &scene);
-
-    private:
-        RenderDevice *device;
-        std::vector<RenderPass *> passes;
+        void render(RenderTarget &target, RenderScene &scene);
     };
 }
 

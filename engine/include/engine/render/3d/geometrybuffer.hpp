@@ -20,14 +20,63 @@
 #ifndef MANA_GEOMETRYBUFFER_HPP
 #define MANA_GEOMETRYBUFFER_HPP
 
+#include "engine/render/renderdevice.hpp"
+
 #include "engine/render/texturebuffer.hpp"
 
 namespace mana {
-    struct GeometryBuffer {
-        TextureBuffer *position;
-        TextureBuffer *normal;
-        TextureBuffer *diffuseSpecular;
-        TextureBuffer *ambientRoughness;
+    /**
+     * The geometry buffer textures are bound to the following targets:
+     *
+     * position     :   SV_TARGET0
+     * normal       :   SV_TARGET1
+     * diffuse      :   SV_TARGET2
+     * ambient      :   SV_TARGET3
+     * specular     :   SV_TARGET4
+     * roughness    :   SV_TARGET5
+     *
+     * Contained textures and render target are reallocated whenever the size changes.
+     */
+    class GeometryBuffer {
+    public:
+        GeometryBuffer() = default;
+
+        explicit GeometryBuffer(RenderDevice &device, Vec2i size = {640, 320});
+
+        ~GeometryBuffer();
+
+        void setSize(const Vec2i &s);
+
+        Vec2i getSize();
+
+        RenderDevice &getRenderDevice();
+
+        RenderTarget &getRenderTarget();
+
+        TextureBuffer &getDiffuse();
+
+        TextureBuffer &getPosition();
+
+        TextureBuffer &getNormal();
+
+        TextureBuffer &getAmbient();
+
+        TextureBuffer &getSpecular();
+
+        TextureBuffer &getRoughness();
+
+    private:
+        RenderDevice *renderDevice{};
+        Vec2i size;
+
+        RenderTarget *renderTarget{};
+
+        TextureBuffer *diffuse{};
+        TextureBuffer *position{};
+        TextureBuffer *normal{};
+        TextureBuffer *ambient{};
+        TextureBuffer *specular{};
+        TextureBuffer *roughness{};
     };
 }
 
