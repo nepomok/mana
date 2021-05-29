@@ -53,11 +53,11 @@ namespace mana {
 
         RenderTarget &getRenderTarget();
 
-        TextureBuffer &getDiffuse();
-
         TextureBuffer &getPosition();
 
         TextureBuffer &getNormal();
+
+        TextureBuffer &getDiffuse();
 
         TextureBuffer &getAmbient();
 
@@ -71,9 +71,9 @@ namespace mana {
 
         RenderTarget *renderTarget{};
 
-        TextureBuffer *diffuse{};
         TextureBuffer *position{};
         TextureBuffer *normal{};
+        TextureBuffer *diffuse{};
         TextureBuffer *ambient{};
         TextureBuffer *specular{};
         TextureBuffer *roughness{};

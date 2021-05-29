@@ -35,9 +35,9 @@ namespace mana {
 
         renderTarget = device.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
-        renderTarget->attachColor(0, *diffuse);
-        renderTarget->attachColor(1, *position);
-        renderTarget->attachColor(2, *normal);
+        renderTarget->attachColor(0, *position);
+        renderTarget->attachColor(1, *normal);
+        renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
         renderTarget->attachColor(5, *roughness);
@@ -86,9 +86,9 @@ namespace mana {
 
         renderTarget = renderDevice->createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
-        renderTarget->attachColor(0, *diffuse);
-        renderTarget->attachColor(1, *position);
-        renderTarget->attachColor(2, *normal);
+        renderTarget->attachColor(0, *position);
+        renderTarget->attachColor(1, *normal);
+        renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
         renderTarget->attachColor(5, *roughness);
@@ -106,16 +106,16 @@ namespace mana {
         return *renderTarget;
     }
 
-    TextureBuffer &GeometryBuffer::getDiffuse() {
-        return *diffuse;
-    }
-
     TextureBuffer &GeometryBuffer::getPosition() {
         return *position;
     }
 
     TextureBuffer &GeometryBuffer::getNormal() {
         return *normal;
+    }
+
+    TextureBuffer &GeometryBuffer::getDiffuse() {
+        return *diffuse;
     }
 
     TextureBuffer &GeometryBuffer::getAmbient() {
