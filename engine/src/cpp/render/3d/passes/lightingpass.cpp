@@ -20,8 +20,11 @@
 #include "engine/render/3d/passes/lightingpass.hpp"
 
 namespace mana {
-    void LightingPass::render(GeometryBuffer &target, RenderScene &scene) {
+    void LightingPass::setGeometryBuffer(GeometryBuffer &gBuffer) {
 
     }
 
+    void LightingPass::render(RenderTarget &screen, const RenderScene &scene) {
+
+    }
 }

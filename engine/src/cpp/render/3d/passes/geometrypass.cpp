@@ -20,8 +20,11 @@
 #include "engine/render/3d/passes/geometrypass.hpp"
 
 namespace mana {
-    void GeometryPass::render(GeometryBuffer &target, RenderScene &scene) {
+    void GeometryPass::setGeometryBuffer(GeometryBuffer &gBuffer) {
 
     }
 
+    void GeometryPass::render(RenderTarget &screen, const RenderScene &scene) {
+
+    }
 }

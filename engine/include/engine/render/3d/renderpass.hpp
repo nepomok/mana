@@ -31,7 +31,9 @@ namespace mana {
     public:
         virtual ~RenderPass() = default;
 
-        virtual void render(GeometryBuffer &gBuffer, RenderScene &scene) = 0;
+        virtual void setGeometryBuffer(GeometryBuffer &gBuffer) = 0;
+
+        virtual void render(RenderTarget &screen, const RenderScene &scene) = 0;
     };
 }
 

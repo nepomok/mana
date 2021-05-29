@@ -18,9 +18,9 @@
  */
 
 #include "engine/render/3d/renderer3d.hpp"
-#include "engine/math/rotation.hpp"
 
-#include "hlslinject.hpp"
+#include "render/3d/hlslinject.hpp"
+#include "render/3d/forwardpipeline.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -47,47 +47,30 @@ namespace mana {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D() : device(nullptr), gBuffer() {};
-
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
-                                                                                     passes(std::move(passes)),
-                                                                                     gBuffer(device) {}
-
-    Renderer3D::Renderer3D(Renderer3D &&other) noexcept: device(other.device),
-                                                         passes(std::move(other.passes)),
-                                                         gBuffer(*other.device) {
-        other.device = nullptr;
-        other.passes.clear();
+                                                                                     deferredPasses(std::move(passes)),
+                                                                                     gBuffer(device) {
+        for (auto *pass : deferredPasses)
+            pass->setGeometryBuffer(gBuffer);
     }
 
     Renderer3D::~Renderer3D() {
-        for (auto *pass : passes)
+        for (auto *pass : deferredPasses)
             delete pass;
     }
 
-    Renderer3D &Renderer3D::operator=(Renderer3D &&other) noexcept {
-        device = other.device;
-        passes = other.passes;
-        other.device = nullptr;
-        other.passes.clear();
-        return *this;
-    }
-
     void Renderer3D::render(RenderTarget &target,
-                            RenderScene &scene) {
+                            const RenderScene &scene) {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
         gBuffer.setSize(target.getSize());
 
-        for (auto *pass : passes) {
-            pass->render(gBuffer, scene);
+        for (auto *pass : deferredPasses) {
+            pass->render(target, scene);
         }
 
-        target.blitColor(gBuffer.getRenderTarget(), {}, {}, target.getSize(), target.getSize(), TextureBuffer::LINEAR);
-        target.blitDepth(gBuffer.getRenderTarget(), {}, {}, target.getSize(), target.getSize(), TextureBuffer::LINEAR);
-
-        fRen.render(*device, target, scene);
+        ForwardPipeline::render(device, target, scene);
     }
 
 }

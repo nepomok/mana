@@ -22,13 +22,17 @@
 
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana
-{
+namespace mana {
     class LightingPass : public RenderPass {
     public:
         ~LightingPass() override = default;
 
-        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+        void setGeometryBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(RenderTarget &screen, const RenderScene &scene) override;
+
+    private:
+        GeometryBuffer *gBuffer = nullptr;
     };
 }
 

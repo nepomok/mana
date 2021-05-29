@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/forwardrenderer.hpp"
+#include "forwardpipeline.hpp"
 
 #include "engine/math/rotation.hpp"
 
@@ -89,11 +89,7 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    void ForwardRenderer::setEnableShadowMapping() {
-
-    }
-
-    void ForwardRenderer::render(RenderDevice &device, RenderTarget &target, RenderScene &scene) {
+    void ForwardPipeline::render(RenderDevice *device, RenderTarget &target, const RenderScene &scene) {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
@@ -184,10 +180,10 @@ namespace mana {
                 command.properties.stencilMode = STENCIL_NEVER;
             }
 
-            device.getRenderer().addCommand(command);
+            device->getRenderer().addCommand(command);
         }
 
-        ShaderProgram *defaultOutlineShader = device.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
+        ShaderProgram *defaultOutlineShader = device->createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
                                                                          SHADER_FRAG_OUTLINE_DEFAULT,
                                                                          {}, {});
 
@@ -225,11 +221,11 @@ namespace mana {
 
                 command.shader = &shader;
 
-                device.getRenderer().addCommand(command);
+                device->getRenderer().addCommand(command);
             }
         }
 
-        device.getRenderer().renderFinish();
+        device->getRenderer().renderFinish();
         delete defaultOutlineShader;
     }
 

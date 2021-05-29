@@ -27,7 +27,12 @@ namespace mana {
     public:
         ~GeometryPass() override = default;
 
-        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+        void setGeometryBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(RenderTarget &screen, const RenderScene &scene) override;
+
+    private:
+        GeometryBuffer *gBuffer = nullptr;
     };
 }
 
