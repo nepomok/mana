@@ -28,11 +28,22 @@
 namespace mana {
     class World3D {
     public:
+        class CollisionListener {
+        public:
+            virtual ~CollisionListener() = default;
+
+            //TODO: Add Collision events
+        };
+
         virtual ~World3D() = 0;
 
-        virtual std::vector<Rigidbody3D *> getRigidbodies() = 0;
+        virtual RigidBody3D *createRigidBody() = 0;
 
-        virtual Rigidbody3D *createRigidbody(const Vec3f &position) = 0;
+        virtual Collider3D *createCollider() = 0;
+
+        virtual void addCollisionListener(CollisionListener *listener) = 0;
+
+        virtual void removeCollisionListener(CollisionListener *listener) = 0;
 
         virtual void setGravity(const Vec3f &gravity) = 0;
 

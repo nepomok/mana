@@ -28,11 +28,22 @@
 namespace mana {
     class World2D {
     public:
+        class CollisionListener {
+        public:
+            virtual ~CollisionListener() = default;
+
+            //TODO: Add Collision events
+        };
+
         virtual ~World2D() = 0;
 
-        virtual std::vector<Rigidbody2D *> getRigidbodies() = 0;
+        virtual RigidBody2D *createRigidBody() = 0;
 
-        virtual Rigidbody2D *createRigidbody(const Vec2f &position) = 0;
+        virtual Collider2D *createCollider() = 0;
+
+        virtual void addCollisionListener(CollisionListener *listener) = 0;
+
+        virtual void removeCollisionListener(CollisionListener *listener) = 0;
 
         virtual void setGravity(const Vec2f &gravity) = 0;
 

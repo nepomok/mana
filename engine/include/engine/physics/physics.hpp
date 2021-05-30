@@ -20,15 +20,15 @@
 #ifndef MANA_PHYSICS_HPP
 #define MANA_PHYSICS_HPP
 
-#include "engine/physics/physicsapi.hpp"
+#include "engine/physics/physicsbackend.hpp"
 #include "engine/physics/2d/world2d.hpp"
 #include "engine/physics/3d/world3d.hpp"
 
 namespace mana {
     namespace Physics {
-        World2D *createWorld2D(PhysicsApi api);
+        World2D *createWorld2D(PhysicsBackend backend);
 
-        World3D *createWorld3D(PhysicsApi api);
+        World3D *createWorld3D(PhysicsBackend backend);
     }
 }
 

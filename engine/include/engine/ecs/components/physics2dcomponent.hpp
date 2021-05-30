@@ -37,7 +37,7 @@ namespace mana {
             return typeid(typeof(Physics2DComponent));
         }
 
-        Resource<Rigidbody2D> *rigidbody;
+        Resource<RigidBody2D> *rigidbody;
         Resource<Collider2D> *collider;
     };
 }

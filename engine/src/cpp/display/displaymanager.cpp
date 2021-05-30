@@ -23,7 +23,7 @@
 
 #include "display/glfw/glfwdisplay.hpp"
 
-mana::DisplayManager::DisplayManager(mana::DisplayApi displayApi) : displayApi(displayApi) {}
+mana::DisplayManager::DisplayManager(mana::DisplayBackend displayApi) : displayApi(displayApi) {}
 
 mana::DisplayManager::~DisplayManager() = default;
 
@@ -45,31 +45,31 @@ std::set<mana::Monitor *> mana::DisplayManager::getMonitors() const {
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi) const {
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend) const {
     switch (displayApi) {
         case GLFW:
-            return glfw::createWindow(graphicsApi);
+            return glfw::createWindow(graphicsBackend);
         default:
             throw std::runtime_error("Unsupported display api");
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi, std::string title, mana::Vec2i size,
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend, std::string title, mana::Vec2i size,
                                                  mana::WindowAttributes attributes) const {
     switch (displayApi) {
         case GLFW:
-            return glfw::createWindow(graphicsApi, std::move(title), size, attributes);
+            return glfw::createWindow(graphicsBackend, std::move(title), size, attributes);
         default:
             throw std::runtime_error("Unsupported display api");
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi, std::string title, mana::Vec2i size,
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend, std::string title, mana::Vec2i size,
                                                  mana::WindowAttributes attributes, mana::Monitor &monitor,
                                                  mana::VideoMode mode) const {
     switch (displayApi) {
         case GLFW:
-            return glfw::createWindow(graphicsApi, std::move(title), size, attributes, monitor, mode);
+            return glfw::createWindow(graphicsBackend, std::move(title), size, attributes, monitor, mode);
         default:
             throw std::runtime_error("Unsupported display api");
     }

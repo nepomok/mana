@@ -22,16 +22,16 @@
 
 #include <set>
 
-#include "engine/display/displayapi.hpp"
+#include "engine/display/displaybackend.hpp"
 #include "engine/display/window.hpp"
 #include "engine/display/monitor.hpp"
 
 namespace mana {
     class DisplayManager {
     public:
-        const DisplayApi displayApi;
+        const DisplayBackend displayApi;
 
-        explicit DisplayManager(DisplayApi displayApi);
+        explicit DisplayManager(DisplayBackend displayApi);
 
         ~DisplayManager();
 
@@ -39,11 +39,14 @@ namespace mana {
 
         std::set<Monitor *> getMonitors() const;
 
-        Window *createWindow(GraphicsBackend graphicsApi) const;
+        Window *createWindow(GraphicsBackend graphicsBackend) const;
 
-        Window *createWindow(GraphicsBackend graphicsApi, std::string title, Vec2i size, WindowAttributes attributes) const;
+        Window *createWindow(GraphicsBackend graphicsBackend,
+                             std::string title,
+                             Vec2i size,
+                             WindowAttributes attributes) const;
 
-        Window *createWindow(GraphicsBackend graphicsApi,
+        Window *createWindow(GraphicsBackend graphicsBackend,
                              std::string title,
                              Vec2i size,
                              WindowAttributes attributes,

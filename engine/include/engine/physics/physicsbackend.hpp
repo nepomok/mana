@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYSICSAPI_HPP
-#define MANA_PHYSICSAPI_HPP
+#ifndef MANA_PHYSICSBACKEND_HPP
+#define MANA_PHYSICSBACKEND_HPP
 
 namespace mana {
-    enum PhysicsApi {
+    enum PhysicsBackend {
         BULLET,
         BOX2D
     };
 }
-#endif //MANA_PHYSICSAPI_HPP
+#endif //MANA_PHYSICSBACKEND_HPP
