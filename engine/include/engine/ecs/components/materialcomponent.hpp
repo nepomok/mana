@@ -36,7 +36,7 @@ namespace mana {
             return typeid(MaterialComponent);
         }
 
-        Material *material = nullptr;
+        Resource<Material> *material = nullptr;
     };
 }
 

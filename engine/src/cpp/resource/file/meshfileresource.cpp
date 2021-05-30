@@ -36,7 +36,7 @@ namespace mana {
     void MeshFileResource::load() {
         if (isLoaded)
             return;
-        mesh = assetFile.getMeshData().at(meshName);
+        mesh = assetFile.getMeshes().at(meshName);
         isLoaded = true;
     }
 

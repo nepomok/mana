@@ -23,9 +23,11 @@
 
 #include "engine/ecs/components.hpp"
 
+#include "engine/render/3d/passes/forwardpass.hpp"
+
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {}) {
+            : screenTarget(scr), ren(device, {new ForwardPass()}) {
     }
 
     void RenderSystem::start() {
@@ -69,11 +71,10 @@ namespace mana {
                 continue;
 
             RenderUnit unit;
+
             unit.transform = TransformComponent::walkTransformHierarchy(transformComponent);
-            unit.material = materialComponent.material;
-            for (auto *m : meshComponent.meshes) {
-                unit.meshes.emplace_back(m);
-            }
+            unit.material = &materialComponent.material->get();
+            unit.mesh = &meshComponent.mesh->get();
 
             scene3d.forward.emplace_back(unit);
         }

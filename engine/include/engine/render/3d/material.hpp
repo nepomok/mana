@@ -20,33 +20,28 @@
 #ifndef MANA_MATERIAL_HPP
 #define MANA_MATERIAL_HPP
 
-#include "engine/render/imagebuffer.hpp"
-#include "engine/render/shaderprogram.hpp"
+#include <memory>
 
-#include "engine/resource/resource.hpp"
+#include "engine/render/texturebuffer.hpp"
+#include "engine/render/shaderprogram.hpp"
 
 namespace mana {
     struct Material {
-        ShaderProgram *shader = nullptr;
+        std::string name{};
 
-        std::string name;
+        ColorRGBA diffuseColor{};
+        ColorRGBA ambientColor{};
+        ColorRGBA specularColor{};
+        float shininess{};
 
-        ColorRGBA diffuseColor;
-        ColorRGBA specularColor;
-        ColorRGBA ambientColor;
+        TextureBuffer *diffuseTexture;
+        TextureBuffer *ambientTexture;
+        TextureBuffer *specularTexture;
+        TextureBuffer *shininessTexture;
 
-        ImageBuffer<ColorRGBA> *diffuseTex = nullptr;
-        ImageBuffer<ColorRGBA> *ambientTex = nullptr;
-        ImageBuffer<ColorRGBA> *specularTex = nullptr;
-        ImageBuffer<ColorRGBA> *emissiveTex = nullptr;
-        ImageBuffer<ColorRGBA> *normalTex = nullptr;
-        ImageBuffer<ColorRGBA> *roughnessTex = nullptr;
+        TextureBuffer *normalTexture;
 
-        bool wireframe;
-        bool twosided;
-
-        float opacity;
-        float roughness;
+        TextureBuffer *emissiveTexture;
     };
 }
 

@@ -17,23 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SKYBOX_HPP
-#define MANA_SKYBOX_HPP
+#ifndef MANA_FORWARDPASS_HPP
+#define MANA_FORWARDPASS_HPP
 
-#include <vector>
-
-#include "engine/render/imagebuffer.hpp"
-
-#include "engine/render/texturebuffer.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace mana {
-    struct Skybox {
-        ImageBuffer<ColorRGBA> *textures[6];
+    class ForwardPass : public RenderPass {
+    public:
+        ~ForwardPass() override;
 
-        ImageBuffer<ColorRGBA> *&getFace(TextureBuffer::CubeMapFace face) {
-            return textures[face];
-        }
+        void setGeometryBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(RenderTarget &screen, const RenderScene &scene) override;
+
+    private:
+        GeometryBuffer *gBuffer = nullptr;
+
+        ShaderProgram *defaultOutlineShader = nullptr;
     };
 }
 
-#endif //MANA_SKYBOX_HPP
+#endif //MANA_FORWARDPASS_HPP

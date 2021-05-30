@@ -23,21 +23,24 @@
 #include <utility>
 
 #include "engine/math/transform.hpp"
-#include "engine/render/mesh.hpp"
+#include "engine/render/meshbuffer.hpp"
 #include "engine/render/3d/material.hpp"
 
 namespace mana {
     struct RenderUnit {
-        RenderUnit() : transform(), material(), meshes() {}
+        RenderUnit() : transform(), material(), mesh() {}
 
-        RenderUnit(Transform t, Material *material, std::vector<Mesh *> meshes) : transform(t),
-                                                                                  material(material),
-                                                                                  meshes(std::move(meshes)) {}
+        RenderUnit(Transform t, Material *material, MeshBuffer *mesh) : transform(t),
+                                                                        material(material),
+                                                                        mesh(mesh) {}
 
         Transform transform;
 
         Material *material;
-        std::vector<Mesh *> meshes;
+        MeshBuffer *mesh;
+
+        //The shader used in the forward pass, texture uniforms have to be set by the user and lighting / shadow calculation helpers are accessed via mana.hlsl include.
+        ShaderProgram *shader = nullptr;
 
         bool outline = false;
         ColorRGB outlineColor;

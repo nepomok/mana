@@ -21,6 +21,7 @@
 #define MANA_FILE_HPP
 
 #include <fstream>
+#include <utility>
 
 namespace mana {
     class File {
@@ -29,9 +30,15 @@ namespace mana {
 
         static void writeAllText(const std::string &filepath, const std::string &text);
 
-        const std::string &getFilePath() { return filePath; }
+        File() = default;
 
-        void setFilePath(const std::string &fp) {
+        explicit File(std::string filePath) : filePath(std::move(filePath)) {}
+
+        virtual ~File() = default;
+
+        virtual const std::string &getFilePath() { return filePath; }
+
+        virtual void setFilePath(const std::string &fp) {
             if (isOpen)
                 close();
             filePath = fp;

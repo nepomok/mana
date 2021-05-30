@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "engine/render/mesh.hpp"
+#include "engine/render/meshbuffer.hpp"
 #include "engine/resource/resource.hpp"
 #include "engine/ecs/component.hpp"
 
@@ -38,7 +38,7 @@ namespace mana {
             return typeid(MeshComponent);
         }
 
-        std::vector<Mesh *> meshes;
+        Resource<MeshBuffer> *mesh = nullptr;
     };
 }
 

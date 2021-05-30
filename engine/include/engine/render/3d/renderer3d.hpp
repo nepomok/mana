@@ -39,7 +39,7 @@ namespace mana {
 
         Renderer3D() = default;
 
-        Renderer3D(RenderDevice &device, std::vector<RenderPass *> deferredPasses);
+        Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes);
 
         ~Renderer3D();
 
@@ -48,7 +48,7 @@ namespace mana {
     private:
         RenderDevice *device{};
         GeometryBuffer gBuffer;
-        std::vector<RenderPass *> deferredPasses;
+        std::vector<RenderPass *> passes;
     };
 }
 

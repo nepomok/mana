@@ -129,7 +129,7 @@ namespace mana {
             return std::move(ret);
         }
 
-    private:
+    protected:
         Vec2i size;
         std::vector<T> buffer;
     };

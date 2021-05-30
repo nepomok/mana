@@ -19,11 +19,14 @@
 
 #include "engine/io/assetfile.hpp"
 
+#include <memory>
 #include <stdexcept>
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+
+#include "engine/io/imagefile.hpp"
 
 namespace mana {
     Mesh convertMesh(const aiMesh &assMesh) {
@@ -62,40 +65,124 @@ namespace mana {
         return ret;
     }
 
-    std::map<std::string, Mesh> readMeshFromFile(const std::string &filePath) {
-        Assimp::Importer importer;
-        std::map<std::string, Mesh> ret;
-        const auto *scenePointer = importer.ReadFile(filePath, aiPostProcessSteps::aiProcess_Triangulate);
-        if (scenePointer == nullptr)
-            throw std::runtime_error("Failed to open mesh file at " + filePath);
-        const auto &scene = dynamic_cast<const aiScene &>(*scenePointer);
-        for (auto i = 0; i < scene.mNumMeshes; i++) {
-            const auto &aimesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[0]);
-            std::string meshname = aimesh.mName.C_Str();
-            if (ret.find(meshname) != ret.end())
-                throw std::runtime_error("Duplicate mesh name in file " + filePath);
-            ret[aimesh.mName.C_Str()] = convertMesh(aimesh);
-        }
+    AssetFile::MaterialSource convertMaterial(const aiMaterial &assMaterial) {
+        AssetFile::MaterialSource ret;
+
+        assMaterial.Get(AI_MATKEY_NAME, ret.name);
+
+        aiColor3D c;
+        assMaterial.Get(AI_MATKEY_COLOR_DIFFUSE, c);
+        ret.diffuseColor = {static_cast<uint8_t>(255 * c.r),
+                            static_cast<uint8_t>(255 * c.g),
+                            static_cast<uint8_t>(255 * c.b),
+                            255};
+
+        assMaterial.Get(AI_MATKEY_COLOR_AMBIENT, c);
+        ret.ambientColor = {static_cast<uint8_t>(255 * c.r),
+                            static_cast<uint8_t>(255 * c.g),
+                            static_cast<uint8_t>(255 * c.b),
+                            255};
+
+        assMaterial.Get(AI_MATKEY_COLOR_SPECULAR, c);
+        ret.specularColor = {static_cast<uint8_t>(255 * c.r),
+                             static_cast<uint8_t>(255 * c.g),
+                             static_cast<uint8_t>(255 * c.b),
+                             255};
+
+        assMaterial.Get(AI_MATKEY_SHININESS, ret.shininess);
+
+        ImageFile img;
+        std::string path;
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
+        img.setFilePath(path);
+
+        ret.diffuseTexture = img.getBuffer();
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_AMBIENT(0), path);
+        img.setFilePath(path);
+
+        ret.ambientTexture = img.getBuffer();
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_SPECULAR(0), path);
+        img.setFilePath(path);
+
+        ret.specularTexture = img.getBuffer();
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_SHININESS(0), path);
+        img.setFilePath(path);
+
+        ret.shininessTexture = img.getBuffer();
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
+        img.setFilePath(path);
+
+        ret.normalTexture = img.getBuffer();
+
+        assMaterial.Get(AI_MATKEY_TEXTURE_EMISSIVE(0), path);
+        img.setFilePath(path);
+
+        ret.emissiveTexture = img.getBuffer();
+
         return ret;
     }
 
-    AssetFile::AssetFile() = default;
+    void readAssetFile(const std::string &filePath,
+                       std::map<std::string, Mesh> &meshes,
+                       std::map<std::string, AssetFile::MaterialSource> &materials) {
+        Assimp::Importer importer;
+        const auto *scenePointer = importer.ReadFile(filePath, aiPostProcessSteps::aiProcess_Triangulate);
+        if (scenePointer == nullptr)
+            throw std::runtime_error("Failed to open mesh file at " + filePath);
 
-    AssetFile::AssetFile(const std::string &filePath) : meshes(readMeshFromFile(filePath)) {
-        this->filePath = filePath;
+        std::map<std::string, unsigned int> meshMaterialMapping;
+
+        const auto &scene = dynamic_cast<const aiScene &>(*scenePointer);
+        for (auto i = 0; i < scene.mNumMeshes; i++) {
+            const auto &mesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[i]);
+            std::string name = mesh.mName.C_Str();
+
+            if (meshes.find(name) != meshes.end())
+                throw std::runtime_error("Duplicate mesh name in file " + filePath);
+
+            meshes[name] = convertMesh(mesh);
+            meshMaterialMapping[name] = mesh.mMaterialIndex;
+        }
+
+        for (auto i = 0; i < scene.mNumMaterials; i++) {
+            auto mat = convertMaterial(dynamic_cast<const aiMaterial &>(*scene.mMaterials[i]));
+            for (auto &p : meshMaterialMapping) {
+                if (p.second == i) {
+                    materials[p.first] = mat;
+                }
+            }
+        }
+    }
+
+    AssetFile::AssetFile() {}
+
+    AssetFile::AssetFile(const std::string &filePath) : File(filePath),
+                                                        meshes(),
+                                                        materials() {
+        readAssetFile(filePath, meshes, materials);
     }
 
     void AssetFile::open() {
-        meshes = readMeshFromFile(filePath);
+        readAssetFile(filePath, meshes, materials);
         File::open();
     }
 
     void AssetFile::close() {
         meshes.clear();
+        materials.clear();
         File::close();
     }
 
-    const std::map<std::string, Mesh> &AssetFile::getMeshData() {
+    const std::map<std::string, Mesh> &AssetFile::getMeshes() {
         return meshes;
+    }
+
+    const std::map<std::string, AssetFile::MaterialSource> &AssetFile::getMaterials() {
+        return materials;
     }
 }

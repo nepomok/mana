@@ -20,7 +20,6 @@
 #include "engine/render/3d/renderer3d.hpp"
 
 #include "render/3d/hlslinject.hpp"
-#include "render/3d/forwardpipeline.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -48,14 +47,14 @@ namespace mana {
     }
 
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
-                                                                                     deferredPasses(std::move(passes)),
+                                                                                     passes(std::move(passes)),
                                                                                      gBuffer(device) {
-        for (auto *pass : deferredPasses)
+        for (auto *pass : passes)
             pass->setGeometryBuffer(gBuffer);
     }
 
     Renderer3D::~Renderer3D() {
-        for (auto *pass : deferredPasses)
+        for (auto *pass : passes)
             delete pass;
     }
 
@@ -66,11 +65,8 @@ namespace mana {
 
         gBuffer.setSize(target.getSize());
 
-        for (auto *pass : deferredPasses) {
+        for (auto *pass : passes) {
             pass->render(target, scene);
         }
-
-        ForwardPipeline::render(device, target, scene);
     }
-
 }

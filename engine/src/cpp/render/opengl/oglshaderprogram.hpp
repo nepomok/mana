@@ -33,14 +33,6 @@
 
 namespace mana {
     namespace opengl {
-        /**
-         * The following vertex shader input layout is required:
-         *
-         * layout (location = 0) in vec3 position;
-         * layout (location = 1) in vec3 normal;
-         * layout (location = 2) in vec2 uv;
-         * layout (location = 3) in mat4 instanceMatrix;
-         */
         class OGLShaderProgram : public ShaderProgram {
         public:
             OGLShaderProgram();

@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "forwardpipeline.hpp"
+#include "engine/render/3d/passes/forwardpass.hpp"
 
 #include "engine/math/rotation.hpp"
 
@@ -89,18 +89,39 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    void ForwardPipeline::render(RenderDevice *device, RenderTarget &target, const RenderScene &scene) {
+    ShaderProgram *getDefaultOutlineShader(RenderDevice &device) {
+        return device.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
+                                          SHADER_FRAG_OUTLINE_DEFAULT,
+                                          {},
+                                          {});
+    }
+
+    ForwardPass::~ForwardPass() {
+        delete defaultOutlineShader;
+    }
+
+    void ForwardPass::setGeometryBuffer(GeometryBuffer &buffer) {
+        delete defaultOutlineShader;
+        gBuffer = &buffer;
+        defaultOutlineShader = getDefaultOutlineShader(gBuffer->getRenderDevice());
+    }
+
+    void ForwardPass::render(RenderTarget &screen, const RenderScene &scene) {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+
+        Renderer &ren = gBuffer->getRenderDevice().getRenderer();
+
+        ren.renderBegin(screen);
 
         for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);
             model = model * MatrixMath::scale(unit.transform.scale);
             model = model * MatrixMath::rotate(unit.transform.rotation);
 
-            ShaderProgram &shader = *unit.material->shader;
+            ShaderProgram &shader = *unit.shader;
 
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);
@@ -180,19 +201,14 @@ namespace mana {
                 command.properties.stencilMode = STENCIL_NEVER;
             }
 
-            device->getRenderer().addCommand(command);
+            ren.addCommand(command);
         }
 
-        ShaderProgram *defaultOutlineShader = device->createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                                                         SHADER_FRAG_OUTLINE_DEFAULT,
-                                                                         {}, {});
-
         RenderScene sceneCopy = scene;
-
         for (auto &unit : sceneCopy.forward) {
             if (unit.outline) {
                 unit.transform.scale *= unit.outlineScale;
-                unit.material->shader = defaultOutlineShader;
+                unit.shader = defaultOutlineShader;
 
                 RenderCommand command;
 
@@ -208,7 +224,7 @@ namespace mana {
                 model = model * MatrixMath::scale(unit.transform.scale);
                 model = model * MatrixMath::rotate(unit.transform.rotation);
 
-                ShaderProgram &shader = *unit.material->shader;
+                ShaderProgram &shader = *unit.shader;
 
                 shader.setMat4("MANA_M", model);
                 shader.setMat4("MANA_V", view);
@@ -221,12 +237,10 @@ namespace mana {
 
                 command.shader = &shader;
 
-                device->getRenderer().addCommand(command);
+                ren.addCommand(command);
             }
         }
 
-        device->getRenderer().renderFinish();
-        delete defaultOutlineShader;
+        ren.renderFinish();
     }
-
 }

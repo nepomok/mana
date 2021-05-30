@@ -24,10 +24,52 @@
 
 #include "engine/io/file.hpp"
 #include "engine/render/mesh.hpp"
+#include "engine/render/renderdevice.hpp"
+#include "engine/render/3d/material.hpp"
 
 namespace mana {
     class AssetFile : public File {
     public:
+        struct MaterialSource {
+            std::string name{};
+
+            ColorRGBA diffuseColor{};
+            ColorRGBA ambientColor{};
+            ColorRGBA specularColor{};
+            float shininess{};
+
+            ImageBuffer<ColorRGBA> diffuseTexture;
+            ImageBuffer<ColorRGBA> ambientTexture;
+            ImageBuffer<ColorRGBA> specularTexture;
+            ImageBuffer<ColorRGBA> shininessTexture;
+
+            ImageBuffer<ColorRGBA> normalTexture;
+
+            ImageBuffer<ColorRGBA> emissiveTexture;
+
+            Material *createMaterial(RenderDevice &dev) const {
+                auto *ret = new Material();
+                ret->name = name;
+                ret->diffuseColor = diffuseColor;
+                ret->ambientColor = ambientColor;
+                ret->specularColor = specularColor;
+                ret->shininess = shininess;
+                ret->diffuseTexture = dev.createTextureBuffer({});
+                ret->ambientTexture = dev.createTextureBuffer({});
+                ret->specularTexture = dev.createTextureBuffer({});
+                ret->shininessTexture = dev.createTextureBuffer({});
+                ret->normalTexture = dev.createTextureBuffer({});
+                ret->emissiveTexture = dev.createTextureBuffer({});
+                ret->diffuseTexture->upload(diffuseTexture);
+                ret->ambientTexture->upload(ambientTexture);
+                ret->specularTexture->upload(specularTexture);
+                ret->shininessTexture->upload(shininessTexture);
+                ret->normalTexture->upload(normalTexture);
+                ret->emissiveTexture->upload(emissiveTexture);
+                return ret;
+            }
+        };
+
         AssetFile();
 
         explicit AssetFile(const std::string &filePath);
@@ -36,10 +78,13 @@ namespace mana {
 
         void close() override;
 
-        const std::map<std::string, Mesh> &getMeshData();
+        const std::map<std::string, Mesh> &getMeshes();
+
+        const std::map<std::string, MaterialSource> &getMaterials();
 
     private:
         std::map<std::string, Mesh> meshes;
+        std::map<std::string, MaterialSource> materials;
     };
 }
 

@@ -23,13 +23,12 @@
 #include "engine/render/3d/renderunit.hpp"
 #include "engine/render/3d/camera.hpp"
 #include "engine/render/3d/light.hpp"
-#include "engine/render/3d/skybox.hpp"
 
 namespace mana {
     struct RenderScene {
         Camera camera;
 
-        Skybox skybox;
+        TextureBuffer* skybox;
 
         std::vector<RenderUnit> deferred;
         std::vector<RenderUnit> forward;
