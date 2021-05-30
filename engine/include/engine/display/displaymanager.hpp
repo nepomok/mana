@@ -39,11 +39,11 @@ namespace mana {
 
         std::set<Monitor *> getMonitors() const;
 
-        Window *createWindow(GraphicsApi graphicsApi) const;
+        Window *createWindow(GraphicsBackend graphicsApi) const;
 
-        Window *createWindow(GraphicsApi graphicsApi, std::string title, Vec2i size, WindowAttributes attributes) const;
+        Window *createWindow(GraphicsBackend graphicsApi, std::string title, Vec2i size, WindowAttributes attributes) const;
 
-        Window *createWindow(GraphicsApi graphicsApi,
+        Window *createWindow(GraphicsBackend graphicsApi,
                              std::string title,
                              Vec2i size,
                              WindowAttributes attributes,

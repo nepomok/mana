@@ -42,7 +42,7 @@ namespace mana {
             return ret;
         }
 
-        Window *createWindow(GraphicsApi api) {
+        Window *createWindow(GraphicsBackend api) {
             Window *ret;
             switch (api) {
                 case OPENGL:
@@ -55,7 +55,7 @@ namespace mana {
             return ret;
         }
 
-        Window *createWindow(GraphicsApi api,
+        Window *createWindow(GraphicsBackend api,
                              std::string title,
                              Vec2i size,
                              WindowAttributes attributes) {
@@ -70,7 +70,7 @@ namespace mana {
             return ret;
         }
 
-        Window *createWindow(GraphicsApi api,
+        Window *createWindow(GraphicsBackend api,
                              std::string title,
                              Vec2i size,
                              WindowAttributes attributes,

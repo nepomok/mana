@@ -68,9 +68,23 @@ namespace mana {
         checkOALError();
     }
 
+    float OALAudioSource::getPitch() {
+        float ret;
+        alGetSourcef(handle, AL_PITCH, &ret);
+        checkOALError();
+        return ret;
+    }
+
     void OALAudioSource::setGain(float gain) {
         alSourcef(handle, AL_GAIN, gain);
         checkOALError();
+    }
+
+    float OALAudioSource::getGain() {
+        float ret;
+        alGetSourcef(handle, AL_GAIN, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setMaxDistance(float maxDistance) {
@@ -78,14 +92,37 @@ namespace mana {
         checkOALError();
     }
 
-    void OALAudioSource::setRolloffFactor(float rollOffFactor) {
+    float OALAudioSource::getMaxDistance() {
+        float ret;
+        alGetSourcef(handle, AL_MAX_DISTANCE, &ret);
+        checkOALError();
+        return ret;
+    }
+
+
+    void OALAudioSource::setRollOffFactor(float rollOffFactor) {
         alSourcef(handle, AL_ROLLOFF_FACTOR, rollOffFactor);
         checkOALError();
     }
 
+    float OALAudioSource::getRollOffFactor() {
+        float ret;
+        alGetSourcef(handle, AL_ROLLOFF_FACTOR, &ret);
+        checkOALError();
+        return ret;
+    }
+
+
     void OALAudioSource::setReferenceDistance(float referenceDistance) {
         alSourcef(handle, AL_REFERENCE_DISTANCE, referenceDistance);
         checkOALError();
+    }
+
+    float OALAudioSource::getReferenceDistance() {
+        float ret;
+        alGetSourcef(handle, AL_REFERENCE_DISTANCE, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setMininumGain(float minGain) {
@@ -93,14 +130,38 @@ namespace mana {
         checkOALError();
     }
 
+    float OALAudioSource::getMinimumGain() {
+        float ret;
+        alGetSourcef(handle, AL_MIN_GAIN, &ret);
+        checkOALError();
+        return ret;
+    }
+
+
     void OALAudioSource::setMaximumGain(float maxGain) {
         alSourcef(handle, AL_MAX_GAIN, maxGain);
         checkOALError();
     }
 
+
+    float OALAudioSource::getMaximumGain() {
+        float ret;
+        alGetSourcef(handle, AL_MAX_GAIN, &ret);
+        checkOALError();
+        return ret;
+    }
+
+
     void OALAudioSource::setConeOuterGain(float coneOuterGain) {
         alSourcef(handle, AL_CONE_OUTER_GAIN, coneOuterGain);
         checkOALError();
+    }
+
+    float OALAudioSource::getConeOuterGain() {
+        float ret;
+        alGetSourcef(handle, AL_CONE_OUTER_GAIN, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setConeInnerAngle(float innerAngle) {
@@ -108,9 +169,25 @@ namespace mana {
         checkOALError();
     }
 
+    float OALAudioSource::getConeInnerAngle() {
+        float ret;
+        alGetSourcef(handle, AL_CONE_INNER_ANGLE, &ret);
+        checkOALError();
+        return ret;
+    }
+
+
     void OALAudioSource::setConeOuterAngle(float outerAngle) {
         alSourcef(handle, AL_CONE_OUTER_ANGLE, outerAngle);
         checkOALError();
+    }
+
+
+    float OALAudioSource::getConeOuterAngle() {
+        float ret;
+        alGetSourcef(handle, AL_CONE_OUTER_ANGLE, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setPosition(Vec3f position) {
@@ -118,9 +195,24 @@ namespace mana {
         checkOALError();
     }
 
+    Vec3f OALAudioSource::getPosition() {
+        Vec3f ret;
+        alGetSource3f(handle, AL_POSITION, &ret.x, &ret.y, &ret.z);
+        checkOALError();
+        return ret;
+    }
+
     void OALAudioSource::setVelocity(Vec3f velocity) {
         alSource3f(handle, AL_VELOCITY, velocity.x, velocity.y, velocity.z);
         checkOALError();
+    }
+
+
+    Vec3f OALAudioSource::getVelocity() {
+        Vec3f ret;
+        alGetSource3f(handle, AL_VELOCITY, &ret.x, &ret.y, &ret.z);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setDirection(Vec3f direction) {
@@ -128,9 +220,24 @@ namespace mana {
         checkOALError();
     }
 
+    Vec3f OALAudioSource::getDirection() {
+        Vec3f ret;
+        alGetSource3f(handle, AL_DIRECTION, &ret.x, &ret.y, &ret.z);
+        checkOALError();
+        return ret;
+    }
+
+
     void OALAudioSource::setSourceRelative(bool relative) {
         alSourcei(handle, AL_SOURCE_RELATIVE, relative);
         checkOALError();
+    }
+
+    bool OALAudioSource::getSourceRelative() {
+        int ret;
+        alGetSourcei(handle, AL_SOURCE_RELATIVE, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setSourceType(AudioSource::SourceType type) {
@@ -138,9 +245,32 @@ namespace mana {
         checkOALError();
     }
 
+    AudioSource::SourceType OALAudioSource::getSourceType() {
+        int ret;
+        alGetSourcei(handle, AL_SOURCE_TYPE, &ret);
+        checkOALError();
+        switch (ret) {
+            case AL_UNDETERMINED:
+                return UNDETERMINED;
+            case AL_STATIC:
+                return STATIC;
+            case AL_STREAMING:
+                return STREAMING;
+            default:
+                throw std::runtime_error("Source type not recognized");
+        }
+    }
+
     void OALAudioSource::setLooping(bool looping) {
         alSourcei(handle, AL_LOOPING, looping);
         checkOALError();
+    }
+
+    bool OALAudioSource::getLooping() {
+        int ret;
+        alGetSourcei(handle, AL_LOOPING, &ret);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioSource::setBuffer(const AudioBuffer &buffer) {

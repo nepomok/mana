@@ -25,7 +25,7 @@
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/texturebuffer.hpp"
-#include "engine/render/graphicsapi.hpp"
+#include "engine/render/graphicsbackend.hpp"
 
 namespace mana {
     class Renderer {

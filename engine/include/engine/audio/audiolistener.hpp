@@ -29,11 +29,19 @@ namespace mana {
 
         virtual void setGain(float gain) = 0;
 
+        virtual float getGain() = 0;
+
         virtual void setPosition(Vec3f position) = 0;
+
+        virtual Vec3f getPosition() = 0;
 
         virtual void setVelocity(Vec3f velocity) = 0;
 
+        virtual Vec3f getVelocity() = 0;
+
         virtual void setOrientation(Vec3f at, Vec3f up) = 0;
+
+        virtual void getOrientation(Vec3f &at, Vec3f &up) = 0;
     };
 }
 

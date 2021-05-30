@@ -50,35 +50,67 @@ namespace mana {
 
         virtual void setPitch(float pitch) = 0;
 
+        virtual float getPitch() = 0;
+
         virtual void setGain(float gain) = 0;
+
+        virtual float getGain() = 0;
 
         virtual void setMaxDistance(float maxDistance) = 0;
 
-        virtual void setRolloffFactor(float rollOffFactor) = 0;
+        virtual float getMaxDistance() = 0;
+
+        virtual void setRollOffFactor(float rollOffFactor) = 0;
+
+        virtual float getRollOffFactor() = 0;
 
         virtual void setReferenceDistance(float referenceDistance) = 0;
 
+        virtual float getReferenceDistance() = 0;
+
         virtual void setMininumGain(float minGain) = 0;
+
+        virtual float getMinimumGain() = 0;
 
         virtual void setMaximumGain(float maxGain) = 0;
 
+        virtual float getMaximumGain() = 0;
+
         virtual void setConeOuterGain(float coneOuterGain) = 0;
+
+        virtual float getConeOuterGain() = 0;
 
         virtual void setConeInnerAngle(float innerAngle) = 0;
 
+        virtual float getConeInnerAngle() = 0;
+
         virtual void setConeOuterAngle(float outerAngle) = 0;
+
+        virtual float getConeOuterAngle() = 0;
 
         virtual void setPosition(Vec3f position) = 0;
 
+        virtual Vec3f getPosition() = 0;
+
         virtual void setVelocity(Vec3f velocity) = 0;
+
+        virtual Vec3f getVelocity() = 0;
 
         virtual void setDirection(Vec3f direction) = 0;
 
+        virtual Vec3f getDirection() = 0;
+
         virtual void setSourceRelative(bool relative) = 0;
+
+        virtual bool getSourceRelative() = 0;
 
         virtual void setSourceType(SourceType type) = 0;
 
+        virtual SourceType getSourceType() = 0;
+
         virtual void setLooping(bool looping) = 0;
+
+        virtual bool getLooping() = 0;
 
         virtual void setBuffer(const AudioBuffer &buffer) = 0;
 

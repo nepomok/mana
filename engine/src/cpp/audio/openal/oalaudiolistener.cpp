@@ -23,8 +23,7 @@
 #include <AL/al.h>
 
 namespace mana {
-    OALAudioListener::OALAudioListener(AudioContext *context) : context(context) {
-    }
+    OALAudioListener::OALAudioListener(AudioContext *context) : context(context) {}
 
     OALAudioListener::~OALAudioListener() = default;
 
@@ -34,10 +33,26 @@ namespace mana {
         checkOALError();
     }
 
+    float OALAudioListener::getGain() {
+        context->makeCurrent();
+        float ret;
+        alGetListenerf(AL_GAIN, &ret);
+        checkOALError();
+        return ret;
+    }
+
     void OALAudioListener::setPosition(Vec3f position) {
         context->makeCurrent();
         alListener3f(AL_POSITION, position.x, position.y, position.z);
         checkOALError();
+    }
+
+    Vec3f OALAudioListener::getPosition() {
+        context->makeCurrent();
+        Vec3f ret;
+        alGetListener3f(AL_POSITION, &ret.x, &ret.y, &ret.z);
+        checkOALError();
+        return ret;
     }
 
     void OALAudioListener::setVelocity(Vec3f velocity) {
@@ -46,10 +61,31 @@ namespace mana {
         checkOALError();
     }
 
+    Vec3f OALAudioListener::getVelocity() {
+        context->makeCurrent();
+        Vec3f ret;
+        alGetListener3f(AL_VELOCITY, &ret.x, &ret.y, &ret.z);
+        checkOALError();
+        return ret;
+    }
+
     void OALAudioListener::setOrientation(Vec3f at, Vec3f up) {
         context->makeCurrent();
         float v[6] = {at.x, at.y, at.z, up.x, up.y, up.z};
         alListenerfv(AL_ORIENTATION, v);
         checkOALError();
+    }
+
+    void OALAudioListener::getOrientation(Vec3f &at, Vec3f &up) {
+        context->makeCurrent();
+        float v[6] = {at.x, at.y, at.z, up.x, up.y, up.z};
+        alGetListenerfv(AL_ORIENTATION, v);
+        checkOALError();
+        at.x = v[0];
+        at.y = v[1];
+        at.z = v[2];
+        up.x = v[3];
+        up.y = v[4];
+        up.z = v[5];
     }
 }

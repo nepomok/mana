@@ -19,57 +19,36 @@
 
 #include "engine/audio/audiodevice.hpp"
 
-#include <AL/al.h>
-#include <AL/alc.h>
-
 #include <stdexcept>
 
-#include "audio/openal/oalaudiocontext.hpp"
-#include "audio/openal/oalcheckerror.hpp"
+#include "audio/openal/oalaudiodevice.hpp"
 
 namespace mana {
-    AudioDevice::AudioDevice() {
-        device = alcOpenDevice(nullptr);
-        if (!device) {
-            throw std::runtime_error("Failed to open default device");
+    std::vector<std::string> AudioDevice::getDeviceNames(AudioBackend backend) {
+        switch (backend) {
+            case OpenAL:
+                return OALAudioDevice::getDeviceNames();
+            default:
+                throw std::runtime_error("Unsupported audio backend");
         }
     }
 
-    AudioDevice::AudioDevice(const std::string &n) {
-        device = alcOpenDevice(n.c_str());
-        if (!device) {
-            throw std::runtime_error("Failed to open device " + n);
+    AudioDevice *AudioDevice::createDevice(AudioBackend backend, const std::string &name) {
+        switch (backend) {
+            case OpenAL:
+                return new OALAudioDevice(name);
+            default:
+                throw std::runtime_error("Unsupported audio backend");
         }
     }
 
-    AudioDevice::~AudioDevice() {
-        alcCloseDevice(device);
-    }
-
-    AudioContext *AudioDevice::createContext() {
-        auto c = alcCreateContext(device, nullptr);
-        return new OALAudioContext(c);
-    }
-
-    std::vector<std::string> AudioDevice::getAvailableDevices() {
-        const char *dev = alcGetString(nullptr, ALC_DEVICE_SPECIFIER);
-        std::vector<std::string> ret;
-        std::string tmp;
-        bool gotzero = false;
-        for (int i = 0; true; i++) {
-            char c = dev[i];
-            if (c == 0) {
-                if (gotzero)
-                    break;
-                gotzero = true;
-                ret.emplace_back(tmp);
-                tmp.clear();
-            } else {
-                gotzero = false;
-                tmp += c;
-            }
+    AudioDevice *AudioDevice::createDevice(AudioBackend backend) {
+        switch (backend) {
+            case OpenAL:
+                return new OALAudioDevice();
+            default:
+                throw std::runtime_error("Unsupported audio backend");
         }
-        return ret;
     }
 }
 

@@ -32,11 +32,19 @@ namespace mana {
 
         void setGain(float gain) override;
 
+        float getGain() override;
+
         void setPosition(Vec3f position) override;
+
+        Vec3f getPosition() override;
 
         void setVelocity(Vec3f velocity) override;
 
+        Vec3f getVelocity() override;
+
         void setOrientation(Vec3f at, Vec3f up) override;
+
+        void getOrientation(Vec3f &at, Vec3f &up) override;
 
     private:
         AudioContext *context;

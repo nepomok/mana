@@ -30,7 +30,7 @@ class Game : public InputListener, public WindowListener {
 public:
     virtual ~Game() = default;
 
-    virtual int loop(GraphicsApi api) {
+    virtual int loop(GraphicsBackend api) {
         DisplayManager dm(mana::GLFW);
 
         Window *wnd = dm.createWindow(api, "Game", {640, 480}, {});

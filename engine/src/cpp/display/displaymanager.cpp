@@ -45,7 +45,7 @@ std::set<mana::Monitor *> mana::DisplayManager::getMonitors() const {
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsApi graphicsApi) const {
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi) const {
     switch (displayApi) {
         case GLFW:
             return glfw::createWindow(graphicsApi);
@@ -54,7 +54,7 @@ mana::Window *mana::DisplayManager::createWindow(mana::GraphicsApi graphicsApi) 
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsApi graphicsApi, std::string title, mana::Vec2i size,
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi, std::string title, mana::Vec2i size,
                                                  mana::WindowAttributes attributes) const {
     switch (displayApi) {
         case GLFW:
@@ -64,7 +64,7 @@ mana::Window *mana::DisplayManager::createWindow(mana::GraphicsApi graphicsApi, 
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsApi graphicsApi, std::string title, mana::Vec2i size,
+mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsApi, std::string title, mana::Vec2i size,
                                                  mana::WindowAttributes attributes, mana::Monitor &monitor,
                                                  mana::VideoMode mode) const {
     switch (displayApi) {

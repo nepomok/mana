@@ -17,27 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIODEVICE_HPP
-#define MANA_AUDIODEVICE_HPP
-
-#include <string>
-
-#include "engine/audio/audiocontext.hpp"
-#include "engine/audio/audiobackend.hpp"
+#ifndef MANA_AUDIOBACKEND_HPP
+#define MANA_AUDIOBACKEND_HPP
 
 namespace mana {
-    class AudioDevice {
-    public:
-        static std::vector<std::string> getDeviceNames(AudioBackend backend);
-
-        static AudioDevice *createDevice(AudioBackend backend, const std::string &name);
-
-        static AudioDevice *createDevice(AudioBackend backend);
-
-        virtual ~AudioDevice() = default;
-
-        virtual AudioContext *createContext() = 0;
+    enum AudioBackend {
+        OpenAL
     };
 }
 
-#endif //MANA_AUDIODEVICE_HPP
+#endif //MANA_AUDIOBACKEND_HPP
