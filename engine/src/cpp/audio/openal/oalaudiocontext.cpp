@@ -27,7 +27,7 @@
 #include <AL/alc.h>
 
 namespace mana {
-    OALAudioContext::OALAudioContext(ALCcontext *context) : context(context), listener(this) {}
+    OALAudioContext::OALAudioContext(ALCcontext *context) : context(context), listener() {}
 
     mana::OALAudioContext::~OALAudioContext() {
         if (alcGetCurrentContext() == context)

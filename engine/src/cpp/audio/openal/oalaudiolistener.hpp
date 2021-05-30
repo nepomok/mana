@@ -26,7 +26,7 @@
 namespace mana {
     class OALAudioListener : public AudioListener {
     public:
-        explicit OALAudioListener(AudioContext *context);
+        OALAudioListener();
 
         ~OALAudioListener() override;
 
@@ -45,9 +45,6 @@ namespace mana {
         void setOrientation(Vec3f at, Vec3f up) override;
 
         void getOrientation(Vec3f &at, Vec3f &up) override;
-
-    private:
-        AudioContext *context;
     };
 }
 
