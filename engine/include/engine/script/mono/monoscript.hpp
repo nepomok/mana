@@ -29,8 +29,8 @@ namespace mana {
         MonoScript();
 
         MonoScript(MonoCppAssembly *assembly,
-                   const std::string& scriptClassNameSpace,
-                   const std::string& scriptClass);
+                   const std::string &scriptClassNameSpace,
+                   const std::string &scriptClass);
 
         ~MonoScript();
 
