@@ -17,25 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDPASS_HPP
-#define MANA_FORWARDPASS_HPP
+#ifndef MANA_DEFERREDPIPELINE_HPP
+#define MANA_DEFERREDPIPELINE_HPP
 
+#include "engine/render/rendertarget.hpp"
+#include "engine/render/renderer.hpp"
+
+#include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
 
 namespace mana {
-    class ForwardPass : public RenderPass {
+    class DeferredPipeline {
     public:
-        ~ForwardPass() override;
+        DeferredPipeline() = default;
 
-        void setGeometryBuffer(GeometryBuffer &gBuffer) override;
+        /**
+         * The object takes ownership of the render pass pointers.
+         *
+         * @param ren
+         * @param passes The render passes to use in this pipeline. The pipeline destructor deletes the passes.
+         */
+        explicit DeferredPipeline(RenderDevice &device, std::vector<RenderPass *> passes);
 
-        void render(RenderTarget &screen, const RenderScene &scene) override;
+        ~DeferredPipeline();
+
+        void render(RenderTarget &screen, RenderScene &scene);
 
     private:
-        GeometryBuffer *gBuffer = nullptr;
-
-        ShaderProgram *defaultOutlineShader = nullptr;
+        Renderer *ren{};
+        GeometryBuffer gBuffer;
+        std::vector<RenderPass *> passes;
     };
 }
 
-#endif //MANA_FORWARDPASS_HPP
+#endif //MANA_DEFERREDPIPELINE_HPP

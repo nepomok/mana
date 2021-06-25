@@ -17,18 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTINGPASS_HPP
-#define MANA_LIGHTINGPASS_HPP
+#ifndef MANA_FORWARDCOMMAND_HPP
+#define MANA_FORWARDCOMMAND_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include <utility>
+
+#include "engine/math/transform.hpp"
+#include "engine/render/meshbuffer.hpp"
 
 namespace mana {
-    class LightingPass : public RenderPass {
-    public:
-        ~LightingPass() override = default;
+    struct ForwardCommand {
+        ForwardCommand() : transform(), command() {}
 
-        void render(GeometryBuffer &gBuffer, const RenderScene &scene) override;
+        ForwardCommand(Transform t, RenderCommand command) : transform(t),
+                                                             command(std::move(command)) {}
+
+        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
+        RenderCommand command;
     };
 }
 
-#endif //MANA_LIGHTINGPASS_HPP
+#endif //MANA_FORWARDCOMMAND_HPP

@@ -17,7 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/forwardpass.hpp"
+#include "engine/render/renderdevice.hpp"
+
+#include "engine/render/3d/forwardpipeline.hpp"
 
 #include "engine/math/rotation.hpp"
 
@@ -96,32 +98,24 @@ namespace mana {
                                           {});
     }
 
-    ForwardPass::~ForwardPass() {
-        delete defaultOutlineShader;
-    }
+    ForwardPipeline::ForwardPipeline(Renderer* ren) : ren(ren) {}
 
-    void ForwardPass::setGeometryBuffer(GeometryBuffer &buffer) {
-        delete defaultOutlineShader;
-        gBuffer = &buffer;
-        defaultOutlineShader = getDefaultOutlineShader(gBuffer->getRenderDevice());
-    }
+    ForwardPipeline::~ForwardPipeline() = default;
 
-    void ForwardPass::render(RenderTarget &screen, const RenderScene &scene) {
+    void ForwardPipeline::render(RenderTarget &screen, RenderScene &scene) {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
-        Renderer &ren = gBuffer->getRenderDevice().getRenderer();
-
-        ren.renderBegin(screen);
+        ren->renderBegin(screen);
 
         for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);
             model = model * MatrixMath::scale(unit.transform.scale);
             model = model * MatrixMath::rotate(unit.transform.rotation);
 
-            ShaderProgram &shader = *unit.shader;
+            ShaderProgram &shader = *unit.command.shader;
 
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);
@@ -180,67 +174,9 @@ namespace mana {
 
             shader.setVec3("MANA_VIEWPOS", unit.transform.position);
 
-            RenderCommand command;
-
-            if (unit.outline) {
-                command.properties.enableDepthTest = true;
-                command.properties.enableStencilTest = true;
-                command.properties.stencilFail = STENCIL_KEEP;
-                command.properties.stencilDepthFail = STENCIL_KEEP;
-                command.properties.stencilPass = STENCIL_REPLACE;
-                command.properties.stencilTestMask = 0xFF;
-                command.properties.stencilMode = STENCIL_ALWAYS;
-                command.properties.stencilReference = 1;
-                command.properties.stencilFunctionMask = 0xFF;
-            } else {
-                command.properties.enableStencilTest = false;
-                command.properties.stencilTestMask = 0x00;
-                command.properties.stencilFail = STENCIL_KEEP;
-                command.properties.stencilDepthFail = STENCIL_KEEP;
-                command.properties.stencilPass = STENCIL_KEEP;
-                command.properties.stencilMode = STENCIL_NEVER;
-            }
-
-            ren.addCommand(command);
+            ren->addCommand(unit.command);
         }
 
-        RenderScene sceneCopy = scene;
-        for (auto &unit : sceneCopy.forward) {
-            if (unit.outline) {
-                unit.transform.scale *= unit.outlineScale;
-                unit.shader = defaultOutlineShader;
-
-                RenderCommand command;
-
-                command.properties.enableDepthTest = false;
-
-                command.properties.stencilMode = STENCIL_NOTEQUAL;
-                command.properties.stencilReference = 1;
-                command.properties.stencilFunctionMask = 0xFF;
-
-                command.properties.stencilTestMask = 0x00;
-
-                model = MatrixMath::translate(unit.transform.position);
-                model = model * MatrixMath::scale(unit.transform.scale);
-                model = model * MatrixMath::rotate(unit.transform.rotation);
-
-                ShaderProgram &shader = *unit.shader;
-
-                shader.setMat4("MANA_M", model);
-                shader.setMat4("MANA_V", view);
-                shader.setMat4("MANA_P", projection);
-                shader.setMat4("MANA_MVP", projection * view * model);
-                shader.setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-                shader.setVec3("COLOR_OUTLINE", Vec3f((float) unit.outlineColor.r() / 255,
-                                                      (float) unit.outlineColor.g() / 255,
-                                                      (float) unit.outlineColor.b() / 255));
-
-                command.shader = &shader;
-
-                ren.addCommand(command);
-            }
-        }
-
-        ren.renderFinish();
+        ren->renderFinish();
     }
 }

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERUNIT_HPP
-#define MANA_RENDERUNIT_HPP
+#ifndef MANA_DEFERREDCOMMAND_HPP
+#define MANA_DEFERREDCOMMAND_HPP
 
 #include <utility>
 
@@ -27,20 +27,16 @@
 #include "engine/render/3d/material.hpp"
 
 namespace mana {
-    struct RenderUnit {
-        RenderUnit() : transform(), material(), mesh() {}
+    struct DeferredCommand {
+        DeferredCommand() : transform(), meshBuffer() {}
 
-        RenderUnit(Transform t, Material *material, MeshBuffer *mesh) : transform(t),
-                                                                        material(material),
-                                                                        mesh(mesh) {}
+        DeferredCommand(Transform t, Material material, MeshBuffer *meshBuffer) : transform(t),
+                                                                                  material(std::move(material)),
+                                                                                  meshBuffer(meshBuffer) {}
 
-        Transform transform;
-
-        Material *material;
-        MeshBuffer *mesh;
-
-        //The shader used in the forward pass, texture uniforms have to be set by the user and lighting / shadow calculation helpers are accessed via mana.hlsl include.
-        ShaderProgram *shader = nullptr;
+        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
+        Material material;
+        MeshBuffer *meshBuffer;
 
         bool outline = false;
         ColorRGB outlineColor;
@@ -48,4 +44,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERUNIT_HPP
+#endif //MANA_DEFERREDCOMMAND_HPP

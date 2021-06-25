@@ -23,7 +23,7 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/3d/passes/forwardpass.hpp"
+#include "engine/render/3d/forwardpipeline.hpp"
 
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)

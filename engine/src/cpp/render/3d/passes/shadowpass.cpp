@@ -20,11 +20,7 @@
 #include "engine/render/3d/passes/shadowpass.hpp"
 
 namespace mana {
-    void ShadowPass::setGeometryBuffer(GeometryBuffer &gBuffer) {
-
-    }
-
-    void ShadowPass::render(RenderTarget &screen, const RenderScene &scene) {
+    void ShadowPass::render(GeometryBuffer &gBuffer, const RenderScene &scene) {
 
     }
 }

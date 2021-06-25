@@ -99,7 +99,7 @@
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/3d/material.hpp"
 #include "engine/render/3d/camera.hpp"
-#include "engine/render/3d/passes/forwardpass.hpp"
+#include "engine/render/3d/forwardpipeline.hpp"
 #include "engine/render/3d/passes/shadowpass.hpp"
 #include "engine/render/3d/passes/lightingpass.hpp"
 #include "engine/render/3d/passes/outlinepass.hpp"

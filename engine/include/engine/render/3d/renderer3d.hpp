@@ -29,6 +29,8 @@
 
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
+#include "engine/render/3d/forwardpipeline.hpp"
+#include "engine/render/3d/deferredpipeline.hpp"
 
 namespace mana {
     class Renderer3D {
@@ -43,12 +45,13 @@ namespace mana {
 
         ~Renderer3D();
 
-        void render(RenderTarget &target, const RenderScene &scene);
+        void render(RenderTarget &target, RenderScene &scene);
 
     private:
         RenderDevice *device{};
-        GeometryBuffer gBuffer;
-        std::vector<RenderPass *> passes;
+
+        DeferredPipeline deferredPipeline;
+        ForwardPipeline forwardPipeline;
     };
 }
 

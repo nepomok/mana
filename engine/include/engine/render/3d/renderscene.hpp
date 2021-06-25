@@ -20,7 +20,8 @@
 #ifndef MANA_RENDERSCENE_HPP
 #define MANA_RENDERSCENE_HPP
 
-#include "engine/render/3d/renderunit.hpp"
+#include "engine/render/3d/deferredcommand.hpp"
+#include "engine/render/3d/forwardcommand.hpp"
 #include "engine/render/3d/camera.hpp"
 #include "engine/render/3d/light.hpp"
 
@@ -28,12 +29,16 @@ namespace mana {
     struct RenderScene {
         Camera camera;
 
-        TextureBuffer* skybox;
-
-        std::vector<RenderUnit> deferred;
-        std::vector<RenderUnit> forward;
-
         std::vector<Light> lights;
+
+        std::vector<DeferredCommand> deferred; //The commands to draw in the deferred pipeline
+
+        // The commands to draw in the forward pipeline,
+        // the forward pipeline is executed after the deferred pipeline.
+        // The depth information from the deferred pass is preserved in the depth buffer.
+        std::vector<ForwardCommand> forward;
+
+        TextureBuffer* skybox; //The cubemap texture of the skybox if not null it is drawn after the forward pipeline.
     };
 }
 

@@ -20,11 +20,7 @@
 #include "engine/render/3d/passes/outlinepass.hpp"
 
 namespace mana {
-    void OutlinePass::setGeometryBuffer(GeometryBuffer &gBuffer) {
-
-    }
-
-    void OutlinePass::render(RenderTarget &screen, const RenderScene &scene) {
+    void OutlinePass::render(GeometryBuffer &gBuffer, const RenderScene &scene) {
 
     }
 }

@@ -17,18 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTINGPASS_HPP
-#define MANA_LIGHTINGPASS_HPP
+#ifndef MANA_FORWARDPIPELINE_HPP
+#define MANA_FORWARDPIPELINE_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include "engine/render/rendertarget.hpp"
+#include "engine/render/3d/renderscene.hpp"
+#include "engine/render/renderer.hpp"
 
 namespace mana {
-    class LightingPass : public RenderPass {
+    class ForwardPipeline {
     public:
-        ~LightingPass() override = default;
+        ForwardPipeline() = default;
 
-        void render(GeometryBuffer &gBuffer, const RenderScene &scene) override;
+        explicit ForwardPipeline(Renderer *ren);
+
+        ~ForwardPipeline();
+
+        void render(RenderTarget &screen, RenderScene &scene);
+
+    private:
+        Renderer *ren{};
     };
 }
 
-#endif //MANA_LIGHTINGPASS_HPP
+#endif //MANA_FORWARDPIPELINE_HPP

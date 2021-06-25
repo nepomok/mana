@@ -46,27 +46,26 @@ namespace mana {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes) : device(&device),
-                                                                                     passes(std::move(passes)),
-                                                                                     gBuffer(device) {
-        for (auto *pass : passes)
-            pass->setGeometryBuffer(gBuffer);
+    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes)
+            : device(&device),
+              forwardPipeline(&device.getRenderer()),
+              deferredPipeline(device, std::move(passes)) {
+
     }
 
     Renderer3D::~Renderer3D() {
-        for (auto *pass : passes)
-            delete pass;
     }
 
     void Renderer3D::render(RenderTarget &target,
-                            const RenderScene &scene) {
+                            RenderScene &scene) {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
-        gBuffer.setSize(target.getSize());
+        device->getRenderer().setClear(true, true, true);
+        deferredPipeline.render(target, scene);
 
-        for (auto *pass : passes) {
-            pass->render(target, scene);
-        }
+        // Preserve color and depth from the deferred pipeline
+        device->getRenderer().setClear(false, false, false);
+        forwardPipeline.render(target, scene);
     }
 }
