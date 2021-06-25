@@ -51,7 +51,7 @@ QtOGLRenderTexture::QtOGLRenderTexture(Attributes attributes) : TextureBuffer(at
                      attributes.size.x,
                      attributes.size.y,
                      0,
-                     QtOGLTypeConverter::convert(attributes.format),
+                     GL_RGBA,
                      attributes.format == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
                      NULL);
     } else {

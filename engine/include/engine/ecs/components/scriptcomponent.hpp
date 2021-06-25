@@ -38,7 +38,7 @@ namespace mana {
             return typeid(ScriptComponent);
         }
 
-        Script *script = nullptr;
+        Resource<Script *> script;
 
         bool scriptEnabled = false;
 

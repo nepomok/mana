@@ -31,7 +31,8 @@ opengl::QtOGLRenderTarget::QtOGLRenderTarget() : FBO(0),
 
 opengl::QtOGLRenderTarget::QtOGLRenderTarget(Vec2i size, int samples) : size(size),
                                                                         FBO(0) {
-    glGenFramebuffers(1, &FBO);
+    //Offscreen render targets do not appear to be supported.
+  /*  glGenFramebuffers(1, &FBO);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
     glGenRenderbuffers(1, &colorRBO);
@@ -53,12 +54,12 @@ opengl::QtOGLRenderTarget::QtOGLRenderTarget(Vec2i size, int samples) : size(siz
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    checkQtGLError("OGLRenderAllocator::allocateFrameBuffer");
+    checkQtGLError("OGLRenderAllocator::allocateFrameBuffer");*/
 }
 
 opengl::QtOGLRenderTarget::~QtOGLRenderTarget() {
-    if (deleteFramebuffer)
-        glDeleteFramebuffers(1, &FBO);
+    /*if (deleteFramebuffer)
+        glDeleteFramebuffers(1, &FBO);*/
 }
 
 Vec2i opengl::QtOGLRenderTarget::getSize() {
@@ -67,7 +68,7 @@ Vec2i opengl::QtOGLRenderTarget::getSize() {
 
 void opengl::QtOGLRenderTarget::blitColor(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
                                           Vec2i sourceRect, Vec2i targetRect, TextureBuffer::TextureFiltering filter) {
-    if (sourceRect.x < 0 || sourceRect.y < 0) {
+    /*if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
     if (sourceOffset.x < 0 || sourceOffset.y < 0) {
@@ -104,7 +105,7 @@ void opengl::QtOGLRenderTarget::blitColor(RenderTarget &source, Vec2i sourceOffs
                       QtOGLTypeConverter::convert(filter));
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
+    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");*/
 }
 
 void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source,
@@ -112,7 +113,7 @@ void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source,
                                           Vec2i targetOffset,
                                           Vec2i sourceRect,
                                           Vec2i targetRect) {
-    if (sourceRect.x < 0 || sourceRect.y < 0) {
+    /*if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
     if (sourceOffset.x < 0 || sourceOffset.y < 0) {
@@ -149,7 +150,7 @@ void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source,
                       GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
+    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");*/
 }
 
 void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source,
@@ -157,7 +158,7 @@ void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source,
                                             Vec2i targetOffset,
                                             Vec2i sourceRect,
                                             Vec2i targetRect) {
-    if (sourceRect.x < 0 || sourceRect.y < 0) {
+    /*if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
     if (sourceOffset.x < 0 || sourceOffset.y < 0) {
@@ -194,84 +195,84 @@ void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source,
                       GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
+    checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");*/
 }
 
 void QtOGLRenderTarget::setNumberOfColorAttachments(int count) {
-    unsigned int attachments[count];
+    /*unsigned int attachments[count];
     for (int i = 0; i < count; i++) {
         attachments[i] = GL_COLOR_ATTACHMENT0 + i;
     }
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glDrawBuffers(count, attachments);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachColor(int index, TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachDepth(TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachStencil(TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachDepthStencil(TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachColor(int index, TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, QtOGLTypeConverter::convert(face), tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachDepth(TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, QtOGLTypeConverter::convert(face), tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachStencil(TextureBuffer::CubeMapFace face, TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, QtOGLTypeConverter::convert(face), tex.handle, 0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 void opengl::QtOGLRenderTarget::attachDepthStencil(TextureBuffer::CubeMapFace face,
                                                    TextureBuffer &texture) {
-    auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
+    /*auto &tex = dynamic_cast<QtOGLRenderTexture &>(texture);
     glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, QtOGLTypeConverter::convert(face), tex.handle,
                            0);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    checkQtGLError("");
+    checkQtGLError("");*/
 }
 
 GLuint opengl::QtOGLRenderTarget::getFBO() const {
@@ -283,25 +284,25 @@ int QtOGLRenderTarget::getSamples() {
 }
 
 void QtOGLRenderTarget::detachColor(int index) {
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+  /*  glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 }
 
 void QtOGLRenderTarget::detachDepth() {
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    /*glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 }
 
 void QtOGLRenderTarget::detachStencil() {
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    /*glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 }
 
 void QtOGLRenderTarget::detachDepthStencil() {
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+    /*glBindFramebuffer(GL_FRAMEBUFFER, FBO);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);*/
 }

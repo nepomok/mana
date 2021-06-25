@@ -103,8 +103,6 @@ private:
 
     mana::opengl::QtOGLRenderDevice device;
 
-    mana::Renderer3D ren3d;
-
     mana::Scene scene;
 
     mana::Vec3f inputMovement;

@@ -36,8 +36,6 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     frameBuffer.FBO = defaultFramebufferObject();
     frameBuffer.size = {width(), height()};
 
-    ren3d = std::move(mana::Renderer3D(device, {}));
-
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
 
     timer.start((int) ((1.0f / (float) fps) * 1000));
@@ -165,6 +163,8 @@ struct RenderData {
 void SceneDisplayWidget::paintGL() {
     device.initializeOpenGLFunctions();
 
+    auto ren3d = mana::Renderer3D(device, {});
+
     device.getRenderer().setClearColor(mana::ColorRGBA(38, 38, 38, 255));
     device.getRenderer().setViewport({}, frameBuffer.size);
 
@@ -182,52 +182,74 @@ void SceneDisplayWidget::paintGL() {
         scene3d.lights.emplace_back(lightComponent.light);
     }
 
-    for (auto &nodePointer : scene.findNodesWithComponent<RenderCommand>()) {
+    std::map<RenderComponent *, TransformComponent *> mapping;
+    std::vector<RenderComponent *> renderComponents;
+    for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
         auto &node = *nodePointer;
         if (!node.enabled)
             continue;
 
-        auto &transformComponent = node.getComponent<TransformComponent>();
-        if (!transformComponent.enabled)
+        auto &comp = node.getComponent<RenderComponent>();
+        if (!comp.enabled)
             continue;
 
-        auto &meshComponent = node.getComponent<MeshComponent>();
-        if (!meshComponent.enabled)
+        auto &tcomp = node.getComponent<TransformComponent>();
+        if (!tcomp.enabled)
             continue;
 
-        auto &materialComponent = node.getComponent<MaterialComponent>();
-        if (!materialComponent.enabled)
-            continue;
+        renderComponents.emplace_back(&comp);
+        mapping[&comp] = &tcomp;
+    }
 
-        RenderUnit unit;
-        unit.transform = TransformComponent::walkTransformHierarchy(transformComponent);
-        unit.material = materialComponent.material;
-        for (auto *m : meshComponent.meshes) {
-            unit.meshes.emplace_back(m);
+    std::sort(renderComponents.begin(), renderComponents.end(),
+              [](const RenderComponent *a, const RenderComponent *b) -> bool {
+                  return a->renderOrder < b->renderOrder;
+              });
+
+    for (auto *comp : renderComponents) {
+        ForwardCommand unit;
+
+        unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
+
+        unit.command.shader = &comp->shader->get();
+        for (auto &m : comp->textureMapping) {
+            unit.command.shader->setTexture(m.first, m.second);
         }
+
+        for (auto *t : comp->textureBuffers) {
+            unit.command.textures.emplace_back(&t->get());
+        }
+
+        for (auto *m : comp->meshBuffers) {
+            unit.command.meshBuffers.emplace_back(&m->get());
+        }
+
+        unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
+        unit.command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
+        unit.command.properties.depthTestMode = comp->renderProperties.depthTestMode;
+
+        unit.command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
+        unit.command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
+        unit.command.properties.stencilMode = comp->renderProperties.stencilMode;
+        unit.command.properties.stencilReference = comp->renderProperties.stencilReference;
+        unit.command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
+        unit.command.properties.stencilFail = comp->renderProperties.stencilFail;
+        unit.command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
+        unit.command.properties.stencilPass = comp->renderProperties.stencilPass;
+
+        unit.command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
+        unit.command.properties.faceCullMode = comp->renderProperties.faceCullMode;
+        unit.command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
+
+        unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
+        unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
+        unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
         scene3d.forward.emplace_back(unit);
     }
 
-    Node *cameraNode;
-    for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
-        if (!node->enabled)
-            continue;
-        auto &comp = node->getComponent<CameraComponent>();
-        if (!comp.enabled)
-            continue;
-        auto &tcomp = node->getComponent<TransformComponent>();
-        if (!tcomp.enabled)
-            continue;
-        cameraNode = node;
-        break;
-    }
-
-    auto &cameraComponent = cameraNode->getComponent<CameraComponent>();
-    auto &cameraTransformComponent = cameraNode->getComponent<TransformComponent>();
-
-    scene3d.camera = cameraComponent.camera;
-    scene3d.camera.transform = TransformComponent::walkTransformHierarchy(cameraTransformComponent);
+    scene3d.camera = Camera(PERSPECTIVE);
+    scene3d.camera.transform = viewerTransform;
 
     scene3d.camera.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());
 
