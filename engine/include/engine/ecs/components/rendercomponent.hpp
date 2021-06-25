@@ -17,29 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MESHCOMPONENT_HPP
-#define MANA_MESHCOMPONENT_HPP
+#ifndef MANA_RENDERCOMPONENT_HPP
+#define MANA_RENDERCOMPONENT_HPP
 
-#include <vector>
-
-#include "engine/render/meshbuffer.hpp"
-#include "engine/resource/resource.hpp"
 #include "engine/ecs/component.hpp"
 
+#include "engine/resource/resource.hpp"
+
+#include "engine/render/rendercommand.hpp"
+
 namespace mana {
-    struct MeshComponent : public Component {
-        MeshComponent() : Component(MESH) {}
+    struct RenderComponent : public Component {
+        RenderComponent() : Component(RENDER) {}
 
         Component *clone() override {
-            return new MeshComponent(*this);
+            return new MaterialComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(MeshComponent);
+            return typeid(MaterialComponent);
         }
 
-        Resource<MeshBuffer> *mesh = nullptr;
+        Resource<RenderCommand> *command = nullptr;
     };
 }
 
-#endif //MANA_MESHCOMPONENT_HPP
+#endif //MANA_RENDERCOMPONENT_HPP

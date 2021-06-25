@@ -25,10 +25,9 @@ namespace mana {
         NONE,
         TRANSFORM,
         CAMERA,
-        MATERIAL,
-        MESH,
         LIGHT,
         SCRIPT,
+        RENDER
     };
 }
 

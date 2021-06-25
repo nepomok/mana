@@ -27,7 +27,7 @@
 
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {new ForwardPass()}) {
+            : screenTarget(scr), ren(device, {}) {
     }
 
     void RenderSystem::start() {
@@ -53,7 +53,7 @@ namespace mana {
             scene3d.lights.emplace_back(lightComponent.light);
         }
 
-        for (auto &nodePointer : scene.findNodesWithComponent<MeshComponent>()) {
+        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
             auto &node = *nodePointer;
             if (!node.enabled)
                 continue;
@@ -62,21 +62,16 @@ namespace mana {
             if (!transformComponent.enabled)
                 continue;
 
-            auto &meshComponent = node.getComponent<MeshComponent>();
-            if (!meshComponent.enabled)
+            auto &renderComponent = node.getComponent<RenderComponent>();
+            if (!renderComponent.enabled)
                 continue;
 
-            auto &materialComponent = node.getComponent<MaterialComponent>();
-            if (!materialComponent.enabled)
-                continue;
+            ForwardCommand command;
 
-            RenderUnit unit;
+            command.transform = TransformComponent::walkTransformHierarchy(transformComponent);
+            command.command = renderComponent.command->get();
 
-            unit.transform = TransformComponent::walkTransformHierarchy(transformComponent);
-            unit.material = &materialComponent.material->get();
-            unit.mesh = &meshComponent.mesh->get();
-
-            scene3d.forward.emplace_back(unit);
+            scene3d.forward.emplace_back(command);
         }
 
         Node *cameraNode;
