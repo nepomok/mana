@@ -31,11 +31,11 @@ namespace mana {
         RenderComponent() : Component(RENDER) {}
 
         Component *clone() override {
-            return new MaterialComponent(*this);
+            return new RenderComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(MaterialComponent);
+            return typeid(RenderComponent);
         }
 
         Resource<RenderCommand> *command = nullptr;
