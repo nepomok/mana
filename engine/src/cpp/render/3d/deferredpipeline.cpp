@@ -53,7 +53,6 @@ namespace mana {
                          {},
                          {},
                          gBuffer.getRenderTarget().getSize(),
-                         screen.getSize(),
-                         TextureBuffer::TextureFiltering::LINEAR);
+                         screen.getSize());
     }
 }

@@ -36,7 +36,7 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
     frameBuffer.FBO = defaultFramebufferObject();
     frameBuffer.size = {width(), height()};
 
-    ren3d = std::move(mana::Renderer3D(device, {new ForwardPass()}));
+    ren3d = std::move(mana::Renderer3D(device, {}));
 
     connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
 
@@ -182,7 +182,7 @@ void SceneDisplayWidget::paintGL() {
         scene3d.lights.emplace_back(lightComponent.light);
     }
 
-    for (auto &nodePointer : scene.findNodesWithComponent<MeshComponent>()) {
+    for (auto &nodePointer : scene.findNodesWithComponent<RenderCommand>()) {
         auto &node = *nodePointer;
         if (!node.enabled)
             continue;

@@ -110,9 +110,11 @@ namespace mana {
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
 
-    void opengl::OGLRenderTarget::blitDepth(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                            Vec2i sourceRect, Vec2i targetRect,
-                                            TextureBuffer::TextureFiltering filter) {
+    void opengl::OGLRenderTarget::blitDepth(RenderTarget &source,
+                                       Vec2i sourceOffset,
+                                       Vec2i targetOffset,
+                                       Vec2i sourceRect,
+                                       Vec2i targetRect) {
         if (sourceRect.x < 0 || sourceRect.y < 0) {
             throw std::runtime_error("Rect cannot be negative");
         }
@@ -153,9 +155,11 @@ namespace mana {
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
 
-    void opengl::OGLRenderTarget::blitStencil(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                              Vec2i sourceRect, Vec2i targetRect,
-                                              TextureBuffer::TextureFiltering filter) {
+    void opengl::OGLRenderTarget::blitStencil(RenderTarget &source,
+                                         Vec2i sourceOffset,
+                                         Vec2i targetOffset,
+                                         Vec2i sourceRect,
+                                         Vec2i targetRect) {
         if (sourceRect.x < 0 || sourceRect.y < 0) {
             throw std::runtime_error("Rect cannot be negative");
         }
@@ -190,7 +194,7 @@ namespace mana {
                           targetRect.x,
                           targetRect.y,
                           GL_STENCIL_BUFFER_BIT,
-                          OGLTypeConverter::convert(filter));
+                          GL_NEAREST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");

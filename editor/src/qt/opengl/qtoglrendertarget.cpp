@@ -107,8 +107,11 @@ void opengl::QtOGLRenderTarget::blitColor(RenderTarget &source, Vec2i sourceOffs
     checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
 }
 
-void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                          Vec2i sourceRect, Vec2i targetRect, TextureBuffer::TextureFiltering filter) {
+void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source,
+                                          Vec2i sourceOffset,
+                                          Vec2i targetOffset,
+                                          Vec2i sourceRect,
+                                          Vec2i targetRect) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -143,15 +146,17 @@ void opengl::QtOGLRenderTarget::blitDepth(RenderTarget &source, Vec2i sourceOffs
                       targetRect.x,
                       targetRect.y,
                       GL_DEPTH_BUFFER_BIT,
-                      QtOGLTypeConverter::convert(filter));
+                      GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
 }
 
-void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset,
-                                            Vec2i sourceRect, Vec2i targetRect,
-                                            TextureBuffer::TextureFiltering filter) {
+void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source,
+                                            Vec2i sourceOffset,
+                                            Vec2i targetOffset,
+                                            Vec2i sourceRect,
+                                            Vec2i targetRect) {
     if (sourceRect.x < 0 || sourceRect.y < 0) {
         throw std::runtime_error("Rect cannot be negative");
     }
@@ -186,7 +191,7 @@ void opengl::QtOGLRenderTarget::blitStencil(RenderTarget &source, Vec2i sourceOf
                       targetRect.x,
                       targetRect.y,
                       GL_STENCIL_BUFFER_BIT,
-                      QtOGLTypeConverter::convert(filter));
+                      GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     checkQtGLError("QtOGLUserFrameBuffer::blitFramebuffer");
