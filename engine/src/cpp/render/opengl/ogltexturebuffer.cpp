@@ -49,7 +49,7 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
                      attributes.size.x,
                      attributes.size.y,
                      0,
-                     OGLTypeConverter::convert(attributes.format),
+                     GL_RGBA,
                      attributes.format == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
                      NULL);
     } else {

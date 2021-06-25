@@ -17,25 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDCOMMAND_HPP
-#define MANA_FORWARDCOMMAND_HPP
+#ifndef MANA_MONOSCRIPTRESOURCE_HPP
+#define MANA_MONOSCRIPTRESOURCE_HPP
 
-#include <utility>
+#include "engine/resource/resource.hpp"
 
-#include "engine/math/transform.hpp"
-#include "engine/render/meshbuffer.hpp"
-#include "engine/render/rendercommand.hpp"
+#include "engine/script/mono/monoscript.hpp"
 
 namespace mana {
-    struct ForwardCommand {
-        ForwardCommand() : transform(), command() {}
+    class MonoScriptResource : public Resource<Script> {
+    public:
+        MonoScriptResource(MonoCppDomain &monoRuntime,
+                           std::string assemblyFileName,
+                           std::string nameSpace,
+                           std::string className);
 
-        ForwardCommand(Transform t, RenderCommand command) : transform(t),
-                                                             command(std::move(command)) {}
+        ~MonoScriptResource() override;
 
-        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
-        RenderCommand command;
+        void load() override;
+
+        void free() override;
+
+        Script &get() override;
+
+    private:
+        MonoCppDomain *monoCppRuntime;
+        std::string assemblyFileName;
+        std::string nameSpace;
+        std::string className;
+        MonoScript *script;
+        bool isLoaded = false;
     };
 }
 
-#endif //MANA_FORWARDCOMMAND_HPP
+#endif //MANA_MONOSCRIPTRESOURCE_HPP

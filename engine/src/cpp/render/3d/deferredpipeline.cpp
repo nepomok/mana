@@ -32,6 +32,10 @@ namespace mana {
     }
 
     void DeferredPipeline::render(RenderTarget &screen, RenderScene &scene) {
+        //Clear geometry buffer target
+        ren->renderBegin(gBuffer.getRenderTarget());
+        ren->renderFinish();
+
         gBuffer.setSize(screen.getSize());
 
         for (auto *pass : passes) {
@@ -42,13 +46,13 @@ namespace mana {
         screen.blitColor(gBuffer.getRenderTarget(),
                          {},
                          {},
-                         screen.getSize(),
+                         gBuffer.getRenderTarget().getSize(),
                          screen.getSize(),
                          TextureBuffer::TextureFiltering::LINEAR);
         screen.blitDepth(gBuffer.getRenderTarget(),
                          {},
                          {},
-                         screen.getSize(),
+                         gBuffer.getRenderTarget().getSize(),
                          screen.getSize(),
                          TextureBuffer::TextureFiltering::LINEAR);
     }

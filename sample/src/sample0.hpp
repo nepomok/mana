@@ -29,14 +29,14 @@ public:
 
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
-        Game::start(window, device, input);
-
         device.getRenderer().setClearColor(clearColor);
 
         manaAssembly = domain.loadAssembly("mana.dll");
 
         ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), device));
+
+        Game::start(window, device, input);
     }
 
     void stop(Window &window, RenderDevice &device, Input &input) override {

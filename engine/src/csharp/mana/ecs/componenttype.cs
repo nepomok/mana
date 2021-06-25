@@ -24,8 +24,8 @@ namespace Mana
         NONE,
         TRANSFORM,
         CAMERA,
-        RENDER,
         LIGHT,
         SCRIPT,
+        RENDER
     }
 }

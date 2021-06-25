@@ -17,7 +17,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/*
 #include "engine/resource/script/monoscriptresource.hpp"
 
 #include <utility>
@@ -61,4 +60,3 @@ namespace mana {
         return *script;
     }
 }
- */

@@ -88,8 +88,7 @@ namespace mana {
                 return std::move(uploadCamera(c, manaAssembly));
             case ComponentType::LIGHT:
                 return std::move(uploadLight(c, manaAssembly));
-            case ComponentType::MESH:
-            case ComponentType::MATERIAL:
+            case ComponentType::RENDER:
             case ComponentType::SCRIPT:
             default:
                 return std::move(manaAssembly.createObject("Mana", "Component"));
@@ -158,8 +157,7 @@ namespace mana {
             case ComponentType::LIGHT:
                 downloadLight(o, (LightComponent &) c);
                 break;
-            case ComponentType::MESH:
-            case ComponentType::MATERIAL:
+            case ComponentType::RENDER:
             case ComponentType::SCRIPT:
             default:
                 break;

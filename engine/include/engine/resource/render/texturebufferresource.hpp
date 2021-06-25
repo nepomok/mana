@@ -17,38 +17,37 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMPONENT_HPP
-#define MANA_RENDERCOMPONENT_HPP
+#ifndef MANA_TEXTUREBUFFERRESOURCE_HPP
+#define MANA_TEXTUREBUFFERRESOURCE_HPP
 
-#include "engine/ecs/component.hpp"
-
-#include "engine/render/rendercommand.hpp"
+#include "engine/render/renderdevice.hpp"
 
 #include "engine/resource/resource.hpp"
 
 namespace mana {
-    struct RenderComponent : public Component {
-        RenderComponent() : Component(RENDER) {}
+    class TextureBufferResource : public Resource<TextureBuffer> {
+    public:
+        TextureBufferResource();
 
-        Component *clone() override {
-            return new RenderComponent(*this);
-        }
+        TextureBufferResource(RenderDevice &allocator,
+                              Resource<ImageBuffer<ColorRGBA>> &resource,
+                              TextureBuffer::Attributes attributes);
 
-        const std::type_info &getTypeInfo() override {
-            return typeid(RenderComponent);
-        }
+        ~TextureBufferResource() override;
 
-        Resource<ShaderProgram> *shader{};
+        void load() override;
 
-        std::vector<Resource<MeshBuffer> *> meshBuffers;
-        std::vector<Resource<TextureBuffer> *> textureBuffers;
+        void free() override;
 
-        std::map<std::string, int> textureMapping;
+        TextureBuffer &get() override;
 
-        RenderProperties renderProperties;
-
-        int renderOrder = 0;
+    private:
+        RenderDevice *alloc;
+        Resource <ImageBuffer<ColorRGBA>> *img;
+        TextureBuffer::Attributes attrib;
+        TextureBuffer *texture;
+        bool isLoaded = false;
     };
 }
 
-#endif //MANA_RENDERCOMPONENT_HPP
+#endif //MANA_TEXTUREBUFFERRESOURCE_HPP

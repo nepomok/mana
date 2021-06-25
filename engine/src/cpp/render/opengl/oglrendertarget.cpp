@@ -147,7 +147,7 @@ namespace mana {
                           targetRect.x,
                           targetRect.y,
                           GL_DEPTH_BUFFER_BIT,
-                          OGLTypeConverter::convert(filter));
+                          GL_NEAREST);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");

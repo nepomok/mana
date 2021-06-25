@@ -17,38 +17,39 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMPONENT_HPP
-#define MANA_RENDERCOMPONENT_HPP
-
-#include "engine/ecs/component.hpp"
-
-#include "engine/render/rendercommand.hpp"
+#ifndef MANA_MESHBUFFERRESOURCE_HPP
+#define MANA_MESHBUFFERRESOURCE_HPP
 
 #include "engine/resource/resource.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
-    struct RenderComponent : public Component {
-        RenderComponent() : Component(RENDER) {}
+    class MeshBufferResource : public Resource<MeshBuffer> {
+    public:
+        MeshBufferResource();
 
-        Component *clone() override {
-            return new RenderComponent(*this);
-        }
+        MeshBufferResource(RenderDevice &alloc, Resource <Mesh> &meshResource);
 
-        const std::type_info &getTypeInfo() override {
-            return typeid(RenderComponent);
-        }
+        MeshBufferResource(RenderDevice &alloc,
+                           Resource <Mesh> &meshResource,
+                           std::vector<Transform> instanceOffsets);
 
-        Resource<ShaderProgram> *shader{};
+        ~MeshBufferResource() override;
 
-        std::vector<Resource<MeshBuffer> *> meshBuffers;
-        std::vector<Resource<TextureBuffer> *> textureBuffers;
+        void load() override;
 
-        std::map<std::string, int> textureMapping;
+        void free() override;
 
-        RenderProperties renderProperties;
+        MeshBuffer &get() override;
 
-        int renderOrder = 0;
+    private:
+        RenderDevice *device;
+        Resource <Mesh> *meshResource;
+        std::vector<Transform> instanceOffsets;
+        bool instanced;
+        MeshBuffer *mesh;
+        bool isLoaded = false;
     };
 }
 
-#endif //MANA_RENDERCOMPONENT_HPP
+#endif //MANA_MESHBUFFERRESOURCE_HPP

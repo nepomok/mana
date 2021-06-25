@@ -26,10 +26,8 @@ namespace mana {
     ComponentType convertComponentType(const std::string &str) {
         if (str == "transform")
             return TRANSFORM;
-        else if (str == "mesh")
-            return MESH;
-        else if (str == "material")
-            return MATERIAL;
+        else if (str == "render")
+            return RENDER;
         else if (str == "camera")
             return CAMERA;
         else if (str == "light")
@@ -205,14 +203,44 @@ namespace mana {
         return ret;
     }
 
-    MeshComponent *getMeshComponent(const nlohmann::json &component, Resources &res) {
-        auto *ret = new MeshComponent();
-        throw std::runtime_error("Not Implemented");
-    }
+    RenderComponent *getRenderComponent(const nlohmann::json &component, Resources &res) {
+        auto *ret = new RenderComponent();
+        ret->shader = &res.getResource<ShaderProgram>(component["shaderResourceName"]);
 
-    MaterialComponent *getMaterialComponent(const nlohmann::json &component, Resources &res) {
-        auto *ret = new MaterialComponent();
-        throw std::runtime_error("Not Implemented");
+        for (const auto &entry : component["textureMapping"]) {
+            ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
+        }
+
+        for (auto &mesh : component["meshes"]) {
+            ret->meshBuffers.emplace_back(&res.getResource<MeshBuffer>(mesh["resourceName"]));
+        }
+
+        for (const auto &tex : component["textures"]) {
+            ret->textureBuffers.emplace_back(&res.getResource<TextureBuffer>(tex["resourceName"]));
+        }
+
+        auto props = component["renderProperties"];
+        ret->renderProperties.enableDepthTest = props["enableDepthTest"];
+        ret->renderProperties.depthTestWrite = props["depthTestWrite"];
+        ret->renderProperties.depthTestMode = convertDepthTestMode(props["depthTestMode"]);
+        ret->renderProperties.enableStencilTest = props["enableStencilTest"];
+        ret->renderProperties.stencilTestMask = props["stencilTestMask"];
+        ret->renderProperties.stencilMode = convertStencilMode(props["stencilMode"]);
+        ret->renderProperties.stencilReference = props["stencilReference"];
+        ret->renderProperties.stencilFunctionMask = props["stencilFunctionMask"];
+        ret->renderProperties.stencilFail = convertStencilAction(props["stencilFail"]);
+        ret->renderProperties.stencilDepthFail = convertStencilAction(props["stencilDepthFail"]);
+        ret->renderProperties.stencilPass = convertStencilAction(props["stencilPass"]);
+        ret->renderProperties.enableFaceCulling = props["enableFaceCulling"];
+        ret->renderProperties.faceCullMode = convertFaceCullMode(props["faceCullMode"]);
+        ret->renderProperties.faceCullClockwiseWinding = props["faceCullClockwiseWinding"];
+        ret->renderProperties.enableBlending = props["enableBlending"];
+        ret->renderProperties.blendSourceMode = convertBlendMode(props["blendSourceMode"]);
+        ret->renderProperties.blendDestinationMode = convertBlendMode(props["blendDestinationMode"]);
+
+        ret->renderOrder = props["renderOrder"];
+
+        return ret;
     }
 
     LightComponent *getLightComponent(const nlohmann::json &component) {
@@ -270,11 +298,8 @@ namespace mana {
             case CAMERA:
                 ret = getCameraComponent(component);
                 break;
-            case MESH:
-                ret = getMeshComponent(component, res);
-                break;
-            case MATERIAL:
-                ret = getMaterialComponent(component, res);
+            case RENDER:
+                ret = getRenderComponent(component, res);
                 break;
             case LIGHT:
                 ret = getLightComponent(component);

@@ -17,25 +17,36 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDCOMMAND_HPP
-#define MANA_FORWARDCOMMAND_HPP
+#ifndef MANA_SHADERRESOURCE_HPP
+#define MANA_SHADERRESOURCE_HPP
 
-#include <utility>
-
-#include "engine/math/transform.hpp"
-#include "engine/render/meshbuffer.hpp"
-#include "engine/render/rendercommand.hpp"
+#include "engine/resource/resource.hpp"
+#include "engine/render/renderdevice.hpp"
 
 namespace mana {
-    struct ForwardCommand {
-        ForwardCommand() : transform(), command() {}
+    class ShaderResource : public Resource<ShaderProgram> {
+    public:
+        ShaderResource();
 
-        ForwardCommand(Transform t, RenderCommand command) : transform(t),
-                                                             command(std::move(command)) {}
+        ShaderResource(RenderDevice &device,
+                       Resource <std::string> &vertexShader,
+                       Resource <std::string> &fragmentShader);
 
-        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
-        RenderCommand command;
+        ~ShaderResource() override;
+
+        void load() override;
+
+        void free() override;
+
+        ShaderProgram &get() override;
+
+    private:
+        RenderDevice *device;
+        Resource <std::string> *vertexShader;
+        Resource <std::string> *fragmentShader;
+        ShaderProgram *shader;
+        bool isLoaded = false;
     };
 }
 
-#endif //MANA_FORWARDCOMMAND_HPP
+#endif //MANA_SHADERRESOURCE_HPP
