@@ -28,19 +28,35 @@
 #include "engine/render/graphicsbackend.hpp"
 
 namespace mana {
+    struct RenderOptions {
+        explicit RenderOptions(Vec2i viewportOffset = {},
+                               Vec2i viewportSize = {},
+                               bool multiSample = false,
+                               ColorRGBA clearColorValue = {},
+                               bool clearColor = true,
+                               bool clearDepth = true,
+                               bool clearStencil = true)
+                : viewportOffset(viewportOffset), viewportSize(viewportSize),
+                  multiSample(multiSample),
+                  clearColorValue(clearColorValue),
+                  clearColor(clearColor),
+                  clearDepth(clearDepth),
+                  clearStencil(clearStencil) {}
+
+        Vec2i viewportOffset;
+        Vec2i viewportSize;
+        bool multiSample;
+        ColorRGBA clearColorValue;
+        bool clearColor;
+        bool clearDepth;
+        bool clearStencil;
+    };
+
     class Renderer {
     public:
         virtual ~Renderer() = default;
 
-        virtual void setViewport(Vec2i offset, Vec2i size) = 0;
-
-        virtual void setClear(bool clearColor, bool clearDepth, bool clearStencil) = 0;
-
-        virtual void setClearColor(ColorRGBA clearColor) = 0;
-
-        virtual void setMultiSample(bool multiSample) = 0;
-
-        virtual void renderBegin(RenderTarget &target) = 0;
+        virtual void renderBegin(RenderTarget &target, const RenderOptions &options) = 0;
 
         virtual void addCommand(RenderCommand &command) = 0;
 

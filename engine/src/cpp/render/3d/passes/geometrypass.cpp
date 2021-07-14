@@ -24,9 +24,7 @@ namespace mana {
         auto &ren = gBuffer.getRenderDevice().getRenderer();
 
         //Clear geometry buffer
-        ren.setClear(true, true, true);
-
-        ren.renderBegin(gBuffer.getRenderTarget());
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {}

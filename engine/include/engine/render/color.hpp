@@ -32,6 +32,12 @@ namespace mana {
 
         uint8_t &b() { return data[2]; }
 
+        const uint8_t &r() const { return data[0]; }
+
+        const uint8_t &g() const { return data[1]; }
+
+        const uint8_t &b() const { return data[2]; }
+
         ColorRGB() : data() {}
 
         ColorRGB(uint8_t r, uint8_t g, uint8_t b)
@@ -59,6 +65,14 @@ namespace mana {
         uint8_t &b() { return data[2]; }
 
         uint8_t &a() { return data[3]; }
+
+        const uint8_t &r() const { return data[0]; }
+
+        const uint8_t &g() const { return data[1]; }
+
+        const uint8_t &b() const { return data[2]; }
+
+        const uint8_t &a() const { return data[3]; }
 
         ColorRGBA() : data() {}
 

@@ -64,32 +64,13 @@ namespace mana {
             }
         }
 
-        void OGLRenderer::setViewport(Vec2i offset, Vec2i size) {
-            this->viewportOffset = offset;
-            this->viewportSize = size;
-        }
+        void OGLRenderer::renderBegin(RenderTarget &target, const RenderOptions &options) {
+            glClearColor((float) options.clearColorValue.r() / (float) 255,
+                         (float) options.clearColorValue.g() / (float) 255,
+                         (float) options.clearColorValue.b() / (float) 255,
+                         (float) options.clearColorValue.a() / (float) 255);
 
-        void OGLRenderer::setClear(bool cC, bool cD, bool cS) {
-            this->clearColor = cC;
-            this->clearDepth = cD;
-            this->clearStencil = cS;
-        }
-
-        void OGLRenderer::setClearColor(ColorRGBA c) {
-            this->clearColorValue = c;
-        }
-
-        void OGLRenderer::setMultiSample(bool s) {
-            this->multiSample = s;
-        }
-
-        void OGLRenderer::renderBegin(RenderTarget &target) {
-            glClearColor((float) clearColorValue.r() / (float) 255,
-                         (float) clearColorValue.g() / (float) 255,
-                         (float) clearColorValue.b() / (float) 255,
-                         (float) clearColorValue.a() / (float) 255);
-
-            if (multiSample)
+            if (options.multiSample)
                 glEnable(GL_MULTISAMPLE);
             else
                 glDisable(GL_MULTISAMPLE);
@@ -99,20 +80,20 @@ namespace mana {
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
 
-            glViewport(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
+            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x, options.viewportSize.y);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
 
             GLbitfield clearMask = 0;
-            if (clearColor) {
+            if (options.clearColor) {
                 clearMask |= GL_COLOR_BUFFER_BIT;
             }
 
-            if (clearDepth) {
+            if (options.clearDepth) {
                 clearMask |= GL_DEPTH_BUFFER_BIT;
             }
 
-            if (clearStencil) {
+            if (options.clearStencil) {
                 clearMask |= GL_STENCIL_BUFFER_BIT;
             }
 

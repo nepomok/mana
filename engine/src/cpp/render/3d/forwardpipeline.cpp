@@ -98,7 +98,7 @@ namespace mana {
                                           {});
     }
 
-    ForwardPipeline::ForwardPipeline(Renderer* ren) : ren(ren) {}
+    ForwardPipeline::ForwardPipeline(Renderer *ren) : ren(ren) {}
 
     ForwardPipeline::~ForwardPipeline() = default;
 
@@ -108,7 +108,11 @@ namespace mana {
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
-        ren->renderBegin(screen);
+        // Dont clear color and depth
+        ren->renderBegin(screen, RenderOptions({},
+                                               screen.getSize(),
+                                               true,
+                                               {}, false, false, false));
 
         for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);

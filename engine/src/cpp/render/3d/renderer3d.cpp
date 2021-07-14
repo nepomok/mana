@@ -61,16 +61,7 @@ namespace mana {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
-        device->getRenderer().setClear(true, true, true);
-
-        //Clear screen target
-        device->getRenderer().renderBegin(target);
-        device->getRenderer().renderFinish();
-
         deferredPipeline.render(target, scene);
-
-        // Preserve color and depth from the deferred pipeline
-        device->getRenderer().setClear(false, false, false);
         forwardPipeline.render(target, scene);
     }
 }

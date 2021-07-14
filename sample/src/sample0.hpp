@@ -29,8 +29,6 @@ public:
 
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
-        device.getRenderer().setClearColor(clearColor);
-
         manaAssembly = domain.loadAssembly("mana.dll");
 
         ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
@@ -50,7 +48,6 @@ protected:
 
         window.update();
 
-        device.getRenderer().setViewport({}, window.getFramebufferSize());
         ecs.update(deltaTime, scene);
 
         window.swapBuffers();
@@ -68,8 +65,6 @@ protected:
 
 private:
     ECS ecs;
-
-    ColorRGBA clearColor = ColorRGBA(30, 30, 30, 255);
 
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;

@@ -37,8 +37,6 @@ public:
 
         auto &device = wnd->getRenderDevice();
 
-        device.getRenderer().setMultiSample(true);
-
         Input &input = wnd->getInput();
 
         start(*wnd, device, input);
