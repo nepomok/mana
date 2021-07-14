@@ -43,12 +43,20 @@ namespace mana {
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureBuffer::TextureFiltering filter) override;
+                           TextureBuffer::TextureFiltering filter,
+                           int sourceIndex,
+                           int targetIndex) override;
 
-            void blitDepth(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset, Vec2i sourceRect,
+            void blitDepth(RenderTarget &source,
+                           Vec2i sourceOffset,
+                           Vec2i targetOffset,
+                           Vec2i sourceRect,
                            Vec2i targetRect) override;
 
-            void blitStencil(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset, Vec2i sourceRect,
+            void blitStencil(RenderTarget &source,
+                             Vec2i sourceOffset,
+                             Vec2i targetOffset,
+                             Vec2i sourceRect,
                              Vec2i targetRect) override;
 
             void setNumberOfColorAttachments(int count) override;

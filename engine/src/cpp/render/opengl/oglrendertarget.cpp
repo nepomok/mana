@@ -69,7 +69,9 @@ namespace mana {
                                             Vec2i targetOffset,
                                             Vec2i sourceRect,
                                             Vec2i targetRect,
-                                            TextureBuffer::TextureFiltering filter) {
+                                            TextureBuffer::TextureFiltering filter,
+                                            int sourceIndex,
+                                            int targetIndex) {
         if (sourceRect.x < 0 || sourceRect.y < 0) {
             throw std::runtime_error("Rect cannot be negative");
         }
@@ -94,7 +96,19 @@ namespace mana {
             throw std::runtime_error("Blit rect out of bounds for target framebuffer.");
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
+
+        // The default framebuffer always reads/writes from/to default color buffer.
+        if (fbS.getFBO() != 0) {
+            glReadBuffer(OGLTypeConverter::getColorAttachment(sourceIndex));
+        }
+
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFBO());
+
+        // The default framebuffer always reads/writes from/to default color buffer.
+        if (getFBO() != 0) {
+            glDrawBuffer(OGLTypeConverter::getColorAttachment(targetIndex));
+        }
+
         glBlitFramebuffer(sourceOffset.x,
                           sourceOffset.y,
                           sourceRect.x,
@@ -105,16 +119,17 @@ namespace mana {
                           targetRect.y,
                           GL_COLOR_BUFFER_BIT,
                           OGLTypeConverter::convert(filter));
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
 
     void opengl::OGLRenderTarget::blitDepth(RenderTarget &source,
-                                       Vec2i sourceOffset,
-                                       Vec2i targetOffset,
-                                       Vec2i sourceRect,
-                                       Vec2i targetRect) {
+                                            Vec2i sourceOffset,
+                                            Vec2i targetOffset,
+                                            Vec2i sourceRect,
+                                            Vec2i targetRect) {
         if (sourceRect.x < 0 || sourceRect.y < 0) {
             throw std::runtime_error("Rect cannot be negative");
         }
@@ -156,10 +171,10 @@ namespace mana {
     }
 
     void opengl::OGLRenderTarget::blitStencil(RenderTarget &source,
-                                         Vec2i sourceOffset,
-                                         Vec2i targetOffset,
-                                         Vec2i sourceRect,
-                                         Vec2i targetRect) {
+                                              Vec2i sourceOffset,
+                                              Vec2i targetOffset,
+                                              Vec2i sourceRect,
+                                              Vec2i targetRect) {
         if (sourceRect.x < 0 || sourceRect.y < 0) {
             throw std::runtime_error("Rect cannot be negative");
         }

@@ -27,21 +27,21 @@
 
 namespace mana {
     struct Material {
-        std::string name{};
+        std::string name;
 
         ColorRGBA diffuseColor{};
         ColorRGBA ambientColor{};
         ColorRGBA specularColor{};
         float shininess{};
 
-        TextureBuffer *diffuseTexture;
-        TextureBuffer *ambientTexture;
-        TextureBuffer *specularTexture;
-        TextureBuffer *shininessTexture;
+        TextureBuffer *diffuseTexture{};
+        TextureBuffer *ambientTexture{};
+        TextureBuffer *specularTexture{};
+        TextureBuffer *shininessTexture{};
 
-        TextureBuffer *normalTexture;
+        TextureBuffer *normalTexture{};
 
-        TextureBuffer *emissiveTexture;
+        TextureBuffer *emissiveTexture{};
     };
 }
 

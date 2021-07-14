@@ -25,7 +25,7 @@ namespace mana {
 
         ren.renderBegin(gBuffer.getRenderTarget());
 
-        // Rasterize the geometry and store the geometry data in the gbuffer render targets.
+        // Rasterize the geometry and store the geometry + shading data in the gbuffer render targets.
         for (auto &command : scene.deferred) {}
 
         ren.renderFinish();

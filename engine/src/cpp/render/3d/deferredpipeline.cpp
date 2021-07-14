@@ -42,13 +42,14 @@ namespace mana {
             pass->render(gBuffer, scene);
         }
 
-        //TODO: This blit wont work because there is multiple color targets so the blit method needs a way to specify which one.
         screen.blitColor(gBuffer.getRenderTarget(),
                          {},
                          {},
                          gBuffer.getRenderTarget().getSize(),
                          screen.getSize(),
-                         TextureBuffer::TextureFiltering::LINEAR);
+                         TextureBuffer::TextureFiltering::LINEAR,
+                         0,
+                         0);
         screen.blitDepth(gBuffer.getRenderTarget(),
                          {},
                          {},
