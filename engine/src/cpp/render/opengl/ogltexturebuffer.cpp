@@ -43,14 +43,28 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
     checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
     if (attributes.textureType == TEXTURE_2D) {
+        GLuint texInternalFormat = OGLTypeConverter::convert(attributes.format);
+        GLuint texFormat = GL_RGBA;
+        GLuint texType = GL_UNSIGNED_BYTE;
+
+        if (attributes.format == ColorFormat::DEPTH) {
+            texInternalFormat = GL_DEPTH;
+            texFormat = GL_DEPTH_COMPONENT;
+            texType = GL_FLOAT;
+        } else if (attributes.format == ColorFormat::DEPTH_STENCIL) {
+            texInternalFormat = GL_DEPTH24_STENCIL8;
+            texFormat = GL_DEPTH_STENCIL;
+            texType = GL_UNSIGNED_INT_24_8;
+        }
+
         glTexImage2D(type,
                      0,
-                     OGLTypeConverter::convert(attributes.format),
+                     texInternalFormat,
                      attributes.size.x,
                      attributes.size.y,
                      0,
-                     GL_RGBA,
-                     attributes.format == ColorFormat::DEPTH ? GL_FLOAT : GL_UNSIGNED_BYTE,
+                     texFormat,
+                     texType,
                      NULL);
     } else {
         for (unsigned int i = 0; i < 6; i++) {

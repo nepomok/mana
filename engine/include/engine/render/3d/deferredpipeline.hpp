@@ -41,6 +41,12 @@ namespace mana {
 
         ~DeferredPipeline();
 
+        /**
+         * The screen target contains depth and color information of the deferred commands after this method returns.
+         *
+         * @param screen
+         * @param scene
+         */
         void render(RenderTarget &screen, RenderScene &scene);
 
     private:

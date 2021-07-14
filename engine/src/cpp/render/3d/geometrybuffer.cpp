@@ -41,17 +41,24 @@ namespace mana {
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
         renderTarget->attachColor(5, *roughness);
+
+        attr.format = TextureBuffer::DEPTH_STENCIL;
+        depthStencil = renderDevice->createTextureBuffer(attr);
+
+        renderTarget->attachDepthStencil(*depthStencil);
     }
 
     GeometryBuffer::~GeometryBuffer() {
         for (int i = 0; i < 6; i++)
             renderTarget->detachColor(i);
+        renderTarget->detachDepthStencil();
         delete position;
         delete normal;
         delete diffuse;
         delete ambient;
         delete specular;
         delete roughness;
+        delete depthStencil;
         delete renderTarget;
     }
 
@@ -64,12 +71,15 @@ namespace mana {
         for (int i = 0; i < 6; i++)
             renderTarget->detachColor(i);
 
+        renderTarget->detachDepthStencil();
+
         delete position;
         delete normal;
         delete diffuse;
         delete ambient;
         delete specular;
         delete roughness;
+        delete depthStencil;
         delete renderTarget;
 
         TextureBuffer::Attributes attr;
@@ -92,6 +102,11 @@ namespace mana {
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
         renderTarget->attachColor(5, *roughness);
+
+        attr.format = TextureBuffer::DEPTH_STENCIL;
+        depthStencil = renderDevice->createTextureBuffer(attr);
+
+        renderTarget->attachDepthStencil(*depthStencil);
     }
 
     Vec2i GeometryBuffer::getSize() {
@@ -128,5 +143,9 @@ namespace mana {
 
     TextureBuffer &GeometryBuffer::getRoughness() {
         return *roughness;
+    }
+
+    TextureBuffer &GeometryBuffer::getDepthStencil() {
+        return *depthStencil;
     }
 }

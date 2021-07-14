@@ -24,10 +24,11 @@
 #include "engine/ecs/components.hpp"
 
 #include "engine/render/3d/forwardpipeline.hpp"
+#include "engine/render/3d/passes/geometrypass.hpp"
 
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {}) {
+            : screenTarget(scr), ren(device, {new GeometryPass()}) {
     }
 
     void RenderSystem::start() {

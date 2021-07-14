@@ -65,6 +65,8 @@ namespace mana {
 
         TextureBuffer &getRoughness();
 
+        TextureBuffer &getDepthStencil();
+
     private:
         RenderDevice *renderDevice{};
         Vec2i size;
@@ -77,6 +79,8 @@ namespace mana {
         TextureBuffer *ambient{};
         TextureBuffer *specular{};
         TextureBuffer *roughness{};
+
+        TextureBuffer *depthStencil{};
     };
 }
 

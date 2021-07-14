@@ -20,7 +20,7 @@
 #include "engine/render/3d/passes/outlinepass.hpp"
 
 namespace mana {
-    void OutlinePass::render(GeometryBuffer &gBuffer, const RenderScene &scene) {
-
+    void OutlinePass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
+        //Render screen quad, calculate outline, mix result with existing value in the screen target.
     }
 }

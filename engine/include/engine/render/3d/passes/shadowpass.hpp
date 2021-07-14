@@ -27,7 +27,7 @@ namespace mana {
     public:
         ~ShadowPass() override = default;
 
-        void render(GeometryBuffer &gBuffer, const RenderScene &scene) override;
+        void render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) override;
     };
 }
 

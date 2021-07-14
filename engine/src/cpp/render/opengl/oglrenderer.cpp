@@ -117,6 +117,8 @@ namespace mana {
             }
 
             glClear(clearMask);
+
+            checkGLError("OGLRenderer::renderBegin");
         }
 
         void OGLRenderer::addCommand(RenderCommand &command) {

@@ -20,6 +20,7 @@
 #include "engine/render/3d/passes/lightingpass.hpp"
 
 namespace mana {
-    void LightingPass::render(GeometryBuffer &gBuffer, const RenderScene &scene) {
+    void LightingPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
+        //Render screen quad, calculate lighting, store result in screen buffer overwriting existing values.
     }
 }

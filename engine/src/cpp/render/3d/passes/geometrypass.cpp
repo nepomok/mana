@@ -20,12 +20,15 @@
 #include "engine/render/3d/passes/geometrypass.hpp"
 
 namespace mana {
-    void GeometryPass::render(GeometryBuffer &gBuffer, const RenderScene &scene) {
+    void GeometryPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
         auto &ren = gBuffer.getRenderDevice().getRenderer();
+
+        //Clear geometry buffer
+        ren.setClear(true, true, true);
 
         ren.renderBegin(gBuffer.getRenderTarget());
 
-        // Rasterize the geometry and store the geometry + shading data in the gbuffer render targets.
+        // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {}
 
         ren.renderFinish();

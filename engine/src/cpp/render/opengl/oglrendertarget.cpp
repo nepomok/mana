@@ -53,6 +53,7 @@ namespace mana {
     }
 
     opengl::OGLRenderTarget::~OGLRenderTarget() {
+        //TODO: Delete the default renderbuffers in case the user attached textures.
         glDeleteFramebuffers(1, &FBO);
     }
 
@@ -155,6 +156,7 @@ namespace mana {
 
         glBindFramebuffer(GL_READ_FRAMEBUFFER, fbS.getFBO());
         glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFBO());
+
         glBlitFramebuffer(sourceOffset.x,
                           sourceOffset.y,
                           sourceRect.x,
@@ -165,6 +167,7 @@ namespace mana {
                           targetRect.y,
                           GL_DEPTH_BUFFER_BIT,
                           GL_NEAREST);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
