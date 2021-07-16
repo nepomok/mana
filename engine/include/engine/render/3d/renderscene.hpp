@@ -38,7 +38,7 @@ namespace mana {
         // The depth information from the deferred pass is preserved in the depth buffer.
         std::vector<ForwardCommand> forward;
 
-        TextureBuffer* skybox; //The cubemap texture of the skybox if not null it is drawn after the forward pipeline.
+        TextureBuffer* skybox; //The cubemap texture of the skybox if null no skybox is drawn.
     };
 }
 

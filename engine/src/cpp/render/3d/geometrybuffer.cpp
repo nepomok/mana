@@ -31,7 +31,7 @@ namespace mana {
         ambient = device.createTextureBuffer(attr);
         specular = device.createTextureBuffer(attr);
         attr.format = TextureBuffer::R;
-        roughness = device.createTextureBuffer(attr);
+        shininess = device.createTextureBuffer(attr);
 
         renderTarget = device.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
@@ -40,7 +40,7 @@ namespace mana {
         renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *roughness);
+        renderTarget->attachColor(5, *shininess);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
         depthStencil = renderDevice->createTextureBuffer(attr);
@@ -57,7 +57,7 @@ namespace mana {
         delete diffuse;
         delete ambient;
         delete specular;
-        delete roughness;
+        delete shininess;
         delete depthStencil;
         delete renderTarget;
     }
@@ -78,7 +78,7 @@ namespace mana {
         delete diffuse;
         delete ambient;
         delete specular;
-        delete roughness;
+        delete shininess;
         delete depthStencil;
         delete renderTarget;
 
@@ -92,7 +92,7 @@ namespace mana {
         ambient = renderDevice->createTextureBuffer(attr);
         specular = renderDevice->createTextureBuffer(attr);
         attr.format = TextureBuffer::R;
-        roughness = renderDevice->createTextureBuffer(attr);
+        shininess = renderDevice->createTextureBuffer(attr);
 
         renderTarget = renderDevice->createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
@@ -101,7 +101,7 @@ namespace mana {
         renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *roughness);
+        renderTarget->attachColor(5, *shininess);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
         depthStencil = renderDevice->createTextureBuffer(attr);
@@ -141,8 +141,8 @@ namespace mana {
         return *specular;
     }
 
-    TextureBuffer &GeometryBuffer::getRoughness() {
-        return *roughness;
+    TextureBuffer &GeometryBuffer::getShininess() {
+        return *shininess;
     }
 
     TextureBuffer &GeometryBuffer::getDepthStencil() {

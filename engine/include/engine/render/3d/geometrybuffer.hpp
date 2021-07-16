@@ -33,7 +33,7 @@ namespace mana {
      * diffuse      :   SV_TARGET2
      * ambient      :   SV_TARGET3
      * specular     :   SV_TARGET4
-     * roughness    :   SV_TARGET5
+     * shininess    :   SV_TARGET5
      *
      * Contained textures and render target are reallocated whenever the size changes.
      */
@@ -63,7 +63,7 @@ namespace mana {
 
         TextureBuffer &getSpecular();
 
-        TextureBuffer &getRoughness();
+        TextureBuffer &getShininess();
 
         TextureBuffer &getDepthStencil();
 
@@ -78,7 +78,7 @@ namespace mana {
         TextureBuffer *diffuse{};
         TextureBuffer *ambient{};
         TextureBuffer *specular{};
-        TextureBuffer *roughness{};
+        TextureBuffer *shininess{};
 
         TextureBuffer *depthStencil{};
     };

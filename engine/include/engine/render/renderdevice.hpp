@@ -26,7 +26,7 @@
 #include "engine/render/graphicsbackend.hpp"
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderobject.hpp"
-#include "mesh.hpp"
+#include "engine/render/mesh.hpp"
 
 namespace mana {
     class RenderDevice {
