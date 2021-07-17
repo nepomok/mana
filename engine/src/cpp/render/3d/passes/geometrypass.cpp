@@ -152,17 +152,24 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
+    GeometryPass::GeometryPass(RenderDevice &device) {
+        shaderTextureNormals = device.createShaderProgram(SHADER_VERT_GEOMETRY,
+                                                          SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
+                                                          Renderer3D::getShaderMacros(),
+                                                          Renderer3D::getShaderIncludeCallback());
+        shaderVertexNormals = device.createShaderProgram(SHADER_VERT_GEOMETRY,
+                                                         SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
+                                                         Renderer3D::getShaderMacros(),
+                                                         Renderer3D::getShaderIncludeCallback());
+    }
+
+    GeometryPass::~GeometryPass() {
+        delete shaderTextureNormals;
+        delete shaderVertexNormals;
+    }
+
     void GeometryPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
         auto &ren = gBuffer.getRenderDevice().getRenderer();
-
-        auto *shaderTextureNormals = gBuffer.getRenderDevice().createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                                                   SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
-                                                                                   Renderer3D::getShaderMacros(),
-                                                                                   Renderer3D::getShaderIncludeCallback());
-        auto *shaderVertexNormals = gBuffer.getRenderDevice().createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                                                  SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
-                                                                                  Renderer3D::getShaderMacros(),
-                                                                                  Renderer3D::getShaderIncludeCallback());
 
         shaderTextureNormals->setTexture("diffuse", 0);
         shaderTextureNormals->setTexture("ambient", 1);
@@ -208,8 +215,5 @@ namespace mana {
         }
 
         ren.renderFinish();
-
-        delete shaderTextureNormals;
-        delete shaderVertexNormals;
     }
 }

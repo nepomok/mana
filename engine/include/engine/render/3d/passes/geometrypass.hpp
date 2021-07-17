@@ -25,9 +25,15 @@
 namespace mana {
     class GeometryPass : public RenderPass {
     public:
-        ~GeometryPass() override = default;
+        GeometryPass(RenderDevice &device);
+
+        ~GeometryPass() override;
 
         void render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) override;
+
+    private:
+        ShaderProgram *shaderTextureNormals;
+        ShaderProgram *shaderVertexNormals;
     };
 }
 

@@ -28,7 +28,7 @@
 
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {new GeometryPass()}) {
+            : screenTarget(scr), ren(device, {new GeometryPass(device)}) {
     }
 
     void RenderSystem::start() {
