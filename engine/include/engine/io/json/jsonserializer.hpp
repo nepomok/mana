@@ -20,8 +20,6 @@
 #ifndef MANA_JSONSERIALIZER_HPP
 #define MANA_JSONSERIALIZER_HPP
 
-#include <sstream>
-
 #include "engine/io/serializer.hpp"
 
 namespace mana {

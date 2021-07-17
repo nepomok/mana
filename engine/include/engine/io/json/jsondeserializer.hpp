@@ -20,8 +20,6 @@
 #ifndef MANA_JSONDESERIALIZER_HPP
 #define MANA_JSONDESERIALIZER_HPP
 
-#include <sstream>
-
 #include "engine/io/deserializer.hpp"
 
 namespace mana {
