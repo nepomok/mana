@@ -21,29 +21,55 @@
 #define MANA_RESOURCE_HPP
 
 #include <stdexcept>
+#include <limits>
 
 namespace mana {
+    /**
+     * The interface to some resource implementation.
+     *
+     * Subclasses may load from disk, network etc the manager does not have any requirements on how and from
+     * where the resource is loaded.
+     *
+     * A resource may depend on another resource in which case the resource implementation increments the reference
+     * to another resource it depends on by interacting with the manager responsible for the required resource.
+     */
     class ResourceBase {
     public:
         virtual ~ResourceBase() = default;
+
+        virtual bool isLoaded() = 0;
+
+        /**
+         * Return true if the load/free methods can be called from any thread other than the main thread.
+         *
+         * Resources such as render resources require to be loaded on the same thread that created the render device.
+         *
+         * @return True if load/free can be called from a non main thread.
+         */
+        virtual bool supportAsync() = 0;
+
+        virtual void load() = 0;
+
+        virtual void free() = 0;
     };
 
+    //TODO: Implement resource synchronization
     template<typename T>
     class Resource : public ResourceBase {
     public:
-        ~Resource() override = default;
+        /**
+         * Block until the resource is loaded.
+         *
+         * @return A reference to the resource data.
+         */
+        virtual T &get() = 0;
 
-        virtual void load() {
-            throw std::runtime_error("Resource load not implemented");
-        }
-
-        virtual void free() {
-            throw std::runtime_error("Resource free not implemented");
-        }
-
-        virtual T &get() {
-            throw std::runtime_error("Resource get not implemented");
-        }
+        /**
+         * Throw if the resource is not loaded.
+         *
+         * @return A reference to the resource data.
+         */
+        virtual T &getOrThrow() = 0;
     };
 }
 

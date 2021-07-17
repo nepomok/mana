@@ -33,23 +33,41 @@ namespace mana {
                                                                                     meshName(std::move(meshName)),
                                                                                     mesh() {}
 
+    MeshFileResource::~MeshFileResource() {
+        MeshFileResource::free();
+    }
+
     void MeshFileResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
         mesh = assetFile.getMeshes().at(meshName);
-        isLoaded = true;
+        loaded = true;
     }
 
     void MeshFileResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         mesh = {};
-        isLoaded = false;
+        loaded = false;
     }
 
     Mesh &MeshFileResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return mesh;
+    }
+
+    bool MeshFileResource::isLoaded() {
+        return loaded;
+    }
+
+    bool MeshFileResource::supportAsync() {
+        return false;
+    }
+
+    Mesh &MeshFileResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

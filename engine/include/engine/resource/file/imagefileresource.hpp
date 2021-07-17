@@ -30,7 +30,11 @@ namespace mana {
 
         explicit ImageFileResource(std::string filePath);
 
-        ~ImageFileResource() override = default;
+        ~ImageFileResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -38,10 +42,12 @@ namespace mana {
 
         ImageBuffer<ColorRGBA> &get() override;
 
+        ImageBuffer<ColorRGBA> &getOrThrow() override;
+
     private:
         std::string filePath;
         ImageBuffer<ColorRGBA> buffer;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

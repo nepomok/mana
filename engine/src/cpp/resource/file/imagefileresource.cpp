@@ -46,23 +46,41 @@ namespace mana {
     ImageFileResource::ImageFileResource(std::string filePath)
             : filePath(std::move(filePath)) {}
 
+    ImageFileResource::~ImageFileResource() {
+        ImageFileResource::free();
+    }
+
     void ImageFileResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
         buffer = readImageFile_(filePath);
-        isLoaded = true;
+        loaded = true;
     }
 
     void ImageFileResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         buffer = {};
-        isLoaded = false;
+        loaded = false;
     }
 
     ImageBuffer<ColorRGBA> &ImageFileResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return buffer;
+    }
+
+    bool ImageFileResource::isLoaded() {
+        return loaded;
+    }
+
+    bool ImageFileResource::supportAsync() {
+        return false;
+    }
+
+    ImageBuffer<ColorRGBA> &ImageFileResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

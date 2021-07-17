@@ -26,23 +26,41 @@ namespace mana {
 
     TextFileResource::TextFileResource(std::string filePath) : filePath(std::move(filePath)) {}
 
+    TextFileResource::~TextFileResource() {
+        TextFileResource::free();
+    }
+
     void TextFileResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
         text = File::readAllText(filePath);
-        isLoaded = true;
+        loaded = true;
     }
 
     void TextFileResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         text.clear();
-        isLoaded = false;
+        loaded = false;
     }
 
     std::string &TextFileResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return text;
+    }
+
+    bool TextFileResource::isLoaded() {
+        return loaded;
+    }
+
+    bool TextFileResource::supportAsync() {
+        return false;
+    }
+
+    std::string &TextFileResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

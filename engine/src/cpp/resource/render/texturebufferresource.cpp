@@ -20,25 +20,32 @@
 #include "engine/resource/render/texturebufferresource.hpp"
 
 namespace mana {
-    TextureBufferResource::TextureBufferResource() = default;
+    TextureBufferResource::TextureBufferResource()
+            : alloc(nullptr),
+              image(),
+              manager(nullptr),
+              attrib(),
+              texture(nullptr) {}
 
     TextureBufferResource::TextureBufferResource(RenderDevice &allocator,
-                                                 Resource<ImageBuffer<ColorRGBA>> &resource,
+                                                 std::string image,
+                                                 ResourceManager *manager,
                                                  TextureBuffer::Attributes attributes)
             : alloc(&allocator),
-              img(&resource),
+              image(std::move(image)),
+              manager(manager),
               attrib(attributes),
-              texture(nullptr) {
-    }
+              texture(nullptr) {}
 
     TextureBufferResource::~TextureBufferResource() {
-        if (isLoaded)
-            delete texture;
+        TextureBufferResource::free();
     }
 
     void TextureBufferResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
+        manager->incrementRef(image);
+        auto *img = manager->getResource<ImageBuffer<ColorRGBA>>(image);
         attrib.size = img->get().getSize();
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;
@@ -48,20 +55,35 @@ namespace mana {
         } else {
             texture->upload(img->get());
         }
-        isLoaded = true;
+        loaded = true;
     }
 
     void TextureBufferResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         delete texture;
         texture = nullptr;
-        isLoaded = false;
+        manager->decrementRef(image);
+        loaded = false;
     }
 
     TextureBuffer &TextureBufferResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return *texture;
+    }
+
+    bool TextureBufferResource::isLoaded() {
+        return loaded;
+    }
+
+    bool TextureBufferResource::supportAsync() {
+        return false;
+    }
+
+    TextureBuffer &TextureBufferResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

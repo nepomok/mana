@@ -25,57 +25,78 @@ namespace mana {
     MeshBufferResource::MeshBufferResource()
             : device(nullptr),
               meshResource(),
+              manager(nullptr),
               instanceOffsets(),
               instanced(false),
-              mesh(nullptr) {
-    }
+              mesh(nullptr) {}
 
-    MeshBufferResource::MeshBufferResource(RenderDevice &device, Resource<Mesh> &meshResource)
-            : device(&device),
-              meshResource(&meshResource),
+    MeshBufferResource::MeshBufferResource(RenderDevice &alloc,
+                                           std::string meshResource,
+                                           ResourceManager *manager)
+            : device(&alloc),
+              meshResource(std::move(meshResource)),
+              manager(manager),
               instanceOffsets(),
               instanced(false),
-              mesh(nullptr) {
-    }
+              mesh(nullptr) {}
 
-    MeshBufferResource::MeshBufferResource(RenderDevice &device,
-                                           Resource<Mesh> &meshResource,
+    MeshBufferResource::MeshBufferResource(RenderDevice &alloc,
+                                           std::string meshResource,
+                                           ResourceManager *manager,
                                            std::vector<Transform> instanceOffsets)
-            : device(&device),
-              meshResource(&meshResource),
+            : device(&alloc),
+              meshResource(std::move(meshResource)),
+              manager(manager),
               instanceOffsets(std::move(instanceOffsets)),
-              instanced(true),
-              mesh(nullptr) {
-    }
+              instanced(false),
+              mesh(nullptr) {}
 
     MeshBufferResource::~MeshBufferResource() {
-        if (isLoaded)
-            delete mesh;
+        MeshBufferResource::free();
     }
 
     void MeshBufferResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
 
-        if (instanced)
-            mesh = device->createInstancedMeshBuffer(meshResource->get(), instanceOffsets);
-        else
-            mesh = device->createMeshBuffer(meshResource->get());
+        manager->incrementRef(meshResource);
 
-        isLoaded = true;
+        auto *meshRes = manager->getResource<Mesh>(meshResource);
+
+        if (instanced)
+            mesh = device->createInstancedMeshBuffer(meshRes->get(), instanceOffsets);
+        else
+            mesh = device->createMeshBuffer(meshRes->get());
+
+        loaded = true;
     }
 
     void MeshBufferResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         delete mesh;
         mesh = nullptr;
-        isLoaded = false;
+        manager->decrementRef(meshResource);
+        loaded = false;
     }
 
     MeshBuffer &MeshBufferResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return *mesh;
+    }
+
+    bool MeshBufferResource::isLoaded() {
+        return loaded;
+    }
+
+    bool MeshBufferResource::supportAsync() {
+        return false;
+    }
+
+    MeshBuffer &MeshBufferResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

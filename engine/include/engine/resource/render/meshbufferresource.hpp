@@ -22,19 +22,25 @@
 
 #include "engine/resource/resource.hpp"
 #include "engine/render/renderdevice.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
     class MeshBufferResource : public Resource<MeshBuffer> {
     public:
         MeshBufferResource();
 
-        MeshBufferResource(RenderDevice &alloc, Resource <Mesh> &meshResource);
+        MeshBufferResource(RenderDevice &alloc, std::string meshResource, ResourceManager *manager);
 
         MeshBufferResource(RenderDevice &alloc,
-                           Resource <Mesh> &meshResource,
+                           std::string meshResource,
+                           ResourceManager *manager,
                            std::vector<Transform> instanceOffsets);
 
         ~MeshBufferResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -42,13 +48,19 @@ namespace mana {
 
         MeshBuffer &get() override;
 
+        MeshBuffer &getOrThrow() override;
+
     private:
         RenderDevice *device;
-        Resource <Mesh> *meshResource;
+
+        std::string meshResource;
+        ResourceManager *manager;
+
         std::vector<Transform> instanceOffsets;
+
         bool instanced;
         MeshBuffer *mesh;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

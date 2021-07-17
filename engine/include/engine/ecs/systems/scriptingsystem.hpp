@@ -27,12 +27,12 @@
 
 #include "engine/input/input.hpp"
 
-#include "engine/resource/resources.hpp"
+#include "engine/resource/resourcemanager.hpp"
 
 namespace mana {
     class ScriptingSystem : public System, InputListener {
     public:
-        ScriptingSystem(Resources &res,
+        ScriptingSystem(ResourceManager &res,
                         Input &input,
                         MonoCppDomain &domain,
                         MonoCppAssembly &manaAssembly);
@@ -61,7 +61,7 @@ namespace mana {
         void onTextInput(const std::string &text) override;
 
     private:
-        Resources &res;
+        ResourceManager &res;
         Input &input;
         MonoCppDomain &domain;
         MonoCppAssembly &msCorLib;

@@ -24,7 +24,7 @@
 
 #include "engine/render/rendercommand.hpp"
 
-#include "engine/resource/resource.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
     struct RenderComponent : public Component {
@@ -38,10 +38,10 @@ namespace mana {
             return typeid(RenderComponent);
         }
 
-        Resource<ShaderProgram> *shader{};
+        ResourceHandle<ShaderProgram> shader;
 
-        std::vector<Resource<MeshBuffer> *> meshBuffers;
-        std::vector<Resource<TextureBuffer> *> textureBuffers;
+        std::vector<ResourceHandle<MeshBuffer>> meshBuffers;
+        std::vector<ResourceHandle<TextureBuffer>> textureBuffers;
 
         std::map<std::string, int> textureMapping;
 

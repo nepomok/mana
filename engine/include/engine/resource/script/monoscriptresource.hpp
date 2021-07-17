@@ -34,11 +34,17 @@ namespace mana {
 
         ~MonoScriptResource() override;
 
+        bool isLoaded() override;
+
+        bool supportAsync() override;
+
         void load() override;
 
         void free() override;
 
         Script &get() override;
+
+        Script &getOrThrow() override;
 
     private:
         MonoCppDomain *monoCppRuntime;
@@ -46,7 +52,7 @@ namespace mana {
         std::string nameSpace;
         std::string className;
         MonoScript *script;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

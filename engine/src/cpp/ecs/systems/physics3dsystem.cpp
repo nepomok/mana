@@ -33,10 +33,10 @@ namespace mana {
     void Physics3DSystem::update(float deltaTime, Scene &scene) {
         world->step(deltaTime);
         for (auto &node : scene.findNodesWithComponent<Physics3DComponent>()) {
-            auto &transform = node->getComponent<TransformComponent>();
+            /*auto &transform = node->getComponent<TransformComponent>();
             auto &physicsComponent = node->getComponent<Physics3DComponent>();
-            transform.transform.position = physicsComponent.rigidbody->get().getPosition();
-            transform.transform.rotation = physicsComponent.rigidbody->get().getRotation();
+            transform.transform.position = physicsComponent.rigidbody.get().getPosition();
+            transform.transform.rotation = physicsComponent.rigidbody.get().getRotation();*/
         }
     }
 }

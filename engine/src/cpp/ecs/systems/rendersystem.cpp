@@ -83,17 +83,17 @@ namespace mana {
 
             unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
 
-            unit.command.shader = &comp->shader->get();
+            unit.command.shader = &comp->shader.get();
             for (auto &m : comp->textureMapping) {
                 unit.command.shader->setTexture(m.first, m.second);
             }
 
-            for (auto *t : comp->textureBuffers) {
-                unit.command.textures.emplace_back(&t->get());
+            for (auto t : comp->textureBuffers) {
+                unit.command.textures.emplace_back(&t.get());
             }
 
-            for (auto *m : comp->meshBuffers) {
-                unit.command.meshBuffers.emplace_back(&m->get());
+            for (auto m : comp->meshBuffers) {
+                unit.command.meshBuffers.emplace_back(&m.get());
             }
 
             unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;

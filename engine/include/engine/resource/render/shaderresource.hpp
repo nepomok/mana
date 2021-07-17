@@ -22,6 +22,7 @@
 
 #include "engine/resource/resource.hpp"
 #include "engine/render/renderdevice.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
     class ShaderResource : public Resource<ShaderProgram> {
@@ -29,10 +30,15 @@ namespace mana {
         ShaderResource();
 
         ShaderResource(RenderDevice &device,
-                       Resource <std::string> &vertexShader,
-                       Resource <std::string> &fragmentShader);
+                       std::string vertexShader,
+                       std::string fragmentShader,
+                       ResourceManager *manager);
 
         ~ShaderResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -40,12 +46,17 @@ namespace mana {
 
         ShaderProgram &get() override;
 
+        ShaderProgram &getOrThrow() override;
+
     private:
         RenderDevice *device;
-        Resource <std::string> *vertexShader;
-        Resource <std::string> *fragmentShader;
+
+        std::string vertexShader;
+        std::string fragmentShader;
+        ResourceManager *manager;
+
         ShaderProgram *shader;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

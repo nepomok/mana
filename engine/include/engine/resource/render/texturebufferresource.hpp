@@ -23,6 +23,7 @@
 #include "engine/render/renderdevice.hpp"
 
 #include "engine/resource/resource.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
     class TextureBufferResource : public Resource<TextureBuffer> {
@@ -30,10 +31,15 @@ namespace mana {
         TextureBufferResource();
 
         TextureBufferResource(RenderDevice &allocator,
-                              Resource<ImageBuffer<ColorRGBA>> &resource,
+                              std::string image,
+                              ResourceManager *manager,
                               TextureBuffer::Attributes attributes);
 
         ~TextureBufferResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -41,12 +47,17 @@ namespace mana {
 
         TextureBuffer &get() override;
 
+        TextureBuffer &getOrThrow() override;
+
     private:
         RenderDevice *alloc;
-        Resource <ImageBuffer<ColorRGBA>> *img;
+
+        std::string image;
+        ResourceManager *manager;
+
         TextureBuffer::Attributes attrib;
         TextureBuffer *texture;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

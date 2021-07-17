@@ -22,7 +22,7 @@
 
 #include "engine/io/file.hpp"
 
-#include "engine/resource/resources.hpp"
+#include "engine/resource/resourcemanager.hpp"
 
 #include "engine/render/renderdevice.hpp"
 #include "engine/script/mono/monocppdomain.hpp"
@@ -40,7 +40,7 @@ namespace mana {
 
         std::string getResourcesName();
 
-        Resources *getResources(RenderDevice &device, MonoCppDomain &monoRuntime);
+        ResourceManager *getResources(RenderDevice &device, MonoCppDomain &monoRuntime);
 
     private:
         std::string fileContents;

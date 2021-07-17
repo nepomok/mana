@@ -32,7 +32,11 @@ namespace mana {
 
         explicit MeshFileResource(AssetFile assetFile, std::string meshName);
 
-        ~MeshFileResource() override = default;
+        ~MeshFileResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -40,11 +44,13 @@ namespace mana {
 
         Mesh &get() override;
 
+        Mesh &getOrThrow() override;
+
     private:
         AssetFile assetFile;
         std::string meshName;
         Mesh mesh;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 

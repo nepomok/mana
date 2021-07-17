@@ -30,33 +30,45 @@ namespace mana {
               assemblyFileName(std::move(assemblyFileName)),
               nameSpace(std::move(nameSpace)),
               className(std::move(className)),
-              script(nullptr) {
-
-    }
+              script(nullptr) {}
 
     MonoScriptResource::~MonoScriptResource() {
-        if (isLoaded)
+        if (loaded)
             delete script;
     }
 
     void MonoScriptResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
         script = new MonoScript(monoCppRuntime->loadAssembly(assemblyFileName), nameSpace, className);
-        isLoaded = true;
+        loaded = true;
     }
 
     void MonoScriptResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         delete script;
         script = nullptr;
-        isLoaded = false;
+        loaded = false;
     }
 
     Script &MonoScriptResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return *script;
+    }
+
+    bool MonoScriptResource::isLoaded() {
+        return loaded;
+    }
+
+    bool MonoScriptResource::supportAsync() {
+        return false;
+    }
+
+    Script &MonoScriptResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

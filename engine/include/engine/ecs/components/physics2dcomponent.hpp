@@ -25,7 +25,7 @@
 #include "engine/physics/2d/collider2d.hpp"
 #include "engine/physics/2d/rigidbody2d.hpp"
 
-#include "engine/resource/resource.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
     struct Physics2DComponent : public Component {
@@ -37,8 +37,8 @@ namespace mana {
             return typeid(typeof(Physics2DComponent));
         }
 
-        Resource<RigidBody2D> *rigidbody;
-        Resource<Collider2D> *collider;
+        ResourceHandle<RigidBody2D> rigidbody;
+        ResourceHandle<Collider2D> collider;
     };
 }
 

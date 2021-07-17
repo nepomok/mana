@@ -25,7 +25,7 @@
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
 
-#include "engine/resource/resources.hpp"
+#include "engine/resource/resourcemanager.hpp"
 
 namespace mana {
     class ECS;

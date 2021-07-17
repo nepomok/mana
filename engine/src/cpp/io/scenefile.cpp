@@ -203,20 +203,20 @@ namespace mana {
         return ret;
     }
 
-    RenderComponent *getRenderComponent(const nlohmann::json &component, Resources &res) {
+    RenderComponent *getRenderComponent(const nlohmann::json &component, ResourceManager &res) {
         auto *ret = new RenderComponent();
-        ret->shader = &res.getResource<ShaderProgram>(component["shaderResourceName"]);
+        ret->shader = ResourceHandle<ShaderProgram>(component["shaderResourceName"], &res);
 
         for (const auto &entry : component["textureMapping"]) {
             ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
         }
 
         for (auto &mesh : component["meshes"]) {
-            ret->meshBuffers.emplace_back(&res.getResource<MeshBuffer>(mesh["resourceName"]));
+            ret->meshBuffers.emplace_back(ResourceHandle<MeshBuffer>(mesh["resourceName"], &res));
         }
 
         for (const auto &tex : component["textures"]) {
-            ret->textureBuffers.emplace_back(&res.getResource<TextureBuffer>(tex["resourceName"]));
+            ret->textureBuffers.emplace_back(ResourceHandle<TextureBuffer>(tex["resourceName"], &res));
         }
 
         auto props = component["renderProperties"];
@@ -282,14 +282,14 @@ namespace mana {
         return ret;
     }
 
-    ScriptComponent *getScriptComponent(const nlohmann::json &component, Resources &res) {
+    ScriptComponent *getScriptComponent(const nlohmann::json &component, ResourceManager &res) {
         auto *ret = new ScriptComponent();
-        ret->script = &res.getResource<Script>(component["resourceName"]);
+        ret->script = ResourceHandle<Script>(component["resourceName"], &res);
         ret->queue = component["queue"];
         return ret;
     }
 
-    Component *getComponent(const nlohmann::json &component, Resources &res) {
+    Component *getComponent(const nlohmann::json &component, ResourceManager &res) {
         Component *ret;
         switch (convertComponentType(component["componentType"])) {
             case TRANSFORM:
@@ -314,7 +314,7 @@ namespace mana {
         return ret;
     }
 
-    Node getNode(const nlohmann::json &node, Resources &res) {
+    Node getNode(const nlohmann::json &node, ResourceManager &res) {
         Node ret;
         ret.enabled = node["enabled"];
         for (auto &comp : node["components"]) {
@@ -323,14 +323,14 @@ namespace mana {
         return ret;
     }
 
-    Scene getSceneFromJson(const std::string &jsonText, Resources &res) {
-        Scene ret;
+    Scene *getSceneFromJson(const std::string &jsonText, ResourceManager &res) {
+        auto* ret = new Scene();
         auto j = nlohmann::json::parse(jsonText);
         for (auto &node : j["nodes"]) {
             std::string nodeName = node["nodeName"];
-            if (ret.nodes.find(nodeName) != ret.nodes.end())
+            if (ret->nodes.find(nodeName) != ret->nodes.end())
                 throw std::runtime_error("Duplicate node name");
-            ret.nodes[node["nodeName"]] = getNode(node, res);
+            ret->nodes[node["nodeName"]] = getNode(node, res);
         }
         return ret;
     }
@@ -366,7 +366,7 @@ namespace mana {
         return sceneResources;
     }
 
-    Scene SceneFile::getScene(Resources &res) {
+    Scene* SceneFile::getScene(ResourceManager &res) {
         return getSceneFromJson(sceneJsonSource, res);
     }
 }

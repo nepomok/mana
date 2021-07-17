@@ -115,25 +115,30 @@ namespace mana {
         return new ImageFileResource(j["filePath"]);
     }
 
-    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
-        return new ShaderResource(device,
-                                  res.getResource<std::string>(j["vertexShaderResourceName"]),
-                                  res.getResource<std::string>(j["fragmentShaderResourceName"]));
+    MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
+        return new MonoScriptResource(monoRuntime, j["assemblyFileName"], j["nameSpace"], j["className"]);
     }
 
-    MeshBufferResource *parseMeshBuffer(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
+    Resource<ShaderProgram> *parseShader(const nlohmann::json &j, ResourceManager *res, RenderDevice &device) {
+        return new ShaderResource(device,
+                                  j["vertexShaderResourceName"],
+                                  j["fragmentShaderResourceName"],
+                                  res);
+    }
+
+    MeshBufferResource *parseMeshBuffer(const nlohmann::json &j, ResourceManager *res, RenderDevice &device) {
         if (j["instanced"]) {
             std::vector<Transform> offsets;
             for (auto &t : j["instanceOffsets"]) {
                 offsets.emplace_back(parseTransform(t));
             }
-            return new MeshBufferResource(device, res.getResource<Mesh>(j["meshResourceName"]), offsets);
+            return new MeshBufferResource(device, j["meshResourceName"], res, offsets);
         } else {
-            return new MeshBufferResource(device, res.getResource<Mesh>(j["meshResourceName"]));
+            return new MeshBufferResource(device, j["meshResourceName"], res);
         }
     }
 
-    TextureBufferResource *parseTexture(const nlohmann::json &j, const Resources &res, RenderDevice &device) {
+    TextureBufferResource *parseTexture(const nlohmann::json &j, ResourceManager *res, RenderDevice &device) {
         TextureBuffer::Attributes attr;
         attr.textureType = parseTextureType(j["textureType"]);
         attr.format = parseColorFormat(j["format"]);
@@ -142,33 +147,31 @@ namespace mana {
         attr.filterMag = parseTextureFiltering(j["filterMag"]);
         attr.generateMipmap = j["generateMipmap"];
         attr.mipmapFilter = parseMipMapFiltering(j["mipmapFilter"]);
-        return new TextureBufferResource(device, res.getResource<ImageBuffer<ColorRGBA>>(j["imageResourceName"]), attr);
+        return new TextureBufferResource(device, j["imageResourceName"], res, attr);
     }
 
-    MonoScriptResource *parseMonoScript(const nlohmann::json &j, MonoCppDomain &monoRuntime) {
-        return new MonoScriptResource(monoRuntime, j["assemblyFileName"], j["nameSpace"], j["className"]);
-    }
-
-    Resources *parseResources(const std::string &jsonStr, RenderDevice &device, MonoCppDomain &monoRuntime) {
-        auto *ret = new Resources();
+    ResourceManager *parseResources(const std::string &jsonStr,
+                                    RenderDevice &device,
+                                    MonoCppDomain &monoRuntime) {
+        auto *ret = new ResourceManager();
         auto json = nlohmann::json::parse(jsonStr);
         for (auto &r : json["resources"]) {
             std::string type = r["type"];
             std::string name = r["name"];
             if (type == "meshfile")
-                ret->addResource<Mesh>(name, parseMeshFile(r));
+                ret->addResource(name, parseMeshFile(r));
             else if (type == "textfile")
-                ret->addResource<std::string>(name, parseTextFile(r));
+                ret->addResource(name, parseTextFile(r));
             else if (type == "imagefile")
-                ret->addResource<ImageBuffer<ColorRGBA>>(name, parseImageFile(r));
-            else if (type == "shader")
-                ret->addResource<ShaderProgram>(name, parseShader(r, *ret, device));
-            else if (type == "meshbuffer")
-                ret->addResource<MeshBuffer>(name, parseMeshBuffer(r, *ret, device));
-            else if (type == "texture")
-                ret->addResource<TextureBuffer>(name, parseTexture(r, *ret, device));
+                ret->addResource(name, parseImageFile(r));
             else if (type == "monoscript")
-                ret->addResource<Script>(name, parseMonoScript(r, monoRuntime));
+                ret->addResource(name, parseMonoScript(r, monoRuntime));
+            else if (type == "shader")
+                ret->addResource(name, parseShader(r, ret, device));
+            else if (type == "meshbuffer")
+                ret->addResource(name, parseMeshBuffer(r, ret, device));
+            else if (type == "texture")
+                ret->addResource(name, parseTexture(r, ret, device));
             else
                 throw std::runtime_error("Invalid resource type " + type);
         }
@@ -193,7 +196,7 @@ namespace mana {
         return json["resourcesName"];
     }
 
-    Resources *ResourceFile::getResources(RenderDevice &device, MonoCppDomain &monoRuntime) {
+    ResourceManager *ResourceFile::getResources(RenderDevice &device, MonoCppDomain &monoRuntime) {
         return parseResources(fileContents, device, monoRuntime);
     }
 }

@@ -22,7 +22,7 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/resource/resource.hpp"
+#include "engine/resource/resourcehandle.hpp"
 
 #include "engine/script/script.hpp"
 
@@ -38,7 +38,7 @@ namespace mana {
             return typeid(ScriptComponent);
         }
 
-        Resource<Script> *script;
+        ResourceHandle<Script> script;
 
         bool scriptEnabled = false;
 

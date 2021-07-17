@@ -31,12 +31,20 @@ namespace mana {
 
         RawStringResource(std::string text) : text(std::move(text)) {}
 
+        bool isLoaded() override;
+
+        bool supportAsync() override;
+
         void load() override {}
 
         void free() override {}
 
         std::string &get() override {
             return text;
+        }
+
+        std::string &getOrThrow() override {
+            return get();
         }
     };
 }

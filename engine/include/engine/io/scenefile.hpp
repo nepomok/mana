@@ -23,7 +23,7 @@
 #include "engine/io/file.hpp"
 
 #include "engine/ecs/scene.hpp"
-#include "engine/resource/resources.hpp"
+#include "engine/resource/resourcemanager.hpp"
 
 namespace mana {
     class SceneFile : public File {
@@ -40,7 +40,7 @@ namespace mana {
 
         const std::string &getSceneResourcesName();
 
-        Scene getScene(Resources &res);
+        Scene* getScene(ResourceManager &res);
 
     private:
         std::string sceneName;

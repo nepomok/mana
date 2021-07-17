@@ -23,41 +23,67 @@
 
 namespace mana {
     ShaderResource::ShaderResource()
-            : device(nullptr), vertexShader(nullptr), fragmentShader(nullptr), shader(nullptr) {
+            : device(nullptr),
+              vertexShader(),
+              fragmentShader(),
+              manager(nullptr),
+              shader(nullptr) {}
 
-    }
-
-    ShaderResource::ShaderResource(RenderDevice &device, Resource<std::string> &vertexShader,
-                                   Resource<std::string> &fragmentShader)
-            : device(&device), vertexShader(&vertexShader), fragmentShader(&fragmentShader), shader(nullptr) {
-    }
+    ShaderResource::ShaderResource(RenderDevice &device,
+                                   std::string vertexShader,
+                                   std::string fragmentShader,
+                                   ResourceManager *manager)
+            : device(&device),
+              vertexShader(std::move(vertexShader)),
+              fragmentShader(std::move(fragmentShader)),
+              manager(manager),
+              shader(nullptr) {}
 
     ShaderResource::~ShaderResource() {
-        if (isLoaded)
-            delete shader;
+        ShaderResource::free();
     }
 
     void ShaderResource::load() {
-        if (isLoaded)
+        if (loaded)
             return;
-        shader = device->createShaderProgram(vertexShader->get(),
-                                               fragmentShader->get(),
-                                               Renderer3D::getShaderMacros(),
-                                               Renderer3D::getShaderIncludeCallback());
-        isLoaded = true;
+        manager->incrementRef(vertexShader);
+        manager->incrementRef(fragmentShader);
+        auto *vertexRes = manager->getResource<std::string>(vertexShader);
+        auto *fragmentRes = manager->getResource<std::string>(fragmentShader);
+        shader = device->createShaderProgram(vertexRes->get(),
+                                             fragmentRes->get(),
+                                             Renderer3D::getShaderMacros(),
+                                             Renderer3D::getShaderIncludeCallback());
+        loaded = true;
     }
 
     void ShaderResource::free() {
-        if (!isLoaded)
+        if (!loaded)
             return;
         delete shader;
         shader = nullptr;
-        isLoaded = false;
+        manager->decrementRef(vertexShader);
+        manager->decrementRef(fragmentShader);
+        loaded = false;
     }
 
     ShaderProgram &ShaderResource::get() {
-        if (!isLoaded)
-            load();
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
         return *shader;
+    }
+
+    bool ShaderResource::isLoaded() {
+        return loaded;
+    }
+
+    bool ShaderResource::supportAsync() {
+        return false;
+    }
+
+    ShaderProgram &ShaderResource::getOrThrow() {
+        if (!loaded)
+            throw std::runtime_error("Not loaded");
+        return get();
     }
 }

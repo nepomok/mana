@@ -48,7 +48,7 @@ protected:
 
         window.update();
 
-        ecs.update(deltaTime, scene);
+        ecs.update(deltaTime, *scene);
 
         window.swapBuffers();
     }
@@ -56,10 +56,11 @@ protected:
     void loadScene(RenderDevice &device) override {
         res = ResourceFile("assets/resources.json").getResources(device, domain);
         scene = SceneFile("assets/scene.json").getScene(*res);
-        cameraNode = &scene.nodes.at("mainCamera");
+        cameraNode = &scene->nodes.at("mainCamera");
     }
 
     void destroyScene() override {
+        delete scene;
         delete res;
     }
 
@@ -69,8 +70,8 @@ private:
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
 
-    Resources *res;
-    Scene scene;
+    Scene *scene;
+    ResourceManager *res;
 
     Node *cameraNode;
 };

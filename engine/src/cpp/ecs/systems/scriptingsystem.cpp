@@ -210,7 +210,7 @@ namespace mana {
         }
     }
 
-    ScriptingSystem::ScriptingSystem(Resources &res,
+    ScriptingSystem::ScriptingSystem(ResourceManager &res,
                                      Input &input,
                                      MonoCppDomain &domain,
                                      MonoCppAssembly &manaAssembly)
@@ -245,14 +245,14 @@ namespace mana {
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
                     comp.scriptEnabled = false;
-                    comp.script->get().onDisable();
+                    comp.script.get().onDisable();
                 }
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                comp.script->get().onEnable();
+                comp.script.get().onEnable();
             }
-            comp.script->get().onUpdate();
+            comp.script.get().onUpdate();
         }
 
         SceneInterface::setScene(nullptr);

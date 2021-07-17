@@ -29,7 +29,11 @@ namespace mana {
 
         explicit TextFileResource(std::string filePath);
 
-        ~TextFileResource() override = default;
+        ~TextFileResource() override;
+
+        bool isLoaded() override;
+
+        bool supportAsync() override;
 
         void load() override;
 
@@ -37,10 +41,12 @@ namespace mana {
 
         std::string &get() override;
 
+        std::string &getOrThrow() override;
+
     private:
         std::string filePath;
         std::string text;
-        bool isLoaded = false;
+        bool loaded = false;
     };
 }
 
