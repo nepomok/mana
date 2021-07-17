@@ -17,36 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENEFILE_HPP
-#define MANA_SCENEFILE_HPP
+#include "engine/io/json/ecs/scenedeserializer.hpp"
 
-#include "engine/io/file.hpp"
-
-#include "engine/ecs/scene.hpp"
-#include "engine/resource/resourcemanager.hpp"
+#include "extern/json.hpp"
 
 namespace mana {
-    class SceneFile : public File {
-    public:
-        SceneFile() = default;
+    SceneDeserializer::SceneDeserializer() = default;
 
-        explicit SceneFile(const std::string &filePath);
+    SceneDeserializer::SceneDeserializer(ResourceManager &resourceManager)
+            : nodeDeserializer(resourceManager) {}
 
-        void open() override;
-
-        void close() override;
-
-        const std::string &getSceneName();
-
-        const std::string &getSceneResourcesName();
-
-        Scene* getScene(ResourceManager &res);
-
-    private:
-        std::string sceneName;
-        std::string sceneResources;
-        std::string sceneJsonSource;
-    };
+    Scene SceneDeserializer::deserialize(std::istream &stream) {
+        nlohmann::json j;
+        stream >> j;
+        Scene ret;
+        ret.name = j.at("name");
+        ret.resources = j.at("resources");
+        for (auto &node : j.at("nodes")) {
+            std::istringstream s(node.dump());
+            ret.nodes[node.at("name")] = nodeDeserializer.deserialize(s);
+        }
+        return ret;
+    }
 }
-
-#endif //MANA_SCENEFILE_HPP

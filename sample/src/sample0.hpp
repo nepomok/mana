@@ -48,19 +48,31 @@ protected:
 
         window.update();
 
-        ecs.update(deltaTime, *scene);
+        ecs.update(deltaTime, scene);
 
         window.swapBuffers();
     }
 
     void loadScene(RenderDevice &device) override {
-        res = ResourceFile("assets/resources.json").getResources(device, domain);
-        scene = SceneFile("assets/scene.json").getScene(*res);
-        cameraNode = &scene->nodes.at("mainCamera");
+        std::ifstream file;
+
+        file.open("assets/resources.json", std::ifstream::in);
+        if (file.fail())
+            throw std::runtime_error("Failed to open assets/resources.json");
+        res = ResourceManagerDeserializer(device, domain).deserialize(file);
+        file.close();
+
+        file.open("assets/scene.json");
+        if (file.fail())
+            throw std::runtime_error("Failed to open assets/scene.json");
+        scene = SceneDeserializer(*res).deserialize(file);
+        file.close();
+
+        cameraNode = &scene.nodes.at("mainCamera");
     }
 
     void destroyScene() override {
-        delete scene;
+        scene = {};
         delete res;
     }
 
@@ -70,8 +82,8 @@ private:
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
 
-    Scene *scene;
-    ResourceManager *res;
+    Scene scene;
+    ResourceManager* res;
 
     Node *cameraNode;
 };

@@ -17,37 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENE_HPP
-#define MANA_SCENE_HPP
+#include "engine/io/json/ecs/nodedeserializer.hpp"
 
-#include <vector>
-#include <set>
-
-#include "engine/ecs/node.hpp"
+#include "extern/json.hpp"
 
 namespace mana {
-    class Scene {
-    public:
-        std::string name;
-        std::string resources;
+    NodeDeserializer::NodeDeserializer() = default;
 
-        std::map<std::string, Node> nodes;
+    NodeDeserializer::NodeDeserializer(ResourceManager &resourceManager)
+            : componentDeserializer(resourceManager) {}
 
-        Node &operator[](const std::string &nodeName) {
-            return nodes[nodeName];
+    Node NodeDeserializer::deserialize(std::istream &stream) {
+        nlohmann::json j;
+        stream >> j;
+        Node ret;
+        ret.enabled = j.at("enabled");
+        for (auto &component : j["components"]) {
+            std::istringstream s(component.dump());
+            ret.addComponentPointer(componentDeserializer.deserialize(s));
         }
-
-        template<typename T>
-        std::vector<Node *> findNodesWithComponent() {
-            const std::type_info &typeInfo = typeid(T);
-            std::vector<Node *> ret;
-            for (auto &node : nodes) {
-                if (node.second.hasComponent<T>()) {
-                    ret.push_back(&node.second);
-                }
-            }
-            return ret;
-        }
-    };
+        return ret;
+    }
 }
-#endif //MANA_SCENE_HPP

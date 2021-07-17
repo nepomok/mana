@@ -17,37 +17,22 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENE_HPP
-#define MANA_SCENE_HPP
+#ifndef MANA_SCENESERIALIZER_HPP
+#define MANA_SCENESERIALIZER_HPP
 
-#include <vector>
-#include <set>
+#include "engine/io/json/jsonserializer.hpp"
+#include "engine/io/json/ecs/nodeserializer.hpp"
 
-#include "engine/ecs/node.hpp"
+#include "engine/ecs/scene.hpp"
 
 namespace mana {
-    class Scene {
+    class SceneSerializer : public JsonSerializer<Scene> {
     public:
-        std::string name;
-        std::string resources;
+        void serialize(const Scene &data, std::ostream &stream) override;
 
-        std::map<std::string, Node> nodes;
-
-        Node &operator[](const std::string &nodeName) {
-            return nodes[nodeName];
-        }
-
-        template<typename T>
-        std::vector<Node *> findNodesWithComponent() {
-            const std::type_info &typeInfo = typeid(T);
-            std::vector<Node *> ret;
-            for (auto &node : nodes) {
-                if (node.second.hasComponent<T>()) {
-                    ret.push_back(&node.second);
-                }
-            }
-            return ret;
-        }
+    private:
+        NodeSerializer nodeSerializer;
     };
 }
-#endif //MANA_SCENE_HPP
+
+#endif //MANA_SCENESERIALIZER_HPP

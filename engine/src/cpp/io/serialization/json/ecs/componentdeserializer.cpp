@@ -17,10 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <mana.hpp>
-#include "engine/io/scenefile.hpp"
+#include "engine/io/json/ecs/componentdeserializer.hpp"
+
+#include <cassert>
 
 #include "extern/json.hpp"
+
+#include "engine/ecs/components.hpp"
 
 namespace mana {
     ComponentType convertComponentType(const std::string &str) {
@@ -314,59 +317,16 @@ namespace mana {
         return ret;
     }
 
-    Node getNode(const nlohmann::json &node, ResourceManager &res) {
-        Node ret;
-        ret.enabled = node["enabled"];
-        for (auto &comp : node["components"]) {
-            ret.addComponentPointer(getComponent(comp, res));
-        }
-        return ret;
-    }
+    ComponentDeserializer::ComponentDeserializer()
+            : resourceManager(nullptr) {}
 
-    Scene *getSceneFromJson(const std::string &jsonText, ResourceManager &res) {
-        auto* ret = new Scene();
-        auto j = nlohmann::json::parse(jsonText);
-        for (auto &node : j["nodes"]) {
-            std::string nodeName = node["nodeName"];
-            if (ret->nodes.find(nodeName) != ret->nodes.end())
-                throw std::runtime_error("Duplicate node name");
-            ret->nodes[node["nodeName"]] = getNode(node, res);
-        }
-        return ret;
-    }
+    ComponentDeserializer::ComponentDeserializer(ResourceManager &resourceManager)
+            : resourceManager(&resourceManager) {}
 
-    SceneFile::SceneFile(const std::string &fp) {
-        filePath = fp;
-        sceneJsonSource = File::readAllText(filePath);
-        auto json = nlohmann::json::parse(sceneJsonSource);
-        sceneName = json["sceneName"];
-        sceneResources = json["sceneResources"];
-    }
-
-    void SceneFile::open() {
-        sceneJsonSource = File::readAllText(filePath);
-        auto json = nlohmann::json::parse(sceneJsonSource);
-        sceneName = json["sceneName"];
-        sceneResources = json["sceneResources"];
-        File::open();
-    }
-
-    void SceneFile::close() {
-        sceneJsonSource.clear();
-        sceneName.clear();
-        sceneResources.clear();
-        File::close();
-    }
-
-    const std::string &SceneFile::getSceneName() {
-        return sceneName;
-    }
-
-    const std::string &SceneFile::getSceneResourcesName() {
-        return sceneResources;
-    }
-
-    Scene* SceneFile::getScene(ResourceManager &res) {
-        return getSceneFromJson(sceneJsonSource, res);
+    Component *ComponentDeserializer::deserialize(std::istream &stream) {
+        assert(resourceManager != nullptr);
+        nlohmann::json j;
+        stream >> j;
+        return getComponent(j, *resourceManager);
     }
 }

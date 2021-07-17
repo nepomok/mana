@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/resourcefile.hpp"
+#include "engine/io/json/resource/resourcedeserializer.hpp"
 
 #include "engine/resource/file/meshfileresource.hpp"
 #include "engine/resource/file/textfileresource.hpp"
@@ -150,53 +150,43 @@ namespace mana {
         return new TextureBufferResource(device, j["imageResourceName"], res, attr);
     }
 
-    ResourceManager *parseResources(const std::string &jsonStr,
-                                    RenderDevice &device,
-                                    MonoCppDomain &monoRuntime) {
-        auto *ret = new ResourceManager();
-        auto json = nlohmann::json::parse(jsonStr);
-        for (auto &r : json["resources"]) {
-            std::string type = r["type"];
-            std::string name = r["name"];
-            if (type == "meshfile")
-                ret->addResource(name, parseMeshFile(r));
-            else if (type == "textfile")
-                ret->addResource(name, parseTextFile(r));
-            else if (type == "imagefile")
-                ret->addResource(name, parseImageFile(r));
-            else if (type == "monoscript")
-                ret->addResource(name, parseMonoScript(r, monoRuntime));
-            else if (type == "shader")
-                ret->addResource(name, parseShader(r, ret, device));
-            else if (type == "meshbuffer")
-                ret->addResource(name, parseMeshBuffer(r, ret, device));
-            else if (type == "texture")
-                ret->addResource(name, parseTexture(r, ret, device));
-            else
-                throw std::runtime_error("Invalid resource type " + type);
-        }
-        return ret;
-    }
+    ResourceDeserializer::ResourceDeserializer()
+            : manager(nullptr),
+              device(nullptr),
+              monoRuntime(nullptr) {}
 
-    ResourceFile::ResourceFile(const std::string &filePath)
-            : fileContents(File::readAllText(filePath)) {
-        this->filePath = filePath;
-    }
+    ResourceDeserializer::ResourceDeserializer(ResourceManager &manager,
+                                               RenderDevice &device,
+                                               MonoCppDomain &monoRuntime)
+            : manager(&manager),
+              device(&device),
+              monoRuntime(&monoRuntime) {}
 
-    void ResourceFile::open() {
-        fileContents = File::readAllText(filePath);
-    }
+    ResourceBase *ResourceDeserializer::deserialize(std::istream &stream) {
+        assert(manager != nullptr);
+        assert(device != nullptr);
+        assert(monoRuntime != nullptr);
 
-    void ResourceFile::close() {
-        fileContents.clear();
-    }
+        nlohmann::json j;
+        stream >> j;
 
-    std::string ResourceFile::getResourcesName() {
-        auto json = nlohmann::json::parse(fileContents);
-        return json["resourcesName"];
-    }
+        std::string type = j.at("type");
 
-    ResourceManager *ResourceFile::getResources(RenderDevice &device, MonoCppDomain &monoRuntime) {
-        return parseResources(fileContents, device, monoRuntime);
+        if (type == "meshfile")
+            return parseMeshFile(j);
+        else if (type == "textfile")
+            return parseTextFile(j);
+        else if (type == "imagefile")
+            return parseImageFile(j);
+        else if (type == "monoscript")
+            return parseMonoScript(j, *monoRuntime);
+        else if (type == "shader")
+            return parseShader(j, manager, *device);
+        else if (type == "meshbuffer")
+            return parseMeshBuffer(j, manager, *device);
+        else if (type == "texture")
+            return parseTexture(j, manager, *device);
+        else
+            throw std::runtime_error("Invalid resource type " + type);
     }
 }

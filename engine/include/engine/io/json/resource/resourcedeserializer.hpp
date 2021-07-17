@@ -17,37 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENE_HPP
-#define MANA_SCENE_HPP
+#ifndef MANA_RESOURCEDESERIALIZER_HPP
+#define MANA_RESOURCEDESERIALIZER_HPP
 
-#include <vector>
-#include <set>
+#include "engine/io/json/jsondeserializer.hpp"
 
-#include "engine/ecs/node.hpp"
+#include "engine/resource/resource.hpp"
+#include "engine/resource/resourcemanager.hpp"
+
+#include "engine/render/renderdevice.hpp"
+#include "engine/script/mono/monocppdomain.hpp"
 
 namespace mana {
-    class Scene {
+    class ResourceDeserializer : public JsonDeserializer<ResourceBase *> {
     public:
-        std::string name;
-        std::string resources;
+        ResourceDeserializer();
 
-        std::map<std::string, Node> nodes;
+        ResourceDeserializer(ResourceManager &manager, RenderDevice &device, MonoCppDomain &monoRuntime);
 
-        Node &operator[](const std::string &nodeName) {
-            return nodes[nodeName];
-        }
+        ResourceBase *deserialize(std::istream &stream) override;
 
-        template<typename T>
-        std::vector<Node *> findNodesWithComponent() {
-            const std::type_info &typeInfo = typeid(T);
-            std::vector<Node *> ret;
-            for (auto &node : nodes) {
-                if (node.second.hasComponent<T>()) {
-                    ret.push_back(&node.second);
-                }
-            }
-            return ret;
-        }
+    private:
+        ResourceManager *manager;
+        RenderDevice *device;
+        MonoCppDomain *monoRuntime;
     };
 }
-#endif //MANA_SCENE_HPP
+
+#endif //MANA_RESOURCEDESERIALIZER_HPP

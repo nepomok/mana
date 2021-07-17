@@ -17,34 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RESOURCEFILE_HPP
-#define MANA_RESOURCEFILE_HPP
+#ifndef MANA_DESERIALIZER_HPP
+#define MANA_DESERIALIZER_HPP
 
-#include "engine/io/file.hpp"
-
-#include "engine/resource/resourcemanager.hpp"
-
-#include "engine/render/renderdevice.hpp"
-#include "engine/script/mono/monocppdomain.hpp"
+#include <istream>
 
 namespace mana {
-    class ResourceFile : public File {
+    template<typename T>
+    class Deserializer {
     public:
-        ResourceFile() = default;
-
-        explicit ResourceFile(const std::string &filePath);
-
-        void open() override;
-
-        void close() override;
-
-        std::string getResourcesName();
-
-        ResourceManager *getResources(RenderDevice &device, MonoCppDomain &monoRuntime);
-
-    private:
-        std::string fileContents;
+        virtual T deserialize(std::istream &stream) = 0;
     };
 }
 
-#endif //MANA_RESOURCEFILE_HPP
+#endif //MANA_DESERIALIZER_HPP
