@@ -21,6 +21,8 @@
 
 #include "extern/json.hpp"
 
+#include <sstream>
+
 namespace mana {
     NodeDeserializer::NodeDeserializer() = default;
 
