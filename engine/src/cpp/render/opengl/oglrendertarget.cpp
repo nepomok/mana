@@ -232,7 +232,7 @@ namespace mana {
     void opengl::OGLRenderTarget::attachColor(int index, TextureBuffer &texture) {
         auto &tex = dynamic_cast< OGLTextureBuffer &>(texture);
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, tex.handle, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, GL_TEXTURE_2D, tex.handle, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         checkGLError("");
     }
