@@ -171,7 +171,7 @@ namespace mana {
     void GeometryPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
         auto &ren = gBuffer.getRenderDevice().getRenderer();
 
-        shaderTextureNormals->setTexture("diffuse", 0);
+        /*shaderTextureNormals->setTexture("diffuse", 0);
         shaderTextureNormals->setTexture("ambient", 1);
         shaderTextureNormals->setTexture("specular", 2);
         shaderTextureNormals->setTexture("shininess", 3);
@@ -182,27 +182,39 @@ namespace mana {
         shaderVertexNormals->setTexture("ambient", 1);
         shaderVertexNormals->setTexture("specular", 2);
         shaderVertexNormals->setTexture("shininess", 3);
-        shaderVertexNormals->setTexture("emissive", 4);
+        shaderVertexNormals->setTexture("emissive", 4);*/
+
+        shaderTextureNormals->setTexture("diffuse", 0);
+        shaderTextureNormals->setTexture("specular", 1);
+        shaderTextureNormals->setTexture("normal", 2);
+
+        shaderVertexNormals->setTexture("diffuse", 0);
+        shaderVertexNormals->setTexture("specular", 1);
 
         //Clear geometry buffer
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
+
+        Mat4f model, view, projection, cameraTranslation;
+        view = scene.camera.view();
+        projection = scene.camera.projection();
+        cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {
             assert(command.meshBuffer != nullptr);
             assert(command.material.diffuseTexture != nullptr);
-            assert(command.material.ambientTexture != nullptr);
+            //assert(command.material.ambientTexture != nullptr);
             assert(command.material.specularTexture != nullptr);
-            assert(command.material.shininessTexture != nullptr);
-            assert(command.material.emissiveTexture != nullptr);
+            //assert(command.material.shininessTexture != nullptr);
+            //assert(command.material.emissiveTexture != nullptr);
 
             RenderCommand c;
             c.meshBuffers.emplace_back(command.meshBuffer);
             c.textures.emplace_back(command.material.diffuseTexture);
-            c.textures.emplace_back(command.material.ambientTexture);
+            //c.textures.emplace_back(command.material.ambientTexture);
             c.textures.emplace_back(command.material.specularTexture);
-            c.textures.emplace_back(command.material.shininessTexture);
-            c.textures.emplace_back(command.material.emissiveTexture);
+            //c.textures.emplace_back(command.material.shininessTexture);
+            //c.textures.emplace_back(command.material.emissiveTexture);
 
             if (command.material.normalTexture == nullptr) {
                 c.shader = shaderVertexNormals;
@@ -210,6 +222,17 @@ namespace mana {
                 c.shader = shaderTextureNormals;
                 c.textures.emplace_back(command.material.normalTexture);
             }
+
+            model = MatrixMath::translate(command.transform.position);
+            model = model * MatrixMath::scale(command.transform.scale);
+            model = model * MatrixMath::rotate(command.transform.rotation);
+
+            c.shader->setMat4("MANA_M", model);
+            c.shader->setMat4("MANA_V", view);
+            c.shader->setMat4("MANA_P", projection);
+            c.shader->setMat4("MANA_MVP", projection * view * model);
+            c.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+            c.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
             ren.addCommand(c);
         }

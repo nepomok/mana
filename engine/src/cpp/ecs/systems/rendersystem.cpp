@@ -25,10 +25,11 @@
 
 #include "engine/render/3d/forwardpipeline.hpp"
 #include "engine/render/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/lightingpass.hpp"
 
 namespace mana {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {new GeometryPass(device)}) {
+            : screenTarget(scr), ren(device, {new GeometryPass(device), new LightingPass()}) {
     }
 
     void RenderSystem::start() {
@@ -79,7 +80,7 @@ namespace mana {
                   });
 
         for (auto *comp : renderComponents) {
-            ForwardCommand unit;
+            /*ForwardCommand unit;
 
             unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
 
@@ -117,7 +118,17 @@ namespace mana {
             unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
             unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
 
-            scene3d.forward.emplace_back(unit);
+            scene3d.forward.emplace_back(unit);*/
+
+            if (comp->textureBuffers.size() == 2) {
+                DeferredCommand command;
+                command.material.diffuseTexture = &comp->textureBuffers.at(0).get();
+                command.material.specularTexture = &comp->textureBuffers.at(1).get();
+                command.meshBuffer = &comp->meshBuffers.at(0).get();
+                command.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
+
+                scene3d.deferred.emplace_back(command);
+            }
         }
 
         Node *cameraNode;
