@@ -39,6 +39,11 @@
       "filePath": "assets/images/colormap.png"
     },
     {
+      "name": "Image.specularMap",
+      "type": "imagefile",
+      "filePath": "assets/images/container2_specular.png"
+    },
+    {
       "name": "Image.skybox",
       "type": "imagefile",
       "filePath": "assets/images/deepbluespace-skybox_maintex.png"
@@ -71,6 +76,18 @@
       "name": "Texture.colorMap",
       "type": "texture",
       "imageResourceName": "Image.colorMap",
+      "textureType": "texture2d",
+      "format": "rgba",
+      "wrapping": "repeat",
+      "filterMin": "linear",
+      "filterMag": "linear",
+      "generateMipmap": false,
+      "mipmapFilter": "nearest_mipmap_nearest"
+    },
+    {
+      "name": "Texture.specularMap",
+      "type": "texture",
+      "imageResourceName": "Image.specularMap",
       "textureType": "texture2d",
       "format": "rgba",
       "wrapping": "repeat",
