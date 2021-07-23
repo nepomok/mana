@@ -32,13 +32,13 @@ namespace mana {
         ColorRGBA specularColor{};
         float shininess{};
 
-        TextureBuffer *diffuseTexture{};
-        TextureBuffer *ambientTexture{};
-        TextureBuffer *specularTexture{};
-        TextureBuffer *shininessTexture{};
-        TextureBuffer *emissiveTexture{};
+        TextureBuffer *diffuseTexture = nullptr;
+        TextureBuffer *ambientTexture = nullptr;
+        TextureBuffer *specularTexture = nullptr;
+        TextureBuffer *shininessTexture = nullptr;
+        TextureBuffer *emissiveTexture = nullptr;
 
-        TextureBuffer *normalTexture{};
+        TextureBuffer *normalTexture = nullptr;
     };
 }
 
