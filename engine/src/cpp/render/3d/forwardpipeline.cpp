@@ -176,7 +176,7 @@ namespace mana {
             shader.setInt("MANA_LIGHT_COUNT_POINT", pointCount);
             shader.setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
 
-            shader.setVec3("MANA_VIEWPOS", unit.transform.position);
+            shader.setVec3("MANA_VIEWPOS", scene.camera.transform.position);
 
             ren->addCommand(unit.command);
         }
