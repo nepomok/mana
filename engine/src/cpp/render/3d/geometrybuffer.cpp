@@ -30,7 +30,7 @@ namespace mana {
         diffuse = device.createTextureBuffer(attr);
         ambient = device.createTextureBuffer(attr);
         specular = device.createTextureBuffer(attr);
-        attr.format = TextureBuffer::R;
+        attr.format = TextureBuffer::R32F;
         shininess = device.createTextureBuffer(attr);
 
         renderTarget = device.createRenderTarget(size, 0);
@@ -46,6 +46,17 @@ namespace mana {
         depthStencil = renderDevice->createTextureBuffer(attr);
 
         renderTarget->attachDepthStencil(*depthStencil);
+
+        const Mesh quadMesh(Mesh::TRI,
+                            {
+                                    Vertex({-1, 1, 0}, {0, 1}),
+                                    Vertex({1, 1, 0}, {1, 1}),
+                                    Vertex({1, -1, 0}, {1, 0}),
+                                    Vertex({-1, 1, 0}, {0, 1}),
+                                    Vertex({1, -1, 0}, {1, 0}),
+                                    Vertex({-1, -1, 0}, {0, 0})
+                            });
+        screenQuad = device.createMeshBuffer(quadMesh);
     }
 
     GeometryBuffer::~GeometryBuffer() {
@@ -60,6 +71,7 @@ namespace mana {
         delete shininess;
         delete depthStencil;
         delete renderTarget;
+        delete screenQuad;
     }
 
     void GeometryBuffer::setSize(const Vec2i &s) {
@@ -91,7 +103,7 @@ namespace mana {
         diffuse = renderDevice->createTextureBuffer(attr);
         ambient = renderDevice->createTextureBuffer(attr);
         specular = renderDevice->createTextureBuffer(attr);
-        attr.format = TextureBuffer::R;
+        attr.format = TextureBuffer::R32F;
         shininess = renderDevice->createTextureBuffer(attr);
 
         renderTarget = renderDevice->createRenderTarget(size, 0);
@@ -114,38 +126,52 @@ namespace mana {
     }
 
     RenderDevice &GeometryBuffer::getRenderDevice() {
+        assert(renderDevice != nullptr);
         return *renderDevice;
     }
 
     RenderTarget &GeometryBuffer::getRenderTarget() {
+        assert(renderTarget != nullptr);
         return *renderTarget;
     }
 
     TextureBuffer &GeometryBuffer::getPosition() {
+        assert(position != nullptr);
         return *position;
     }
 
     TextureBuffer &GeometryBuffer::getNormal() {
+        assert(normal != nullptr);
         return *normal;
     }
 
     TextureBuffer &GeometryBuffer::getDiffuse() {
+        assert(diffuse != nullptr);
         return *diffuse;
     }
 
     TextureBuffer &GeometryBuffer::getAmbient() {
+        assert(ambient != nullptr);
         return *ambient;
     }
 
     TextureBuffer &GeometryBuffer::getSpecular() {
+        assert(specular != nullptr);
         return *specular;
     }
 
     TextureBuffer &GeometryBuffer::getShininess() {
+        assert(shininess != nullptr);
         return *shininess;
     }
 
     TextureBuffer &GeometryBuffer::getDepthStencil() {
+        assert(depthStencil != nullptr);
         return *depthStencil;
+    }
+
+    MeshBuffer &GeometryBuffer::getScreenQuad() {
+        assert(screenQuad != nullptr);
+        return *screenQuad;
     }
 }
