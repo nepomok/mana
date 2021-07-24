@@ -27,17 +27,22 @@
 
 namespace mana {
     struct Material {
-        ColorRGBA diffuseColor{};
-        ColorRGBA ambientColor{};
-        ColorRGBA specularColor{};
-        float shininess{};
+        ColorRGBA diffuse{};
+        ColorRGBA ambient{};
+        ColorRGBA specular{};
+        ColorRGBA emissive{};
 
+        float shininess{32};
+
+        //Optional textures if a texturebuffer is nullptr the corresponding color is used instead.
         TextureBuffer *diffuseTexture = nullptr;
         TextureBuffer *ambientTexture = nullptr;
         TextureBuffer *specularTexture = nullptr;
-        TextureBuffer *shininessTexture = nullptr;
         TextureBuffer *emissiveTexture = nullptr;
 
+        TextureBuffer *shininessTexture = nullptr;
+
+        //Optional normal texture if it is nullptr the vertex normals are used instead.
         TextureBuffer *normalTexture = nullptr;
     };
 }

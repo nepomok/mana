@@ -25,7 +25,7 @@
 namespace mana {
     class GeometryPass : public RenderPass {
     public:
-        GeometryPass(RenderDevice &device);
+        explicit GeometryPass(RenderDevice &device);
 
         ~GeometryPass() override;
 
@@ -34,6 +34,14 @@ namespace mana {
     private:
         ShaderProgram *shaderTextureNormals;
         ShaderProgram *shaderVertexNormals;
+
+        //The default texture buffers with a size of 1x1 pixels into which the color values of the material
+        // are stored if the user did not specify a texture in the material.
+        TextureBuffer *diffuseDefault;
+        TextureBuffer *ambientDefault;
+        TextureBuffer *specularDefault;
+        TextureBuffer *shininessDefault;
+        TextureBuffer *emissiveDefault;
     };
 }
 

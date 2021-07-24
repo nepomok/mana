@@ -104,33 +104,27 @@ PS_OUTPUT main(PS_INPUT v) {
     float3 fragNorm = normal.Sample(samplerState_normal, v.fUv).xyz;
     float4 fragDiffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     float4 fragSpecular = specular.Sample(samplerState_specular, v.fUv);
+    float fragShininess = shininess.Sample(samplerState_shininess, v.fUv).r;
+    float fragDepth = depth.Sample(samplerState_depth, v.fUv).r;
     ret.FragColor = mana_calculate_light(fragPos,
                                           fragNorm,
                                           fragDiffuse,
                                           fragSpecular,
-                                          32);
+                                          fragShininess);
     return ret;
 }
 )###";
 
 namespace mana {
+    LightingPass::LightingPass(RenderDevice &device) {
+        shader = device.createShaderProgram(SHADER_VERT_LIGHTING,
+                                            SHADER_FRAG_LIGHTING,
+                                            Renderer3D::getShaderMacros(),
+                                            Renderer3D::getShaderIncludeCallback());
+    }
+
     void LightingPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
         //Render screen quad, calculate lighting, store result in screen buffer overwriting existing values.
-        const Mesh quadMesh(Mesh::TRI,
-                            {
-                                    Vertex({-1, 1, 0}, {0, 1}),
-                                    Vertex({1, 1, 0}, {1, 1}),
-                                    Vertex({1, -1, 0}, {1, 0}),
-                                    Vertex({-1, 1, 0}, {0, 1}),
-                                    Vertex({1, -1, 0}, {1, 0}),
-                                    Vertex({-1, -1, 0}, {0, 0})
-                            });
-        auto *quad = gBuffer.getRenderDevice().createMeshBuffer(quadMesh);
-        auto *shader = gBuffer.getRenderDevice().createShaderProgram(SHADER_VERT_LIGHTING,
-                                                                     SHADER_FRAG_LIGHTING,
-                                                                     Renderer3D::getShaderMacros(),
-                                                                     Renderer3D::getShaderIncludeCallback());
-
         int dirCount = 0;
         int pointCount = 0;
         int spotCount = 0;
@@ -183,7 +177,7 @@ namespace mana {
 
         RenderCommand command;
 
-        command.meshBuffers.emplace_back(quad);
+        command.meshBuffers.emplace_back(&gBuffer.getScreenQuad());
 
         command.shader = shader;
 

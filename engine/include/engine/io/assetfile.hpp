@@ -49,9 +49,9 @@ namespace mana {
 
             Material *createMaterial(RenderDevice &dev) const {
                 auto *ret = new Material();
-                ret->diffuseColor = diffuseColor;
-                ret->ambientColor = ambientColor;
-                ret->specularColor = specularColor;
+                ret->diffuse = diffuseColor;
+                ret->ambient = ambientColor;
+                ret->specular = specularColor;
                 ret->shininess = shininess;
                 ret->diffuseTexture = dev.createTextureBuffer({});
                 ret->ambientTexture = dev.createTextureBuffer({});

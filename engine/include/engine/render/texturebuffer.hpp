@@ -150,19 +150,23 @@ namespace mana {
 
         ~TextureBuffer() override = default;
 
-        virtual void upload(const ImageBuffer<ColorRGB> &buffer) = 0;
+        virtual void upload(const ImageBuffer <ColorRGB> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void upload(const ImageBuffer <ColorRGBA> &buffer) = 0;
 
-        virtual ImageBuffer<ColorRGBA> download() = 0;
+        virtual void upload(const ImageBuffer<float> &buffer) = 0;
 
-        virtual void upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void upload(const ImageBuffer<int> &buffer) = 0;
 
-        virtual ImageBuffer<ColorRGBA> download(CubeMapFace face) = 0;
+        virtual ImageBuffer <ColorRGBA> download() = 0;
 
-        virtual void uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) = 0;
 
-        virtual ImageBuffer<ColorRGBA> downloadCubeMap() = 0;
+        virtual ImageBuffer <ColorRGBA> download(CubeMapFace face) = 0;
+
+        virtual void uploadCubeMap(const ImageBuffer <ColorRGBA> &buffer) = 0;
+
+        virtual ImageBuffer <ColorRGBA> downloadCubeMap() = 0;
     };
 }
 

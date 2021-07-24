@@ -161,17 +161,36 @@ namespace mana {
                                                          SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
                                                          Renderer3D::getShaderMacros(),
                                                          Renderer3D::getShaderIncludeCallback());
+        TextureBuffer::Attributes attributes;
+        attributes.size = Vec2i(1, 1);
+        attributes.format = TextureBuffer::RGBA;
+        attributes.textureType = TextureBuffer::TEXTURE_2D;
+        attributes.generateMipmap = false;
+        attributes.wrapping = TextureBuffer::REPEAT;
+
+        diffuseDefault = device.createTextureBuffer(attributes);
+        ambientDefault = device.createTextureBuffer(attributes);
+        specularDefault = device.createTextureBuffer(attributes);
+        emissiveDefault = device.createTextureBuffer(attributes);
+
+        attributes.format = TextureBuffer::R32F;
+        shininessDefault = device.createTextureBuffer(attributes);
     }
 
     GeometryPass::~GeometryPass() {
         delete shaderTextureNormals;
         delete shaderVertexNormals;
+        delete diffuseDefault;
+        delete ambientDefault;
+        delete specularDefault;
+        delete emissiveDefault;
+        delete shininessDefault;
     }
 
     void GeometryPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
         auto &ren = gBuffer.getRenderDevice().getRenderer();
 
-        /*shaderTextureNormals->setTexture("diffuse", 0);
+        shaderTextureNormals->setTexture("diffuse", 0);
         shaderTextureNormals->setTexture("ambient", 1);
         shaderTextureNormals->setTexture("specular", 2);
         shaderTextureNormals->setTexture("shininess", 3);
@@ -182,14 +201,7 @@ namespace mana {
         shaderVertexNormals->setTexture("ambient", 1);
         shaderVertexNormals->setTexture("specular", 2);
         shaderVertexNormals->setTexture("shininess", 3);
-        shaderVertexNormals->setTexture("emissive", 4);*/
-
-        shaderTextureNormals->setTexture("diffuse", 0);
-        shaderTextureNormals->setTexture("specular", 1);
-        shaderTextureNormals->setTexture("normal", 2);
-
-        shaderVertexNormals->setTexture("diffuse", 0);
-        shaderVertexNormals->setTexture("specular", 1);
+        shaderVertexNormals->setTexture("emissive", 4);
 
         //Clear geometry buffer
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
@@ -202,19 +214,40 @@ namespace mana {
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {
             assert(command.meshBuffer != nullptr);
-            assert(command.material.diffuseTexture != nullptr);
-            //assert(command.material.ambientTexture != nullptr);
-            assert(command.material.specularTexture != nullptr);
-            //assert(command.material.shininessTexture != nullptr);
-            //assert(command.material.emissiveTexture != nullptr);
 
             RenderCommand c;
             c.meshBuffers.emplace_back(command.meshBuffer);
-            c.textures.emplace_back(command.material.diffuseTexture);
-            //c.textures.emplace_back(command.material.ambientTexture);
-            c.textures.emplace_back(command.material.specularTexture);
-            //c.textures.emplace_back(command.material.shininessTexture);
-            //c.textures.emplace_back(command.material.emissiveTexture);
+
+            if (command.material.diffuseTexture == nullptr) {
+                diffuseDefault->upload({1, 1, {command.material.diffuse}});
+                c.textures.emplace_back(diffuseDefault);
+            } else {
+                c.textures.emplace_back(command.material.diffuseTexture);
+            }
+            if (command.material.ambientTexture == nullptr) {
+                ambientDefault->upload({1, 1, {command.material.ambient}});
+                c.textures.emplace_back(ambientDefault);
+            } else {
+                c.textures.emplace_back(command.material.ambientTexture);
+            }
+            if (command.material.specularTexture == nullptr) {
+                specularDefault->upload({1, 1, {command.material.specular}});
+                c.textures.emplace_back(specularDefault);
+            } else {
+                c.textures.emplace_back(command.material.specularTexture);
+            }
+            if (command.material.shininessTexture == nullptr) {
+                shininessDefault->upload(ImageBuffer<float>(1, 1, {command.material.shininess}));
+                c.textures.emplace_back(shininessDefault);
+            } else {
+                c.textures.emplace_back(command.material.shininessTexture);
+            }
+            if (command.material.emissiveTexture == nullptr) {
+                emissiveDefault->upload({1, 1, {command.material.emissive}});
+                c.textures.emplace_back(emissiveDefault);
+            } else {
+                c.textures.emplace_back(command.material.emissiveTexture);
+            }
 
             if (command.material.normalTexture == nullptr) {
                 c.shader = shaderVertexNormals;
