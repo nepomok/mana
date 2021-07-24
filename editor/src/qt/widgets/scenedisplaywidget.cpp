@@ -182,14 +182,14 @@ void SceneDisplayWidget::paintGL() {
         scene3d.lights.emplace_back(lightComponent.light);
     }
 
-    std::map<RenderComponent *, TransformComponent *> mapping;
-    std::vector<RenderComponent *> renderComponents;
-    for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
+    std::map<ForwardRenderComponent *, TransformComponent *> mapping;
+    std::vector<ForwardRenderComponent *> renderComponents;
+    for (auto &nodePointer : scene.findNodesWithComponent<ForwardRenderComponent>()) {
         auto &node = *nodePointer;
         if (!node.enabled)
             continue;
 
-        auto &comp = node.getComponent<RenderComponent>();
+        auto &comp = node.getComponent<ForwardRenderComponent>();
         if (!comp.enabled)
             continue;
 
@@ -202,7 +202,7 @@ void SceneDisplayWidget::paintGL() {
     }
 
     std::sort(renderComponents.begin(), renderComponents.end(),
-              [](const RenderComponent *a, const RenderComponent *b) -> bool {
+              [](const ForwardRenderComponent *a, const ForwardRenderComponent *b) -> bool {
                   return a->renderOrder < b->renderOrder;
               });
 

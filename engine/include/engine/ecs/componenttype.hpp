@@ -27,7 +27,7 @@ namespace mana {
         CAMERA,
         LIGHT,
         SCRIPT,
-        RENDER
+        RENDER_FORWARD
     };
 }
 

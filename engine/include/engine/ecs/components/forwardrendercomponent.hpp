@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMPONENT_HPP
-#define MANA_RENDERCOMPONENT_HPP
+#ifndef MANA_FORWARDRENDERCOMPONENT_HPP
+#define MANA_FORWARDRENDERCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
@@ -27,15 +27,15 @@
 #include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
-    struct RenderComponent : public Component {
-        RenderComponent() : Component(RENDER) {}
+    struct ForwardRenderComponent : public Component {
+        ForwardRenderComponent() : Component(RENDER_FORWARD) {}
 
         Component *clone() override {
-            return new RenderComponent(*this);
+            return new ForwardRenderComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(RenderComponent);
+            return typeid(ForwardRenderComponent);
         }
 
         ResourceHandle<ShaderProgram> shader;
@@ -51,4 +51,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERCOMPONENT_HPP
+#endif //MANA_FORWARDRENDERCOMPONENT_HPP

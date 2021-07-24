@@ -30,7 +30,7 @@ namespace mana {
         if (str == "transform")
             return TRANSFORM;
         else if (str == "render")
-            return RENDER;
+            return RENDER_FORWARD;
         else if (str == "camera")
             return CAMERA;
         else if (str == "light")
@@ -206,8 +206,8 @@ namespace mana {
         return ret;
     }
 
-    RenderComponent *getRenderComponent(const nlohmann::json &component, ResourceManager &res) {
-        auto *ret = new RenderComponent();
+    ForwardRenderComponent *getRenderComponent(const nlohmann::json &component, ResourceManager &res) {
+        auto *ret = new ForwardRenderComponent();
         ret->shader = ResourceHandle<ShaderProgram>(component["shaderResourceName"], &res);
 
         for (const auto &entry : component["textureMapping"]) {
@@ -301,7 +301,7 @@ namespace mana {
             case CAMERA:
                 ret = getCameraComponent(component);
                 break;
-            case RENDER:
+            case RENDER_FORWARD:
                 ret = getRenderComponent(component, res);
                 break;
             case LIGHT:

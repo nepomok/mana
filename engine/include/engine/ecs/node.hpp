@@ -80,8 +80,8 @@ namespace mana {
                     return typeid(TransformComponent);
                 case CAMERA:
                     return typeid(CameraComponent);
-                case RENDER:
-                    return typeid(RenderComponent);
+                case RENDER_FORWARD:
+                    return typeid(ForwardRenderComponent);
                 case LIGHT:
                     return typeid(LightComponent);
                 case SCRIPT:
@@ -96,8 +96,8 @@ namespace mana {
                 return TRANSFORM;
             } else if (index == typeid(CameraComponent)) {
                 return CAMERA;
-            } else if (index == typeid(RenderComponent)) {
-                return RENDER;
+            } else if (index == typeid(ForwardRenderComponent)) {
+                return RENDER_FORWARD;
             } else if (index == typeid(LightComponent)) {
                 return LIGHT;
             } else if (index == typeid(ScriptComponent)) {

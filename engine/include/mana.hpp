@@ -54,7 +54,7 @@
 #include "engine/ecs/components/lightcomponent.hpp"
 #include "engine/ecs/components/particlecomponent.hpp"
 #include "engine/ecs/components/physics2dcomponent.hpp"
-#include "engine/ecs/components/rendercomponent.hpp"
+#include "engine/ecs/components/forwardrendercomponent.hpp"
 #include "engine/ecs/components/scriptcomponent.hpp"
 #include "engine/ecs/components/physics3dcomponent.hpp"
 #include "engine/ecs/components/gui/textcomponent.hpp"
