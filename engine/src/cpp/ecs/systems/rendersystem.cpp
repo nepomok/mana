@@ -80,7 +80,7 @@ namespace mana {
                   });
 
         for (auto *comp : renderComponents) {
-            /*ForwardCommand unit;
+            ForwardCommand unit;
 
             unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
 
@@ -97,38 +97,24 @@ namespace mana {
                 unit.command.meshBuffers.emplace_back(&m.get());
             }
 
-            unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
-            unit.command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
-            unit.command.properties.depthTestMode = comp->renderProperties.depthTestMode;
+            unit.command.properties = comp->renderProperties;
 
-            unit.command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
-            unit.command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
-            unit.command.properties.stencilMode = comp->renderProperties.stencilMode;
-            unit.command.properties.stencilReference = comp->renderProperties.stencilReference;
-            unit.command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
-            unit.command.properties.stencilFail = comp->renderProperties.stencilFail;
-            unit.command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
-            unit.command.properties.stencilPass = comp->renderProperties.stencilPass;
+            scene3d.forward.emplace_back(unit);
+        }
 
-            unit.command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
-            unit.command.properties.faceCullMode = comp->renderProperties.faceCullMode;
-            unit.command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
+        for (auto &node : scene.findNodesWithComponent<DeferredRenderComponent>()) {
+            auto &tcomp = node->getComponent<TransformComponent>();
+            auto &comp = node->getComponent<DeferredRenderComponent>();
 
-            unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
-            unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
-            unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
+            DeferredCommand command;
+            command.transform = TransformComponent::walkTransformHierarchy(tcomp);
+            command.material = comp.material.get();
+            command.meshBuffer = &comp.meshBuffer.get();
+            command.outline = comp.outline;
+            command.outlineColor = comp.outlineColor;
+            command.outlineScale = comp.outlineScale;
 
-            scene3d.forward.emplace_back(unit);*/
-
-            if (comp->textureBuffers.size() == 2) {
-                DeferredCommand command;
-                command.material.diffuseTexture = &comp->textureBuffers.at(0).get();
-                command.material.specularTexture = &comp->textureBuffers.at(1).get();
-                command.meshBuffer = &comp->meshBuffers.at(0).get();
-                command.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
-
-                scene3d.deferred.emplace_back(command);
-            }
+            scene3d.deferred.emplace_back(command);
         }
 
         Node *cameraNode;

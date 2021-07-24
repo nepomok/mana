@@ -17,19 +17,34 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENTTYPE_HPP
-#define MANA_COMPONENTTYPE_HPP
+#ifndef MANA_DEFERREDRENDERCOMPONENT_HPP
+#define MANA_DEFERREDRENDERCOMPONENT_HPP
+
+#include "engine/ecs/component.hpp"
+
+#include "engine/render/rendercommand.hpp"
+
+#include "engine/resource/resourcehandle.hpp"
 
 namespace mana {
-    enum ComponentType {
-        NONE,
-        TRANSFORM,
-        CAMERA,
-        LIGHT,
-        SCRIPT,
-        RENDER_FORWARD,
-        RENDER_DEFERRED
+    struct DeferredRenderComponent : public Component {
+        DeferredRenderComponent() : Component(RENDER_DEFERRED) {}
+
+        Component *clone() override {
+            return new DeferredRenderComponent(*this);
+        }
+
+        const std::type_info &getTypeInfo() override {
+            return typeid(DeferredRenderComponent);
+        }
+
+        ResourceHandle<MeshBuffer> meshBuffer;
+        ResourceHandle<Material> material;
+
+        bool outline = false;
+        ColorRGB outlineColor;
+        float outlineScale = 1.1f;
     };
 }
 
-#endif //MANA_COMPONENTTYPE_HPP
+#endif //MANA_DEFERREDRENDERCOMPONENT_HPP
