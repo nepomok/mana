@@ -26,6 +26,7 @@
 #include "engine/resource/render/meshbufferresource.hpp"
 #include "engine/resource/render/shaderresource.hpp"
 #include "engine/resource/render/texturebufferresource.hpp"
+#include "engine/resource/render/materialresource.hpp"
 
 #include "engine/resource/script/monoscriptresource.hpp"
 
@@ -146,6 +147,26 @@ namespace mana {
         return new TextureBufferResource(device, j["imageResourceName"], res, attr);
     }
 
+    ColorRGBA parseColor(const nlohmann::json &j) {
+        return {j.at("r"), j.at("g"), j.at("b"), j["a"]};
+    }
+
+    MaterialResource *parseMaterial(const nlohmann::json &j, ResourceManager *res, RenderDevice &device) {
+        return new MaterialResource(&device,
+                                    res,
+                                    j.contains("diffuse") ? parseColor(j.at("diffuse")) : ColorRGBA(),
+                                    j.contains("ambient") ? parseColor(j.at("ambient")) : ColorRGBA(),
+                                    j.contains("specular") ? parseColor(j.at("specular")) : ColorRGBA(),
+                                    j.contains("emissive") ? parseColor(j.at("emissive")) : ColorRGBA(),
+                                    j.contains("shininess") ? (float) j.at("shininess") : 32,
+                                    j["diffuseTexture"],
+                                    j["ambientTexture"],
+                                    j["specularTexture"],
+                                    j["emissiveTexture"],
+                                    j["shininessTexture"],
+                                    j["normalTexture"]);
+    }
+
     AssetFileResource *parseAssetFile(const nlohmann::json &j) {
         return new AssetFileResource(AssetFile(j["filePath"]));
     }
@@ -178,6 +199,8 @@ namespace mana {
             return parseImageFile(j);
         else if (type == "assetfile")
             return parseAssetFile(j);
+        else if (type == "material")
+            return parseMaterial(j, manager, *device);
         else if (type == "monoscript")
             return parseMonoScript(j, *monoRuntime);
         else if (type == "shader")
