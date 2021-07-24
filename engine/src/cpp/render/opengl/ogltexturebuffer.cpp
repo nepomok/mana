@@ -150,6 +150,58 @@ void OGLTextureBuffer::upload(const ImageBuffer<ColorRGBA> &buffer) {
     checkGLError("OGLTextureBuffer::upload(RGBA)");
 }
 
+void OGLTextureBuffer::upload(const ImageBuffer<float> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("TextureBuffer not texture 2d");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
+
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
+                 0,
+                 GL_RED,
+                 GL_FLOAT,
+                 buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    checkGLError("OGLTextureBuffer::upload(RGBA)");
+}
+
+void OGLTextureBuffer::upload(const ImageBuffer<int> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("TextureBuffer not texture 2d");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
+
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
+                 0,
+                 GL_RED,
+                 GL_INT,
+                 buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    checkGLError("OGLTextureBuffer::upload(RGBA)");
+}
+
 mana::ImageBuffer<ColorRGBA> OGLTextureBuffer::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
@@ -216,4 +268,3 @@ ImageBuffer<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
     }
     return ret;
 }
-
