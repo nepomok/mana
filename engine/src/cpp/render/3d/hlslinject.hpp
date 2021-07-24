@@ -103,7 +103,7 @@ float4 mana_calculate_light_directional(float3 fPos, float3 fNorm, float4 diffus
     return ret;
 }
 
-float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float shininess)
 {
     float4 ret;
     for (int i = 0; i < MANA_LIGHT_COUNT_POINT; i++)
@@ -121,7 +121,7 @@ float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor
 
         float3 viewDir = normalize(MANA_VIEWPOS - fPos);
         float3 reflectDir = reflect(-lightDir, norm);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
+        float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
         float3 specular = MANA_LIGHTS_POINT[i].specular * float3((spec * specularColor).xyz);
         ambient  *= attenuation;
         diffuse  *= attenuation;
