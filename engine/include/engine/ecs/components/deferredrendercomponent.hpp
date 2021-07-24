@@ -43,7 +43,7 @@ namespace mana {
         ResourceHandle<Material> material;
 
         bool outline = false;
-        ColorRGB outlineColor;
+        ColorRGBA outlineColor;
         float outlineScale = 1.1f;
     };
 }

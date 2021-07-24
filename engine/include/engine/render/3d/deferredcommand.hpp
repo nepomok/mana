@@ -39,7 +39,7 @@ namespace mana {
         MeshBuffer *meshBuffer;
 
         bool outline = false;
-        ColorRGB outlineColor;
+        ColorRGBA outlineColor;
         float outlineScale = 1.1f;
     };
 }

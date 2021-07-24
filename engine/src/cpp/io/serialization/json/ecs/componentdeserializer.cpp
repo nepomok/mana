@@ -29,8 +29,10 @@ namespace mana {
     ComponentType convertComponentType(const std::string &str) {
         if (str == "transform")
             return TRANSFORM;
-        else if (str == "render")
+        else if (str == "renderforward")
             return RENDER_FORWARD;
+        else if (str == "renderdeferred")
+            return RENDER_DEFERRED;
         else if (str == "camera")
             return CAMERA;
         else if (str == "light")
@@ -181,6 +183,10 @@ namespace mana {
         return ret;
     }
 
+    ColorRGBA convertColor(const nlohmann::json &j) {
+        return {j.at("r"), j.at("g"), j.at("b"), j["a"]};
+    }
+
     CameraComponent *getCameraComponent(const nlohmann::json &component) {
         auto *ret = new CameraComponent();
         ret->camera.type = convertCameraType(component["cameraType"]);
@@ -206,7 +212,7 @@ namespace mana {
         return ret;
     }
 
-    ForwardRenderComponent *getRenderComponent(const nlohmann::json &component, ResourceManager &res) {
+    ForwardRenderComponent *getForwardRenderComponent(const nlohmann::json &component, ResourceManager &res) {
         auto *ret = new ForwardRenderComponent();
         ret->shader = ResourceHandle<ShaderProgram>(component["shaderResourceName"], &res);
 
@@ -243,6 +249,17 @@ namespace mana {
 
         ret->renderOrder = props["renderOrder"];
 
+        return ret;
+    }
+
+    DeferredRenderComponent *getDeferredRenderComponent(const nlohmann::json &component, ResourceManager &res) {
+        auto *ret = new DeferredRenderComponent();
+        ret->meshBuffer = ResourceHandle<MeshBuffer>(component.at("meshBuffer"), &res);
+        ret->material = ResourceHandle<Material>(component.at("material"), &res);
+        ret->outline = component["outline"];
+        ret->outlineScale = component["outlineScale"];
+        if (component.contains("outlineColor"))
+            ret->outlineColor = convertColor(component.at("outlineColor"));
         return ret;
     }
 
@@ -302,7 +319,10 @@ namespace mana {
                 ret = getCameraComponent(component);
                 break;
             case RENDER_FORWARD:
-                ret = getRenderComponent(component, res);
+                ret = getForwardRenderComponent(component, res);
+                break;
+            case RENDER_DEFERRED:
+                ret = getDeferredRenderComponent(component, res);
                 break;
             case LIGHT:
                 ret = getLightComponent(component);

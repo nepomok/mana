@@ -61,7 +61,7 @@
         },
         {
           "enabled": true,
-          "componentType": "render",
+          "componentType": "renderforward",
           "shaderResourceName": "Shader.default",
           "textureMapping": [
             {
@@ -140,7 +140,7 @@
         },
         {
           "enabled": true,
-          "componentType": "render",
+          "componentType": "renderforward",
           "shaderResourceName": "Shader.skybox",
           "textureMapping": [
             {
