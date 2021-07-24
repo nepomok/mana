@@ -29,10 +29,11 @@ namespace mana {
     public:
         MeshBufferResource();
 
-        MeshBufferResource(RenderDevice &alloc, std::string meshResource, ResourceManager *manager);
+        MeshBufferResource(RenderDevice &alloc, std::string assetResource, std::string meshName, ResourceManager *manager);
 
         MeshBufferResource(RenderDevice &alloc,
-                           std::string meshResource,
+                           std::string assetResource,
+                           std::string meshName,
                            ResourceManager *manager,
                            std::vector<Transform> instanceOffsets);
 
@@ -53,8 +54,10 @@ namespace mana {
     private:
         RenderDevice *device;
 
-        std::string meshResource;
+        std::string assetResource;
         ResourceManager *manager;
+
+        std::string meshName;
 
         std::vector<Transform> instanceOffsets;
 

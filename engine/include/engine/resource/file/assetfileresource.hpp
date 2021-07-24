@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MESHFILERESOURCE_HPP
-#define MANA_MESHFILERESOURCE_HPP
+#ifndef MANA_ASSETFILERESOURCE_HPP
+#define MANA_ASSETFILERESOURCE_HPP
 
 #include <string>
 
@@ -26,13 +26,13 @@
 #include "engine/io/assetfile.hpp"
 
 namespace mana {
-    class MeshFileResource : public Resource<Mesh> {
+    class AssetFileResource : public Resource<Asset> {
     public:
-        MeshFileResource();
+        AssetFileResource();
 
-        explicit MeshFileResource(AssetFile assetFile, std::string meshName);
+        explicit AssetFileResource(AssetFile assetFile);
 
-        ~MeshFileResource() override;
+        ~AssetFileResource() override;
 
         bool isLoaded() override;
 
@@ -42,16 +42,14 @@ namespace mana {
 
         void free() override;
 
-        Mesh &get() override;
+        Asset &get() override;
 
-        Mesh &getOrThrow() override;
+        Asset &getOrThrow() override;
 
     private:
         AssetFile assetFile;
-        std::string meshName;
-        Mesh mesh;
         bool loaded = false;
     };
 }
 
-#endif //MANA_MESHFILERESOURCE_HPP
+#endif //MANA_ASSETFILERESOURCE_HPP

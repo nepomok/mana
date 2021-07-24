@@ -65,8 +65,8 @@ namespace mana {
         return ret;
     }
 
-    AssetFile::MaterialSource convertMaterial(const aiMaterial &assMaterial) {
-        AssetFile::MaterialSource ret;
+    AssetMaterial convertMaterial(const aiMaterial &assMaterial) {
+        AssetMaterial ret;
 
         assMaterial.Get(AI_MATKEY_NAME, ret.name);
 
@@ -91,45 +91,12 @@ namespace mana {
 
         assMaterial.Get(AI_MATKEY_SHININESS, ret.shininess);
 
-        ImageFile img;
-        std::string path;
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
-        img.setFilePath(path);
-
-        ret.diffuseTexture = img.getBuffer();
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_AMBIENT(0), path);
-        img.setFilePath(path);
-
-        ret.ambientTexture = img.getBuffer();
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_SPECULAR(0), path);
-        img.setFilePath(path);
-
-        ret.specularTexture = img.getBuffer();
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_SHININESS(0), path);
-        img.setFilePath(path);
-
-        ret.shininessTexture = img.getBuffer();
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_NORMALS(0), path);
-        img.setFilePath(path);
-
-        ret.normalTexture = img.getBuffer();
-
-        assMaterial.Get(AI_MATKEY_TEXTURE_EMISSIVE(0), path);
-        img.setFilePath(path);
-
-        ret.emissiveTexture = img.getBuffer();
-
         return ret;
     }
 
     void readAssetFile(const std::string &filePath,
                        std::map<std::string, Mesh> &meshes,
-                       std::map<std::string, AssetFile::MaterialSource> &materials) {
+                       std::map<std::string, AssetMaterial> &materials) {
         Assimp::Importer importer;
         const auto *scenePointer = importer.ReadFile(filePath, aiPostProcessSteps::aiProcess_Triangulate);
         if (scenePointer == nullptr)
@@ -163,9 +130,7 @@ namespace mana {
 
     AssetFile::AssetFile(const std::string &filePath) : File(filePath),
                                                         meshes(),
-                                                        materials() {
-        readAssetFile(filePath, meshes, materials);
-    }
+                                                        materials() {}
 
     void AssetFile::open() {
         readAssetFile(filePath, meshes, materials);
@@ -182,7 +147,7 @@ namespace mana {
         return meshes;
     }
 
-    const std::map<std::string, AssetFile::MaterialSource> &AssetFile::getMaterials() {
+    const std::map<std::string, AssetMaterial> &AssetFile::getMaterials() {
         return materials;
     }
 }

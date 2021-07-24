@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/resource/file/meshfileresource.hpp"
+#include "engine/resource/file/assetfileresource.hpp"
 
 #include <stdexcept>
 
@@ -27,47 +27,45 @@
 #include <assimp/postprocess.h>
 
 namespace mana {
-    MeshFileResource::MeshFileResource() : assetFile(), meshName(), mesh() {}
+    AssetFileResource::AssetFileResource() : assetFile() {}
 
-    MeshFileResource::MeshFileResource(AssetFile assetFile, std::string meshName) : assetFile(std::move(assetFile)),
-                                                                                    meshName(std::move(meshName)),
-                                                                                    mesh() {}
+    AssetFileResource::AssetFileResource(AssetFile assetFile) : assetFile(std::move(assetFile)) {}
 
-    MeshFileResource::~MeshFileResource() {
-        MeshFileResource::free();
+    AssetFileResource::~AssetFileResource() {
+        AssetFileResource::free();
     }
 
-    void MeshFileResource::load() {
+    void AssetFileResource::load() {
         if (loaded)
             return;
-        mesh = assetFile.getMeshes().at(meshName);
+        assetFile.open();
         loaded = true;
     }
 
-    void MeshFileResource::free() {
+    void AssetFileResource::free() {
         if (!loaded)
             return;
-        mesh = {};
+        assetFile.close();
         loaded = false;
     }
 
-    Mesh &MeshFileResource::get() {
+    Asset &AssetFileResource::get() {
         if (!loaded)
             throw std::runtime_error("Not loaded");
-        return mesh;
+        return assetFile;
     }
 
-    bool MeshFileResource::isLoaded() {
-        return loaded;
-    }
-
-    bool MeshFileResource::supportAsync() {
-        return false;
-    }
-
-    Mesh &MeshFileResource::getOrThrow() {
+    Asset &AssetFileResource::getOrThrow() {
         if (!loaded)
             throw std::runtime_error("Not loaded");
         return get();
+    }
+
+    bool AssetFileResource::isLoaded() {
+        return loaded;
+    }
+
+    bool AssetFileResource::supportAsync() {
+        return false;
     }
 }

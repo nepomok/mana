@@ -19,7 +19,7 @@
 
 #include "engine/io/json/resource/resourcedeserializer.hpp"
 
-#include "engine/resource/file/meshfileresource.hpp"
+#include "engine/resource/file/assetfileresource.hpp"
 #include "engine/resource/file/textfileresource.hpp"
 #include "engine/resource/file/imagefileresource.hpp"
 
@@ -103,10 +103,6 @@ namespace mana {
         return ret;
     }
 
-    MeshFileResource *parseMeshFile(const nlohmann::json &j) {
-        return new MeshFileResource(AssetFile(j["assetFilePath"]), j["assetName"]);
-    }
-
     TextFileResource *parseTextFile(const nlohmann::json &j) {
         return new TextFileResource(j["filePath"]);
     }
@@ -132,9 +128,9 @@ namespace mana {
             for (auto &t : j["instanceOffsets"]) {
                 offsets.emplace_back(parseTransform(t));
             }
-            return new MeshBufferResource(device, j["meshResourceName"], res, offsets);
+            return new MeshBufferResource(device, j["assetResourceName"], j["meshName"], res, offsets);
         } else {
-            return new MeshBufferResource(device, j["meshResourceName"], res);
+            return new MeshBufferResource(device, j["assetResourceName"], j["meshName"], res);
         }
     }
 
@@ -148,6 +144,10 @@ namespace mana {
         attr.generateMipmap = j["generateMipmap"];
         attr.mipmapFilter = parseMipMapFiltering(j["mipmapFilter"]);
         return new TextureBufferResource(device, j["imageResourceName"], res, attr);
+    }
+
+    AssetFileResource *parseAssetFile(const nlohmann::json &j) {
+        return new AssetFileResource(AssetFile(j["filePath"]));
     }
 
     ResourceDeserializer::ResourceDeserializer()
@@ -172,12 +172,12 @@ namespace mana {
 
         std::string type = j.at("type");
 
-        if (type == "meshfile")
-            return parseMeshFile(j);
-        else if (type == "textfile")
+        if (type == "textfile")
             return parseTextFile(j);
         else if (type == "imagefile")
             return parseImageFile(j);
+        else if (type == "assetfile")
+            return parseAssetFile(j);
         else if (type == "monoscript")
             return parseMonoScript(j, *monoRuntime);
         else if (type == "shader")

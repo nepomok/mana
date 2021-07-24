@@ -21,32 +21,38 @@
 
 #include <utility>
 
+#include "engine/io/asset.hpp"
+
 namespace mana {
     MeshBufferResource::MeshBufferResource()
             : device(nullptr),
-              meshResource(),
+              assetResource(),
               manager(nullptr),
               instanceOffsets(),
               instanced(false),
               mesh(nullptr) {}
 
     MeshBufferResource::MeshBufferResource(RenderDevice &alloc,
-                                           std::string meshResource,
+                                           std::string assetResource,
+                                           std::string meshName,
                                            ResourceManager *manager)
             : device(&alloc),
-              meshResource(std::move(meshResource)),
+              assetResource(std::move(assetResource)),
               manager(manager),
+              meshName(std::move(meshName)),
               instanceOffsets(),
               instanced(false),
               mesh(nullptr) {}
 
     MeshBufferResource::MeshBufferResource(RenderDevice &alloc,
-                                           std::string meshResource,
+                                           std::string assetResource,
+                                           std::string meshName,
                                            ResourceManager *manager,
                                            std::vector<Transform> instanceOffsets)
             : device(&alloc),
-              meshResource(std::move(meshResource)),
+              assetResource(std::move(assetResource)),
               manager(manager),
+              meshName(std::move(meshName)),
               instanceOffsets(std::move(instanceOffsets)),
               instanced(false),
               mesh(nullptr) {}
@@ -59,14 +65,14 @@ namespace mana {
         if (loaded)
             return;
 
-        manager->incrementRef(meshResource);
+        manager->incrementRef(assetResource);
 
-        auto *meshRes = manager->getResource<Mesh>(meshResource);
+        auto *assetRes = manager->getResource<Asset>(assetResource);
 
         if (instanced)
-            mesh = device->createInstancedMeshBuffer(meshRes->get(), instanceOffsets);
+            mesh = device->createInstancedMeshBuffer(assetRes->get().getMeshes().at(meshName), instanceOffsets);
         else
-            mesh = device->createMeshBuffer(meshRes->get());
+            mesh = device->createMeshBuffer(assetRes->get().getMeshes().at(meshName));
 
         loaded = true;
     }
@@ -76,7 +82,7 @@ namespace mana {
             return;
         delete mesh;
         mesh = nullptr;
-        manager->decrementRef(meshResource);
+        manager->decrementRef(assetResource);
         loaded = false;
     }
 

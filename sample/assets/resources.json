@@ -2,16 +2,14 @@
   "resourcesName": "SampleResources",
   "resources": [
     {
-      "name": "Mesh.Plane",
-      "type": "meshfile",
-      "assetFilePath": "assets/meshes/plane.obj",
-      "assetName": "Plane"
+      "name": "Asset.Plane",
+      "type": "assetfile",
+      "filePath": "assets/meshes/plane.obj"
     },
     {
-      "name": "Mesh.Cube",
-      "type": "meshfile",
-      "assetFilePath": "assets/meshes/cube.obj",
-      "assetName": "Cube"
+      "name": "Asset.Cube",
+      "type": "assetfile",
+      "filePath": "assets/meshes/cube.obj"
     },
     {
       "name": "Text.defaultVertexShader",
@@ -63,13 +61,15 @@
     {
       "name": "MeshBuffer.plane",
       "type": "meshbuffer",
-      "meshResourceName": "Mesh.Plane",
+      "assetResourceName": "Asset.Plane",
+      "meshName": "Plane",
       "instanced": false
     },
     {
       "name": "MeshBuffer.cube",
       "type": "meshbuffer",
-      "meshResourceName": "Mesh.Cube",
+      "assetResourceName": "Asset.Cube",
+      "meshName": "Cube",
       "instanced": false
     },
     {

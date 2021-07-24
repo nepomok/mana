@@ -23,6 +23,7 @@
 #include "engine/ecs/component.hpp"
 
 #include "engine/render/rendercommand.hpp"
+#include "engine/render/3d/material.hpp"
 
 #include "engine/resource/resourcehandle.hpp"
 

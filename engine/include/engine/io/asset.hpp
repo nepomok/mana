@@ -17,37 +17,42 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETFILE_HPP
-#define MANA_ASSETFILE_HPP
+#ifndef MANA_ASSET_HPP
+#define MANA_ASSET_HPP
 
 #include <map>
-
-#include "engine/io/file.hpp"
-#include "engine/io/asset.hpp"
+#include <string>
 
 #include "engine/render/mesh.hpp"
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/3d/material.hpp"
 
 namespace mana {
-    class AssetFile : public File, public Asset {
+    // No embedded textures / texture paths support for now
+    struct AssetMaterial {
+        std::string name{};
+
+        ColorRGBA diffuseColor{};
+        ColorRGBA ambientColor{};
+        ColorRGBA specularColor{};
+        float shininess{};
+
+        Material createMaterial(RenderDevice &dev) const {
+            Material ret;
+            ret.diffuse = diffuseColor;
+            ret.ambient = ambientColor;
+            ret.specular = specularColor;
+            ret.shininess = shininess;
+
+            return ret;
+        }
+    };
+
+    class Asset {
     public:
-        AssetFile();
+        virtual const std::map<std::string, Mesh> &getMeshes() = 0;
 
-        explicit AssetFile(const std::string &filePath);
-
-        void open() override;
-
-        void close() override;
-
-        const std::map<std::string, Mesh> &getMeshes() override;
-
-        const std::map<std::string, AssetMaterial> &getMaterials() override;
-
-    private:
-        std::map<std::string, Mesh> meshes;
-        std::map<std::string, AssetMaterial> materials;
+        virtual const std::map<std::string, AssetMaterial> &getMaterials() = 0;
     };
 }
-
-#endif //MANA_ASSETFILE_HPP
+#endif //MANA_ASSET_HPP
