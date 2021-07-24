@@ -81,7 +81,7 @@
       "wrapping": "repeat",
       "filterMin": "linear",
       "filterMag": "linear",
-      "generateMipmap": false,
+      "generateMipmap": true,
       "mipmapFilter": "nearest_mipmap_nearest"
     },
     {
@@ -107,6 +107,12 @@
       "filterMag": "linear",
       "generateMipmap": false,
       "mipmapFilter": "nearest_mipmap_nearest"
+    },
+    {
+      "name": "Material.cube",
+      "type": "material",
+      "diffuseTexture": "Texture.colorMap",
+      "specularTexture": "Texture.specularMap"
     },
     {
       "name": "Script.inputController",

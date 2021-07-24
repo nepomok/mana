@@ -159,12 +159,12 @@ namespace mana {
                                     j.contains("specular") ? parseColor(j.at("specular")) : ColorRGBA(),
                                     j.contains("emissive") ? parseColor(j.at("emissive")) : ColorRGBA(),
                                     j.contains("shininess") ? (float) j.at("shininess") : 32,
-                                    j["diffuseTexture"],
-                                    j["ambientTexture"],
-                                    j["specularTexture"],
-                                    j["emissiveTexture"],
-                                    j["shininessTexture"],
-                                    j["normalTexture"]);
+                                    j.value("diffuseTexture",""),
+                                    j.value("ambientTexture", ""),
+                                    j.value("specularTexture", ""),
+                                    j.value("emissiveTexture", ""),
+                                    j.value("shininessTexture", ""),
+                                    j.value("normalTexture", ""));
     }
 
     AssetFileResource *parseAssetFile(const nlohmann::json &j) {

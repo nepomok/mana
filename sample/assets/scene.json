@@ -116,7 +116,7 @@
       ]
     },
     {
-      "enabled": true,
+      "enabled": false,
       "name": "skybox",
       "components": [
         {
@@ -178,6 +178,37 @@
             "blendDestinationMode": "zero",
             "renderOrder": 0
           }
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "deferredcube",
+      "components": [
+        {
+          "enabled": true,
+          "componentType": "transform",
+          "position": {
+            "x": 0,
+            "y": 2,
+            "z": -5
+          },
+          "rotation": {
+            "x": 0,
+            "y": 45,
+            "z": 0
+          },
+          "scale": {
+            "x": 1,
+            "y": 1,
+            "z": 1
+          }
+        },
+        {
+          "enabled": true,
+          "componentType": "renderdeferred",
+          "meshBuffer": "MeshBuffer.cube",
+          "material": "Material.cube"
         }
       ]
     },
