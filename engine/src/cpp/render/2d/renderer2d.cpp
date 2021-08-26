@@ -106,6 +106,28 @@ namespace mana {
 
     }
 
+    void Renderer2D::draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color) {
+
+    }
+
+    void Renderer2D::draw(Vec2i pos,
+                          const std::string &text,
+                          std::map<char, Character> &mapping,
+                          ShaderProgram *shader) {
+
+    }
+
+    void Renderer2D::draw(Vec2f pos,
+                          const std::string &text,
+                          std::map<char, Character> &mapping,
+                          ShaderProgram *shader) {
+
+    }
+
     void Renderer2D::renderPresent() {
 
     }

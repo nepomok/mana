@@ -22,6 +22,7 @@
 
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
+#include "engine/render/2d/text/character.hpp"
 
 namespace mana {
     /**
@@ -104,6 +105,18 @@ namespace mana {
         void draw(Vec2i start, Vec2i end, ColorRGBA color = {});
 
         void draw(Vec2i point, ColorRGBA color = {});
+
+        /**
+         * Convenience method which handles the spacing of characters in the mapping by rendering
+         * a user defined ascii string.
+         */
+        void draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
+
+        void draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
+
+        void draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ShaderProgram *shader);
+
+        void draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ShaderProgram *shader);
 
         void renderPresent();
 
