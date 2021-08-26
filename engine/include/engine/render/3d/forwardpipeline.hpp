@@ -29,14 +29,14 @@ namespace mana {
     public:
         ForwardPipeline() = default;
 
-        explicit ForwardPipeline(Renderer *ren);
+        explicit ForwardPipeline(RenderDevice &device);
 
         ~ForwardPipeline();
 
         void render(RenderTarget &screen, RenderScene &scene);
 
     private:
-        Renderer *ren{};
+        RenderDevice *renderDevice{};
     };
 }
 

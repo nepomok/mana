@@ -34,7 +34,7 @@ namespace mana {
 
         float shininess{32};
 
-        //Optional textures if a texturebuffer is nullptr the corresponding color is used instead.
+        //Optional textures if a texture buffer is nullptr the corresponding color is used instead.
         TextureBuffer *diffuseTexture = nullptr;
         TextureBuffer *ambientTexture = nullptr;
         TextureBuffer *specularTexture = nullptr;

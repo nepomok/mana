@@ -70,9 +70,9 @@ namespace mana {
         auto *assetRes = manager->getResource<Asset>(assetResource);
 
         if (instanced)
-            mesh = device->createInstancedMeshBuffer(assetRes->get().getMeshes().at(meshName), instanceOffsets);
+            mesh = device->getAllocator().createInstancedMeshBuffer(assetRes->get().getMeshes().at(meshName), instanceOffsets);
         else
-            mesh = device->createMeshBuffer(assetRes->get().getMeshes().at(meshName));
+            mesh = device->getAllocator().createMeshBuffer(assetRes->get().getMeshes().at(meshName));
 
         loaded = true;
     }

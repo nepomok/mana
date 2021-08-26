@@ -116,14 +116,17 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    LightingPass::LightingPass(RenderDevice &device) {
-        shader = device.createShaderProgram(SHADER_VERT_LIGHTING,
-                                            SHADER_FRAG_LIGHTING,
-                                            Renderer3D::getShaderMacros(),
-                                            Renderer3D::getShaderIncludeCallback());
+    LightingPass::LightingPass(RenderDevice &device)
+            : renderDevice(device) {
+        auto &allocator = device.getAllocator();
+
+        shader = allocator.createShaderProgram(SHADER_VERT_LIGHTING,
+                                               SHADER_FRAG_LIGHTING,
+                                               Renderer3D::getShaderMacros(),
+                                               Renderer3D::getShaderIncludeCallback());
     }
 
-    void LightingPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
+    void LightingPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
         //Render screen quad, calculate lighting, store result in screen buffer overwriting existing values.
         int dirCount = 0;
         int pointCount = 0;
@@ -202,7 +205,7 @@ namespace mana {
         command.properties.enableFaceCulling = false;
         command.properties.enableBlending = false;
 
-        auto &ren = gBuffer.getRenderDevice().getRenderer();
+        auto &ren = renderDevice.getRenderer();
 
         ren.renderBegin(screen, RenderOptions({}, screen.getSize(), true, {255, 0, 0, 255}));
         ren.addCommand(command);

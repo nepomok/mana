@@ -27,11 +27,14 @@
 #include "engine/render/renderdevice.hpp"
 
 namespace mana {
+    /**
+     * Users may extend this class and create custom render passes.
+     */
     class RenderPass {
     public:
         virtual ~RenderPass() = default;
 
-        virtual void render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) = 0;
+        virtual void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) = 0;
     };
 }
 

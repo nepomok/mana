@@ -25,23 +25,11 @@
 #include "engine/render/texturebuffer.hpp"
 
 namespace mana {
-    /**
-     * The geometry buffer textures are bound to the following targets:
-     *
-     * position     :   SV_TARGET0
-     * normal       :   SV_TARGET1
-     * diffuse      :   SV_TARGET2
-     * ambient      :   SV_TARGET3
-     * specular     :   SV_TARGET4
-     * shininess    :   SV_TARGET5
-     *
-     * Contained textures and render target are reallocated whenever the size changes.
-     */
     class GeometryBuffer {
     public:
         GeometryBuffer() = default;
 
-        explicit GeometryBuffer(RenderDevice &device, Vec2i size = {640, 320});
+        explicit GeometryBuffer(RenderAllocator &allocator, Vec2i size = {640, 320});
 
         ~GeometryBuffer();
 
@@ -49,8 +37,18 @@ namespace mana {
 
         Vec2i getSize();
 
-        RenderDevice &getRenderDevice();
-
+        /**
+        * The geometry buffer textures are bound to the following targets:
+        *
+        * position     :   SV_TARGET0
+        * normal       :   SV_TARGET1
+        * diffuse      :   SV_TARGET2
+        * ambient      :   SV_TARGET3
+        * specular     :   SV_TARGET4
+        * shininess    :   SV_TARGET5
+        *
+        * Contained textures and render target are reallocated whenever the size changes.
+        */
         RenderTarget &getRenderTarget();
 
         TextureBuffer &getPosition();
@@ -70,10 +68,10 @@ namespace mana {
         MeshBuffer &getScreenQuad();
 
     private:
-        RenderDevice *renderDevice{};
-        Vec2i size;
-
+        RenderAllocator *renderAllocator{};
         RenderTarget *renderTarget{};
+
+        Vec2i size;
 
         TextureBuffer *position{};
         TextureBuffer *normal{};

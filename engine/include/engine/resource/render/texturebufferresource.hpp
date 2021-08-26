@@ -30,7 +30,7 @@ namespace mana {
     public:
         TextureBufferResource();
 
-        TextureBufferResource(RenderDevice &allocator,
+        TextureBufferResource(RenderDevice &device,
                               std::string image,
                               ResourceManager *manager,
                               TextureBuffer::Attributes attributes);
@@ -50,7 +50,7 @@ namespace mana {
         TextureBuffer &getOrThrow() override;
 
     private:
-        RenderDevice *alloc;
+        RenderDevice *renderDevice;
 
         std::string image;
         ResourceManager *manager;

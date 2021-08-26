@@ -50,7 +50,7 @@ namespace mana {
         manager->incrementRef(fragmentShader);
         auto *vertexRes = manager->getResource<std::string>(vertexShader);
         auto *fragmentRes = manager->getResource<std::string>(fragmentShader);
-        shader = device->createShaderProgram(vertexRes->get(),
+        shader = device->getAllocator().createShaderProgram(vertexRes->get(),
                                              fragmentRes->get(),
                                              Renderer3D::getShaderMacros(),
                                              Renderer3D::getShaderIncludeCallback());

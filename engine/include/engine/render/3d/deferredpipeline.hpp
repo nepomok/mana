@@ -37,7 +37,7 @@ namespace mana {
          * @param ren
          * @param passes The render passes to use in this pipeline. The pipeline destructor deletes the passes.
          */
-        explicit DeferredPipeline(RenderDevice &device, std::vector<RenderPass *> passes);
+        DeferredPipeline(RenderDevice &device, std::vector<RenderPass *> passes);
 
         ~DeferredPipeline();
 
@@ -50,7 +50,7 @@ namespace mana {
         void render(RenderTarget &screen, RenderScene &scene);
 
     private:
-        Renderer *ren{};
+        RenderDevice *renderDevice{};
         GeometryBuffer gBuffer;
         std::vector<RenderPass *> passes;
     };

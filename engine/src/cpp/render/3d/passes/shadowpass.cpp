@@ -20,7 +20,7 @@
 #include "engine/render/3d/passes/shadowpass.hpp"
 
 namespace mana {
-    void ShadowPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
+    void ShadowPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
         //Render screen quad, calculate shadows, mix result with existing value in the screen target.
     }
 }

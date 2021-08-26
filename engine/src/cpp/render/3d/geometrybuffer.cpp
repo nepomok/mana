@@ -20,20 +20,21 @@
 #include "engine/render/3d/geometrybuffer.hpp"
 
 namespace mana {
-    GeometryBuffer::GeometryBuffer(RenderDevice &device, Vec2i size) : renderDevice(&device), size(size) {
+    GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(&allocator), size(size) {
         TextureBuffer::Attributes attr;
         attr.size = size;
         attr.format = TextureBuffer::RGB32F;
-        position = device.createTextureBuffer(attr);
-        normal = device.createTextureBuffer(attr);
-        attr.format = TextureBuffer::RGB;
-        diffuse = device.createTextureBuffer(attr);
-        ambient = device.createTextureBuffer(attr);
-        specular = device.createTextureBuffer(attr);
-        attr.format = TextureBuffer::R32F;
-        shininess = device.createTextureBuffer(attr);
 
-        renderTarget = device.createRenderTarget(size, 0);
+        position = allocator.createTextureBuffer(attr);
+        normal = allocator.createTextureBuffer(attr);
+        attr.format = TextureBuffer::RGB;
+        diffuse = allocator.createTextureBuffer(attr);
+        ambient = allocator.createTextureBuffer(attr);
+        specular = allocator.createTextureBuffer(attr);
+        attr.format = TextureBuffer::R32F;
+        shininess = allocator.createTextureBuffer(attr);
+
+        renderTarget = allocator.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
         renderTarget->attachColor(0, *position);
         renderTarget->attachColor(1, *normal);
@@ -43,7 +44,7 @@ namespace mana {
         renderTarget->attachColor(5, *shininess);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
-        depthStencil = renderDevice->createTextureBuffer(attr);
+        depthStencil = allocator.createTextureBuffer(attr);
 
         renderTarget->attachDepthStencil(*depthStencil);
 
@@ -56,7 +57,7 @@ namespace mana {
                                     Vertex({1, -1, 0}, {1, 0}),
                                     Vertex({-1, -1, 0}, {0, 0})
                             });
-        screenQuad = device.createMeshBuffer(quadMesh);
+        screenQuad = allocator.createMeshBuffer(quadMesh);
     }
 
     GeometryBuffer::~GeometryBuffer() {
@@ -94,19 +95,21 @@ namespace mana {
         delete depthStencil;
         delete renderTarget;
 
+        auto &allocator = *renderAllocator;
+
         TextureBuffer::Attributes attr;
         attr.size = size;
         attr.format = TextureBuffer::RGB32F;
-        position = renderDevice->createTextureBuffer(attr);
-        normal = renderDevice->createTextureBuffer(attr);
+        position = allocator.createTextureBuffer(attr);
+        normal = allocator.createTextureBuffer(attr);
         attr.format = TextureBuffer::RGB;
-        diffuse = renderDevice->createTextureBuffer(attr);
-        ambient = renderDevice->createTextureBuffer(attr);
-        specular = renderDevice->createTextureBuffer(attr);
+        diffuse = allocator.createTextureBuffer(attr);
+        ambient = allocator.createTextureBuffer(attr);
+        specular = allocator.createTextureBuffer(attr);
         attr.format = TextureBuffer::R32F;
-        shininess = renderDevice->createTextureBuffer(attr);
+        shininess = allocator.createTextureBuffer(attr);
 
-        renderTarget = renderDevice->createRenderTarget(size, 0);
+        renderTarget = allocator.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
         renderTarget->attachColor(0, *position);
         renderTarget->attachColor(1, *normal);
@@ -116,18 +119,13 @@ namespace mana {
         renderTarget->attachColor(5, *shininess);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
-        depthStencil = renderDevice->createTextureBuffer(attr);
+        depthStencil = allocator.createTextureBuffer(attr);
 
         renderTarget->attachDepthStencil(*depthStencil);
     }
 
     Vec2i GeometryBuffer::getSize() {
         return size;
-    }
-
-    RenderDevice &GeometryBuffer::getRenderDevice() {
-        assert(renderDevice != nullptr);
-        return *renderDevice;
     }
 
     RenderTarget &GeometryBuffer::getRenderTarget() {

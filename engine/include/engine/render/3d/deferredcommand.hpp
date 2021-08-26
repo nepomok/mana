@@ -31,10 +31,11 @@ namespace mana {
         DeferredCommand() : transform(), meshBuffer() {}
 
         DeferredCommand(Transform t, Material material, MeshBuffer *meshBuffer) : transform(t),
-                                                                                  material(std::move(material)),
+                                                                                  material(material),
                                                                                   meshBuffer(meshBuffer) {}
 
-        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
+        Transform transform; // The transform affects the View matrices provided to shaders via mana.hlsl
+
         Material material;
         MeshBuffer *meshBuffer;
 

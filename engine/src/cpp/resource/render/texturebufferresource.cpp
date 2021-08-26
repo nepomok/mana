@@ -21,17 +21,17 @@
 
 namespace mana {
     TextureBufferResource::TextureBufferResource()
-            : alloc(nullptr),
+            : renderDevice(nullptr),
               image(),
               manager(nullptr),
               attrib(),
               texture(nullptr) {}
 
-    TextureBufferResource::TextureBufferResource(RenderDevice &allocator,
+    TextureBufferResource::TextureBufferResource(RenderDevice &device,
                                                  std::string image,
                                                  ResourceManager *manager,
                                                  TextureBuffer::Attributes attributes)
-            : alloc(&allocator),
+            : renderDevice(&device),
               image(std::move(image)),
               manager(manager),
               attrib(attributes),
@@ -49,7 +49,7 @@ namespace mana {
         attrib.size = img->get().getSize();
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;
-        texture = alloc->createTextureBuffer(attrib);
+        texture = renderDevice->getAllocator().createTextureBuffer(attrib);
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP) {
             texture->uploadCubeMap(img->get());
         } else {

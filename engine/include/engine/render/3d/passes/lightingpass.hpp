@@ -29,9 +29,11 @@ namespace mana {
 
         ~LightingPass() override = default;
 
-        void render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) override;
+        void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) override;
 
     private:
+        RenderDevice &renderDevice;
+
         ShaderProgram *shader;
     };
 }

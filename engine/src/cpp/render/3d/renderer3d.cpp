@@ -48,13 +48,10 @@ namespace mana {
 
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes)
             : device(&device),
-              forwardPipeline(&device.getRenderer()),
-              deferredPipeline(device, std::move(passes)) {
+              forwardPipeline(device),
+              deferredPipeline(device, std::move(passes)) {}
 
-    }
-
-    Renderer3D::~Renderer3D() {
-    }
+    Renderer3D::~Renderer3D() = default;
 
     void Renderer3D::render(RenderTarget &target,
                             RenderScene &scene) {

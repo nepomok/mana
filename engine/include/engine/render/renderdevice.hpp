@@ -27,6 +27,7 @@
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderobject.hpp"
 #include "engine/render/mesh.hpp"
+#include "engine/render/renderallocator.hpp"
 
 namespace mana {
     class RenderDevice {
@@ -35,19 +36,7 @@ namespace mana {
 
         virtual Renderer &getRenderer() = 0;
 
-        virtual RenderTarget *createRenderTarget(Vec2i size, int samples) = 0;
-
-        virtual TextureBuffer *createTextureBuffer(TextureBuffer::Attributes attributes) = 0;
-
-        virtual MeshBuffer *createMeshBuffer(const Mesh &mesh) = 0;
-
-        virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
-
-        virtual ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                                   const std::string &fragmentShader,
-                                                   const std::map<std::string, std::string> &macros,
-                                                   const std::function<std::string(
-                                                           const char *)> &includeCallback) = 0;
+        virtual RenderAllocator &getAllocator() = 0;
     };
 }
 

@@ -29,13 +29,15 @@ namespace mana {
 
         ~GeometryPass() override;
 
-        void render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) override;
+        void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) override;
 
     private:
+        RenderDevice &renderDevice;
+
         ShaderProgram *shaderTextureNormals;
         ShaderProgram *shaderVertexNormals;
 
-        //The default texture buffers with a size of 1x1 pixels into which the color values of the material
+        // The default texture buffers with a size of 1x1 pixels into which the color values of the material
         // are stored if the user did not specify a texture in the material.
         TextureBuffer *diffuseDefault;
         TextureBuffer *ambientDefault;

@@ -23,6 +23,7 @@
 #include <mana.hpp>
 
 #include "render/opengl/oglrenderer.hpp"
+#include "render/opengl/oglrenderallocator.hpp"
 
 namespace mana {
     namespace opengl {
@@ -34,22 +35,11 @@ namespace mana {
 
             Renderer &getRenderer() override;
 
-            RenderTarget *createRenderTarget(Vec2i size, int samples) override;
-
-            TextureBuffer *createTextureBuffer(TextureBuffer::Attributes attributes) override;
-
-            MeshBuffer *createMeshBuffer(const Mesh &mesh) override;
-
-            MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) override;
-
-            ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                               const std::string &fragmentShader,
-                                               const std::map<std::string, std::string> &macros,
-                                               const std::function<std::string(
-                                                       const char *)> &includeCallback) override;
+            RenderAllocator &getAllocator() override;
 
         private:
             OGLRenderer renderer;
+            OGLRenderAllocator allocator;
         };
     }
 }

@@ -152,15 +152,18 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    GeometryPass::GeometryPass(RenderDevice &device) {
-        shaderTextureNormals = device.createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                          SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
-                                                          Renderer3D::getShaderMacros(),
-                                                          Renderer3D::getShaderIncludeCallback());
-        shaderVertexNormals = device.createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                         SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
-                                                         Renderer3D::getShaderMacros(),
-                                                         Renderer3D::getShaderIncludeCallback());
+    GeometryPass::GeometryPass(RenderDevice &device)
+            : renderDevice(device) {
+        auto &allocator = device.getAllocator();
+
+        shaderTextureNormals = allocator.createShaderProgram(SHADER_VERT_GEOMETRY,
+                                                             SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
+                                                             Renderer3D::getShaderMacros(),
+                                                             Renderer3D::getShaderIncludeCallback());
+        shaderVertexNormals = allocator.createShaderProgram(SHADER_VERT_GEOMETRY,
+                                                            SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
+                                                            Renderer3D::getShaderMacros(),
+                                                            Renderer3D::getShaderIncludeCallback());
         TextureBuffer::Attributes attributes;
         attributes.size = Vec2i(1, 1);
         attributes.format = TextureBuffer::RGBA;
@@ -168,13 +171,13 @@ namespace mana {
         attributes.generateMipmap = false;
         attributes.wrapping = TextureBuffer::REPEAT;
 
-        diffuseDefault = device.createTextureBuffer(attributes);
-        ambientDefault = device.createTextureBuffer(attributes);
-        specularDefault = device.createTextureBuffer(attributes);
-        emissiveDefault = device.createTextureBuffer(attributes);
+        diffuseDefault = allocator.createTextureBuffer(attributes);
+        ambientDefault = allocator.createTextureBuffer(attributes);
+        specularDefault = allocator.createTextureBuffer(attributes);
+        emissiveDefault = allocator.createTextureBuffer(attributes);
 
         attributes.format = TextureBuffer::R32F;
-        shininessDefault = device.createTextureBuffer(attributes);
+        shininessDefault = allocator.createTextureBuffer(attributes);
     }
 
     GeometryPass::~GeometryPass() {
@@ -187,8 +190,8 @@ namespace mana {
         delete shininessDefault;
     }
 
-    void GeometryPass::render(RenderTarget &screen, GeometryBuffer &gBuffer, RenderScene &scene) {
-        auto &ren = gBuffer.getRenderDevice().getRenderer();
+    void GeometryPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
+        auto &ren = renderDevice.getRenderer();
 
         shaderTextureNormals->setTexture("diffuse", 0);
         shaderTextureNormals->setTexture("ambient", 1);

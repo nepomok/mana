@@ -91,14 +91,14 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace mana {
-    ShaderProgram *getDefaultOutlineShader(RenderDevice &device) {
-        return device.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                          SHADER_FRAG_OUTLINE_DEFAULT,
-                                          {},
-                                          {});
+    static ShaderProgram *getDefaultOutlineShader(RenderAllocator &alloc) {
+        return alloc.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
+                                         SHADER_FRAG_OUTLINE_DEFAULT,
+                                         {},
+                                         {});
     }
 
-    ForwardPipeline::ForwardPipeline(Renderer *ren) : ren(ren) {}
+    ForwardPipeline::ForwardPipeline(RenderDevice &device) : renderDevice(&device) {}
 
     ForwardPipeline::~ForwardPipeline() = default;
 
@@ -108,11 +108,14 @@ namespace mana {
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
+        auto &ren = renderDevice->getRenderer();
+
         // Dont clear color and depth
-        ren->renderBegin(screen, RenderOptions({},
-                                               screen.getSize(),
-                                               true,
-                                               {}, false, false, false));
+        ren.renderBegin(screen, RenderOptions({},
+                                              screen.getSize(),
+                                              true,
+                                              {},
+                                              false, false, false));
 
         for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);
@@ -178,9 +181,9 @@ namespace mana {
 
             shader.setVec3("MANA_VIEWPOS", scene.camera.transform.position);
 
-            ren->addCommand(unit.command);
+            ren.addCommand(unit.command);
         }
 
-        ren->renderFinish();
+        ren.renderFinish();
     }
 }

@@ -21,10 +21,9 @@
 
 namespace mana {
     DeferredPipeline::DeferredPipeline(RenderDevice &device, std::vector<RenderPass *> passes)
-            : ren(&device.getRenderer()),
+            : renderDevice(&device),
               passes(std::move(passes)),
-              gBuffer(device) {
-    }
+              gBuffer(device.getAllocator()) {}
 
     DeferredPipeline::~DeferredPipeline() {
         for (auto *p : passes)
@@ -35,7 +34,7 @@ namespace mana {
         gBuffer.setSize(screen.getSize());
 
         for (auto *pass : passes) {
-            pass->render(screen, gBuffer, scene);
+            pass->render(screen, scene, gBuffer);
         }
 
         // Blit depth from geometry buffer to screen target, the geometry buffer target contains the correct

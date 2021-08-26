@@ -31,7 +31,9 @@ namespace mana {
      * -X - -|- - +X
      *       |
      *      +Y
+     *
      * with 0,0 at the top left and depending on the argument types of the called function either:
+     *
      *  float(Normalized screen coordinates) = 1,1 the lower right
      *  int(Pixel coordinates) = viewport width - 1, viewport height - 1 at the lower right.
      */
@@ -49,7 +51,11 @@ namespace mana {
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, const ShaderProgram &shader, Vec2f center,
+        void draw(Rectf srcRect,
+                  Rectf dstRect,
+                  const TextureBuffer &texture,
+                  const ShaderProgram &shader,
+                  Vec2f center,
                   float rotation);
 
         void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, const ShaderProgram &shader);
@@ -68,7 +74,11 @@ namespace mana {
 
         void draw(Vec2f point, ColorRGBA color = {});
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, const ShaderProgram &shader, Vec2i center,
+        void draw(Recti srcRect,
+                  Recti dstRect,
+                  const TextureBuffer &texture,
+                  const ShaderProgram &shader,
+                  Vec2i center,
                   float rotation);
 
         void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, const ShaderProgram &shader);

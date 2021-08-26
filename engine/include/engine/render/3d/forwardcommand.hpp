@@ -33,7 +33,7 @@ namespace mana {
         ForwardCommand(Transform t, RenderCommand command) : transform(t),
                                                              command(std::move(command)) {}
 
-        Transform transform; // The transform affects the View matrices provided to user shaders via mana.hlsl
+        Transform transform; // The transform affects the View matrices provided to shaders via mana.hlsl
         RenderCommand command;
     };
 }

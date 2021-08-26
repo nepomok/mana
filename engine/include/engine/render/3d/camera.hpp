@@ -38,13 +38,14 @@ namespace mana {
 
         explicit Camera(CameraType type) : type(type) {}
 
-        virtual Mat4f view() const {
+        Mat4f view() const {
             Mat4f ret = MatrixMath::rotate(transform.rotation);
-            //The engines move the universe (Negate camera position)
+
+            // "The engines move the universe" - Futurama (Negate camera position)
             return ret * MatrixMath::translate(transform.position * -1);
         }
 
-        virtual Mat4f projection() const {
+        Mat4f projection() const {
             switch (type) {
                 case ORTHOGRAPHIC:
                     return MatrixMath::ortho(left,
