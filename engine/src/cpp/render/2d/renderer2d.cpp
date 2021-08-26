@@ -24,15 +24,11 @@ namespace mana {
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {}
 
-    void Renderer2D::setEnableAlphaBlending(bool enable) {
+    void Renderer2D::renderBegin(const RenderTarget &target, bool clear) {
 
     }
 
-    void Renderer2D::renderBegin(const RenderTarget &target) {
-
-    }
-
-    void Renderer2D::renderBegin(const RenderTarget &target, Vec2i viewportOffset, Vec2i viewportSize) {
+    void Renderer2D::renderBegin(const RenderTarget &target, bool clear, Vec2i viewportOffset, Vec2i viewportSize) {
 
     }
 
@@ -112,9 +108,5 @@ namespace mana {
 
     void Renderer2D::renderPresent() {
 
-    }
-
-    const RenderDevice &Renderer2D::getRenderDevice() {
-        return *renderDevice;
     }
 }

@@ -25,6 +25,9 @@
 
 namespace mana {
     /**
+     * This is a SDL inspired 2d renderer.
+     * It uses a similar interface to SDL in a object oriented manner.
+     *
      * The 2d renderer uses the following coordinate system:
      *      -Y
      *       |
@@ -36,6 +39,12 @@ namespace mana {
      *
      *  float(Normalized screen coordinates) = 1,1 the lower right
      *  int(Pixel coordinates) = viewport width - 1, viewport height - 1 at the lower right.
+     *
+     * The Renderer2D ignores depth information stored in the render target.
+     * The order in which methods are invoked controls which elements are drawn below / above.
+     *
+     * For example when drawing a rectangle texture first and then drawing a triangle texture afterwards
+     * the triangle will be drawn on top of the rectangle.
      */
     class Renderer2D {
     public:
@@ -43,11 +52,10 @@ namespace mana {
 
         explicit Renderer2D(RenderDevice &device);
 
-        void setEnableAlphaBlending(bool enable);
-
-        void renderBegin(const RenderTarget &target);
+        void renderBegin(const RenderTarget &target, bool clear);
 
         void renderBegin(const RenderTarget &target,
+                         bool clear,
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
@@ -98,8 +106,6 @@ namespace mana {
         void draw(Vec2i point, ColorRGBA color = {});
 
         void renderPresent();
-
-        const RenderDevice &getRenderDevice();
 
     private:
         RenderDevice *renderDevice = nullptr;
