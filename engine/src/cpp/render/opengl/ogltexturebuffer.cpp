@@ -173,7 +173,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<float> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(RGBA)");
+    checkGLError("OGLTextureBuffer::upload(float)");
 }
 
 void OGLTextureBuffer::upload(const ImageBuffer<int> &buffer) {
@@ -199,7 +199,59 @@ void OGLTextureBuffer::upload(const ImageBuffer<int> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(RGBA)");
+    checkGLError("OGLTextureBuffer::upload(int)");
+}
+
+void OGLTextureBuffer::upload(const ImageBuffer<char> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("TextureBuffer not texture 2d");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
+
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
+                 0,
+                 GL_RED,
+                 GL_BYTE,
+                 buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    checkGLError("OGLTextureBuffer::upload(char)");
+}
+
+void OGLTextureBuffer::upload(const ImageBuffer<unsigned char> &buffer) {
+    if (attributes.textureType != TEXTURE_2D)
+        throw std::runtime_error("TextureBuffer not texture 2d");
+    if (!(buffer.getSize() == attributes.size))
+        throw std::runtime_error("Upload size mismatch");
+
+    glBindTexture(GL_TEXTURE_2D, handle);
+    glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 OGLTypeConverter::convert(attributes.format),
+                 attributes.size.x,
+                 attributes.size.y,
+                 0,
+                 GL_RED,
+                 GL_UNSIGNED_BYTE,
+                 buffer.getData());
+
+    if (attributes.generateMipmap) {
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    checkGLError("OGLTextureBuffer::upload(unsigned char)");
 }
 
 mana::ImageBuffer<ColorRGBA> OGLTextureBuffer::download() {

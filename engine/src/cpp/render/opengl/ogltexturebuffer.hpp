@@ -46,6 +46,10 @@ namespace mana {
 
             void upload(const ImageBuffer<int> &buffer) override;
 
+            void upload(const ImageBuffer<char> &buffer) override;
+
+            void upload(const ImageBuffer<unsigned char> &buffer) override;
+
             ImageBuffer<ColorRGBA> download() override;
 
             void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) override;

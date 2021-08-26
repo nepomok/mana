@@ -150,13 +150,17 @@ namespace mana {
 
         ~TextureBuffer() override = default;
 
-        virtual void upload(const ImageBuffer <ColorRGB> &buffer) = 0;
+        virtual void upload(const ImageBuffer<ColorRGB> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer <ColorRGBA> &buffer) = 0;
+        virtual void upload(const ImageBuffer<ColorRGBA> &buffer) = 0;
 
         virtual void upload(const ImageBuffer<float> &buffer) = 0;
 
         virtual void upload(const ImageBuffer<int> &buffer) = 0;
+
+        virtual void upload(const ImageBuffer<char> &buffer) = 0;
+
+        virtual void upload(const ImageBuffer<unsigned char> &buffer) = 0;
 
         virtual ImageBuffer <ColorRGBA> download() = 0;
 
