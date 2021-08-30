@@ -40,19 +40,19 @@ namespace mana {
 
             ~QtOGLRenderTexture() override;
 
-            void upload(const ImageBuffer <ColorRGB> &buffer) override;
+            void upload(const Image <ColorRGB> &buffer) override;
 
-            void upload(const ImageBuffer <ColorRGBA> &buffer) override;
+            void upload(const Image <ColorRGBA> &buffer) override;
 
-            ImageBuffer<ColorRGBA> download() override;
+            Image<ColorRGBA> download() override;
 
-            void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) override;
+            void upload(CubeMapFace face, const Image <ColorRGBA> &buffer) override;
 
-            ImageBuffer<ColorRGBA> download(CubeMapFace face) override;
+            Image<ColorRGBA> download(CubeMapFace face) override;
 
-            void uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) override;
+            void uploadCubeMap(const Image<ColorRGBA> &buffer) override;
 
-            ImageBuffer<ColorRGBA> downloadCubeMap() override;
+            Image<ColorRGBA> downloadCubeMap() override;
         };
     }
 }

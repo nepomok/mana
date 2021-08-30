@@ -38,27 +38,27 @@ namespace mana {
 
             ~OGLTextureBuffer() override;
 
-            void upload(const ImageBuffer <ColorRGB> &buffer) override;
+            void upload(const Image <ColorRGB> &buffer) override;
 
-            void upload(const ImageBuffer <ColorRGBA> &buffer) override;
+            void upload(const Image <ColorRGBA> &buffer) override;
 
-            void upload(const ImageBuffer<float> &buffer) override;
+            void upload(const Image<float> &buffer) override;
 
-            void upload(const ImageBuffer<int> &buffer) override;
+            void upload(const Image<int> &buffer) override;
 
-            void upload(const ImageBuffer<char> &buffer) override;
+            void upload(const Image<char> &buffer) override;
 
-            void upload(const ImageBuffer<unsigned char> &buffer) override;
+            void upload(const Image<unsigned char> &buffer) override;
 
-            ImageBuffer<ColorRGBA> download() override;
+            Image<ColorRGBA> download() override;
 
-            void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) override;
+            void upload(CubeMapFace face, const Image <ColorRGBA> &buffer) override;
 
-            ImageBuffer<ColorRGBA> download(CubeMapFace face) override;
+            Image<ColorRGBA> download(CubeMapFace face) override;
 
-            void uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) override;
+            void uploadCubeMap(const Image<ColorRGBA> &buffer) override;
 
-            ImageBuffer<ColorRGBA> downloadCubeMap() override;
+            Image<ColorRGBA> downloadCubeMap() override;
         };
     }
 }

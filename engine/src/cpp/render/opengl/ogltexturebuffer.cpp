@@ -103,7 +103,7 @@ OGLTextureBuffer::~OGLTextureBuffer() {
     glDeleteTextures(1, &handle);
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<ColorRGB> &buffer) {
+void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("Invalid texture type");
     if (!(buffer.getSize() == attributes.size))
@@ -129,7 +129,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<ColorRGB> &buffer) {
     checkGLError("OGLTextureBuffer::upload(RGB)");
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -155,7 +155,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<ColorRGBA> &buffer) {
     checkGLError("OGLTextureBuffer::upload(RGBA)");
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<float> &buffer) {
+void OGLTextureBuffer::upload(const Image<float> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -181,7 +181,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<float> &buffer) {
     checkGLError("OGLTextureBuffer::upload(float)");
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<int> &buffer) {
+void OGLTextureBuffer::upload(const Image<int> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -207,7 +207,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<int> &buffer) {
     checkGLError("OGLTextureBuffer::upload(int)");
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<char> &buffer) {
+void OGLTextureBuffer::upload(const Image<char> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -233,7 +233,7 @@ void OGLTextureBuffer::upload(const ImageBuffer<char> &buffer) {
     checkGLError("OGLTextureBuffer::upload(char)");
 }
 
-void OGLTextureBuffer::upload(const ImageBuffer<unsigned char> &buffer) {
+void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -259,11 +259,11 @@ void OGLTextureBuffer::upload(const ImageBuffer<unsigned char> &buffer) {
     checkGLError("OGLTextureBuffer::upload(unsigned char)");
 }
 
-mana::ImageBuffer<ColorRGBA> OGLTextureBuffer::download() {
+mana::Image<ColorRGBA> OGLTextureBuffer::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 
-    auto output = ImageBuffer<ColorRGBA>(attributes.size);
+    auto output = Image<ColorRGBA>(attributes.size);
     glBindTexture(GL_TEXTURE_2D, handle);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *) output.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -271,7 +271,7 @@ mana::ImageBuffer<ColorRGBA> OGLTextureBuffer::download() {
     return output;
 }
 
-void OGLTextureBuffer::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
     if (!(buffer.getSize() == attributes.size))
@@ -297,14 +297,14 @@ void OGLTextureBuffer::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &bu
     checkGLError("OGLTextureBuffer::upload(CUBEMAP)");
 }
 
-ImageBuffer<ColorRGBA> OGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
+Image<ColorRGBA> OGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
 
     throw std::runtime_error("Not Implemented");
 }
 
-void OGLTextureBuffer::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
+void OGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
     auto faceSize = buffer.getSize();
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
@@ -316,10 +316,10 @@ void OGLTextureBuffer::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
     }
 }
 
-ImageBuffer<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
+Image<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
     auto size = attributes.size;
     size.x = size.x * 6;
-    ImageBuffer<ColorRGBA> ret(size);
+    Image<ColorRGBA> ret(size);
     for (int i = 0; i < 6; i++) {
         ret.blit({Vec2i(i * attributes.size.x, 0), attributes.size}, download(static_cast<CubeMapFace>(i)));
     }

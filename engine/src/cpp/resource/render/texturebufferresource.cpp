@@ -45,7 +45,7 @@ namespace mana {
         if (loaded)
             return;
         manager->incrementRef(image);
-        auto *img = manager->getResource<ImageBuffer<ColorRGBA>>(image);
+        auto *img = manager->getResource<Image<ColorRGBA>>(image);
         attrib.size = img->get().getSize();
         if (attrib.textureType == TextureBuffer::TEXTURE_CUBE_MAP)
             attrib.size.x = attrib.size.x / 6;

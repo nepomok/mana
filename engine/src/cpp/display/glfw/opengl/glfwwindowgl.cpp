@@ -352,7 +352,7 @@ namespace mana {
             glfwSetWindowTitle(wndH, title.c_str());
         }
 
-        void GLFWWindowGL::setIcon(ImageBuffer<ColorRGBA> &buffer) {
+        void GLFWWindowGL::setIcon(Image<ColorRGBA> &buffer) {
             throw std::runtime_error("Not Implemented");
         }
 

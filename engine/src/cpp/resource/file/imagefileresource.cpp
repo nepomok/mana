@@ -24,11 +24,11 @@
 #include <cstring>
 
 namespace mana {
-    ImageBuffer<ColorRGBA> readImageFile_(const std::string &filePath) {
+    Image<ColorRGBA> readImageFile_(const std::string &filePath) {
         int width, height, nrChannels;
         stbi_uc *data = stbi_load(filePath.c_str(), &width, &height, &nrChannels, 4);
         if (data) {
-            auto ret = ImageBuffer<ColorRGBA>(width, height);
+            auto ret = Image<ColorRGBA>(width, height);
             std::memcpy(ret.getData(), data, (width * height) * (sizeof(stbi_uc) * 4));
             stbi_image_free(data);
             return ret;
@@ -64,7 +64,7 @@ namespace mana {
         loaded = false;
     }
 
-    ImageBuffer<ColorRGBA> &ImageFileResource::get() {
+    Image<ColorRGBA> &ImageFileResource::get() {
         if (!loaded)
             throw std::runtime_error("Not loaded");
         return buffer;
@@ -78,7 +78,7 @@ namespace mana {
         return false;
     }
 
-    ImageBuffer<ColorRGBA> &ImageFileResource::getOrThrow() {
+    Image<ColorRGBA> &ImageFileResource::getOrThrow() {
         if (!loaded)
             throw std::runtime_error("Not loaded");
         return get();

@@ -319,7 +319,7 @@ namespace mana {
             if (scene.skybox == nullptr) {
                 for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
                     skyboxDefault->upload(static_cast<TextureBuffer::CubeMapFace>(i),
-                                          ImageBuffer<ColorRGBA>(1, 1, {scene.skyboxColor}));
+                                          Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
                 }
                 command.textures.emplace_back(skyboxDefault);
             } else {
@@ -367,7 +367,7 @@ namespace mana {
                 c.textures.emplace_back(command.material.specularTexture);
             }
             if (command.material.shininessTexture == nullptr) {
-                shininessDefault->upload(ImageBuffer<float>(1, 1, {command.material.shininess}));
+                shininessDefault->upload(Image<float>(1, 1, {command.material.shininess}));
                 c.textures.emplace_back(shininessDefault);
             } else {
                 c.textures.emplace_back(command.material.shininessTexture);

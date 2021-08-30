@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGEBUFFER_HPP
-#define MANA_IMAGEBUFFER_HPP
+#ifndef MANA_IMAGE_HPP
+#define MANA_IMAGE_HPP
 
 #include <vector>
 #include <stdexcept>
@@ -33,23 +33,23 @@ namespace mana {
      * @tparam T The type to use for a pixel
      */
     template<typename T>
-    class ImageBuffer {
+    class Image {
     public:
-        ImageBuffer()
+        Image()
                 : size(), buffer() {}
 
-        ImageBuffer(int width, int height, const std::vector<T> &buffer) : size(width, height),
-                                                                           buffer(buffer) {}
+        Image(int width, int height, const std::vector<T> &buffer) : size(width, height),
+                                                                     buffer(buffer) {}
 
-        ImageBuffer(int width, int height)
+        Image(int width, int height)
                 : size(width, height), buffer(width * height) {}
 
-        explicit ImageBuffer(Vec2i size)
+        explicit Image(Vec2i size)
                 : size(size), buffer(size.x * size.y) {}
 
-        ImageBuffer(const ImageBuffer &copy) : size(copy.size), buffer(copy.buffer) {}
+        Image(const Image &copy) : size(copy.size), buffer(copy.buffer) {}
 
-        ImageBuffer &operator=(const ImageBuffer &copy) {
+        Image &operator=(const Image &copy) {
             this->size = copy.size;
             this->buffer = std::vector<T>(copy.buffer);
             return *this;
@@ -77,7 +77,7 @@ namespace mana {
             return y * size.x;
         }
 
-        void blit(const ImageBuffer<T> &source) {
+        void blit(const Image<T> &source) {
             if (source.size.x != size.x || source.height != size.y) {
                 throw std::runtime_error("Invalid blit source size");
             }
@@ -88,7 +88,7 @@ namespace mana {
             }
         }
 
-        void blit(const Recti &targetRect, const ImageBuffer<T> &source) {
+        void blit(const Recti &targetRect, const Image<T> &source) {
             if (source.size != targetRect.dimensions) {
                 throw std::runtime_error("Invalid blit source size");
             }
@@ -99,8 +99,8 @@ namespace mana {
             }
         }
 
-        ImageBuffer<T> slice(const Recti &rect) const {
-            ImageBuffer<T> ret = ImageBuffer<T>(rect.dimensions.x, rect.dimensions.y);
+        Image<T> slice(const Recti &rect) const {
+            Image<T> ret = Image<T>(rect.dimensions.x, rect.dimensions.y);
             for (int x = rect.position.x; x < rect.position.x + rect.dimensions.x; x++) {
                 for (int y = rect.position.y; y < rect.position.y + rect.dimensions.y; y++) {
                     ret.setPixel(x - rect.position.x, y - rect.position.y, getPixel(x, y));
@@ -109,8 +109,8 @@ namespace mana {
             return std::move(ret);
         }
 
-        ImageBuffer<T> swapRows() {
-            ImageBuffer<T> ret = ImageBuffer<T>(size.x, size.y);
+        Image<T> swapRows() {
+            Image<T> ret = Image<T>(size.x, size.y);
             for (int y = 0; y < size.y; y++) {
                 for (int x = 0; x < size.x; x++) {
                     ret.setPixel(size.x - 1 - x, y, getPixel(x, y));
@@ -119,8 +119,8 @@ namespace mana {
             return std::move(ret);
         }
 
-        ImageBuffer<T> swapColumns() {
-            ImageBuffer<T> ret = ImageBuffer<T>(size.x, size.y);
+        Image<T> swapColumns() {
+            Image<T> ret = Image<T>(size.x, size.y);
             for (int x = 0; x < size.x; x++) {
                 for (int y = 0; y < size.y; y++) {
                     ret.setPixel(x, size.y - 1 - y, getPixel(x, y));
@@ -135,4 +135,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_IMAGEBUFFER_HPP
+#endif //MANA_IMAGE_HPP

@@ -53,9 +53,9 @@ namespace mana {
         Vec2i bearing(ftfont.face->glyph->bitmap_left, ftfont.face->glyph->bitmap_top);
         int advance = ftfont.face->glyph->advance.x;
 
-        ImageBuffer<unsigned char> buffer(size.x,
-                                          size.y,
-                                          std::vector<unsigned char>(ftfont.face->glyph->bitmap.buffer,
+        Image<unsigned char> buffer(size.x,
+                                    size.y,
+                                    std::vector<unsigned char>(ftfont.face->glyph->bitmap.buffer,
                                                                      ftfont.face->glyph->bitmap.buffer +
                                                                      size.x * size.y));
         TextureBuffer::Attributes attribs;

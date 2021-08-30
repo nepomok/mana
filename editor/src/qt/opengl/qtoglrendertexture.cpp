@@ -86,7 +86,7 @@ QtOGLRenderTexture::~QtOGLRenderTexture() {
     glDeleteTextures(1, &handle);
 }
 
-void QtOGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
+void QtOGLRenderTexture::upload(const Image<ColorRGB> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("Invalid texture type");
     if (!(buffer.getSize() == attributes.size))
@@ -112,7 +112,7 @@ void QtOGLRenderTexture::upload(const ImageBuffer<ColorRGB> &buffer) {
     checkQtGLError("QtOGLRenderTexture::upload(RGB)");
 }
 
-void QtOGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
+void QtOGLRenderTexture::upload(const Image<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
     if (!(buffer.getSize() == attributes.size))
@@ -138,11 +138,11 @@ void QtOGLRenderTexture::upload(const ImageBuffer<ColorRGBA> &buffer) {
     checkQtGLError("QtOGLRenderTexture::upload(RGBA)");
 }
 
-mana::ImageBuffer<ColorRGBA> QtOGLRenderTexture::download() {
+mana::Image<ColorRGBA> QtOGLRenderTexture::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 
-    auto output = ImageBuffer<ColorRGBA>(attributes.size);
+    auto output = Image<ColorRGBA>(attributes.size);
     glBindTexture(GL_TEXTURE_2D, handle);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *) output.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
@@ -150,7 +150,7 @@ mana::ImageBuffer<ColorRGBA> QtOGLRenderTexture::download() {
     return output;
 }
 
-void QtOGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &buffer) {
+void QtOGLRenderTexture::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
     if (!(buffer.getSize() == attributes.size))
@@ -176,14 +176,14 @@ void QtOGLRenderTexture::upload(CubeMapFace face, const ImageBuffer<ColorRGBA> &
     checkQtGLError("QtOGLRenderTexture::upload(CUBEMAP)");
 }
 
-ImageBuffer<ColorRGBA> QtOGLRenderTexture::download(TextureBuffer::CubeMapFace face) {
+Image<ColorRGBA> QtOGLRenderTexture::download(TextureBuffer::CubeMapFace face) {
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
 
     throw std::runtime_error("Not Implemented");
 }
 
-void QtOGLRenderTexture::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
+void QtOGLRenderTexture::uploadCubeMap(const Image<ColorRGBA> &buffer) {
     auto faceSize = buffer.getSize();
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
@@ -195,10 +195,10 @@ void QtOGLRenderTexture::uploadCubeMap(const ImageBuffer<ColorRGBA> &buffer) {
     }
 }
 
-ImageBuffer<ColorRGBA> QtOGLRenderTexture::downloadCubeMap() {
+Image<ColorRGBA> QtOGLRenderTexture::downloadCubeMap() {
     auto size = attributes.size;
     size.x = size.x * 6;
-    ImageBuffer<ColorRGBA> ret(size);
+    Image<ColorRGBA> ret(size);
     for (int i = 0; i < 6; i++) {
         ret.blit({Vec2i(i * attributes.size.x, 0), attributes.size}, download(static_cast<CubeMapFace>(i)));
     }

@@ -22,7 +22,7 @@
 
 #include "engine/io/file.hpp"
 
-#include "engine/render/imagebuffer.hpp"
+#include "engine/asset/image.hpp"
 
 namespace mana {
     class ImageFile : public File {
@@ -35,10 +35,10 @@ namespace mana {
 
         void close() override;
 
-        const ImageBuffer<ColorRGBA> &getBuffer();
+        const Image<ColorRGBA> &getBuffer();
 
     private:
-        ImageBuffer<ColorRGBA> buffer;
+        Image<ColorRGBA> buffer;
     };
 }
 

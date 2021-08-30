@@ -21,7 +21,7 @@
 #define MANA_IMAGEFILERESOURCE_HPP
 
 #include "engine/resource/resource.hpp"
-#include "engine/render/imagebuffer.hpp"
+#include "engine/asset/image.hpp"
 
 namespace mana {
     class ImageFileResource : public Resource<ImageBuffer<ColorRGBA>> {
@@ -40,13 +40,13 @@ namespace mana {
 
         void free() override;
 
-        ImageBuffer<ColorRGBA> &get() override;
+        Image<ColorRGBA> &get() override;
 
-        ImageBuffer<ColorRGBA> &getOrThrow() override;
+        Image<ColorRGBA> &getOrThrow() override;
 
     private:
         std::string filePath;
-        ImageBuffer<ColorRGBA> buffer;
+        Image<ColorRGBA> buffer;
         bool loaded = false;
     };
 }

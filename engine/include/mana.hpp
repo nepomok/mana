@@ -106,7 +106,7 @@
 #include "engine/render/rendercommand.hpp"
 #include "engine/render/renderallocator.hpp"
 #include "engine/render/renderdevice.hpp"
-#include "engine/render/imagebuffer.hpp"
+#include "engine/asset/image.hpp"
 #include "engine/render/2d/renderer2d.hpp"
 #include "engine/render/2d/text/character.hpp"
 #include "engine/render/2d/text/font.hpp"

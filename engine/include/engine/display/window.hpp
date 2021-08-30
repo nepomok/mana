@@ -22,7 +22,7 @@
 
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/rendertarget.hpp"
-#include "engine/render/imagebuffer.hpp"
+#include "engine/asset/image.hpp"
 
 #include "engine/display/windowlistener.hpp"
 #include "engine/display/monitor.hpp"
@@ -89,7 +89,7 @@ namespace mana {
 
         virtual void setTitle(std::string title) = 0;
 
-        virtual void setIcon(ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void setIcon(Image<ColorRGBA> &buffer) = 0;
 
         virtual void setWindowPosition(Vec2i position) = 0;
 

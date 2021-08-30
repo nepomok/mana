@@ -20,7 +20,7 @@
 #ifndef MANA_TEXTUREBUFFER_HPP
 #define MANA_TEXTUREBUFFER_HPP
 
-#include "engine/render/imagebuffer.hpp"
+#include "engine/asset/image.hpp"
 #include "engine/render/renderobject.hpp"
 
 namespace mana {
@@ -150,27 +150,27 @@ namespace mana {
 
         ~TextureBuffer() override = default;
 
-        virtual void upload(const ImageBuffer<ColorRGB> &buffer) = 0;
+        virtual void upload(const Image<ColorRGB> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<ColorRGBA> &buffer) = 0;
+        virtual void upload(const Image<ColorRGBA> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<float> &buffer) = 0;
+        virtual void upload(const Image<float> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<int> &buffer) = 0;
+        virtual void upload(const Image<int> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<char> &buffer) = 0;
+        virtual void upload(const Image<char> &buffer) = 0;
 
-        virtual void upload(const ImageBuffer<unsigned char> &buffer) = 0;
+        virtual void upload(const Image<unsigned char> &buffer) = 0;
 
-        virtual ImageBuffer <ColorRGBA> download() = 0;
+        virtual Image <ColorRGBA> download() = 0;
 
-        virtual void upload(CubeMapFace face, const ImageBuffer <ColorRGBA> &buffer) = 0;
+        virtual void upload(CubeMapFace face, const Image <ColorRGBA> &buffer) = 0;
 
-        virtual ImageBuffer <ColorRGBA> download(CubeMapFace face) = 0;
+        virtual Image <ColorRGBA> download(CubeMapFace face) = 0;
 
-        virtual void uploadCubeMap(const ImageBuffer <ColorRGBA> &buffer) = 0;
+        virtual void uploadCubeMap(const Image <ColorRGBA> &buffer) = 0;
 
-        virtual ImageBuffer <ColorRGBA> downloadCubeMap() = 0;
+        virtual Image <ColorRGBA> downloadCubeMap() = 0;
     };
 }
 
