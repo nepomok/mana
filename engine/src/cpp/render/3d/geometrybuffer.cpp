@@ -31,8 +31,12 @@ namespace mana {
         diffuse = allocator.createTextureBuffer(attr);
         ambient = allocator.createTextureBuffer(attr);
         specular = allocator.createTextureBuffer(attr);
-        attr.format = TextureBuffer::R32F;
-        shininess = allocator.createTextureBuffer(attr);
+
+        attr.format = TextureBuffer::RG32F;
+        lighting = allocator.createTextureBuffer(attr);
+
+        attr.format = TextureBuffer::R32UI;
+        id = allocator.createTextureBuffer(attr);
 
         renderTarget = allocator.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
@@ -41,7 +45,8 @@ namespace mana {
         renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *shininess);
+        renderTarget->attachColor(5, *lighting);
+        renderTarget->attachColor(6, *id);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
         depthStencil = allocator.createTextureBuffer(attr);
@@ -57,6 +62,7 @@ namespace mana {
                                     Vertex({1, -1, 0}, {1, 0}),
                                     Vertex({-1, -1, 0}, {0, 0})
                             });
+
         screenQuad = allocator.createMeshBuffer(quadMesh);
     }
 
@@ -69,8 +75,9 @@ namespace mana {
         delete diffuse;
         delete ambient;
         delete specular;
-        delete shininess;
+        delete lighting;
         delete depthStencil;
+        delete id;
         delete renderTarget;
         delete screenQuad;
     }
@@ -91,8 +98,9 @@ namespace mana {
         delete diffuse;
         delete ambient;
         delete specular;
-        delete shininess;
+        delete lighting;
         delete depthStencil;
+        delete id;
         delete renderTarget;
 
         auto &allocator = *renderAllocator;
@@ -106,8 +114,11 @@ namespace mana {
         diffuse = allocator.createTextureBuffer(attr);
         ambient = allocator.createTextureBuffer(attr);
         specular = allocator.createTextureBuffer(attr);
-        attr.format = TextureBuffer::R32F;
-        shininess = allocator.createTextureBuffer(attr);
+        attr.format = TextureBuffer::RG32F;
+        lighting = allocator.createTextureBuffer(attr);
+
+        attr.format = TextureBuffer::R32UI;
+        id = allocator.createTextureBuffer(attr);
 
         renderTarget = allocator.createRenderTarget(size, 0);
         renderTarget->setNumberOfColorAttachments(6);
@@ -116,7 +127,8 @@ namespace mana {
         renderTarget->attachColor(2, *diffuse);
         renderTarget->attachColor(3, *ambient);
         renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *shininess);
+        renderTarget->attachColor(5, *lighting);
+        renderTarget->attachColor(6, *id);
 
         attr.format = TextureBuffer::DEPTH_STENCIL;
         depthStencil = allocator.createTextureBuffer(attr);
@@ -158,14 +170,19 @@ namespace mana {
         return *specular;
     }
 
-    TextureBuffer &GeometryBuffer::getShininess() {
-        assert(shininess != nullptr);
-        return *shininess;
+    TextureBuffer &GeometryBuffer::getLighting() {
+        assert(lighting != nullptr);
+        return *lighting;
     }
 
     TextureBuffer &GeometryBuffer::getDepthStencil() {
         assert(depthStencil != nullptr);
         return *depthStencil;
+    }
+
+    TextureBuffer &GeometryBuffer::getId() {
+        assert(id != nullptr);
+        return *id;
     }
 
     MeshBuffer &GeometryBuffer::getScreenQuad() {

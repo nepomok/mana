@@ -45,25 +45,63 @@ namespace mana {
         * diffuse      :   SV_TARGET2
         * ambient      :   SV_TARGET3
         * specular     :   SV_TARGET4
-        * shininess    :   SV_TARGET5
+        * lighting     :   SV_TARGET5
+        * id           :   SV_TARGET6
         *
         * Contained textures and render target are reallocated whenever the size changes.
         */
         RenderTarget &getRenderTarget();
 
+        /**
+         * 3 * 32 bit float
+         * @return
+         */
         TextureBuffer &getPosition();
 
+        /**
+         * 3 * 32 bit float
+         * @return
+         */
         TextureBuffer &getNormal();
 
+        /**
+         * 3 * 32 bit float
+         * @return
+         */
         TextureBuffer &getDiffuse();
 
+        /**
+         * 3 * 32 bit float
+         * @return
+         */
         TextureBuffer &getAmbient();
 
+        /**
+         * 3 * 32 bit float
+         * @return
+         */
         TextureBuffer &getSpecular();
 
-        TextureBuffer &getShininess();
+        /**
+         * 2 * 32 bit float
+         *  [0] = shininess
+         *  [1] = if this value is 0 the pixel color is diffuse color otherwise it is the phong shaded color
+         * @return
+         */
+        TextureBuffer &getLighting();
 
+        /**
+         * 24 bit depth + 8 bit stencil
+         * @return
+         */
         TextureBuffer &getDepthStencil();
+
+        /**
+         * 1 * 32 bit unsigned integer
+         *  [0] = id of the command that has drawn the pixel
+         * @return
+         */
+        TextureBuffer &getId();
 
         MeshBuffer &getScreenQuad();
 
@@ -78,9 +116,9 @@ namespace mana {
         TextureBuffer *diffuse{};
         TextureBuffer *ambient{};
         TextureBuffer *specular{};
-        TextureBuffer *shininess{};
-
+        TextureBuffer *lighting{};
         TextureBuffer *depthStencil{};
+        TextureBuffer *id{};
 
         MeshBuffer *screenQuad{};
     };

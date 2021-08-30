@@ -44,6 +44,10 @@ namespace mana {
         TextureBuffer *specularDefault;
         TextureBuffer *shininessDefault;
         TextureBuffer *emissiveDefault;
+
+        ShaderProgram *shaderSkybox;
+        MeshBuffer *skyboxCube;
+        TextureBuffer *skyboxDefault;
     };
 }
 

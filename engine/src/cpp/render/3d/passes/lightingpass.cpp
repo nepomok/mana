@@ -74,7 +74,7 @@ Texture2D normal;
 Texture2D diffuse;
 Texture2D ambient;
 Texture2D specular;
-Texture2D shininess;
+Texture2D lighting;
 Texture2D depth;
 
 SamplerState samplerState_position
@@ -92,7 +92,7 @@ SamplerState samplerState_ambient
 SamplerState samplerState_specular
 {};
 
-SamplerState samplerState_shininess
+SamplerState samplerState_lighting
 {};
 
 SamplerState samplerState_depth
@@ -104,13 +104,17 @@ PS_OUTPUT main(PS_INPUT v) {
     float3 fragNorm = normal.Sample(samplerState_normal, v.fUv).xyz;
     float4 fragDiffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     float4 fragSpecular = specular.Sample(samplerState_specular, v.fUv);
-    float fragShininess = shininess.Sample(samplerState_shininess, v.fUv).r;
+    float fragShininess = lighting.Sample(samplerState_lighting, v.fUv).r;
     float fragDepth = depth.Sample(samplerState_depth, v.fUv).r;
-    ret.FragColor = mana_calculate_light(fragPos,
-                                          fragNorm,
-                                          fragDiffuse,
-                                          fragSpecular,
-                                          fragShininess);
+    float influence = lighting.Sample(samplerState_lighting, v.fUv).g;
+    if (influence == 0)
+        ret.FragColor = fragDiffuse;
+    else
+        ret.FragColor = mana_calculate_light(fragPos,
+                                                fragNorm,
+                                                fragDiffuse,
+                                                fragSpecular,
+                                                fragShininess);
     return ret;
 }
 )###";
@@ -189,7 +193,7 @@ namespace mana {
         command.shader->setTexture("diffuse", 2);
         command.shader->setTexture("ambient", 3);
         command.shader->setTexture("specular", 4);
-        command.shader->setTexture("shininess", 5);
+        command.shader->setTexture("lighting", 5);
         command.shader->setTexture("depth", 6);
 
         command.textures.emplace_back(&gBuffer.getPosition());
@@ -197,7 +201,7 @@ namespace mana {
         command.textures.emplace_back(&gBuffer.getDiffuse());
         command.textures.emplace_back(&gBuffer.getAmbient());
         command.textures.emplace_back(&gBuffer.getSpecular());
-        command.textures.emplace_back(&gBuffer.getShininess());
+        command.textures.emplace_back(&gBuffer.getLighting());
         command.textures.emplace_back(&gBuffer.getDepthStencil());
 
         command.properties.enableDepthTest = false;

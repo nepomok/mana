@@ -21,7 +21,7 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-const char *SHADER_VERT_GEOMETRY = R"###(
+static const char *SHADER_VERT_GEOMETRY = R"###(
 #include "mana.hlsl"
 
 struct VS_INPUT
@@ -58,7 +58,7 @@ VS_OUTPUT main(const VS_INPUT v)
 }
 )###";
 
-const char *SHADER_FRAG_GEOMETRY_TEXTURENORMALS = R"###(
+static const char *SHADER_FRAG_GEOMETRY_TEXTURENORMALS = R"###(
 struct PS_INPUT {
     float3 fPos: POSITION;
     float3 fNorm: NORMAL;
@@ -71,7 +71,8 @@ struct PS_OUTPUT {
      float4 diffuse      :   SV_TARGET2;
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
-     float4 shininess    :   SV_TARGET5;
+     float4 lighting     :   SV_TARGET5;
+     float4 id           :   SV_TARGET6;
 };
 
 Texture2D diffuse;
@@ -101,12 +102,14 @@ PS_OUTPUT main(PS_INPUT v) {
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.shininess = shininess.Sample(samplerState_shininess, v.fUv);
+    ret.lighting.r = shininess.Sample(samplerState_shininess, v.fUv).r;
+    ret.lighting.g = 1.0f;
+    ret.id = 1;
     return ret;
 }
 )###";
 
-const char *SHADER_FRAG_GEOMETRY_VERTEXNORMALS = R"###(
+static const char *SHADER_FRAG_GEOMETRY_VERTEXNORMALS = R"###(
 struct PS_INPUT {
     float3 fPos: POSITION;
     float3 fNorm: NORMAL;
@@ -119,7 +122,8 @@ struct PS_OUTPUT {
      float4 diffuse      :   SV_TARGET2;
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
-     float4 shininess    :   SV_TARGET5;
+     float4 lighting     :   SV_TARGET5;
+     float4 id           :   SV_TARGET6;
 };
 
 Texture2D diffuse;
@@ -146,7 +150,85 @@ PS_OUTPUT main(PS_INPUT v) {
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.shininess = shininess.Sample(samplerState_shininess, v.fUv);
+    ret.lighting.r = shininess.Sample(samplerState_shininess, v.fUv).r;
+    ret.lighting.g = 1.0f;
+    ret.id = 1;
+    return ret;
+}
+)###";
+
+static const char *SHADER_VERT_SKYBOX = R"###(
+#include "mana.hlsl"
+
+struct VS_INPUT
+{
+    float3 position : POSITION0;
+    float3 normal : NORMAL;
+    float2 uv : TEXCOORD0;
+    float4 instanceRow0 : POSITION1;
+    float4 instanceRow1 : POSITION2;
+    float4 instanceRow2 : POSITION3;
+    float4 instanceRow3 : POSITION4;
+};
+
+struct VS_OUTPUT
+{
+    float3  fPos : POSITION0;
+    float3  fNorm : NORMAL;
+    float2  fUv : TEXCOORD0;
+    float4 vPos : SV_Position;
+    float3 worldPos : POSITION1;
+};
+
+VS_OUTPUT main(const VS_INPUT v)
+{
+    VS_OUTPUT ret;
+
+    float4x4 t = mul(MANA_VIEW_TRANSLATION, mul(MANA_V, MANA_P));
+
+    ret.vPos = mul(float4(v.position, 1), t);
+    ret.fPos = mul(float4(v.position, 1), t).xyz;
+    ret.worldPos = v.position;
+    ret.fNorm = mul(float4(v.normal, 1), transpose(MANA_M_INVERT)).xyz;
+    ret.fUv = v.uv;
+
+    return ret;
+}
+)###";
+
+static const char *SHADER_FRAG_SKYBOX = R"###(
+struct PS_INPUT {
+    float3 fPos: POSITION0;
+    float3 fNorm: NORMAL;
+    float2 fUv: TEXCOORD0;
+    float3 worldPos : POSITION1;
+};
+
+struct PS_OUTPUT {
+     float4 position     :   SV_TARGET0;
+     float4 normal       :   SV_TARGET1;
+     float4 diffuse      :   SV_TARGET2;
+     float4 ambient      :   SV_TARGET3;
+     float4 specular     :   SV_TARGET4;
+     float4 lighting     :   SV_TARGET5;
+     float4 id           :   SV_TARGET6;
+};
+
+TextureCube diffuse;
+
+SamplerState samplerState_diffuse
+{};
+
+PS_OUTPUT main(PS_INPUT v) {
+    PS_OUTPUT ret;
+    ret.position = float4(v.fPos, 1);
+    ret.normal = float4(v.fNorm, 1);
+    ret.diffuse = diffuse.Sample(samplerState_diffuse, v.worldPos);
+    ret.ambient = float4(0,0,0,0);
+    ret.specular = float4(0,0,0,0);
+    ret.lighting.r = 0.0f;
+    ret.lighting.g = 0.0f;
+    ret.id = 0;
     return ret;
 }
 )###";
@@ -178,6 +260,19 @@ namespace mana {
 
         attributes.format = TextureBuffer::R32F;
         shininessDefault = allocator.createTextureBuffer(attributes);
+
+        attributes.format = TextureBuffer::RGBA;
+        attributes.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
+        skyboxDefault = allocator.createTextureBuffer(attributes);
+
+        shaderSkybox = allocator.createShaderProgram(SHADER_VERT_SKYBOX,
+                                                     SHADER_FRAG_SKYBOX,
+                                                     Renderer3D::getShaderMacros(),
+                                                     Renderer3D::getShaderIncludeCallback());
+        shaderSkybox->setTexture("diffuse", 0);
+
+        Mesh skyboxMesh = Mesh::cube();
+        skyboxCube = allocator.createMeshBuffer(skyboxMesh);
     }
 
     GeometryPass::~GeometryPass() {
@@ -188,6 +283,8 @@ namespace mana {
         delete specularDefault;
         delete emissiveDefault;
         delete shininessDefault;
+        delete shaderSkybox;
+        delete skyboxCube;
     }
 
     void GeometryPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
@@ -213,6 +310,36 @@ namespace mana {
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+
+        //Draw skybox
+        {
+            RenderCommand command;
+            command.meshBuffers.emplace_back(skyboxCube);
+
+            if (scene.skybox == nullptr) {
+                for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
+                    skyboxDefault->upload(static_cast<TextureBuffer::CubeMapFace>(i),
+                                          ImageBuffer<ColorRGBA>(1, 1, {scene.skyboxColor}));
+                }
+                command.textures.emplace_back(skyboxDefault);
+            } else {
+                command.textures.emplace_back(scene.skybox);
+            }
+
+            command.properties.enableDepthTest = false;
+            command.properties.enableFaceCulling = false;
+
+            command.shader = shaderSkybox;
+
+            command.shader->setMat4("MANA_M", model);
+            command.shader->setMat4("MANA_V", view);
+            command.shader->setMat4("MANA_P", projection);
+            command.shader->setMat4("MANA_MVP", projection * view * model);
+            command.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+            command.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+
+            ren.addCommand(command);
+        }
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {
