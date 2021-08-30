@@ -24,19 +24,19 @@
 
 #include "engine/math/transform.hpp"
 #include "engine/render/meshbuffer.hpp"
-#include "engine/render/3d/material.hpp"
+#include "engine/render/3d/rendermaterial.hpp"
 
 namespace mana {
     struct DeferredCommand {
         DeferredCommand() : transform(), meshBuffer() {}
 
-        DeferredCommand(Transform t, Material material, MeshBuffer *meshBuffer) : transform(t),
-                                                                                  material(material),
-                                                                                  meshBuffer(meshBuffer) {}
+        DeferredCommand(Transform t, RenderMaterial material, MeshBuffer *meshBuffer) : transform(t),
+                                                                                        material(material),
+                                                                                        meshBuffer(meshBuffer) {}
 
         Transform transform; // The transform affects the View matrices provided to shaders via mana.hlsl
 
-        Material material;
+        RenderMaterial material;
         MeshBuffer *meshBuffer;
 
         bool outline = false;

@@ -22,13 +22,13 @@
 
 #include "engine/resource/resource.hpp"
 
-#include "engine/render/3d/material.hpp"
+#include "engine/render/3d/rendermaterial.hpp"
 #include "engine/render/renderdevice.hpp"
 
 #include "engine/resource/resourcemanager.hpp"
 
 namespace mana {
-    class MaterialResource : public Resource<Material> {
+    class MaterialResource : public Resource<RenderMaterial> {
     public:
         MaterialResource(RenderDevice *device,
                          ResourceManager *manager,
@@ -52,15 +52,15 @@ namespace mana {
 
         void free() override;
 
-        Material &get() override;
+        RenderMaterial &get() override;
 
-        Material &getOrThrow() override;
+        RenderMaterial &getOrThrow() override;
 
     private:
         RenderDevice *device;
         ResourceManager *manager;
 
-        Material mat;
+        RenderMaterial mat;
 
         std::string diffuseResource;
         std::string ambientResource;

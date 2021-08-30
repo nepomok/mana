@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/mesh.hpp"
+#include "engine/asset/mesh.hpp"
 
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>

@@ -115,13 +115,13 @@ namespace mana {
         loaded = false;
     }
 
-    Material &MaterialResource::get() {
+    RenderMaterial &MaterialResource::get() {
         if (!loaded)
             throw std::runtime_error("Resource not loaded");
         return mat;
     }
 
-    Material &MaterialResource::getOrThrow() {
+    RenderMaterial &MaterialResource::getOrThrow() {
         return get();
     }
 }

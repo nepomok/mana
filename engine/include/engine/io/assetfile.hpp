@@ -25,9 +25,9 @@
 #include "engine/io/file.hpp"
 #include "engine/io/asset.hpp"
 
-#include "engine/render/mesh.hpp"
+#include "engine/asset/mesh.hpp"
 #include "engine/render/renderdevice.hpp"
-#include "engine/render/3d/material.hpp"
+#include "engine/render/3d/rendermaterial.hpp"
 
 namespace mana {
     class AssetFile : public File, public Asset {

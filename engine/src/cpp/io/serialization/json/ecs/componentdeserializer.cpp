@@ -255,7 +255,7 @@ namespace mana {
     DeferredRenderComponent *getDeferredRenderComponent(const nlohmann::json &component, ResourceManager &res) {
         auto *ret = new DeferredRenderComponent();
         ret->meshBuffer = ResourceHandle<MeshBuffer>(component.at("meshBuffer"), &res);
-        ret->material = ResourceHandle<Material>(component.at("material"), &res);
+        ret->material = ResourceHandle<RenderMaterial>(component.at("material"), &res);
         ret->outline = component.value("outline", false);
         ret->outlineScale = component.value("outlineScale", 1.1f);
         if (component.contains("outlineColor"))

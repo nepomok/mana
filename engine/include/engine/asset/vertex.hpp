@@ -17,27 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERDEVICE_HPP
-#define MANA_RENDERDEVICE_HPP
-
-#include <map>
-#include <functional>
-
-#include "engine/render/graphicsbackend.hpp"
-#include "engine/render/renderer.hpp"
-#include "engine/render/renderobject.hpp"
-#include "engine/asset/mesh.hpp"
-#include "engine/render/renderallocator.hpp"
+#ifndef MANA_VERTEX_HPP
+#define MANA_VERTEX_HPP
 
 namespace mana {
-    class RenderDevice {
-    public:
-        virtual ~RenderDevice() = default;
+    struct Vertex {
+        float data[8];
 
-        virtual Renderer &getRenderer() = 0;
+        Vertex(Vec3f position, Vec3f normal, Vec2f uv) : data() {
+            data[0] = position.x;
+            data[1] = position.y;
+            data[2] = position.z;
+            data[3] = normal.x;
+            data[4] = normal.y;
+            data[5] = normal.z;
+            data[6] = uv.x;
+            data[7] = uv.y;
+        }
 
-        virtual RenderAllocator &getAllocator() = 0;
+        Vertex(Vec3f position, Vec2f uv) : Vertex(position, {}, uv) {}
+
+        explicit Vertex(Vec3f position) : Vertex(position, {}, {}) {}
+
+        Vertex() = default;
     };
 }
 
-#endif //MANA_RENDERDEVICE_HPP
+#endif //MANA_VERTEX_HPP

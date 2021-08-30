@@ -23,7 +23,7 @@
 #include "engine/ecs/component.hpp"
 
 #include "engine/render/rendercommand.hpp"
-#include "engine/render/3d/material.hpp"
+#include "engine/render/3d/rendermaterial.hpp"
 
 #include "engine/resource/resourcehandle.hpp"
 
@@ -40,7 +40,7 @@ namespace mana {
         }
 
         ResourceHandle<MeshBuffer> meshBuffer;
-        ResourceHandle<Material> material;
+        ResourceHandle<RenderMaterial> material;
 
         bool outline = false;
         ColorRGBA outlineColor;

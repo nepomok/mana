@@ -23,9 +23,9 @@
 #include <map>
 #include <string>
 
-#include "engine/render/mesh.hpp"
+#include "engine/asset/mesh.hpp"
 #include "engine/render/renderdevice.hpp"
-#include "engine/render/3d/material.hpp"
+#include "engine/render/3d/rendermaterial.hpp"
 
 namespace mana {
     // No embedded textures / texture paths support for now
@@ -37,8 +37,8 @@ namespace mana {
         ColorRGBA specularColor{};
         float shininess{};
 
-        Material createMaterial(RenderDevice &dev) const {
-            Material ret;
+        RenderMaterial createMaterial(RenderDevice &dev) const {
+            RenderMaterial ret;
             ret.diffuse = diffuseColor;
             ret.ambient = ambientColor;
             ret.specular = specularColor;
