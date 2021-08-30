@@ -45,6 +45,11 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
     if (attributes.textureType == TEXTURE_2D) {
         GLuint texInternalFormat = OGLTypeConverter::convert(attributes.format);
         GLuint texFormat = GL_RGBA;
+
+        if (attributes.format >= R8I) {
+            texFormat = GL_RGBA_INTEGER; //Integer formats require _INTEGER format
+        }
+
         GLuint texType = GL_UNSIGNED_BYTE;
 
         if (attributes.format == ColorFormat::DEPTH) {
