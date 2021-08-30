@@ -97,7 +97,7 @@
 #include "engine/render/renderobject.hpp"
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/graphicsbackend.hpp"
-#include "engine/render/color.hpp"
+#include "engine/asset/color.hpp"
 #include "engine/render/rendertarget.hpp"
 #include "engine/asset/mesh.hpp"
 #include "engine/render/renderer.hpp"
