@@ -22,7 +22,7 @@
 #include "render/2d/text/freetype/ftfontrasterizer.hpp"
 
 namespace mana {
-    FontRasterizer *FontRasterizer::create(FontRasterizer::Backend backend, RenderAllocator &allocator) {
+    FontRasterizer *FontRasterizer::instantiate(FontRasterizer::Backend backend, RenderAllocator &allocator) {
         switch (backend) {
             case FreeType:
                 return new FTFontRasterizer(allocator);

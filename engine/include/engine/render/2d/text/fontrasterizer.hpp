@@ -39,7 +39,7 @@ namespace mana {
          * @param allocator
          * @return
          */
-        static FontRasterizer *create(Backend backend, RenderAllocator &allocator);
+        static FontRasterizer *instantiate(Backend backend, RenderAllocator &allocator);
 
         virtual ~FontRasterizer() = default;
 
