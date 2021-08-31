@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <iterator>
+
 #include <mono/jit/jit.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/assembly.h>
@@ -57,6 +59,21 @@ namespace mana {
         if (ap == nullptr)
             throw std::runtime_error("Failed to load assembly " + filePath);
         return new mana::MonoCppAssembly(domainPointer, ap);
+    }
+
+    MonoCppAssembly *MonoCppDomain::loadAssembly(std::istream &source) {
+        std::string assemblyBytes((std::istreambuf_iterator<char>(source)),
+                                  std::istreambuf_iterator<char>());
+        MonoImageOpenStatus status;
+        auto *image = mono_image_open_from_data(assemblyBytes.data(), assemblyBytes.size(), false, &status);
+        if (image == nullptr || status != MONO_IMAGE_OK)
+            throw std::runtime_error("Failed to open image " + std::to_string(status));
+
+        auto *assembly = mono_assembly_load_from(image, "", &status);
+        if (assembly == nullptr || status != MONO_IMAGE_OK)
+            throw std::runtime_error("Failed to create assembly " + std::to_string(status));
+
+        return new MonoCppAssembly(domainPointer, assembly);
     }
 
     MonoCppObject MonoCppDomain::stringFromUtf8(const std::string &str, bool pinned) {

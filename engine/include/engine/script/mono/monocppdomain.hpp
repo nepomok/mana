@@ -33,7 +33,21 @@ namespace mana {
 
         MonoCppAssembly &getMsCorLibAssembly();
 
+        /**
+         * Load assembly from file.
+         *
+         * @param filePath
+         * @return
+         */
         MonoCppAssembly *loadAssembly(const std::string &filePath);
+
+        /**
+         * Load assembly from stream.
+         *
+         * @param source The stream pointing to the assembly data.
+         * @return
+         */
+        MonoCppAssembly *loadAssembly(std::istream &source);
 
         MonoCppObject stringFromUtf8(const std::string &str, bool pinned = false);
 
