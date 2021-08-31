@@ -25,8 +25,6 @@
 #include "engine/physics/2d/collider2d.hpp"
 #include "engine/physics/2d/rigidbody2d.hpp"
 
-#include "engine/resource/resourcehandle.hpp"
-
 namespace mana {
     struct Physics2DComponent : public Component {
         Component *clone() override {
@@ -36,9 +34,6 @@ namespace mana {
         const std::type_info &getTypeInfo() override {
             return typeid(typeof(Physics2DComponent));
         }
-
-        ResourceHandle<RigidBody2D> rigidbody;
-        ResourceHandle<Collider2D> collider;
     };
 }
 

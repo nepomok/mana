@@ -30,7 +30,11 @@
 namespace mana {
     class MonoCppAssembly {
     public:
-        explicit MonoCppAssembly(void *domainPointer, void *assemblyPointer);
+        MonoCppAssembly() = default;
+
+        explicit MonoCppAssembly(void *domainPointer,
+                                 void *assemblyPointer,
+                                 void *imagePointer);
 
         ~MonoCppAssembly();
 
@@ -54,6 +58,9 @@ namespace mana {
 
         void *domainPointer;
         void *assemblyPointer;
+        void *imagePointer;
+
+        std::string imageBytes;
     };
 }
 

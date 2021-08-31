@@ -17,36 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MEMSTRINGRESOURCE_HPP
-#define MANA_MEMSTRINGRESOURCE_HPP
+#ifndef MANA_RENDERCOMPONENT_HPP
+#define MANA_RENDERCOMPONENT_HPP
 
-#include "engine/resource/resource.hpp"
+#include "engine/ecs/component.hpp"
+
+#include "engine/script/script.hpp"
 
 namespace mana {
-    class RawStringResource : public Resource<std::string> {
-    public:
-        std::string text;
+    struct RenderComponent : public Component {
+        RenderComponent() : Component(RENDER) {}
 
-        RawStringResource() : text() {}
-
-        RawStringResource(std::string text) : text(std::move(text)) {}
-
-        bool isLoaded() override;
-
-        bool supportAsync() override;
-
-        void load() override {}
-
-        void free() override {}
-
-        std::string &get() override {
-            return text;
+        Component *clone() override {
+            return new RenderComponent(*this);
         }
 
-        std::string &getOrThrow() override {
-            return get();
+        const std::type_info &getTypeInfo() override {
+            return typeid(RenderComponent);
         }
+
+        bool forward = false;
     };
 }
 
-#endif //MANA_MEMSTRINGRESOURCE_HPP
+#endif //MANA_RENDERCOMPONENT_HPP

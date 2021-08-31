@@ -26,9 +26,6 @@
 namespace mana {
     NodeDeserializer::NodeDeserializer() = default;
 
-    NodeDeserializer::NodeDeserializer(ResourceManager &resourceManager)
-            : componentDeserializer(resourceManager) {}
-
     Node NodeDeserializer::deserialize(std::istream &stream) {
         nlohmann::json j;
         stream >> j;

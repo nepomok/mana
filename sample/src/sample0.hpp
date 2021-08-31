@@ -20,8 +20,9 @@
 #ifndef MANA_SAMPLE0_HPP
 #define MANA_SAMPLE0_HPP
 
-
 #include "game.hpp"
+
+#include <filesystem>
 
 class Sample0 : public Game {
 public:
@@ -29,10 +30,14 @@ public:
 
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
-        manaAssembly = domain.loadAssembly("mana.dll");
+        archive = ArchiveDirectory(std::filesystem::current_path().c_str());
 
-        ecs.addSystem(new ScriptingSystem(*res, input, domain, *manaAssembly));
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), device));
+        auto *assemblyStream = archive.open("mana.dll");
+        manaAssembly = domain.loadAssembly(*assemblyStream);
+        delete assemblyStream;
+
+        ecs.addSystem(new ScriptingSystem(input, domain, *manaAssembly, archive));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), device, archive));
 
         Game::start(window, device, input);
     }
@@ -54,26 +59,15 @@ protected:
     }
 
     void loadScene(RenderDevice &device) override {
-        std::ifstream file;
+        auto *sceneStream = archive.open("assets/scene.json");
+        scene = SceneDeserializer().deserialize(*sceneStream);
+        delete sceneStream;
 
-        file.open("assets/resources.json", std::ifstream::in);
-        if (file.fail())
-            throw std::runtime_error("Failed to open assets/resources.json");
-        res = ResourceManagerDeserializer(device, domain).deserialize(file);
-        file.close();
-
-        file.open("assets/scene.json");
-        if (file.fail())
-            throw std::runtime_error("Failed to open assets/scene.json");
-        scene = SceneDeserializer(*res).deserialize(file);
-        file.close();
-
-        cameraNode = &scene.nodes.at("mainCamera");
+        cameraNode = &scene.nodes.at("MainCamera");
     }
 
     void destroyScene() override {
         scene = {};
-        delete res;
     }
 
 private:
@@ -83,9 +77,10 @@ private:
     MonoCppAssembly *manaAssembly;
 
     Scene scene;
-    ResourceManager* res;
 
     Node *cameraNode;
+
+    ArchiveDirectory archive;
 };
 
 #endif //MANA_SAMPLE0_HPP

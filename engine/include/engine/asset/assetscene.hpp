@@ -17,31 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RESOURCEDESERIALIZER_HPP
-#define MANA_RESOURCEDESERIALIZER_HPP
+#ifndef MANA_ASSETSCENE_HPP
+#define MANA_ASSETSCENE_HPP
 
-#include "engine/io/json/jsondeserializer.hpp"
+#include <map>
+#include <string>
 
-#include "engine/resource/resource.hpp"
-#include "engine/resource/resourcemanager.hpp"
-
-#include "engine/render/renderdevice.hpp"
-#include "engine/script/mono/monocppdomain.hpp"
+#include "engine/asset/mesh.hpp"
+#include "engine/asset/image.hpp"
+#include "engine/asset/material.hpp"
 
 namespace mana {
-    class ResourceDeserializer : public JsonDeserializer<ResourceBase *> {
+    /**
+     * An asset scene which is import from 3d formats such as fbx or obj.
+     * Can contain meshes, materials, bones, lights etc.
+     *
+     * The scene has to specify which elements of an asset scene are linked.
+     * Relations defined in the file format are not supported.
+     */
+    class AssetScene {
     public:
-        ResourceDeserializer();
-
-        ResourceDeserializer(ResourceManager &manager, RenderDevice &device, MonoCppDomain &monoRuntime);
-
-        ResourceBase *deserialize(std::istream &stream) override;
-
-    private:
-        ResourceManager *manager;
-        RenderDevice *device;
-        MonoCppDomain *monoRuntime;
+        std::map<std::string, Mesh> meshes;
+        std::map<std::string, Material> materials;
     };
 }
 
-#endif //MANA_RESOURCEDESERIALIZER_HPP
+#endif //MANA_ASSETSCENE_HPP

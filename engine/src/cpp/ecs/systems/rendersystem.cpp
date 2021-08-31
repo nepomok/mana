@@ -18,6 +18,7 @@
  */
 
 #include <algorithm>
+#include <filesystem>
 
 #include "engine/ecs/systems/rendersystem.hpp"
 
@@ -27,9 +28,14 @@
 #include "engine/render/3d/passes/geometrypass.hpp"
 #include "engine/render/3d/passes/lightingpass.hpp"
 
+#include "engine/asset/assetimporter.hpp"
+
 namespace mana {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device)
-            : screenTarget(scr), ren(device, {new GeometryPass(device), new LightingPass(device)}) {
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
+            : screenTarget(scr),
+              device(device),
+              ren(device, {new GeometryPass(device), new LightingPass(device)}),
+              archive(archive) {
     }
 
     void RenderSystem::start() {
@@ -43,6 +49,7 @@ namespace mana {
     void RenderSystem::update(float deltaTime, Scene &scene) {
         RenderScene scene3d;
 
+        //Get lights
         for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
             auto &node = *nodePointer;
             if (!node.enabled)
@@ -55,68 +62,51 @@ namespace mana {
             scene3d.lights.emplace_back(lightComponent.light);
         }
 
-        std::map<ForwardRenderComponent *, TransformComponent *> mapping;
-        std::vector<ForwardRenderComponent *> renderComponents;
-        for (auto &nodePointer : scene.findNodesWithComponent<ForwardRenderComponent>()) {
+        //Get render commands
+        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
             auto &node = *nodePointer;
             if (!node.enabled)
                 continue;
 
-            auto &comp = node.getComponent<ForwardRenderComponent>();
+            auto &comp = node.getComponent<RenderComponent>();
             if (!comp.enabled)
                 continue;
 
+            if (!node.hasComponent<TransformComponent>())
+                continue;
             auto &tcomp = node.getComponent<TransformComponent>();
             if (!tcomp.enabled)
                 continue;
 
-            renderComponents.emplace_back(&comp);
-            mapping[&comp] = &tcomp;
+            if (!node.hasComponent<MaterialComponent>())
+                continue;
+            auto &matcomp = node.getComponent<MaterialComponent>();
+            if (!matcomp.enabled)
+                continue;
+
+            if (!node.hasComponent<MeshComponent>())
+                continue;
+            auto &meshcomp = node.getComponent<MeshComponent>();
+            if (!meshcomp.enabled)
+                continue;
+
+            if (comp.forward) {
+                /*ForwardCommand unit;
+                unit.transform = TransformComponent::walkTransformHierarchy(tcomp);
+                scene3d.forward.emplace_back(unit);*/
+            } else {
+                /*DeferredCommand command;
+                command.transform = TransformComponent::walkTransformHierarchy(tcomp);
+                command.material = comp.material.get();
+                command.meshBuffer = &comp.meshBuffer.get();
+                command.outline = comp.outline;
+                command.outlineColor = comp.outlineColor;
+                command.outlineScale = comp.outlineScale;
+                scene3d.deferred.emplace_back(command);*/
+            }
         }
 
-        std::sort(renderComponents.begin(), renderComponents.end(),
-                  [](const ForwardRenderComponent *a, const ForwardRenderComponent *b) -> bool {
-                      return a->renderOrder < b->renderOrder;
-                  });
-
-        for (auto *comp : renderComponents) {
-            ForwardCommand unit;
-
-            unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
-
-            unit.command.shader = &comp->shader.get();
-            for (auto &m : comp->textureMapping) {
-                unit.command.shader->setTexture(m.first, m.second);
-            }
-
-            for (auto t : comp->textureBuffers) {
-                unit.command.textures.emplace_back(&t.get());
-            }
-
-            for (auto m : comp->meshBuffers) {
-                unit.command.meshBuffers.emplace_back(&m.get());
-            }
-
-            unit.command.properties = comp->renderProperties;
-
-            scene3d.forward.emplace_back(unit);
-        }
-
-        for (auto &node : scene.findNodesWithComponent<DeferredRenderComponent>()) {
-            auto &tcomp = node->getComponent<TransformComponent>();
-            auto &comp = node->getComponent<DeferredRenderComponent>();
-
-            DeferredCommand command;
-            command.transform = TransformComponent::walkTransformHierarchy(tcomp);
-            command.material = comp.material.get();
-            command.meshBuffer = &comp.meshBuffer.get();
-            command.outline = comp.outline;
-            command.outlineColor = comp.outlineColor;
-            command.outlineScale = comp.outlineScale;
-
-            scene3d.deferred.emplace_back(command);
-        }
-
+        //Get Camera
         Node *cameraNode;
         for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
             if (!node->enabled)
@@ -129,6 +119,26 @@ namespace mana {
                 continue;
             cameraNode = node;
             break;
+        }
+
+        //Get Skybox
+        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
+            auto &comp = node->getComponent<SkyboxComponent>();
+
+            if (comp.userData == nullptr) {
+                auto *stream = archive.open(comp.path);
+                auto image = AssetImporter::importImage(*stream, std::filesystem::path(comp.path).extension());
+                delete stream;
+
+                TextureBuffer::Attributes attribs;
+                attribs.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
+                attribs.size = {image.getSize().x / 6, image.getSize().y};
+                auto *textureBuffer = device.getAllocator().createTextureBuffer(attribs);
+                textureBuffer->uploadCubeMap(image);
+                comp.userData = std::shared_ptr<void>(textureBuffer);
+            }
+
+            scene3d.skybox = reinterpret_cast<TextureBuffer *>(comp.userData.get());
         }
 
         auto &cameraComponent = cameraNode->getComponent<CameraComponent>();

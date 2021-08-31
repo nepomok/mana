@@ -17,35 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_DEFERREDRENDERCOMPONENT_HPP
-#define MANA_DEFERREDRENDERCOMPONENT_HPP
+#ifndef MANA_AUDIO_HPP
+#define MANA_AUDIO_HPP
 
-#include "engine/ecs/component.hpp"
-
-#include "engine/render/rendercommand.hpp"
-#include "engine/render/3d/rendermaterial.hpp"
-
-#include "engine/resource/resourcehandle.hpp"
+#include "engine/audio/audioformat.hpp"
 
 namespace mana {
-    struct DeferredRenderComponent : public Component {
-        DeferredRenderComponent() : Component(RENDER_DEFERRED) {}
-
-        Component *clone() override {
-            return new DeferredRenderComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(DeferredRenderComponent);
-        }
-
-        ResourceHandle<MeshBuffer> meshBuffer;
-        ResourceHandle<RenderMaterial> material;
-
-        bool outline = false;
-        ColorRGBA outlineColor;
-        float outlineScale = 1.1f;
+    class Audio {
+    public:
+        std::vector<uint8_t> buffer;
+        AudioFormat format;
+        unsigned int frequency;
     };
 }
 
-#endif //MANA_DEFERREDRENDERCOMPONENT_HPP
+#endif //MANA_AUDIO_HPP

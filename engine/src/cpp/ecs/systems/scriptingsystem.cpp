@@ -25,8 +25,6 @@
 
 #include "script/sceneinterface.hpp"
 
-#include "engine/resource/resource.hpp"
-
 //TODO: Refactor script scene interface
 namespace mana {
     MonoCppObject uploadVector(MonoCppAssembly &manaAssembly, Vec3f vec) {
@@ -88,7 +86,6 @@ namespace mana {
                 return std::move(uploadCamera(c, manaAssembly));
             case ComponentType::LIGHT:
                 return std::move(uploadLight(c, manaAssembly));
-            case ComponentType::RENDER_FORWARD:
             case ComponentType::SCRIPT:
             default:
                 return std::move(manaAssembly.createObject("Mana", "Component"));
@@ -157,7 +154,6 @@ namespace mana {
             case ComponentType::LIGHT:
                 downloadLight(o, (LightComponent &) c);
                 break;
-            case ComponentType::RENDER_FORWARD:
             case ComponentType::SCRIPT:
             default:
                 break;
@@ -210,15 +206,15 @@ namespace mana {
         }
     }
 
-    ScriptingSystem::ScriptingSystem(ResourceManager &res,
-                                     Input &input,
+    ScriptingSystem::ScriptingSystem(Input &input,
                                      MonoCppDomain &domain,
-                                     MonoCppAssembly &manaAssembly)
-            : res(res),
-              domain(domain),
+                                     MonoCppAssembly &manaAssembly,
+                                     Archive &archive)
+            : domain(domain),
               msCorLib(domain.getMsCorLibAssembly()),
               manaAssembly(manaAssembly),
-              input(input) {}
+              input(input),
+              archive(archive) {}
 
     void ScriptingSystem::start() {
         input.registerListener(*this);
@@ -245,14 +241,14 @@ namespace mana {
             if (!node->enabled || !comp.enabled) {
                 if (comp.scriptEnabled) {
                     comp.scriptEnabled = false;
-                    comp.script.get().onDisable();
+                    //comp.script.get().onDisable();
                 }
             }
             if (!comp.scriptEnabled) {
                 comp.scriptEnabled = true;
-                comp.script.get().onEnable();
+                //comp.script.get().onEnable();
             }
-            comp.script.get().onUpdate();
+            //comp.script.get().onUpdate();
         }
 
         SceneInterface::setScene(nullptr);

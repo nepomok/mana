@@ -25,20 +25,26 @@
 
 #include "engine/ecs/components.hpp"
 
+#include "engine/render/rendercommand.hpp"
+
 namespace mana {
     ComponentType convertComponentType(const std::string &str) {
         if (str == "transform")
             return TRANSFORM;
-        else if (str == "renderforward")
-            return RENDER_FORWARD;
-        else if (str == "renderdeferred")
-            return RENDER_DEFERRED;
         else if (str == "camera")
             return CAMERA;
         else if (str == "light")
             return LIGHT;
         else if (str == "script")
             return SCRIPT;
+        else if (str == "mesh")
+            return MESH;
+        else if (str == "material")
+            return MATERIAL;
+        else if (str == "render")
+            return RENDER;
+        else if (str == "skybox")
+            return SKYBOX;
         throw std::runtime_error("Invalid component type " + str);
     }
 
@@ -58,111 +64,6 @@ namespace mana {
         else if (str == "spot")
             return LIGHT_SPOT;
         throw std::runtime_error("Invalid light type " + str);
-    }
-
-    DepthTestMode convertDepthTestMode(const std::string &str) {
-        if (str == "depth_test_always")
-            return DEPTH_TEST_ALWAYS;
-        else if (str == "dpeth_test_never")
-            return DEPTH_TEST_NEVER;
-        else if (str == "depth_test_less")
-            return DEPTH_TEST_LESS;
-        else if (str == "depth_test_equal")
-            return DEPTH_TEST_EQUAL;
-        else if (str == "depth_test_lequal")
-            return DEPTH_TEST_LEQUAL;
-        else if (str == "depth_test_greater")
-            return DEPTH_TEST_GREATER;
-        else if (str == "depth_test_notequal")
-            return DEPTH_TEST_NOTEQUAL;
-        else if (str == "depth_test_gequal")
-            return DEPTH_TEST_GEQUAL;
-        else
-            throw std::runtime_error("Invalid depth test mode " + str);
-    }
-
-    StencilMode convertStencilMode(const std::string &str) {
-        if (str == "stencil_never")
-            return STENCIL_NEVER;
-        else if (str == "stencil_less")
-            return STENCIL_LESS;
-        else if (str == "stencil_lequal")
-            return STENCIL_LEQUAL;
-        else if (str == "stencil_greater")
-            return STENCIL_GREATER;
-        else if (str == "stencil_gequal")
-            return STENCIL_GEQUAL;
-        else if (str == "stencil_equal")
-            return STENCIL_EQUAL;
-        else if (str == "stencil_notequal")
-            return STENCIL_NOTEQUAL;
-        else if (str == "stencil_always")
-            return STENCIL_ALWAYS;
-        else
-            throw std::runtime_error("Invalid stencil mode " + str);
-    }
-
-    StencilAction convertStencilAction(const std::string &str) {
-        if (str == "stencil_keep")
-            return STENCIL_KEEP;
-        else if (str == "stencil_zero")
-            return STENCIL_ZERO;
-        else if (str == "stencil_replace")
-            return STENCIL_REPLACE;
-        else if (str == "stencil_incr")
-            return STENCIL_INCR;
-        else if (str == "stencil_incr_wrap")
-            return STENCIL_INCR_WRAP;
-        else if (str == "stencil_decr")
-            return STENCIL_DECR;
-        else if (str == "stencil_decr_wrap")
-            return STENCIL_DECR_WRAP;
-        else if (str == "stencil_invert")
-            return STENCIL_INVERT;
-        else
-            throw std::runtime_error("Invalid stencil action " + str);
-    }
-
-    FaceCullingMode convertFaceCullMode(const std::string &str) {
-        if (str == "cull_none")
-            return CULL_NONE;
-        else if (str == "cull_front")
-            return CULL_FRONT;
-        else if (str == "cull_back")
-            return CULL_BACK;
-        else
-            throw std::runtime_error("Invalid face cull mode " + str);
-    }
-
-    BlendMode convertBlendMode(const std::string &str) {
-        if (str == "zero")
-            return ZERO;
-        else if (str == "one")
-            return ONE;
-        else if (str == "src_color")
-            return SRC_COLOR;
-        else if (str == "one_minus_src_color")
-            return ONE_MINUS_SRC_COLOR;
-        else if (str == "dst_color")
-            return DST_COLOR;
-        else if (str == "src_alpha")
-            return SRC_ALPHA;
-        else if (str == "one_minus_src_alpha")
-            return ONE_MINUS_SRC_ALPHA;
-        else if (str == "dst_alpha")
-            return DST_ALPHA;
-        else if (str == "one_minus_dst_alpha")
-            return ONE_MINUS_DST_ALPHA;
-        else if (str == "constant_color")
-            return CONSTANT_COLOR;
-        else if (str == "one_minus_constant_color")
-            return ONE_MINUS_CONSTANT_COLOR;
-        else if (str == "constant_alpha")
-            return CONSTANT_ALPHA;
-        else if (str == "one_minus_constant_alpha")
-            return ONE_MINUS_CONSTANT_ALPHA;
-        else
-            throw std::runtime_error("Invalid blend mode " + str);
     }
 
     Transform convertTransform(const nlohmann::json &component) {
@@ -212,54 +113,15 @@ namespace mana {
         return ret;
     }
 
-    ForwardRenderComponent *getForwardRenderComponent(const nlohmann::json &component, ResourceManager &res) {
-        auto *ret = new ForwardRenderComponent();
-        ret->shader = ResourceHandle<ShaderProgram>(component["shaderResourceName"], &res);
-
-        for (const auto &entry : component["textureMapping"]) {
-            ret->textureMapping.insert({std::string(entry["name"]), entry["slot"]});
-        }
-
-        for (auto &mesh : component["meshes"]) {
-            ret->meshBuffers.emplace_back(ResourceHandle<MeshBuffer>(mesh["resourceName"], &res));
-        }
-
-        for (const auto &tex : component["textures"]) {
-            ret->textureBuffers.emplace_back(ResourceHandle<TextureBuffer>(tex["resourceName"], &res));
-        }
-
-        auto props = component["renderProperties"];
-        ret->renderProperties.enableDepthTest = props["enableDepthTest"];
-        ret->renderProperties.depthTestWrite = props["depthTestWrite"];
-        ret->renderProperties.depthTestMode = convertDepthTestMode(props["depthTestMode"]);
-        ret->renderProperties.enableStencilTest = props["enableStencilTest"];
-        ret->renderProperties.stencilTestMask = props["stencilTestMask"];
-        ret->renderProperties.stencilMode = convertStencilMode(props["stencilMode"]);
-        ret->renderProperties.stencilReference = props["stencilReference"];
-        ret->renderProperties.stencilFunctionMask = props["stencilFunctionMask"];
-        ret->renderProperties.stencilFail = convertStencilAction(props["stencilFail"]);
-        ret->renderProperties.stencilDepthFail = convertStencilAction(props["stencilDepthFail"]);
-        ret->renderProperties.stencilPass = convertStencilAction(props["stencilPass"]);
-        ret->renderProperties.enableFaceCulling = props["enableFaceCulling"];
-        ret->renderProperties.faceCullMode = convertFaceCullMode(props["faceCullMode"]);
-        ret->renderProperties.faceCullClockwiseWinding = props["faceCullClockwiseWinding"];
-        ret->renderProperties.enableBlending = props["enableBlending"];
-        ret->renderProperties.blendSourceMode = convertBlendMode(props["blendSourceMode"]);
-        ret->renderProperties.blendDestinationMode = convertBlendMode(props["blendDestinationMode"]);
-
-        ret->renderOrder = props["renderOrder"];
-
+    RenderComponent *getRenderComponent(const nlohmann::json &component) {
+        auto *ret = new RenderComponent();
+        ret->forward = component["forward"];
         return ret;
     }
 
-    DeferredRenderComponent *getDeferredRenderComponent(const nlohmann::json &component, ResourceManager &res) {
-        auto *ret = new DeferredRenderComponent();
-        ret->meshBuffer = ResourceHandle<MeshBuffer>(component.at("meshBuffer"), &res);
-        ret->material = ResourceHandle<RenderMaterial>(component.at("material"), &res);
-        ret->outline = component.value("outline", false);
-        ret->outlineScale = component.value("outlineScale", 1.1f);
-        if (component.contains("outlineColor"))
-            ret->outlineColor = convertColor(component.at("outlineColor"));
+    SkyboxComponent *getSkyboxComponent(const nlohmann::json &component) {
+        auto *ret = new SkyboxComponent();
+        ret->path = component["path"];
         return ret;
     }
 
@@ -302,14 +164,31 @@ namespace mana {
         return ret;
     }
 
-    ScriptComponent *getScriptComponent(const nlohmann::json &component, ResourceManager &res) {
+    ScriptComponent *getScriptComponent(const nlohmann::json &component) {
         auto *ret = new ScriptComponent();
-        ret->script = ResourceHandle<Script>(component["resourceName"], &res);
+        ret->runtime = component["runtime"];
+        ret->assembly = component["assembly"];
+        ret->nameSpace = component["nameSpace"];
+        ret->className = component["className"];
         ret->queue = component["queue"];
         return ret;
     }
 
-    Component *getComponent(const nlohmann::json &component, ResourceManager &res) {
+    MeshComponent *getMeshComponent(const nlohmann::json &component) {
+        auto *ret = new MeshComponent();
+        ret->path = component["path"];
+        ret->name = component["name"];
+        return ret;
+    }
+
+    MaterialComponent *getMaterialComponent(const nlohmann::json &component) {
+        auto *ret = new MaterialComponent();
+        ret->path = component["path"];
+        ret->name = component["name"];
+        return ret;
+    }
+
+    Component *getComponent(const nlohmann::json &component) {
         Component *ret;
         switch (convertComponentType(component["componentType"])) {
             case TRANSFORM:
@@ -318,17 +197,23 @@ namespace mana {
             case CAMERA:
                 ret = getCameraComponent(component);
                 break;
-            case RENDER_FORWARD:
-                ret = getForwardRenderComponent(component, res);
-                break;
-            case RENDER_DEFERRED:
-                ret = getDeferredRenderComponent(component, res);
-                break;
             case LIGHT:
                 ret = getLightComponent(component);
                 break;
             case SCRIPT:
-                ret = getScriptComponent(component, res);
+                ret = getScriptComponent(component);
+                break;
+            case MESH:
+                ret = getMeshComponent(component);
+                break;
+            case MATERIAL:
+                ret = getMaterialComponent(component);
+                break;
+            case RENDER:
+                ret = getRenderComponent(component);
+                break;
+            case SKYBOX:
+                ret = getSkyboxComponent(component);
                 break;
             default:
                 throw std::runtime_error("Unrecognized component type");
@@ -337,16 +222,11 @@ namespace mana {
         return ret;
     }
 
-    ComponentDeserializer::ComponentDeserializer()
-            : resourceManager(nullptr) {}
-
-    ComponentDeserializer::ComponentDeserializer(ResourceManager &resourceManager)
-            : resourceManager(&resourceManager) {}
+    ComponentDeserializer::ComponentDeserializer() = default;
 
     Component *ComponentDeserializer::deserialize(std::istream &stream) {
-        assert(resourceManager != nullptr);
         nlohmann::json j;
         stream >> j;
-        return getComponent(j, *resourceManager);
+        return getComponent(j);
     }
 }

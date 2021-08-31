@@ -17,38 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGEFILERESOURCE_HPP
-#define MANA_IMAGEFILERESOURCE_HPP
+#ifndef MANA_MATERIAL_HPP
+#define MANA_MATERIAL_HPP
 
-#include "engine/resource/resource.hpp"
 #include "engine/asset/image.hpp"
 
 namespace mana {
-    class ImageFileResource : public Resource<ImageBuffer<ColorRGBA>> {
-    public:
-        ImageFileResource();
+    struct Material {
+        ColorRGBA diffuse{};
+        ColorRGBA ambient{};
+        ColorRGBA specular{};
+        ColorRGBA emissive{};
+        float shininess{32};
 
-        explicit ImageFileResource(std::string filePath);
-
-        ~ImageFileResource() override;
-
-        bool isLoaded() override;
-
-        bool supportAsync() override;
-
-        void load() override;
-
-        void free() override;
-
-        Image<ColorRGBA> &get() override;
-
-        Image<ColorRGBA> &getOrThrow() override;
-
-    private:
-        std::string filePath;
-        Image<ColorRGBA> buffer;
-        bool loaded = false;
+        std::string diffuseTexture;
+        std::string ambientTexture;
+        std::string specularTexture;
+        std::string emissiveTexture;
+        std::string shininessTexture;
+        std::string normalTexture;
     };
 }
 
-#endif //MANA_IMAGEFILERESOURCE_HPP
+#endif //MANA_MATERIAL_HPP

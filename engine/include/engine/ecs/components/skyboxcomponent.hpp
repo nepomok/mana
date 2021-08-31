@@ -17,41 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FILE_HPP
-#define MANA_FILE_HPP
+#ifndef MANA_SKYBOXCOMPONENT_HPP
+#define MANA_SKYBOXCOMPONENT_HPP
 
-#include <fstream>
-#include <utility>
+#include <string>
+
+#include "engine/ecs/component.hpp"
 
 namespace mana {
-    class File {
-    public:
-        static std::string readAllText(const std::string &filepath);
+    struct SkyboxComponent : public Component {
+        SkyboxComponent() : Component(SKYBOX) {}
 
-        static void writeAllText(const std::string &filepath, const std::string &text);
-
-        File() = default;
-
-        explicit File(std::string filePath) : filePath(std::move(filePath)) {}
-
-        virtual ~File() = default;
-
-        virtual const std::string &getFilePath() { return filePath; }
-
-        virtual void setFilePath(const std::string &fp) {
-            if (isOpen)
-                close();
-            filePath = fp;
+        Component *clone() override {
+            return new SkyboxComponent(*this);
         }
 
-        virtual void open() { isOpen = true; }
+        const std::type_info &getTypeInfo() override {
+            return typeid(SkyboxComponent);
+        }
 
-        virtual void close() { isOpen = false; }
-
-    protected:
-        bool isOpen = false;
-        std::string filePath;
+        std::string path;
     };
 }
-
-#endif //MANA_FILE_HPP
+#endif //MANA_SKYBOXCOMPONENT_HPP

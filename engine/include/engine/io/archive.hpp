@@ -17,39 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETFILERESOURCE_HPP
-#define MANA_ASSETFILERESOURCE_HPP
+#ifndef MANA_ARCHIVE_HPP
+#define MANA_ARCHIVE_HPP
 
-#include <string>
-
-#include "engine/resource/resource.hpp"
-#include "engine/io/assetfile.hpp"
+#include <iostream>
 
 namespace mana {
-    class AssetFileResource : public Resource<Asset> {
+    /**
+     * Archive interface, implementations may be directories or custom archive format.
+     *
+     * The runtime will define a packaged format which is interfaced with via this interface.
+     */
+    class Archive {
     public:
-        AssetFileResource();
+        virtual ~Archive() = default;
 
-        explicit AssetFileResource(AssetFile assetFile);
-
-        ~AssetFileResource() override;
-
-        bool isLoaded() override;
-
-        bool supportAsync() override;
-
-        void load() override;
-
-        void free() override;
-
-        Asset &get() override;
-
-        Asset &getOrThrow() override;
-
-    private:
-        AssetFile assetFile;
-        bool loaded = false;
+        virtual std::iostream *open(const std::string &name) = 0;
     };
 }
 
-#endif //MANA_ASSETFILERESOURCE_HPP
+#endif //MANA_ARCHIVE_HPP

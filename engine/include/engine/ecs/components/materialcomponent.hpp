@@ -17,43 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOFILE_HPP
-#define MANA_AUDIOFILE_HPP
+#ifndef MANA_MATERIALCOMPONENT_HPP
+#define MANA_MATERIALCOMPONENT_HPP
 
-#include <string>
-#include <vector>
-#include <cstdint>
+#include "engine/ecs/component.hpp"
 
-#include "engine/audio/audioformat.hpp"
-
-#include "engine/io/file.hpp"
+#include "engine/asset/material.hpp"
 
 namespace mana {
-    class AudioFile : public File {
-    public:
-        AudioFile();
+    struct MaterialComponent : public Component {
+        MaterialComponent() : Component(MATERIAL) {}
 
-        explicit AudioFile(const std::string &filePath);
+        Component *clone() override {
+            return new MaterialComponent(*this);
+        }
 
-        ~AudioFile();
+        const std::type_info &getTypeInfo() override {
+            return typeid(MaterialComponent);
+        }
 
-        AudioFormat getFormat() const;
-
-        int getSampleRate() const;
-
-        const std::vector<uint8_t> &getBuffer() const;
-
-        void open() override;
-
-        void close() override;
-
-    private:
-        void loadFile();
-
-        AudioFormat format{};
-        int sampleRate{};
-        std::vector<uint8_t> buffer;
+        std::string path;
+        std::string name;
     };
 }
 
-#endif //MANA_AUDIOFILE_HPP
+#endif //MANA_MATERIALCOMPONENT_HPP

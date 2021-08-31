@@ -23,16 +23,12 @@
 #include "engine/io/json/jsondeserializer.hpp"
 #include "engine/io/json/ecs/nodedeserializer.hpp"
 
-#include "engine/resource/resourcemanager.hpp"
-
 #include "engine/ecs/scene.hpp"
 
 namespace mana {
     class SceneDeserializer : public JsonDeserializer<Scene> {
     public:
         SceneDeserializer();
-
-        explicit SceneDeserializer(ResourceManager &resourceManager);
 
         Scene deserialize(std::istream &stream) override;
 

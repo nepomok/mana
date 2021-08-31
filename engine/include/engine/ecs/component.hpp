@@ -22,6 +22,8 @@
 
 #include "engine/ecs/componenttype.hpp"
 
+#include <memory>
+
 namespace mana {
     struct Node;
 
@@ -41,6 +43,9 @@ namespace mana {
 
         bool enabled = true;
         Node *node = nullptr;
+
+        std::shared_ptr<void> userData = nullptr;
     };
 }
+
 #endif //MANA_COMPONENT_HPP

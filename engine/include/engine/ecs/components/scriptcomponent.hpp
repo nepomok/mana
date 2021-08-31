@@ -22,8 +22,6 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/resource/resourcehandle.hpp"
-
 #include "engine/script/script.hpp"
 
 namespace mana {
@@ -38,10 +36,13 @@ namespace mana {
             return typeid(ScriptComponent);
         }
 
-        ResourceHandle<Script> script;
+        std::string runtime;
+
+        std::string assembly;
+        std::string nameSpace;
+        std::string className;
 
         bool scriptEnabled = false;
-
         int queue = 0;
     };
 }

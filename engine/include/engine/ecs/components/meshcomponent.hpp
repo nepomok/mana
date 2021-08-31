@@ -17,38 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDRENDERCOMPONENT_HPP
-#define MANA_FORWARDRENDERCOMPONENT_HPP
+#ifndef MANA_MESHCOMPONENT_HPP
+#define MANA_MESHCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/render/rendercommand.hpp"
-
-#include "engine/resource/resourcehandle.hpp"
+#include "engine/asset/image.hpp"
 
 namespace mana {
-    struct ForwardRenderComponent : public Component {
-        ForwardRenderComponent() : Component(RENDER_FORWARD) {}
+    struct MeshComponent : public Component {
+        MeshComponent() : Component(MESH) {}
 
         Component *clone() override {
-            return new ForwardRenderComponent(*this);
+            return new MeshComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(ForwardRenderComponent);
+            return typeid(MeshComponent);
         }
 
-        ResourceHandle<ShaderProgram> shader;
-
-        std::vector<ResourceHandle<MeshBuffer>> meshBuffers;
-        std::vector<ResourceHandle<TextureBuffer>> textureBuffers;
-
-        std::map<std::string, int> textureMapping;
-
-        RenderProperties renderProperties;
-
-        int renderOrder = 0;
+        std::string path;
+        std::string name;
     };
 }
 
-#endif //MANA_FORWARDRENDERCOMPONENT_HPP
+#endif //MANA_MESHCOMPONENT_HPP

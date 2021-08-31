@@ -22,8 +22,6 @@
 
 #include "engine/io/json/jsondeserializer.hpp"
 
-#include "engine/resource/resourcemanager.hpp"
-
 #include "engine/ecs/component.hpp"
 
 namespace mana {
@@ -31,12 +29,7 @@ namespace mana {
     public:
         ComponentDeserializer();
 
-        explicit ComponentDeserializer(ResourceManager &resourceManager);
-
         Component *deserialize(std::istream &stream) override;
-
-    private:
-        ResourceManager *resourceManager;
     };
 }
 

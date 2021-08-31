@@ -4,7 +4,7 @@
   "nodes": [
     {
       "enabled": true,
-      "name": "mainCamera",
+      "name": "MainCamera",
       "components": [
         {
           "enabled": true,
@@ -38,7 +38,7 @@
     },
     {
       "enabled": true,
-      "name": "plane",
+      "name": "Plane",
       "components": [
         {
           "enabled": true,
@@ -61,63 +61,23 @@
         },
         {
           "enabled": true,
-          "componentType": "renderforward",
-          "shaderResourceName": "Shader.default",
-          "textureMapping": [
-            {
-              "name": "diffuse",
-              "slot": 0
-            },
-            {
-              "name": "specular",
-              "slot": 1
-            }
-          ],
-          "meshes": [
-            {
-              "resourceName": "MeshBuffer.plane"
-            }
-          ],
-          "textures": [
-            {
-              "resourceName": "Texture.colorMap"
-            },
-            {
-              "resourceName": "Texture.specularMap"
-            }
-          ],
-          "renderProperties": {
-            "enableDepthTest": true,
-            "depthTestWrite": true,
-            "depthTestMode": "depth_test_less",
-            "enableStencilTest": false,
-            "stencilTestMask": 255,
-            "stencilMode": "stencil_always",
-            "stencilReference": 1,
-            "stencilFunctionMask": 255,
-            "stencilFail": "stencil_keep",
-            "stencilDepthFail": "stencil_keep",
-            "stencilPass": "stencil_keep",
-            "enableFaceCulling": false,
-            "faceCullMode": "cull_front",
-            "faceCullClockwiseWinding": false,
-            "enableBlending": false,
-            "blendSourceMode": "one",
-            "blendDestinationMode": "zero",
-            "renderOrder": 1
-          }
+          "componentType": "render",
+          "forward": false
         },
         {
           "enabled": true,
           "componentType": "script",
-          "resourceName": "Script.inputController",
+          "runtime": "mono",
+          "assembly": "assets/scripts/script.dll",
+          "nameSpace": "",
+          "className": "InputController",
           "queue": 0
         }
       ]
     },
     {
       "enabled": false,
-      "name": "skybox",
+      "name": "Skybox",
       "components": [
         {
           "enabled": true,
@@ -140,50 +100,14 @@
         },
         {
           "enabled": true,
-          "componentType": "renderforward",
-          "shaderResourceName": "Shader.skybox",
-          "textureMapping": [
-            {
-              "name": "skybox",
-              "slot": 0
-            }
-          ],
-          "meshes": [
-            {
-              "resourceName": "MeshBuffer.cube"
-            }
-          ],
-          "textures": [
-            {
-              "resourceName": "Texture.skybox"
-            }
-          ],
-          "renderProperties": {
-            "enableDepthTest": false,
-            "depthTestWrite": false,
-            "depthTestMode": "depth_test_less",
-            "enableStencilTest": false,
-            "stencilTestMask": 255,
-            "stencilMode": "stencil_always",
-            "stencilReference": 1,
-            "stencilFunctionMask": 255,
-            "stencilFail": "stencil_keep",
-            "stencilDepthFail": "stencil_keep",
-            "stencilPass": "stencil_keep",
-            "enableFaceCulling": false,
-            "faceCullMode": "cull_front",
-            "faceCullClockwiseWinding": false,
-            "enableBlending": false,
-            "blendSourceMode": "one",
-            "blendDestinationMode": "zero",
-            "renderOrder": 0
-          }
+          "componentType": "skybox",
+          "path": "assets/images/deepbluespace-skybox_maintex.png"
         }
       ]
     },
     {
       "enabled": true,
-      "name": "deferredcube",
+      "name": "Cube",
       "components": [
         {
           "enabled": true,
@@ -206,15 +130,14 @@
         },
         {
           "enabled": true,
-          "componentType": "renderdeferred",
-          "meshBuffer": "MeshBuffer.cube",
-          "material": "Material.cube"
+          "componentType": "render",
+          "forward": false
         }
       ]
     },
     {
       "enabled": true,
-      "name": "light",
+      "name": "DirectionalLight",
       "components": [
         {
           "enabled": true,

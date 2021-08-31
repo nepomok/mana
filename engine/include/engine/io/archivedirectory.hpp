@@ -17,27 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RESOURCEMANAGERDESERIALIZER_HPP
-#define MANA_RESOURCEMANAGERDESERIALIZER_HPP
+#ifndef MANA_ARCHIVEDIRECTORY_HPP
+#define MANA_ARCHIVEDIRECTORY_HPP
 
-#include "engine/io/json/jsondeserializer.hpp"
-#include "engine/io/json/resource/resourcedeserializer.hpp"
+#include <fstream>
+#include <filesystem>
 
-#include "engine/resource/resourcemanager.hpp"
+#include "engine/io/archive.hpp"
 
 namespace mana {
-    class ResourceManagerDeserializer : public JsonDeserializer<ResourceManager*> {
+    /**
+     * A directory representing an archive.
+     */
+    class ArchiveDirectory : public Archive {
     public:
-        ResourceManagerDeserializer();
+        std::string directory;
 
-        ResourceManagerDeserializer(RenderDevice &device, MonoCppDomain &monoRuntime);
+        ArchiveDirectory() = default;
 
-        ResourceManager* deserialize(std::istream &stream) override;
+        explicit ArchiveDirectory(std::string directory) : directory(std::move(directory)) {}
 
-    private:
-        RenderDevice *device;
-        MonoCppDomain *monoRuntime;
+        std::iostream *open(const std::string &path) override {
+            return new std::fstream(directory + "/" + path);
+        }
     };
 }
 
-#endif //MANA_RESOURCEMANAGERDESERIALIZER_HPP
+#endif //MANA_ARCHIVEDIRECTORY_HPP

@@ -18,6 +18,8 @@
  */
 
 #include <iterator>
+#include <string>
+#include <sstream>
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/loader.h>
@@ -29,21 +31,21 @@
 
 namespace mana {
     MonoCppDomain::MonoCppDomain()
-            : msCorLib(nullptr, nullptr) {
+            : msCorLib(nullptr, nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
         if (domainPointer == nullptr)
             throw std::runtime_error("Failed to create mono domain DefaultDomain");
         mono_config_parse(nullptr);
-        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
+        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()), mono_get_corlib());
     }
 
     MonoCppDomain::MonoCppDomain(const std::string &domainName)
-            : msCorLib(nullptr, nullptr) {
+            : msCorLib(nullptr, nullptr, nullptr) {
         domainPointer = mono_jit_init(domainName.c_str());
         if (domainPointer == nullptr)
             throw std::runtime_error("Failed to create mono domain " + domainName);
         mono_config_parse(nullptr);
-        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()));
+        msCorLib = MonoCppAssembly(domainPointer, mono_image_get_assembly(mono_get_corlib()), mono_get_corlib());
     }
 
     MonoCppDomain::~MonoCppDomain() {
@@ -58,14 +60,15 @@ namespace mana {
         auto *ap = mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer), filePath.c_str());
         if (ap == nullptr)
             throw std::runtime_error("Failed to load assembly " + filePath);
-        return new mana::MonoCppAssembly(domainPointer, ap);
+        return new mana::MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
     }
 
     MonoCppAssembly *MonoCppDomain::loadAssembly(std::istream &source) {
-        std::string assemblyBytes((std::istreambuf_iterator<char>(source)),
-                                  std::istreambuf_iterator<char>());
+        auto *ret = new MonoCppAssembly();
+        ret->imageBytes = std::string((std::istreambuf_iterator<char>(source)),
+                                      std::istreambuf_iterator<char>());
         MonoImageOpenStatus status;
-        auto *image = mono_image_open_from_data(assemblyBytes.data(), assemblyBytes.size(), false, &status);
+        auto *image = mono_image_open_from_data(ret->imageBytes.data(), ret->imageBytes.size(), false, &status);
         if (image == nullptr || status != MONO_IMAGE_OK)
             throw std::runtime_error("Failed to open image " + std::to_string(status));
 
@@ -73,7 +76,11 @@ namespace mana {
         if (assembly == nullptr || status != MONO_IMAGE_OK)
             throw std::runtime_error("Failed to create assembly " + std::to_string(status));
 
-        return new MonoCppAssembly(domainPointer, assembly);
+        ret->imagePointer = image;
+        ret->assemblyPointer = assembly;
+        ret->domainPointer = domainPointer;
+
+        return ret;
     }
 
     MonoCppObject MonoCppDomain::stringFromUtf8(const std::string &str, bool pinned) {

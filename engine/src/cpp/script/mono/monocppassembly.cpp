@@ -28,9 +28,10 @@
 #include "engine/script/mono/monocppassembly.hpp"
 
 namespace mana {
-    MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer)
+    MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer, void *imagePointer)
             : domainPointer(domainPointer),
-              assemblyPointer(assemblyPointer) {}
+              assemblyPointer(assemblyPointer),
+              imagePointer(imagePointer) {}
 
     MonoCppAssembly::~MonoCppAssembly() = default; //TODO: Unload assembly in destructor
 
@@ -38,8 +39,7 @@ namespace mana {
                                                       const std::string &className,
                                                       const std::string &functionName,
                                                       MonoCppArguments &args) const {
-        auto *imagePointer = mono_assembly_get_image(static_cast<MonoAssembly *>(assemblyPointer));
-        auto *c = mono_class_from_name(imagePointer, nameSpace.c_str(), className.c_str());
+        auto *c = mono_class_from_name(reinterpret_cast<MonoImage *>(imagePointer), nameSpace.c_str(), className.c_str());
         if (c == nullptr)
             throw std::runtime_error("Failed to find class " + className);
         auto *m = mono_class_get_method_from_name(c, functionName.c_str(), args.size());
@@ -57,8 +57,7 @@ namespace mana {
                                          const std::string &className,
                                          const std::string &fieldName,
                                          MonoCppValue value) const {
-        auto *imagePointer = mono_assembly_get_image(static_cast<MonoAssembly *>(assemblyPointer));
-        auto *c = mono_class_from_name(imagePointer, nameSpace.c_str(), className.c_str());
+        auto *c = mono_class_from_name(reinterpret_cast<MonoImage *>(imagePointer), nameSpace.c_str(), className.c_str());
         if (c == nullptr)
             throw std::runtime_error("Failed to find class " + className);
         auto *f = mono_class_get_field_from_name(c, fieldName.c_str());
@@ -70,8 +69,7 @@ namespace mana {
     MonoCppObject MonoCppAssembly::getStaticField(const std::string &nameSpace,
                                                   const std::string &className,
                                                   const std::string &fieldName) const {
-        auto *imagePointer = mono_assembly_get_image((MonoAssembly *) assemblyPointer);
-        auto *c = mono_class_from_name(imagePointer, nameSpace.c_str(), className.c_str());
+        auto *c = mono_class_from_name(reinterpret_cast<MonoImage *>(imagePointer), nameSpace.c_str(), className.c_str());
         if (c == nullptr)
             throw std::runtime_error("Failed to find class " + className);
         auto *f = mono_class_get_field_from_name(c, fieldName.c_str());
@@ -85,8 +83,7 @@ namespace mana {
     MonoCppObject MonoCppAssembly::createObject(const std::string &nameSpace,
                                                 const std::string &className,
                                                 bool pinned) const {
-        auto *imagePointer = mono_assembly_get_image(static_cast<MonoAssembly *>(assemblyPointer));
-        auto *monoClass = mono_class_from_name(imagePointer, nameSpace.c_str(), className.c_str());
+        auto *monoClass = mono_class_from_name(reinterpret_cast<MonoImage *>(imagePointer), nameSpace.c_str(), className.c_str());
         if (monoClass == nullptr)
             throw std::runtime_error("Class not found " + nameSpace + "." + className);
         auto *o = mono_object_new(static_cast<MonoDomain *>(domainPointer), monoClass);

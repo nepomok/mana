@@ -20,17 +20,18 @@
 #ifndef MANA_COMPONENTS_HPP
 #define MANA_COMPONENTS_HPP
 
-#include "engine/ecs/components/physics2dcomponent.hpp"
-#include "engine/ecs/components/physics3dcomponent.hpp"
 #include "engine/ecs/components/boneanimatorcomponent.hpp"
+#include "engine/ecs/components/meshcomponent.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"
+#include "engine/ecs/components/materialcomponent.hpp"
 #include "engine/ecs/components/transformcomponent.hpp"
 #include "engine/ecs/components/lightcomponent.hpp"
 #include "engine/ecs/components/particlecomponent.hpp"
-#include "engine/ecs/components/forwardrendercomponent.hpp"
-#include "engine/ecs/components/deferredrendercomponent.hpp"
+#include "engine/ecs/components/physics2dcomponent.hpp"
+#include "engine/ecs/components/rendercomponent.hpp"
 #include "engine/ecs/components/scriptcomponent.hpp"
-
+#include "engine/ecs/components/skyboxcomponent.hpp"
+#include "engine/ecs/components/physics3dcomponent.hpp"
 #include "engine/ecs/components/gui/textcomponent.hpp"
 #include "engine/ecs/components/gui/canvascomponent.hpp"
 #include "engine/ecs/components/gui/buttoncomponent.hpp"

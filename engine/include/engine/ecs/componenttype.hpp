@@ -27,8 +27,10 @@ namespace mana {
         CAMERA,
         LIGHT,
         SCRIPT,
-        RENDER_FORWARD,
-        RENDER_DEFERRED
+        MESH,
+        MATERIAL,
+        RENDER,
+        SKYBOX
     };
 }
 

@@ -25,14 +25,14 @@
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
 
-#include "engine/resource/resourcemanager.hpp"
+#include "engine/io/archive.hpp"
 
 namespace mana {
     class ECS;
 
     class RenderSystem : public System {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
 
         ~RenderSystem() override = default;
 
@@ -46,8 +46,11 @@ namespace mana {
 
     private:
         RenderTarget &screenTarget;
-        Renderer3D ren;
+        RenderDevice &device;
+        Archive &archive;
 
+        Renderer3D ren;
+        
         Camera camera;
     };
 }

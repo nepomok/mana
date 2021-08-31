@@ -26,9 +26,6 @@
 namespace mana {
     SceneDeserializer::SceneDeserializer() = default;
 
-    SceneDeserializer::SceneDeserializer(ResourceManager &resourceManager)
-            : nodeDeserializer(resourceManager) {}
-
     Scene SceneDeserializer::deserialize(std::istream &stream) {
         nlohmann::json j;
         stream >> j;
