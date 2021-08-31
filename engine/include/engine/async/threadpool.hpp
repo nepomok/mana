@@ -20,6 +20,7 @@
 #ifndef MANA_THREADPOOL_HPP
 #define MANA_THREADPOOL_HPP
 
+#include <memory>
 #include <vector>
 #include <thread>
 #include <functional>
@@ -43,11 +44,11 @@ namespace mana {
             }
         }
 
-        Task *addTask(const std::function<void()> &work) {
+        std::shared_ptr<Task> addTask(const std::function<void()> &work) {
             if (isShutdown)
                 throw std::runtime_error("Thread pool was shut down");
 
-            Task *ret;
+            std::shared_ptr<Task> ret;
             {
                 const std::lock_guard<std::mutex> l(taskMutex);
                 int index;
@@ -59,8 +60,8 @@ namespace mana {
                     index = *taskCache.begin();
                     taskCache.erase(taskCache.begin());
                 }
-                ret = new Task(work);
-                tasks[index] = ret;
+                ret = std::make_shared<Task>(work);
+                tasks[index] = std::make_shared<Task>(work);
             }
 
             taskVar.notify_all();
@@ -77,7 +78,7 @@ namespace mana {
 
         int taskIndex = 0;
         std::vector<int> taskCache;
-        std::map<int, Task *> tasks;
+        std::map<int, std::shared_ptr<Task>> tasks;
         std::condition_variable taskVar;
 
         std::vector<std::thread> threads;
@@ -88,7 +89,7 @@ namespace mana {
             std::unique_lock<std::mutex> taskLock(taskMutex);
             while (!isShutdown) {
                 if (!tasks.empty()) {
-                    auto *task = tasks.begin()->second;
+                    auto task = tasks.begin()->second;
                     taskCache.emplace_back(tasks.begin()->first);
 
                     tasks.erase(tasks.begin());
