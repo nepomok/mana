@@ -33,9 +33,6 @@
 
 #include "engine/script/script.hpp"
 
-#include "engine/script/mono/monocppassembly.hpp"
-#include "engine/script/mono/monocppdomain.hpp"
-
 namespace mana {
     /**
      * The asset importer defines import functions which convert raw data streams into objects useable by the engine.
@@ -47,8 +44,6 @@ namespace mana {
         static Image<ColorRGBA> importImage(std::istream &source, const std::string &hint);
 
         static Audio importAudio(std::istream &source, const std::string &hint);
-
-        static MonoCppAssembly *importMonoAssembly(std::istream &source, MonoCppDomain &domain);
 
         /**
          * Import scene in json format

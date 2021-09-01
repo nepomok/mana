@@ -322,10 +322,6 @@ namespace mana {
         return readAudio(source);
     }
 
-    MonoCppAssembly *AssetImporter::importMonoAssembly(std::istream &source, MonoCppDomain &domain) {
-        return domain.loadAssembly(source);
-    }
-
     Scene AssetImporter::importScene(std::istream &source) {
         SceneDeserializer deserializer;
         return deserializer.deserialize(source);
