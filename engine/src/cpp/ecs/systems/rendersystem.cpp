@@ -247,8 +247,7 @@ namespace mana {
     TextureBuffer &RenderSystem::getCubemap(const std::string &path) {
         if (cubeMaps.find(path) == cubeMaps.end()) {
             auto image = AssetImporter::importImage(*archive.open(path), std::filesystem::path(path).extension());
-            cubeMaps[path] = std::shared_ptr<TextureBuffer>(
-                    device.getAllocator().createTextureBuffer({TextureBuffer::TEXTURE_CUBE_MAP}));
+            cubeMaps[path] = std::shared_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer({}));
             cubeMaps[path]->uploadCubeMap(image);
         }
         return *cubeMaps.find(path)->second;

@@ -59,6 +59,9 @@ namespace mana {
             void uploadCubeMap(const Image<ColorRGBA> &buffer) override;
 
             Image<ColorRGBA> downloadCubeMap() override;
+
+        private:
+            void setTextureType(TextureType type);
         };
     }
 }

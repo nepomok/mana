@@ -24,8 +24,6 @@
 using namespace mana;
 using namespace mana::opengl;
 
-//TODO: Reallocate texture when type changes
-
 OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
@@ -106,10 +104,8 @@ OGLTextureBuffer::~OGLTextureBuffer() {
 }
 
 void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::RGB8;
     attributes.size = buffer.getSize();
 
@@ -134,10 +130,8 @@ void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::RGBA8;
     attributes.size = buffer.getSize();
 
@@ -162,10 +156,8 @@ void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<float> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::R32F;
     attributes.size = buffer.getSize();
 
@@ -190,10 +182,8 @@ void OGLTextureBuffer::upload(const Image<float> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<int> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::R32I;
     attributes.size = buffer.getSize();
 
@@ -218,10 +208,8 @@ void OGLTextureBuffer::upload(const Image<int> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<char> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::R8I;
     attributes.size = buffer.getSize();
 
@@ -246,10 +234,8 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.textureType = TextureBuffer::TEXTURE_2D;
     attributes.format = TextureBuffer::R8UI;
     attributes.size = buffer.getSize();
 
@@ -286,10 +272,8 @@ mana::Image<ColorRGBA> OGLTextureBuffer::download() {
 }
 
 void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
-    if (attributes.textureType != TEXTURE_CUBE_MAP)
-        throw std::runtime_error("Invalid texture type");
+    setTextureType(TextureBuffer::TEXTURE_CUBE_MAP);
 
-    attributes.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
     attributes.format = TextureBuffer::RGBA8;
     attributes.size = buffer.getSize();
 
@@ -339,4 +323,82 @@ Image<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
         ret.blit({Vec2i(i * attributes.size.x, 0), attributes.size}, download(static_cast<CubeMapFace>(i)));
     }
     return ret;
+}
+
+void OGLTextureBuffer::setTextureType(TextureType t) {
+    if (attributes.textureType != t) {
+        GLenum type = OGLTypeConverter::convert(attributes.textureType);
+
+        glDeleteTextures(1, &handle);
+
+        glGenTextures(1, &handle);
+        glBindTexture(type, handle);
+
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
+        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+
+        glTexParameteri(type,
+                        GL_TEXTURE_MIN_FILTER,
+                        OGLTypeConverter::convert(attributes.filterMin));
+        glTexParameteri(type,
+                        GL_TEXTURE_MAG_FILTER,
+                        OGLTypeConverter::convert(attributes.filterMag));
+        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+
+        if (attributes.textureType == TEXTURE_2D) {
+            GLuint texInternalFormat = OGLTypeConverter::convert(attributes.format);
+            GLuint texFormat = GL_RGBA;
+
+            if (attributes.format >= R8I) {
+                texFormat = GL_RGBA_INTEGER; //Integer formats require _INTEGER format
+            }
+
+            GLuint texType = GL_UNSIGNED_BYTE;
+
+            if (attributes.format == ColorFormat::DEPTH) {
+                texInternalFormat = GL_DEPTH;
+                texFormat = GL_DEPTH_COMPONENT;
+                texType = GL_FLOAT;
+            } else if (attributes.format == ColorFormat::DEPTH_STENCIL) {
+                texInternalFormat = GL_DEPTH24_STENCIL8;
+                texFormat = GL_DEPTH_STENCIL;
+                texType = GL_UNSIGNED_INT_24_8;
+            }
+
+            glTexImage2D(type,
+                         0,
+                         texInternalFormat,
+                         attributes.size.x,
+                         attributes.size.y,
+                         0,
+                         texFormat,
+                         texType,
+                         NULL);
+        } else {
+            for (unsigned int i = 0; i < 6; i++) {
+                glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                             0,
+                             OGLTypeConverter::convert(attributes.format),
+                             attributes.size.x,
+                             attributes.size.y,
+                             0,
+                             GL_RGBA,
+                             GL_UNSIGNED_BYTE,
+                             NULL);
+            }
+        }
+        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+
+        if (attributes.generateMipmap) {
+            glGenerateMipmap(type);
+            glTexParameteri(type, GL_TEXTURE_MIN_FILTER,
+                            OGLTypeConverter::convert(attributes.mipmapFilter));
+            glTexParameteri(type, GL_TEXTURE_MAG_FILTER,
+                            OGLTypeConverter::convert(attributes.filterMag));
+        }
+
+        glBindTexture(type, 0);
+        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+    }
 }
