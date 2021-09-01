@@ -20,6 +20,9 @@
 #ifndef MANA_RENDERSYSTEM_HPP
 #define MANA_RENDERSYSTEM_HPP
 
+#include <map>
+#include <string>
+
 #include "engine/ecs/system.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
@@ -50,8 +53,21 @@ namespace mana {
         Archive &archive;
 
         Renderer3D ren;
-        
+
         Camera camera;
+
+        TextureBuffer &getTexture(const std::string &path);
+
+        TextureBuffer &getCubemap(const std::string &path);
+
+        MeshBuffer &getMesh(const std::string &path, const std::string &name);
+
+        Material &getMaterial(const std::string &path, const std::string &name);
+
+        std::map<std::string, std::shared_ptr<TextureBuffer>> textures;
+        std::map<std::string, std::shared_ptr<TextureBuffer>> cubeMaps;
+        std::map<std::string, std::shared_ptr<MeshBuffer>> meshes;
+        std::map<std::string, Material> materials;
     };
 }
 

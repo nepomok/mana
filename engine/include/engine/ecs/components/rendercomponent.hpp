@@ -37,6 +37,10 @@ namespace mana {
         }
 
         bool forward = false;
+
+        bool outline;
+        ColorRGBA outlineColor;
+        float outlineScale = 1.1f;
     };
 }
 

@@ -14,7 +14,7 @@ class InputController : Script
 
     public override void OnUpdate()
     {
-        Node cam = Scene.scene.GetNode("mainCamera");
+        Node cam = Scene.scene.GetNode("MainCamera");
         Transform camT = cam.GetTransform();
 
         Vector3 inputMovement = new Vector3(0);

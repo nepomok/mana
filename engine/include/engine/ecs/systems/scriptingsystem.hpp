@@ -66,6 +66,10 @@ namespace mana {
         MonoCppDomain &domain;
         MonoCppAssembly &msCorLib;
         MonoCppAssembly &manaAssembly;
+
+        MonoCppAssembly &getAssembly(const std::string &path);
+
+        std::map<std::string, MonoCppAssembly*> assemblies;
     };
 }
 

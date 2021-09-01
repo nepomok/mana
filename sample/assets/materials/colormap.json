@@ -1,0 +1,7 @@
+[
+  {
+    "name": "Colormap",
+    "type": "material",
+    "diffuseTexture": "assets/images/colormap.png"
+  }
+]

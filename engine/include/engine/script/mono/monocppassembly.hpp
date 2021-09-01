@@ -28,6 +28,7 @@
 #include "engine/script/mono/monocppvalue.hpp"
 
 namespace mana {
+    //TODO: Refactor mono abstraction
     class MonoCppAssembly {
     public:
         MonoCppAssembly() = default;

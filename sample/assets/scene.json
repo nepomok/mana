@@ -66,6 +66,18 @@
         },
         {
           "enabled": true,
+          "componentType": "mesh",
+          "path": "assets/meshes/plane.obj",
+          "name": "Plane"
+        },
+        {
+          "enabled": true,
+          "componentType": "material",
+          "path": "assets/materials/colormap.json",
+          "name": ""
+        },
+        {
+          "enabled": true,
           "componentType": "script",
           "runtime": "mono",
           "assembly": "assets/scripts/script.dll",

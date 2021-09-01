@@ -71,12 +71,12 @@ protected:
     }
 
 private:
+    Scene scene;
+
     ECS ecs;
 
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
-
-    Scene scene;
 
     Node *cameraNode;
 

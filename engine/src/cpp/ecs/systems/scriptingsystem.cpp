@@ -20,7 +20,6 @@
 #include <algorithm>
 
 #include "engine/ecs/systems/scriptingsystem.hpp"
-
 #include "engine/ecs/components.hpp"
 
 #include "script/sceneinterface.hpp"
@@ -229,6 +228,7 @@ namespace mana {
 
         SceneInterface::setScene(&scene);
         uploadScene(domain, msCorLib, manaAssembly, scene);
+
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
 
         std::sort(nodes.begin(), nodes.end(),
@@ -236,19 +236,43 @@ namespace mana {
                       return a->getComponent<ScriptComponent>().queue < b->getComponent<ScriptComponent>().queue;
                   });
 
+        std::set<std::string> usedAssemblies;
+
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
-            if (!node->enabled || !comp.enabled) {
-                if (comp.scriptEnabled) {
-                    comp.scriptEnabled = false;
-                    //comp.script.get().onDisable();
+
+            if (comp.runtime == "mono") {
+                auto *script = reinterpret_cast<MonoScript *>(comp.userData.get());
+
+                usedAssemblies.insert(comp.assembly);
+
+                if (script == nullptr) {
+                    auto &assembly = getAssembly(comp.assembly);
+                    script = new MonoScript(&assembly, comp.nameSpace, comp.className);
+                    comp.userData = std::shared_ptr<MonoScript>(script);
                 }
+
+                if (!node->enabled || !comp.enabled) {
+                    if (comp.scriptEnabled) {
+                        comp.scriptEnabled = false;
+                        script->onDisable();
+                    }
+                }
+                if (!comp.scriptEnabled) {
+                    comp.scriptEnabled = true;
+                    script->onEnable();
+                }
+                script->onUpdate();
             }
-            if (!comp.scriptEnabled) {
-                comp.scriptEnabled = true;
-                //comp.script.get().onEnable();
-            }
-            //comp.script.get().onUpdate();
+        }
+
+        std::set<std::string> unused;
+        for (auto &pair : assemblies) {
+            if (usedAssemblies.find(pair.first) == usedAssemblies.end())
+                unused.insert(pair.first);
+        }
+        for (auto &s : unused) {
+            assemblies.erase(s);
         }
 
         SceneInterface::setScene(nullptr);
@@ -303,5 +327,13 @@ namespace mana {
         auto monostr = domain.stringFromUtf8(text);
         args.add(monostr);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnTextInput", args);
+    }
+
+    MonoCppAssembly &ScriptingSystem::getAssembly(const std::string &path) {
+        if (assemblies.find(path) == assemblies.end()) {
+            std::unique_ptr<std::iostream> stream(archive.open(path));
+            assemblies[path] = domain.loadAssembly(*stream);
+        }
+        return *assemblies[path];
     }
 }
