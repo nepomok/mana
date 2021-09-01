@@ -58,6 +58,12 @@ namespace mana {
             return *this;
         }
 
+        Image &operator=(Image &&other) noexcept {
+            this->size = std::move(other.size);
+            this->buffer = std::move(other.buffer);
+            return *this;
+        }
+
         Vec2i getSize() const { return size; }
 
         const T *getData() const { return buffer.data(); }
