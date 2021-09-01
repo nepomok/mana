@@ -36,8 +36,6 @@ namespace mana {
             QUAD
         };
 
-        static Mesh cube();
-
         bool indexed = false;
         Primitive primitive = POINT;
         std::vector<Vertex> vertices;
