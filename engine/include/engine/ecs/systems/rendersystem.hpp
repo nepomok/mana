@@ -30,6 +30,8 @@
 
 #include "engine/io/archive.hpp"
 
+#include "engine/resource/resourcemanager.hpp"
+
 namespace mana {
     class ECS;
 
@@ -51,6 +53,7 @@ namespace mana {
         RenderTarget &screenTarget;
         RenderDevice &device;
         Archive &archive;
+        ResourceManager res;
 
         Renderer3D ren;
 

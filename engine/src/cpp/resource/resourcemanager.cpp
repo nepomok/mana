@@ -23,7 +23,7 @@
 
 namespace mana {
     ResourceManager::ResourceManager(Archive &archive)
-            : archive(archive), pool(1) {}
+            : archive(archive), pool() {}
 
     void ResourceManager::loadAssetScene(const std::string &path) {
         std::lock_guard<std::mutex> guard(mutex);

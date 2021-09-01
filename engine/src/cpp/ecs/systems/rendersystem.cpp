@@ -35,7 +35,8 @@ namespace mana {
             : screenTarget(scr),
               device(device),
               ren(device, {new GeometryPass(device), new LightingPass(device)}),
-              archive(archive) {
+              archive(archive),
+              res(archive) {
     }
 
     void RenderSystem::start() {
@@ -99,6 +100,73 @@ namespace mana {
             usedMeshes.insert(meshcomp.path + "/" + meshcomp.name);
 
             if (comp.forward) {
+            } else {
+                auto &material = getMaterial(matcomp.path, matcomp.name);
+
+                if (!material.diffuseTexture.empty()) {
+                    usedTextures.insert(material.diffuseTexture);
+                }
+                if (!material.ambientTexture.empty()) {
+                    usedTextures.insert(material.ambientTexture);
+                }
+                if (!material.specularTexture.empty()) {
+                    usedTextures.insert(material.specularTexture);
+                }
+                if (!material.emissiveTexture.empty()) {
+                    usedTextures.insert(material.emissiveTexture);
+                }
+                if (!material.shininessTexture.empty()) {
+                    usedTextures.insert(material.shininessTexture);
+                }
+                if (!material.normalTexture.empty()) {
+                    usedTextures.insert(material.normalTexture);
+                }
+            }
+        }
+
+        //Get Skybox
+        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
+            auto &comp = node->getComponent<SkyboxComponent>();
+            usedCubemaps.insert(comp.path);
+        }
+
+        //Load used resources
+        for (auto &s : usedTextures) {
+            res.loadImage(s);
+        }
+        for (auto &s : usedCubemaps) {
+            res.loadImage(s);
+        }
+
+        //Get render commands
+        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
+            auto &node = *nodePointer;
+            if (!node.enabled)
+                continue;
+
+            auto &comp = node.getComponent<RenderComponent>();
+            if (!comp.enabled)
+                continue;
+
+            if (!node.hasComponent<TransformComponent>())
+                continue;
+            auto &tcomp = node.getComponent<TransformComponent>();
+            if (!tcomp.enabled)
+                continue;
+
+            if (!node.hasComponent<MaterialComponent>())
+                continue;
+            auto &matcomp = node.getComponent<MaterialComponent>();
+            if (!matcomp.enabled)
+                continue;
+
+            if (!node.hasComponent<MeshComponent>())
+                continue;
+            auto &meshcomp = node.getComponent<MeshComponent>();
+            if (!meshcomp.enabled)
+                continue;
+
+            if (comp.forward) {
                 /*ForwardCommand unit;
                 unit.transform = TransformComponent::walkTransformHierarchy(tcomp);
                 scene3d.forward.emplace_back(unit);*/
@@ -117,27 +185,21 @@ namespace mana {
 
                 if (!material.diffuseTexture.empty()) {
                     renderMaterial.diffuseTexture = &getTexture(material.diffuseTexture);
-                    usedTextures.insert(material.diffuseTexture);
                 }
                 if (!material.ambientTexture.empty()) {
                     renderMaterial.ambientTexture = &getTexture(material.ambientTexture);
-                    usedTextures.insert(material.ambientTexture);
                 }
                 if (!material.specularTexture.empty()) {
                     renderMaterial.specularTexture = &getTexture(material.specularTexture);
-                    usedTextures.insert(material.specularTexture);
                 }
                 if (!material.emissiveTexture.empty()) {
                     renderMaterial.emissiveTexture = &getTexture(material.emissiveTexture);
-                    usedTextures.insert(material.emissiveTexture);
                 }
                 if (!material.shininessTexture.empty()) {
                     renderMaterial.shininessTexture = &getTexture(material.shininessTexture);
-                    usedTextures.insert(material.shininessTexture);
                 }
                 if (!material.normalTexture.empty()) {
                     renderMaterial.normalTexture = &getTexture(material.normalTexture);
-                    usedTextures.insert(material.normalTexture);
                 }
 
                 command.material = renderMaterial;
@@ -155,9 +217,7 @@ namespace mana {
             auto &comp = node->getComponent<SkyboxComponent>();
 
             if (comp.userData == nullptr) {
-                auto *stream = archive.open(comp.path);
-                auto image = AssetImporter::importImage(*stream, std::filesystem::path(comp.path).extension());
-                delete stream;
+                auto &image = res.getImage(comp.path);
 
                 TextureBuffer::Attributes attribs;
                 attribs.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
@@ -189,7 +249,7 @@ namespace mana {
             break;
         }
 
-        //Delete unused resources
+        //Delete and unload unused resources
         std::set<std::string> unused;
         for (auto &pair : textures) {
             if (usedTextures.find(pair.first) == usedTextures.end())
@@ -197,6 +257,7 @@ namespace mana {
         }
         for (auto &s : unused) {
             textures.erase(s);
+            res.unload(s);
         }
         unused.clear();
 
@@ -206,6 +267,7 @@ namespace mana {
         }
         for (auto &s : unused) {
             cubeMaps.erase(s);
+            res.unload(s);
         }
         unused.clear();
 
@@ -237,7 +299,7 @@ namespace mana {
 
     TextureBuffer &RenderSystem::getTexture(const std::string &path) {
         if (textures.find(path) == textures.end()) {
-            auto image = AssetImporter::importImage(*archive.open(path), std::filesystem::path(path).extension());
+            auto &image = res.getImage(path);
             textures[path] = std::shared_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer({}));
             textures[path]->upload(image);
         }
@@ -246,7 +308,7 @@ namespace mana {
 
     TextureBuffer &RenderSystem::getCubemap(const std::string &path) {
         if (cubeMaps.find(path) == cubeMaps.end()) {
-            auto image = AssetImporter::importImage(*archive.open(path), std::filesystem::path(path).extension());
+            auto &image = res.getImage(path);
             cubeMaps[path] = std::shared_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer({}));
             cubeMaps[path]->uploadCubeMap(image);
         }
