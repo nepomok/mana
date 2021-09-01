@@ -71,6 +71,7 @@ namespace mana {
 
         void shutdown() {
             isShutdown = true;
+            taskVar.notify_all();
         }
 
     private:
@@ -98,7 +99,11 @@ namespace mana {
                     task->start();
                     taskLock.lock();
                 }
-                taskVar.wait(taskLock, [this] { return !tasks.empty(); });
+                taskVar.wait(taskLock, [this] {
+                    if (isShutdown)
+                        return true;
+                    return !tasks.empty();
+                });
             }
         }
     };
