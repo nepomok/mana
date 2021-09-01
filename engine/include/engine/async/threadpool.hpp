@@ -61,7 +61,7 @@ namespace mana {
                     taskCache.erase(taskCache.begin());
                 }
                 ret = std::make_shared<Task>(work);
-                tasks[index] = std::make_shared<Task>(work);
+                tasks[index] = ret;
             }
 
             taskVar.notify_all();
