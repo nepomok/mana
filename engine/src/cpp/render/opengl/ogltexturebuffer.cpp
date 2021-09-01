@@ -302,8 +302,7 @@ void OGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
         throw std::runtime_error("Invalid cubemap image");
-    if (!(faceSize == attributes.size))
-        throw std::runtime_error("Invalid cubemap face size");
+
     for (int i = 0; i < 6; i++) {
         upload(static_cast<CubeMapFace>(i), buffer.slice(Recti(Vec2i(faceSize.x * i, 0), faceSize)));
     }
