@@ -104,10 +104,9 @@ OGLTextureBuffer::~OGLTextureBuffer() {
 }
 
 void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("Invalid texture type");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::RGB8;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -130,10 +129,9 @@ void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("TextureBuffer not texture 2d");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::RGBA8;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -156,10 +154,9 @@ void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<float> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("TextureBuffer not texture 2d");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::R32F;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -182,10 +179,9 @@ void OGLTextureBuffer::upload(const Image<float> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<int> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("TextureBuffer not texture 2d");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::R32I;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -208,10 +204,9 @@ void OGLTextureBuffer::upload(const Image<int> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<char> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("TextureBuffer not texture 2d");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::R8I;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -234,10 +229,9 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
 }
 
 void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
-    if (attributes.textureType != TEXTURE_2D)
-        throw std::runtime_error("TextureBuffer not texture 2d");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_2D;
+    attributes.format = TextureBuffer::R8UI;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
     glTexImage2D(GL_TEXTURE_2D,
@@ -272,10 +266,9 @@ mana::Image<ColorRGBA> OGLTextureBuffer::download() {
 }
 
 void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
-    if (attributes.textureType != TEXTURE_CUBE_MAP)
-        throw std::runtime_error("TextureBuffer not cubemap");
-    if (!(buffer.getSize() == attributes.size))
-        throw std::runtime_error("Upload size mismatch");
+    attributes.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
+    attributes.format = TextureBuffer::RGBA8;
+    attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
     glTexImage2D(OGLTypeConverter::convert(face),

@@ -111,7 +111,7 @@ namespace mana {
                 }
                 auto &texture = dynamic_cast<const OGLTextureBuffer &>(*textureObject);
                 glActiveTexture(getTextureSlot(i));
-                glBindTexture(OGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
+                glBindTexture(OGLTypeConverter::convert(texture.getAttributes().textureType), texture.handle);
             }
 
             //Bind shader program
