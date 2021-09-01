@@ -24,6 +24,7 @@
 #include <assimp/postprocess.h>
 
 #include "extern/stb_image.h"
+#include "extern/json.hpp"
 
 #include <sndfile.h>
 
@@ -261,8 +262,56 @@ namespace mana {
         return ret;
     }
 
+    ColorRGBA convertJsonColor(const nlohmann::json &j) {
+        return ColorRGBA(j["r"], j["g"], j["b"], j["a"]);
+    }
+
+    AssetScene readJsonScene(std::istream &source) {
+        AssetScene ret;
+        std::string str((std::istreambuf_iterator<char>(source)), std::istreambuf_iterator<char>());
+        nlohmann::json j = nlohmann::json::parse(str);
+        for (auto &element : j) {
+            std::string type = element["type"];
+            std::string name = element["name"];
+            if (type == "material") {
+                Material mat;
+
+                if (element.find("diffuse") != element.end())
+                    mat.diffuse = convertJsonColor(element["diffuse"]);
+                if (element.find("ambient") != element.end())
+                    mat.ambient = convertJsonColor(element["ambient"]);
+                if (element.find("specular") != element.end())
+                    mat.specular = convertJsonColor(element["specular"]);
+                if (element.find("emissive") != element.end())
+                    mat.emissive = convertJsonColor(element["emissive"]);
+                if (element.find("shininess") != element.end())
+                    mat.shininess = element["shininess"];
+
+                if (element.find("diffuseTexture") != element.end())
+                    mat.diffuseTexture = element["diffuseTexture"];
+                if (element.find("ambientTexture") != element.end())
+                    mat.ambientTexture = element["ambientTexture"];
+                if (element.find("specularTexture") != element.end())
+                    mat.specularTexture = element["specularTexture"];
+                if (element.find("emissiveTexture") != element.end())
+                    mat.emissiveTexture = element["emissiveTexture"];
+                if (element.find("shininessTexture") != element.end())
+                    mat.shininessTexture = element["shininessTexture"];
+                if (element.find("normalTexture") != element.end())
+                    mat.normalTexture = element["normalTexture"];
+
+                ret.materials[name] = mat;
+            }
+        }
+        return ret;
+    }
+
     AssetScene AssetImporter::importAssetScene(std::istream &source, const std::string &hint) {
-        return readAsset(source, hint);
+        if (hint == ".json") {
+            return readJsonScene(source);
+        } else {
+            return readAsset(source, hint);
+        }
     }
 
     Image<ColorRGBA> AssetImporter::importImage(std::istream &source, const std::string &hint) {
