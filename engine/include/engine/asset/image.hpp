@@ -50,6 +50,8 @@ namespace mana {
 
         Image(const Image &copy) : size(copy.size), buffer(copy.buffer) {}
 
+        Image(Image &&other)  noexcept : size(std::move(other.size)), buffer(std::move(other.buffer)) {}
+
         Image &operator=(const Image &copy) {
             this->size = copy.size;
             this->buffer = std::vector<T>(copy.buffer);
