@@ -121,7 +121,10 @@ namespace mana {
 
     SkyboxComponent *getSkyboxComponent(const nlohmann::json &component) {
         auto *ret = new SkyboxComponent();
-        ret->path = component["path"];
+        int i = 0;
+        for (auto &node : component["paths"]) {
+            ret->paths.at(i++) = node;
+        }
         return ret;
     }
 

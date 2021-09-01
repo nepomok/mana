@@ -61,14 +61,14 @@ namespace mana {
 
         TextureBuffer &getTexture(const std::string &path);
 
-        TextureBuffer &getCubemap(const std::string &path);
+        TextureBuffer &getCubemap(const std::array<std::string, 6> &paths);
 
         MeshBuffer &getMesh(const std::string &path, const std::string &name);
 
         Material &getMaterial(const std::string &path, const std::string &name);
 
         std::map<std::string, std::shared_ptr<TextureBuffer>> textures;
-        std::map<std::string, std::shared_ptr<TextureBuffer>> cubeMaps;
+        std::map<std::array<std::string, 6>, std::shared_ptr<TextureBuffer>> cubeMaps;
         std::map<std::string, std::shared_ptr<MeshBuffer>> meshes;
         std::map<std::string, Material> materials;
     };

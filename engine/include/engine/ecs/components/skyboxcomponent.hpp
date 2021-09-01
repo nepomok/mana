@@ -36,7 +36,7 @@ namespace mana {
             return typeid(SkyboxComponent);
         }
 
-        std::string path;
+        std::array<std::string, 6> paths; //Paths to skybox textures
     };
 }
 #endif //MANA_SKYBOXCOMPONENT_HPP

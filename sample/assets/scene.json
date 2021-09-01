@@ -113,7 +113,14 @@
         {
           "enabled": true,
           "componentType": "skybox",
-          "path": "assets/images/deepbluespace-skybox_maintex.png"
+          "paths": [
+            "assets/images/deepbluespace-skybox/0.png",
+            "assets/images/deepbluespace-skybox/1.png",
+            "assets/images/deepbluespace-skybox/2.png",
+            "assets/images/deepbluespace-skybox/3.png",
+            "assets/images/deepbluespace-skybox/4.png",
+            "assets/images/deepbluespace-skybox/5.png"
+          ]
         }
       ]
     },

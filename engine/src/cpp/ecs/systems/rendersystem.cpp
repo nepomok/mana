@@ -51,7 +51,6 @@ namespace mana {
         RenderScene scene3d;
 
         std::set<std::string> usedTextures;
-        std::set<std::string> usedCubemaps;
         std::set<std::string> usedMeshes;
         std::set<std::string> usedMaterials;
 
@@ -127,14 +126,11 @@ namespace mana {
         //Get Skybox
         for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
             auto &comp = node->getComponent<SkyboxComponent>();
-            usedCubemaps.insert(comp.path);
+            usedTextures.insert(comp.paths.begin(), comp.paths.end());
         }
 
         //Load used resources
         for (auto &s : usedTextures) {
-            res.loadImage(s);
-        }
-        for (auto &s : usedCubemaps) {
             res.loadImage(s);
         }
 
@@ -212,24 +208,15 @@ namespace mana {
             }
         }
 
+        std::set<std::array<std::string, 6>> usedCubemaps;
+
         //Get Skybox
         for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
             auto &comp = node->getComponent<SkyboxComponent>();
 
-            if (comp.userData == nullptr) {
-                auto &image = res.getImage(comp.path);
+            usedCubemaps.insert(comp.paths);
 
-                TextureBuffer::Attributes attribs;
-                attribs.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
-                attribs.size = {image.getSize().x / 6, image.getSize().y};
-                auto *textureBuffer = device.getAllocator().createTextureBuffer(attribs);
-                textureBuffer->uploadCubeMap(image);
-                comp.userData = std::shared_ptr<void>(textureBuffer);
-            }
-
-            usedCubemaps.insert(comp.path);
-
-            scene3d.skybox = &getCubemap(comp.path);
+            scene3d.skybox = &getCubemap(comp.paths);
         }
 
         //Get Camera
@@ -257,17 +244,7 @@ namespace mana {
         }
         for (auto &s : unused) {
             textures.erase(s);
-            res.unload(s);
-        }
-        unused.clear();
-
-        for (auto &pair : cubeMaps) {
-            if (usedCubemaps.find(pair.first) == usedCubemaps.end())
-                unused.insert(pair.first);
-        }
-        for (auto &s : unused) {
-            cubeMaps.erase(s);
-            res.unload(s);
+            res.unload(s); //Image not used in any texture buffer cubemap or 2d
         }
         unused.clear();
 
@@ -289,6 +266,16 @@ namespace mana {
         }
         unused.clear();
 
+        std::set<std::array<std::string, 6>> unusedCubemaps;
+        for (auto &pair : cubeMaps) {
+            if (usedCubemaps.find(pair.first) == usedCubemaps.end())
+                unusedCubemaps.insert(pair.first);
+        }
+        for (auto &s : unusedCubemaps) {
+            cubeMaps.erase(s); //Erase cube map texture buffer instances which are no longer referenced.
+        }
+        unusedCubemaps.clear();
+
         //Render
         ren.render(screenTarget, scene3d);
     }
@@ -306,13 +293,16 @@ namespace mana {
         return *textures.find(path)->second;
     }
 
-    TextureBuffer &RenderSystem::getCubemap(const std::string &path) {
-        if (cubeMaps.find(path) == cubeMaps.end()) {
-            auto &image = res.getImage(path);
-            cubeMaps[path] = std::shared_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer({}));
-            cubeMaps[path]->uploadCubeMap(image);
+    TextureBuffer &RenderSystem::getCubemap(const std::array<std::string, 6> &paths) {
+        if (cubeMaps.find(paths) == cubeMaps.end()) {
+            TextureBuffer *buffer = device.getAllocator().createTextureBuffer({});
+            for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
+                auto &image = res.getImage(paths.at(i));
+                buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image);
+            }
+            cubeMaps[paths] = std::shared_ptr<TextureBuffer>(buffer);
         }
-        return *cubeMaps.find(path)->second;
+        return *cubeMaps.find(paths)->second;
     }
 
     MeshBuffer &RenderSystem::getMesh(const std::string &path, const std::string &name) {
