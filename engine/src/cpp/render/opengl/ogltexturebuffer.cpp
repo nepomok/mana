@@ -327,6 +327,8 @@ Image<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
 
 void OGLTextureBuffer::setTextureType(TextureType t) {
     if (attributes.textureType != t) {
+        attributes.textureType = t;
+
         GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
         glDeleteTextures(1, &handle);
