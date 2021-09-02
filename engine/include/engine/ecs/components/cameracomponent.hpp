@@ -22,7 +22,7 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/render/3d/camera.hpp"
+#include "engine/asset/camera.hpp"
 
 namespace mana {
     struct CameraComponent : public Component {

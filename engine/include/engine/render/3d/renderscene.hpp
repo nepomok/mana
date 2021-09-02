@@ -22,8 +22,8 @@
 
 #include "engine/render/3d/deferredcommand.hpp"
 #include "engine/render/3d/forwardcommand.hpp"
-#include "engine/render/3d/camera.hpp"
-#include "engine/render/3d/light.hpp"
+#include "engine/asset/camera.hpp"
+#include "engine/asset/light.hpp"
 
 namespace mana {
     struct RenderScene {

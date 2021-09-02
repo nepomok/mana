@@ -22,7 +22,7 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/render/3d/light.hpp"
+#include "engine/asset/light.hpp"
 
 namespace mana {
     struct LightComponent : public Component {
