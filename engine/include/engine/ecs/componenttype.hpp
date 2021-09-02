@@ -27,9 +27,7 @@ namespace mana {
         CAMERA,
         LIGHT,
         SCRIPT,
-        MESH,
-        MATERIAL,
-        RENDER,
+        MESH_RENDER,
         SKYBOX
     };
 }

@@ -17,30 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SKYBOXCOMPONENT_HPP
-#define MANA_SKYBOXCOMPONENT_HPP
+#ifndef MANA_TEXTURE_HPP
+#define MANA_TEXTURE_HPP
 
-#include <string>
-
-#include "engine/ecs/component.hpp"
-
-#include "engine/asset/assetpath.hpp"
+#include "engine/render/texturebuffer.hpp"
 
 namespace mana {
-    struct SkyboxComponent : public Component {
-        SkyboxComponent() : Component(SKYBOX) {}
-
-        Component *clone() override {
-            return new SkyboxComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(SkyboxComponent);
-        }
-
-        //Paths to skybox images, using paths here means immutable skybox images
-        //Mutable images would be desirable for animated skybox
-        std::array<AssetPath, 6> paths;
+    struct Texture {
+        AssetPath image;
+        TextureBuffer::Attributes attributes;
     };
 }
-#endif //MANA_SKYBOXCOMPONENT_HPP
+
+#endif //MANA_TEXTURE_HPP

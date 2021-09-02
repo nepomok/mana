@@ -30,14 +30,14 @@
 
 #include "engine/io/archive.hpp"
 
-#include "engine/resource/resourcemanager.hpp"
+#include "engine/asset/assetimporter.hpp"
 
 namespace mana {
     class ECS;
 
     class RenderSystem : public System {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, AssetImporter &importer);
 
         ~RenderSystem() override = default;
 
@@ -52,25 +52,31 @@ namespace mana {
     private:
         RenderTarget &screenTarget;
         RenderDevice &device;
-        Archive &archive;
-        ResourceManager res;
+        AssetImporter &assetImporter;
 
         Renderer3D ren;
 
         Camera camera;
 
-        TextureBuffer &getTexture(const std::string &path);
+        /**
+         * Retrieve or allocate the texture buffer for a given path.
+         *
+         * @param path
+         * @return
+         */
+        TextureBuffer &getTexture(const AssetPath &path);
 
-        TextureBuffer &getCubemap(const std::array<std::string, 6> &paths);
+        TextureBuffer &getCubemap(const std::array<AssetPath, 6> &paths);
 
-        MeshBuffer &getMesh(const std::string &path, const std::string &name);
+        MeshBuffer &getMesh(const AssetPath &path);
 
-        Material &getMaterial(const std::string &path, const std::string &name);
+        const Material &getMaterial(const AssetPath &path);
 
-        std::map<std::string, std::shared_ptr<TextureBuffer>> textures;
-        std::map<std::array<std::string, 6>, std::shared_ptr<TextureBuffer>> cubeMaps;
-        std::map<std::string, std::shared_ptr<MeshBuffer>> meshes;
-        std::map<std::string, Material> materials;
+        std::set<std::string> loadedBundles;
+
+        std::map<AssetPath, std::shared_ptr<MeshBuffer>> meshes;
+        std::map<AssetPath, std::shared_ptr<TextureBuffer>> textures;
+        std::map<std::array<AssetPath, 6>, std::shared_ptr<TextureBuffer>> cubeMaps;
     };
 }
 

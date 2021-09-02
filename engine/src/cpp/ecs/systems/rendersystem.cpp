@@ -31,12 +31,11 @@
 #include "engine/asset/assetimporter.hpp"
 
 namespace mana {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, AssetImporter &importer)
             : screenTarget(scr),
               device(device),
               ren(device, {new GeometryPass(device), new LightingPass(device)}),
-              archive(archive),
-              res(archive) {
+              assetImporter(importer) {
     }
 
     void RenderSystem::start() {
@@ -48,176 +47,205 @@ namespace mana {
     }
 
     void RenderSystem::update(float deltaTime, Scene &scene) {
+        std::set<std::string> activeBundles;
+
+        std::set<AssetPath> activeMeshes;
+        std::set<AssetPath> activeTextures;
+        std::set<std::array<AssetPath, 6>> activeCubeMaps;
+
+        //Get active asset bundles
+        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
+            auto &node = *nodePtr;
+            if (!node.enabled)
+                continue;
+
+            auto &transform = node.getComponent<TransformComponent>();
+            if (!transform.enabled)
+                continue;
+
+            auto &render = node.getComponent<MeshRenderComponent>();
+            if (!render.enabled)
+                continue;
+
+            activeBundles.insert(render.mesh.bundle);
+            activeBundles.insert(render.material.bundle);
+            activeMeshes.insert(render.mesh);
+        }
+
+        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
+            auto &comp = node->getComponent<SkyboxComponent>();
+
+            for (auto &path : comp.paths)
+                activeBundles.insert(path.bundle);
+
+            activeCubeMaps.insert(comp.paths);
+        }
+
+        for (auto &bundle : activeBundles) {
+            if (loadedBundles.find(bundle) != loadedBundles.end())
+                continue;;
+            loadedBundles.insert(bundle);
+            assetImporter.import(bundle);
+        }
+
+        //Get referenced asset bundles in material.
+        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
+            auto &node = *nodePtr;
+            if (!node.enabled)
+                continue;
+
+            auto &transform = node.getComponent<TransformComponent>();
+            if (!transform.enabled)
+                continue;
+
+            auto &render = node.getComponent<MeshRenderComponent>();
+            if (!render.enabled)
+                continue;
+
+            auto &material = assetImporter.getBundle(render.material.bundle).getMaterial(render.material.asset);
+
+            if (!material.diffuseTexture.empty()) {
+                activeBundles.insert(material.diffuseTexture.bundle);
+                activeTextures.insert(material.diffuseTexture);
+            }
+            if (!material.ambientTexture.empty()) {
+                activeBundles.insert(material.ambientTexture.bundle);
+                activeTextures.insert(material.ambientTexture);
+            }
+            if (!material.specularTexture.empty()) {
+                activeBundles.insert(material.specularTexture.bundle);
+                activeTextures.insert(material.specularTexture);
+            }
+            if (!material.emissiveTexture.empty()) {
+                activeBundles.insert(material.emissiveTexture.bundle);
+                activeTextures.insert(material.emissiveTexture);
+            }
+            if (!material.shininessTexture.empty()) {
+                activeBundles.insert(material.shininessTexture.bundle);
+                activeTextures.insert(material.shininessTexture);
+            }
+            if (!material.normalTexture.empty()) {
+                activeBundles.insert(material.normalTexture.bundle);
+                activeTextures.insert(material.normalTexture);
+            }
+        }
+
+        for (auto &bundle : activeBundles) {
+            if (loadedBundles.find(bundle) != loadedBundles.end())
+                continue;;
+            loadedBundles.insert(bundle);
+            assetImporter.import(bundle);
+        }
+
+        // Retrieve image bundles from active textures
+        for (auto &texture : activeTextures) {
+            auto &t = assetImporter.getBundle(texture.bundle).getTexture(texture.asset);
+            activeBundles.insert(t.image.bundle);
+        }
+
+        for (auto &bundle : activeBundles) {
+            if (loadedBundles.find(bundle) != loadedBundles.end())
+                continue;;
+            loadedBundles.insert(bundle);
+            assetImporter.import(bundle);
+        }
+
         RenderScene scene3d;
 
-        std::set<std::string> usedTextures;
-        std::set<std::string> usedMeshes;
-        std::set<std::string> usedMaterials;
-
-        //Get lights
-        for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
-            auto &node = *nodePointer;
+        //Create render commands
+        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
+            auto &node = *nodePtr;
             if (!node.enabled)
                 continue;
 
-            auto lightComponent = node.getComponent<LightComponent>();
-            if (!lightComponent.enabled)
+            auto &transform = node.getComponent<TransformComponent>();
+            if (!transform.enabled)
                 continue;
 
-            scene3d.lights.emplace_back(lightComponent.light);
-        }
-
-        //Get render commands
-        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
-            auto &node = *nodePointer;
-            if (!node.enabled)
+            auto &render = node.getComponent<MeshRenderComponent>();
+            if (!render.enabled)
                 continue;
 
-            auto &comp = node.getComponent<RenderComponent>();
-            if (!comp.enabled)
-                continue;
+            DeferredCommand command;
+            command.transform = transform.walkTransformHierarchy();
+            command.meshBuffer = &getMesh(render.mesh);
 
-            if (!node.hasComponent<TransformComponent>())
-                continue;
-            auto &tcomp = node.getComponent<TransformComponent>();
-            if (!tcomp.enabled)
-                continue;
+            auto &material = getMaterial(render.material);
 
-            if (!node.hasComponent<MaterialComponent>())
-                continue;
-            auto &matcomp = node.getComponent<MaterialComponent>();
-            if (!matcomp.enabled)
-                continue;
+            RenderMaterial renderMaterial;
+            renderMaterial.diffuse = material.diffuse;
+            renderMaterial.ambient = material.ambient;
+            renderMaterial.specular = material.specular;
+            renderMaterial.emissive = material.emissive;
+            renderMaterial.shininess = material.shininess;
 
-            if (!node.hasComponent<MeshComponent>())
-                continue;
-            auto &meshcomp = node.getComponent<MeshComponent>();
-            if (!meshcomp.enabled)
-                continue;
-
-            usedMaterials.insert(matcomp.path + "/" + matcomp.name);
-            usedMeshes.insert(meshcomp.path + "/" + meshcomp.name);
-
-            if (comp.forward) {
-            } else {
-                auto &material = getMaterial(matcomp.path, matcomp.name);
-
-                if (!material.diffuseTexture.empty()) {
-                    usedTextures.insert(material.diffuseTexture);
-                }
-                if (!material.ambientTexture.empty()) {
-                    usedTextures.insert(material.ambientTexture);
-                }
-                if (!material.specularTexture.empty()) {
-                    usedTextures.insert(material.specularTexture);
-                }
-                if (!material.emissiveTexture.empty()) {
-                    usedTextures.insert(material.emissiveTexture);
-                }
-                if (!material.shininessTexture.empty()) {
-                    usedTextures.insert(material.shininessTexture);
-                }
-                if (!material.normalTexture.empty()) {
-                    usedTextures.insert(material.normalTexture);
-                }
+            if (!material.diffuseTexture.bundle.empty()) {
+                renderMaterial.diffuseTexture = &getTexture(material.diffuseTexture);
             }
+            if (!material.ambientTexture.bundle.empty()) {
+                renderMaterial.ambientTexture = &getTexture(material.ambientTexture);
+            }
+            if (!material.specularTexture.bundle.empty()) {
+                renderMaterial.specularTexture = &getTexture(material.specularTexture);
+            }
+            if (!material.emissiveTexture.bundle.empty()) {
+                renderMaterial.emissiveTexture = &getTexture(material.emissiveTexture);
+            }
+            if (!material.shininessTexture.bundle.empty()) {
+                renderMaterial.shininessTexture = &getTexture(material.shininessTexture);
+            }
+            if (!material.normalTexture.bundle.empty()) {
+                renderMaterial.normalTexture = &getTexture(material.normalTexture);
+            }
+
+            command.material = renderMaterial;
+
+            scene3d.deferred.emplace_back(command);
         }
 
         //Get Skybox
         for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
             auto &comp = node->getComponent<SkyboxComponent>();
-            usedTextures.insert(comp.paths.begin(), comp.paths.end());
-        }
-
-        //Load used resources
-        for (auto &s : usedTextures) {
-            res.loadImage(s);
-        }
-
-        //Get render commands
-        for (auto &nodePointer : scene.findNodesWithComponent<RenderComponent>()) {
-            auto &node = *nodePointer;
-            if (!node.enabled)
-                continue;
-
-            auto &comp = node.getComponent<RenderComponent>();
-            if (!comp.enabled)
-                continue;
-
-            if (!node.hasComponent<TransformComponent>())
-                continue;
-            auto &tcomp = node.getComponent<TransformComponent>();
-            if (!tcomp.enabled)
-                continue;
-
-            if (!node.hasComponent<MaterialComponent>())
-                continue;
-            auto &matcomp = node.getComponent<MaterialComponent>();
-            if (!matcomp.enabled)
-                continue;
-
-            if (!node.hasComponent<MeshComponent>())
-                continue;
-            auto &meshcomp = node.getComponent<MeshComponent>();
-            if (!meshcomp.enabled)
-                continue;
-
-            if (comp.forward) {
-                /*ForwardCommand unit;
-                unit.transform = TransformComponent::walkTransformHierarchy(tcomp);
-                scene3d.forward.emplace_back(unit);*/
-            } else {
-                DeferredCommand command;
-                command.transform = TransformComponent::walkTransformHierarchy(tcomp);
-
-                auto &material = getMaterial(matcomp.path, matcomp.name);
-
-                RenderMaterial renderMaterial;
-                renderMaterial.diffuse = material.diffuse;
-                renderMaterial.ambient = material.ambient;
-                renderMaterial.specular = material.specular;
-                renderMaterial.emissive = material.emissive;
-                renderMaterial.shininess = material.shininess;
-
-                if (!material.diffuseTexture.empty()) {
-                    renderMaterial.diffuseTexture = &getTexture(material.diffuseTexture);
-                }
-                if (!material.ambientTexture.empty()) {
-                    renderMaterial.ambientTexture = &getTexture(material.ambientTexture);
-                }
-                if (!material.specularTexture.empty()) {
-                    renderMaterial.specularTexture = &getTexture(material.specularTexture);
-                }
-                if (!material.emissiveTexture.empty()) {
-                    renderMaterial.emissiveTexture = &getTexture(material.emissiveTexture);
-                }
-                if (!material.shininessTexture.empty()) {
-                    renderMaterial.shininessTexture = &getTexture(material.shininessTexture);
-                }
-                if (!material.normalTexture.empty()) {
-                    renderMaterial.normalTexture = &getTexture(material.normalTexture);
-                }
-
-                command.material = renderMaterial;
-                command.meshBuffer = &getMesh(meshcomp.path, meshcomp.name);
-                command.outline = comp.outline;
-                command.outlineColor = comp.outlineColor;
-                command.outlineScale = comp.outlineScale;
-
-                scene3d.deferred.emplace_back(command);
-            }
-        }
-
-        std::set<std::array<std::string, 6>> usedCubemaps;
-
-        //Get Skybox
-        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
-            auto &comp = node->getComponent<SkyboxComponent>();
-
-            usedCubemaps.insert(comp.paths);
-
             scene3d.skybox = &getCubemap(comp.paths);
         }
+
+        //Unload bundles which are not referenced anymore
+        for (auto &bundle : loadedBundles) {
+            if (activeBundles.find(bundle) == activeBundles.end())
+                assetImporter.clear(bundle);
+        }
+
+        //Delete unused texture buffers
+        std::set<AssetPath> unused;
+        for (auto &pair : textures) {
+            if (activeTextures.find(pair.first) == activeTextures.end())
+                unused.insert(pair.first);
+        }
+        for (auto &s : unused) {
+            textures.erase(s); //Deallocate texture buffer
+        }
+        unused.clear();
+
+        //Delete unused mesh buffers
+        for (auto &pair : meshes) {
+            if (activeMeshes.find(pair.first) == activeMeshes.end())
+                unused.insert(pair.first);
+        }
+        for (auto &s : unused) {
+            meshes.erase(s); //Deallocate mesh buffer
+        }
+        unused.clear();
+
+        //Delete unused cube map texture buffers
+        std::set<std::array<AssetPath, 6>> unusedCubeMaps;
+        for (auto &pair : cubeMaps) {
+            if (activeCubeMaps.find(pair.first) == activeCubeMaps.end())
+                unusedCubeMaps.insert(pair.first);
+        }
+        for (auto &s : unusedCubeMaps) {
+            cubeMaps.erase(s); //Deallocate cube map texture buffer
+        }
+        unusedCubeMaps.clear();
 
         //Get Camera
         for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
@@ -236,45 +264,18 @@ namespace mana {
             break;
         }
 
-        //Delete and unload unused resources
-        std::set<std::string> unused;
-        for (auto &pair : textures) {
-            if (usedTextures.find(pair.first) == usedTextures.end())
-                unused.insert(pair.first);
-        }
-        for (auto &s : unused) {
-            textures.erase(s);
-            res.unload(s); //Image not used in any texture buffer cubemap or 2d
-        }
-        unused.clear();
+        //Get lights
+        for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
+            auto &node = *nodePointer;
+            if (!node.enabled)
+                continue;
 
-        for (auto &pair : meshes) {
-            if (usedMeshes.find(pair.first) == usedMeshes.end())
-                unused.insert(pair.first);
-        }
-        for (auto &s : unused) {
-            meshes.erase(s);
-        }
-        unused.clear();
+            auto lightComponent = node.getComponent<LightComponent>();
+            if (!lightComponent.enabled)
+                continue;
 
-        for (auto &pair : materials) {
-            if (usedMaterials.find(pair.first) == usedMaterials.end())
-                unused.insert(pair.first);
+            scene3d.lights.emplace_back(lightComponent.light);
         }
-        for (auto &s : unused) {
-            materials.erase(s);
-        }
-        unused.clear();
-
-        std::set<std::array<std::string, 6>> unusedCubemaps;
-        for (auto &pair : cubeMaps) {
-            if (usedCubemaps.find(pair.first) == usedCubemaps.end())
-                unusedCubemaps.insert(pair.first);
-        }
-        for (auto &s : unusedCubemaps) {
-            cubeMaps.erase(s); //Erase cube map texture buffer instances which are no longer referenced.
-        }
-        unusedCubemaps.clear();
 
         //Render
         ren.render(screenTarget, scene3d);
@@ -284,63 +285,58 @@ namespace mana {
         return ren;
     }
 
-    TextureBuffer &RenderSystem::getTexture(const std::string &path) {
+    TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {
         if (textures.find(path) == textures.end()) {
-            auto &image = res.getImage(path);
-            textures[path] = std::shared_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer({}));
+            auto &texture = assetImporter.getBundle(path.bundle).getTexture(path.asset);
+            auto &image = assetImporter.getBundle(texture.image.bundle).getImage(texture.image.asset);
+
+            textures[path] = std::shared_ptr<TextureBuffer>(
+                    device.getAllocator().createTextureBuffer(texture.attributes)
+            );
+
             textures[path]->upload(image);
         }
+
         return *textures.find(path)->second;
     }
 
-    TextureBuffer &RenderSystem::getCubemap(const std::array<std::string, 6> &paths) {
+    TextureBuffer &RenderSystem::getCubemap(const std::array<AssetPath, 6> &paths) {
         if (cubeMaps.find(paths) == cubeMaps.end()) {
             TextureBuffer *buffer = device.getAllocator().createTextureBuffer({});
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
-                auto &image = res.getImage(paths.at(i));
-                buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image);
+                auto path = paths.at(i);
+                auto &image = assetImporter.getBundle(path.bundle);
+
+                if (path.asset.empty()) {
+                    buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.begin()->second);
+                } else {
+                    buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.at(path.asset));
+                }
             }
             cubeMaps[paths] = std::shared_ptr<TextureBuffer>(buffer);
         }
         return *cubeMaps.find(paths)->second;
     }
 
-    MeshBuffer &RenderSystem::getMesh(const std::string &path, const std::string &name) {
-        std::string key = path + "/" + name;
-        if (meshes.find(key) == meshes.end()) {
-            auto scene = AssetImporter::importAssetScene(*archive.open(path), std::filesystem::path(path).extension());
+    MeshBuffer &RenderSystem::getMesh(const AssetPath &path) {
+        if (meshes.find(path) == meshes.end()) {
+            auto bundle = assetImporter.getBundle(path.bundle);
 
             Mesh *mesh;
-            if (name.empty()) {
-                if (scene.meshes.empty())
+            if (path.asset.empty()) {
+                if (bundle.meshes.empty())
                     throw std::runtime_error("");
-                mesh = &scene.meshes.begin()->second;
+                mesh = &bundle.meshes.begin()->second;
             } else {
-                mesh = &scene.meshes.at(name);
+                mesh = &bundle.meshes.at(path.asset);
             }
 
-            meshes[key] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
+            meshes[path] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
         }
-        return *meshes[key];
+        return *meshes[path];
     }
 
-    Material &RenderSystem::getMaterial(const std::string &path, const std::string &name) {
-        std::string key = path + "/" + name;
-        if (materials.find(key) == materials.end()) {
-            auto scene = AssetImporter::importAssetScene(*archive.open(path), std::filesystem::path(path).extension());
-
-            Material *material;
-            if (name.empty()) {
-                if (scene.materials.empty())
-                    throw std::runtime_error("");
-                material = &scene.materials.begin()->second;
-            } else {
-                material = &scene.materials.at(name);
-            }
-
-            materials[key] = *material;
-        }
-
-        return materials[key];
+    const Material &RenderSystem::getMaterial(const AssetPath &path) {
+        return assetImporter.getBundle(path.bundle).getMaterial(path.asset);
     }
 }

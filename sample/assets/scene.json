@@ -61,20 +61,15 @@
         },
         {
           "enabled": true,
-          "componentType": "render",
-          "forward": false
-        },
-        {
-          "enabled": true,
-          "componentType": "mesh",
-          "path": "assets/meshes/plane.obj",
-          "name": "Plane"
-        },
-        {
-          "enabled": true,
-          "componentType": "material",
-          "path": "assets/materials/colormap.json",
-          "name": ""
+          "componentType": "mesh_render",
+          "mesh": {
+            "bundle": "assets/meshes/plane.obj",
+            "asset": "Plane"
+          },
+          "material": {
+            "bundle": "assets/materials/colormap.json",
+            "asset": ""
+          }
         },
         {
           "enabled": true,
@@ -114,43 +109,31 @@
           "enabled": true,
           "componentType": "skybox",
           "paths": [
-            "assets/images/deepbluespace-skybox/0.png",
-            "assets/images/deepbluespace-skybox/1.png",
-            "assets/images/deepbluespace-skybox/2.png",
-            "assets/images/deepbluespace-skybox/3.png",
-            "assets/images/deepbluespace-skybox/4.png",
-            "assets/images/deepbluespace-skybox/5.png"
+            {
+              "bundle": "assets/images/deepbluespace-skybox/0.png",
+              "asset": ""
+            },
+            {
+              "bundle": "assets/images/deepbluespace-skybox/1.png",
+              "asset": ""
+            },
+            {
+              "bundle": "assets/images/deepbluespace-skybox/2.png",
+              "asset": ""
+            },
+            {
+              "bundle": "assets/images/deepbluespace-skybox/3.png",
+              "asset": ""
+            },
+            {
+              "bundle": "assets/images/deepbluespace-skybox/4.png",
+              "asset": ""
+            },
+            {
+              "bundle": "assets/images/deepbluespace-skybox/5.png",
+              "asset": ""
+            }
           ]
-        }
-      ]
-    },
-    {
-      "enabled": true,
-      "name": "Cube",
-      "components": [
-        {
-          "enabled": true,
-          "componentType": "transform",
-          "position": {
-            "x": 0,
-            "y": 2,
-            "z": -5
-          },
-          "rotation": {
-            "x": 0,
-            "y": 45,
-            "z": 0
-          },
-          "scale": {
-            "x": 1,
-            "y": 1,
-            "z": 1
-          }
-        },
-        {
-          "enabled": true,
-          "componentType": "render",
-          "forward": false
         }
       ]
     },

@@ -17,29 +17,20 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETSCENE_HPP
-#define MANA_ASSETSCENE_HPP
+#ifndef MANA_SHADER_HPP
+#define MANA_SHADER_HPP
 
 #include <map>
-#include <string>
 
-#include "engine/asset/mesh.hpp"
-#include "engine/asset/image.hpp"
-#include "engine/asset/material.hpp"
+#include "engine/asset/texture.hpp"
+#include "engine/asset/assetpath.hpp"
 
 namespace mana {
-    /**
-     * An asset scene which is import from 3d formats such as fbx or obj.
-     * Can contain meshes, materials, bones, lights etc.
-     *
-     * The scene has to specify which elements of an asset scene are linked.
-     * Relations defined in the file format are not supported.
-     */
-    class AssetScene {
-    public:
-        std::map<std::string, Mesh> meshes;
-        std::map<std::string, Material> materials;
+    struct Shader {
+        AssetPath vertexSource;
+        AssetPath fragmentSource;
+        std::vector<std::string> textureNames;
     };
 }
 
-#endif //MANA_ASSETSCENE_HPP
+#endif //MANA_SHADER_HPP

@@ -29,56 +29,49 @@
 
 #include "engine/asset/material.hpp"
 #include "engine/asset/audio.hpp"
-#include "engine/asset/assetscene.hpp"
+#include "engine/asset/assetbundle.hpp"
 
 #include "engine/script/script.hpp"
 
+#include "engine/async/threadpool.hpp"
+
 namespace mana {
     /**
-     * The asset importer defines import functions which convert raw data streams into objects useable by the engine.
+     * The asset importer imports bundles.
+     *
+     * A asset bundle is the smallest unit loaded by the importer.
+     *
+     * The user can configure how much data is loaded at once through the asset bundle mechanism.
+     *
+     * A user can for example specify each fbx as a bundle in the scene in which case the fbx is loaded only
+     * when a component references the fbx directly.
+     *
+     * Alternatively the user can define a json bundle which includes multiple fbx files. When this bundle
+     * is loaded all referenced assets are loaded into memory as long as json bundle is referenced in some component.
      */
     class AssetImporter {
     public:
-        static AssetScene importAssetScene(std::istream &source, const std::string &hint);
-
-        static Image<ColorRGBA> importImage(std::istream &source, const std::string &hint);
-
-        static Audio importAudio(std::istream &source, const std::string &hint);
+        explicit AssetImporter(Archive &archive);
 
         /**
-         * Import scene in json format
-        * {
-        *  {
-        *      "name": "testnode",
-        *      "components": [
-        *          {
-        *              "type": "mesh",
-        *              "path": "asset/test.fbx",
-        *              "name": "TestMesh"
-        *          },
-        *          {
-        *              "type": "material",
-        *
-        *              "path": "asset/test.fbx",
-        *              "name": "TestMaterial"
-        *
-         *             "path": "asset/testmaterial.json"
-         *             "name": ""
-        *          },
-        *          {
-        *              "type": "script",
-         *             "runtime": "mono",
-        *              "path": "asset/test.dll",
-         *             "nameSpace": "",
-        *              "className": "TestScript"
-        *          }
-        *      ]
-        *  }
-        * }
-        * @param source
-        * @return
-        */
-        static Scene importScene(std::istream &source);
+         * Import asset bundle identified by path asynchronously.
+         *
+         * @param path
+         */
+        void import(const std::string &path);
+
+        void clear(const std::string &path);
+
+        const AssetBundle &getBundle(const std::string &path);
+
+    private:
+        ThreadPool pool;
+
+        Archive &archive;
+
+        std::mutex mutex;
+        std::map<std::string, std::shared_ptr<Task>> tasks;
+        std::map<std::string, AssetBundle> bundles;
     };
 }
 

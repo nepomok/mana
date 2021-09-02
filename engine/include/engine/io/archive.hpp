@@ -32,7 +32,9 @@ namespace mana {
     public:
         virtual ~Archive() = default;
 
-        virtual std::iostream *open(const std::string &name) = 0;
+        virtual bool exists(const std::string &name) { return false; };
+
+        virtual std::iostream *open(const std::string &name) { throw std::runtime_error("File not found " + name); };
     };
 }
 

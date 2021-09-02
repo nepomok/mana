@@ -22,20 +22,25 @@
 
 #include "engine/asset/image.hpp"
 
+#include "engine/asset/assetpath.hpp"
+
 namespace mana {
     struct Material {
+        AssetPath shader;
+
         ColorRGBA diffuse{};
         ColorRGBA ambient{};
         ColorRGBA specular{};
         ColorRGBA emissive{};
         float shininess{32};
 
-        std::string diffuseTexture;
-        std::string ambientTexture;
-        std::string specularTexture;
-        std::string emissiveTexture;
-        std::string shininessTexture;
-        std::string normalTexture;
+        //Paths to texture objects
+        AssetPath diffuseTexture;
+        AssetPath ambientTexture;
+        AssetPath specularTexture;
+        AssetPath emissiveTexture;
+        AssetPath shininessTexture;
+        AssetPath normalTexture;
     };
 }
 

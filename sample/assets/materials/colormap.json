@@ -1,7 +1,12 @@
-[
-  {
-    "name": "Colormap",
-    "type": "material",
-    "diffuseTexture": "assets/images/colormap.png"
-  }
-]
+{
+  "materials": [
+    {
+      "name": "Colormap",
+      "type": "material",
+      "diffuseTexture": {
+        "bundle": "assets/textures/colormaptexture.json",
+        "asset": ""
+      }
+    }
+  ]
+}

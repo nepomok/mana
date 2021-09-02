@@ -32,6 +32,8 @@ namespace mana {
             return ret;
         }
 
+        Transform walkTransformHierarchy() const { return walkTransformHierarchy(*this); }
+
         TransformComponent() : Component(TRANSFORM) {}
 
         Component *clone() override {

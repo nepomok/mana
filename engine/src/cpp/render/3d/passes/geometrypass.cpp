@@ -23,7 +23,7 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-#include "engine/asset/assetimporter.hpp"
+#include "engine/asset/assetloader.hpp"
 
 static const char *SHADER_VERT_GEOMETRY = R"###(
 #include "mana.hlsl"
@@ -323,7 +323,9 @@ namespace mana {
         shaderSkybox->setTexture("diffuse", 0);
 
         std::stringstream skyboxStream((std::string(SKYBOX_OBJ)));
-        Mesh skyboxMesh = AssetImporter::importAssetScene(skyboxStream, ".obj").meshes.at("Cube");
+
+        Archive archive;
+        Mesh skyboxMesh = AssetLoader::loadBundle(skyboxStream, ".obj", archive, ThreadPool::pool).meshes.at("Cube");
         skyboxCube = allocator.createMeshBuffer(skyboxMesh);
     }
 

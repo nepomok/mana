@@ -24,12 +24,16 @@
 #include <vector>
 #include <thread>
 #include <functional>
+#include <map>
+#include <cassert>
 
 #include "engine/async/task.hpp"
 
 namespace mana {
     class ThreadPool {
     public:
+        static ThreadPool pool;
+
         explicit ThreadPool(int numberOfThreads = 4) : isShutdown(false) {
             assert(numberOfThreads > 0);
             for (int i = 0; i < numberOfThreads; i++) {

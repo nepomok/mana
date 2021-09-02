@@ -17,31 +17,31 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMPONENT_HPP
-#define MANA_RENDERCOMPONENT_HPP
+#ifndef MANA_MESHRENDERCOMPONENT_HPP
+#define MANA_MESHRENDERCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/script/script.hpp"
+#include "engine/asset/image.hpp"
+#include "engine/asset/assetpath.hpp"
 
 namespace mana {
-    struct RenderComponent : public Component {
-        RenderComponent() : Component(RENDER) {}
+    struct MeshRenderComponent : public Component {
+        MeshRenderComponent() : Component(MESH_RENDER) {}
 
         Component *clone() override {
-            return new RenderComponent(*this);
+            return new MeshRenderComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(RenderComponent);
+            return typeid(MeshRenderComponent);
         }
 
-        bool forward = false;
-
-        bool outline;
-        ColorRGBA outlineColor;
-        float outlineScale = 1.1f;
+        bool castShadows;
+        bool receiveShadows;
+        AssetPath mesh;
+        AssetPath material;
     };
 }
 
-#endif //MANA_RENDERCOMPONENT_HPP
+#endif //MANA_MESHRENDERCOMPONENT_HPP

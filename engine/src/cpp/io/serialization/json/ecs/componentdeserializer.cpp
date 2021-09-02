@@ -37,12 +37,8 @@ namespace mana {
             return LIGHT;
         else if (str == "script")
             return SCRIPT;
-        else if (str == "mesh")
-            return MESH;
-        else if (str == "material")
-            return MATERIAL;
-        else if (str == "render")
-            return RENDER;
+        else if (str == "mesh_render")
+            return MESH_RENDER;
         else if (str == "skybox")
             return SKYBOX;
         throw std::runtime_error("Invalid component type " + str);
@@ -113,9 +109,12 @@ namespace mana {
         return ret;
     }
 
-    RenderComponent *getRenderComponent(const nlohmann::json &component) {
-        auto *ret = new RenderComponent();
-        ret->forward = component["forward"];
+    MeshRenderComponent *getMeshRenderComponent(const nlohmann::json &component) {
+        auto *ret = new MeshRenderComponent();
+        ret->castShadows = component.value("castShadows", false);
+        ret->receiveShadows = component.value("receiveShadows", false);
+        ret->mesh = {component["mesh"]["bundle"], component["mesh"]["asset"]};
+        ret->material = {component["material"]["bundle"], component["material"]["asset"]};
         return ret;
     }
 
@@ -123,7 +122,7 @@ namespace mana {
         auto *ret = new SkyboxComponent();
         int i = 0;
         for (auto &node : component["paths"]) {
-            ret->paths.at(i++) = node;
+            ret->paths.at(i++) = {node["bundle"], node["asset"]};
         }
         return ret;
     }
@@ -177,20 +176,6 @@ namespace mana {
         return ret;
     }
 
-    MeshComponent *getMeshComponent(const nlohmann::json &component) {
-        auto *ret = new MeshComponent();
-        ret->path = component["path"];
-        ret->name = component["name"];
-        return ret;
-    }
-
-    MaterialComponent *getMaterialComponent(const nlohmann::json &component) {
-        auto *ret = new MaterialComponent();
-        ret->path = component["path"];
-        ret->name = component["name"];
-        return ret;
-    }
-
     Component *getComponent(const nlohmann::json &component) {
         Component *ret;
         switch (convertComponentType(component["componentType"])) {
@@ -206,14 +191,8 @@ namespace mana {
             case SCRIPT:
                 ret = getScriptComponent(component);
                 break;
-            case MESH:
-                ret = getMeshComponent(component);
-                break;
-            case MATERIAL:
-                ret = getMaterialComponent(component);
-                break;
-            case RENDER:
-                ret = getRenderComponent(component);
+            case MESH_RENDER:
+                ret = getMeshRenderComponent(component);
                 break;
             case SKYBOX:
                 ret = getSkyboxComponent(component);

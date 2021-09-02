@@ -17,28 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MATERIALCOMPONENT_HPP
-#define MANA_MATERIALCOMPONENT_HPP
+#ifndef MANA_ASSETPATH_HPP
+#define MANA_ASSETPATH_HPP
 
-#include "engine/ecs/component.hpp"
-
-#include "engine/asset/material.hpp"
+#include <string>
 
 namespace mana {
-    struct MaterialComponent : public Component {
-        MaterialComponent() : Component(MATERIAL) {}
+    struct AssetPath {
+        std::string bundle;
+        std::string asset;
 
-        Component *clone() override {
-            return new MaterialComponent(*this);
+        bool empty() const { return bundle.empty() && asset.empty(); }
+
+        bool operator<(const AssetPath &other) const {
+            return bundle < other.bundle && asset < other.asset;
         }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(MaterialComponent);
-        }
-
-        std::string path;
-        std::string name;
     };
 }
-
-#endif //MANA_MATERIALCOMPONENT_HPP
+#endif //MANA_ASSETPATH_HPP

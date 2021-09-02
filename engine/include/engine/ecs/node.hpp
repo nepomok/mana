@@ -84,12 +84,8 @@ namespace mana {
                     return typeid(LightComponent);
                 case SCRIPT:
                     return typeid(ScriptComponent);
-                case MESH:
-                    return typeid(MeshComponent);
-                case MATERIAL:
-                    return typeid(MaterialComponent);
-                case RENDER:
-                    return typeid(RenderComponent);
+                case MESH_RENDER:
+                    return typeid(MeshRenderComponent);
                 case SKYBOX:
                     return typeid(SkyboxComponent);
                 default:
@@ -106,12 +102,8 @@ namespace mana {
                 return LIGHT;
             } else if (index == typeid(ScriptComponent)) {
                 return SCRIPT;
-            } else if (index == typeid(MeshComponent)) {
-                return MESH;
-            } else if (index == typeid(MaterialComponent)) {
-                return MATERIAL;
-            } else if (index == typeid(RenderComponent)) {
-                return RENDER;
+            } else if (index == typeid(MeshRenderComponent)) {
+                return MESH_RENDER;
             } else if (index == typeid(SkyboxComponent)) {
                 return SKYBOX;
             }

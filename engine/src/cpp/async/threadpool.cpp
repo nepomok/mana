@@ -17,28 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MESHCOMPONENT_HPP
-#define MANA_MESHCOMPONENT_HPP
-
-#include "engine/ecs/component.hpp"
-
-#include "engine/asset/image.hpp"
+#include "engine/async/threadpool.hpp"
 
 namespace mana {
-    struct MeshComponent : public Component {
-        MeshComponent() : Component(MESH) {}
-
-        Component *clone() override {
-            return new MeshComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(MeshComponent);
-        }
-
-        std::string path;
-        std::string name;
-    };
+    ThreadPool ThreadPool::pool;
 }
-
-#endif //MANA_MESHCOMPONENT_HPP
