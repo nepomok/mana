@@ -79,7 +79,7 @@ namespace mana {
         }
 
         template<typename R>
-        Vector2<R> convert() {
+        Vector2<R> convert() const {
             return Vector2<R>(static_cast<R>(x), static_cast<R>(y));
         }
 

@@ -60,7 +60,7 @@ namespace mana {
         }
 
         template<typename R>
-        Rectangle<R> convert() {
+        Rectangle<R> convert() const {
             return Rectangle<R>(Vector2<R>(static_cast<R>(position.x), static_cast<R>(position.y)),
                                 Vector2<R>(static_cast<R>(dimensions.x), static_cast<R>(dimensions.y)));
         }

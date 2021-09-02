@@ -92,7 +92,7 @@ namespace mana {
         }
 
         template<typename R>
-        Vector4<R> convert() {
+        Vector4<R> convert() const {
             return Vector4<R>(static_cast<R>(x), static_cast<R>(y), static_cast<R>(z), static_cast<R>(w));
         }
 
