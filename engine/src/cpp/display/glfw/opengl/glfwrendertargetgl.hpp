@@ -30,13 +30,12 @@ namespace mana {
         class GLFWRenderTargetGL : public opengl::OGLRenderTarget {
         public:
             GLFWwindow *wndH;
+            Vec2i size;
 
             explicit GLFWRenderTargetGL(GLFWwindow *wndH) : wndH(wndH) {}
 
             Vec2i getSize() override {
-                Vec2i ret;
-                glfwGetWindowSize(wndH, &ret.x, &ret.y);
-                return ret;
+                return size;
             };
 
             GLuint getFBO() override {

@@ -241,6 +241,7 @@ namespace mana {
         }
 
         void GLFWWindowGL::glfwWindowSizeCallback(int width, int height) {
+            renderTarget->size = {width, height};
             for (auto listener : listeners) {
                 listener->onWindowResize(Vec2i(width, height));
             }
