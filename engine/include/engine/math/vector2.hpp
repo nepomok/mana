@@ -78,6 +78,11 @@ namespace mana {
             return *this;
         }
 
+        template<typename R>
+        Vector2<R> convert() {
+            return Vector2<R>(static_cast<R>(x), static_cast<R>(y));
+        }
+
         friend Vector2<T> operator+(const Vector2<T> &lhs, const Vector2<T> &rhs) {
             return Vector2<T>(lhs.x + rhs.x, lhs.y + rhs.y);
         }

@@ -91,6 +91,11 @@ namespace mana {
             return *this;
         }
 
+        template<typename R>
+        Vector4<R> convert() {
+            return Vector4<R>(static_cast<R>(x), static_cast<R>(y), static_cast<R>(z), static_cast<R>(w));
+        }
+
         friend Vector4<T> operator+(const Vector4<T> &lhs, const Vector4<T> &rhs) {
             return Vector4<T>(lhs.x + rhs.x, lhs.y + rhs.y, lhs.z + rhs.z, lhs.w + rhs.w);
         }
