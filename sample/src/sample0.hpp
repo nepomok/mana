@@ -34,6 +34,9 @@ protected:
         archive = ArchiveDirectory(std::filesystem::current_path().c_str());
         assetImporter = std::make_unique<AssetImporter>(archive);
 
+        texture = device.getAllocator().createTextureBuffer({});
+        texture->upload(assetImporter->getBundle("assets/images/smiley.png").getImage());
+
         ren2d = Renderer2D(device);
 
         auto *assemblyStream = archive.open("mana.dll");
@@ -48,6 +51,7 @@ protected:
 
     void stop(Window &window, RenderDevice &device, Input &input) override {
         delete manaAssembly;
+        delete texture;
         Game::stop(window, device, input);
     }
 
@@ -67,6 +71,8 @@ protected:
         ren2d.draw(Recti(Vec2i(100, 100), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 255), false, {50, 50}, rot);
         ren2d.draw(Recti(Vec2i(100, 300), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 125), true, {50, 50}, -rot);
         ren2d.draw(Recti(Vec2i(125, 325), Vec2i(50, 50)), ColorRGBA(255, 0, 0, 125), true, {25, 25}, rot);
+        ren2d.draw( Recti(Vec2i(100, 500), Vec2i(100, 100)), *texture, {50, 50}, rot);
+        ren2d.draw(Recti({0, 0}, {50, 50}), Recti(Vec2i(100, 700), Vec2i(100, 100)), *texture, {50, 50}, -rot);
         ren2d.renderPresent();
 
         window.swapBuffers();
@@ -101,6 +107,8 @@ private:
     std::unique_ptr<AssetImporter> assetImporter;
 
     float rot = 0;
+
+    TextureBuffer *texture;
 };
 
 #endif //MANA_SAMPLE0_HPP

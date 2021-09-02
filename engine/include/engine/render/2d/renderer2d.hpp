@@ -68,22 +68,16 @@ namespace mana {
                   Rectf dstRect,
                   TextureBuffer &texture,
                   ShaderProgram &shader,
-                  Vec2f center,
-                  float rotation);
+                  Vec2f center = {},
+                  float rotation = 0);
 
-        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, ShaderProgram &shader);
+        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center = {}, float rotation = 0);
 
-        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation);
+        void draw(Rectf dstRect, TextureBuffer &texture, Vec2f center = {}, float rotation = 0);
 
-        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture);
+        void draw(Rectf rectangle, ColorRGBA color, bool fill = true, Vec2f center = {}, float rotation = 0);
 
-        void draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation);
-
-        void draw(Rectf rectangle, ColorRGBA color = {}, bool fill = true);
-
-        void draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center, float rotation);
-
-        void draw(Vec2f start, Vec2f end, ColorRGBA color = {});
+        void draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center = {}, float rotation = 0);
 
         void draw(Vec2f point, ColorRGBA color = {});
 
@@ -91,20 +85,16 @@ namespace mana {
                   Recti dstRect,
                   TextureBuffer &texture,
                   ShaderProgram &shader,
-                  Vec2i center,
-                  float rotation);
+                  Vec2i center = {},
+                  float rotation = 0);
 
-        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, ShaderProgram &shader);
+        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center = {}, float rotation = 0);
 
-        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation);
+        void draw(Recti dstRect, TextureBuffer &texture, Vec2i center = {}, float rotation = 0);
 
-        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture);
+        void draw(Recti rectangle, ColorRGBA color, bool fill = true, Vec2i center = {}, float rotation = 0);
 
-        void draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation);
-
-        void draw(Recti rectangle, ColorRGBA color = {}, bool fill = true);
-
-        void draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center, float rotation);
+        void draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center = {}, float rotation = 0);
 
         void draw(Vec2i start, Vec2i end, ColorRGBA color = {});
 
