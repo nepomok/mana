@@ -96,8 +96,6 @@ namespace mana {
 
         void draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center = {}, float rotation = 0);
 
-        void draw(Vec2i start, Vec2i end, ColorRGBA color = {});
-
         void draw(Vec2i point, ColorRGBA color = {});
 
         /**

@@ -130,6 +130,13 @@ namespace mana {
         });
     }
 
+    static Mesh getLine(Vec2f start, Vec2f end, Vec2f center) {
+        return Mesh(Mesh::LINE, {
+                Vertex(Vec3f(start.x - center.x, start.y - center.y, 0)),
+                Vertex(Vec3f(end.x - center.x, end.y - center.y, 0))
+        });
+    }
+
     Renderer2D::Renderer2D() = default;
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
@@ -163,10 +170,6 @@ namespace mana {
                           ShaderProgram &shader,
                           Vec2f center,
                           float rotation) {
-        throw std::runtime_error("Not Implemented");
-    }
-
-    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation) {
         Mesh mesh;
 
         mesh = getPlane(dstRect.dimensions, center, srcRect);
@@ -185,7 +188,7 @@ namespace mana {
         RenderCommand command;
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.shader = defaultShader;
+        command.shader = &shader;
         command.meshBuffers.emplace_back(buffer);
         command.textures.emplace_back(&texture);
 
@@ -203,6 +206,10 @@ namespace mana {
         command.shader->setTexture("diffuse", 0);
 
         renderDevice->getRenderer().addCommand(command);
+    }
+
+    void Renderer2D::draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation) {
+        draw(srcRect, dstRect, texture, *defaultShader, center, rotation);
     }
 
     void Renderer2D::draw(Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation) {
@@ -254,11 +261,73 @@ namespace mana {
     }
 
     void Renderer2D::draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center, float rotation) {
-        throw std::runtime_error("Not Implemented");
+        Mesh mesh = getLine(start, end, center);
+
+        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+        allocatedMeshes.insert(buffer);
+
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = 1;
+        camera.top = 0;
+        camera.bottom = 1;
+
+        RenderCommand command;
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.shader = defaultShader;
+        command.meshBuffers.emplace_back(buffer);
+
+        Mat4f modelMatrix(1);
+        modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
+
+        modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                               (float) color.g() / 255,
+                                               (float) color.b() / 255,
+                                               (float) color.a() / 255));
+
+        renderDevice->getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2f point, ColorRGBA color) {
-        throw std::runtime_error("Not Implemented");
+        Mesh mesh(Mesh::POINT, {
+                Vertex(Vec3f(point.x, point.y, 0))
+        });
+
+        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+        allocatedMeshes.insert(buffer);
+
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = 1;
+        camera.top = 0;
+        camera.bottom = 1;
+
+        RenderCommand command;
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.shader = defaultShader;
+        command.meshBuffers.emplace_back(buffer);
+
+        Mat4f modelMatrix(1);
+        modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                               (float) color.g() / 255,
+                                               (float) color.b() / 255,
+                                               (float) color.a() / 255));
+
+        renderDevice->getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Recti srcRect,
@@ -267,10 +336,6 @@ namespace mana {
                           ShaderProgram &shader,
                           Vec2i center,
                           float rotation) {
-        throw std::runtime_error("Not Implemented");
-    }
-
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation) {
         Mesh mesh;
 
         mesh = getPlane(dstRect.dimensions.convert<float>(),
@@ -291,7 +356,7 @@ namespace mana {
         RenderCommand command;
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.shader = defaultShader;
+        command.shader = &shader;
         command.meshBuffers.emplace_back(buffer);
         command.textures.emplace_back(&texture);
 
@@ -309,6 +374,10 @@ namespace mana {
         command.shader->setTexture("diffuse", 0);
 
         renderDevice->getRenderer().addCommand(command);
+    }
+
+    void Renderer2D::draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation) {
+        draw(srcRect, dstRect, texture, *defaultShader, center, rotation);
     }
 
     void Renderer2D::draw(Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation) {
@@ -360,15 +429,73 @@ namespace mana {
     }
 
     void Renderer2D::draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center, float rotation) {
-        throw std::runtime_error("Not Implemented");
-    }
+        Mesh mesh = getLine(start.convert<float>(), end.convert<float>(), center.convert<float>());
 
-    void Renderer2D::draw(Vec2i start, Vec2i end, ColorRGBA color) {
-        throw std::runtime_error("Not Implemented");
+        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+        allocatedMeshes.insert(buffer);
+
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = screenSize.x;
+        camera.top = 0;
+        camera.bottom = screenSize.y;
+
+        RenderCommand command;
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.shader = defaultShader;
+        command.meshBuffers.emplace_back(buffer);
+
+        Mat4f modelMatrix(1);
+        modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
+
+        modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                               (float) color.g() / 255,
+                                               (float) color.b() / 255,
+                                               (float) color.a() / 255));
+
+        renderDevice->getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2i point, ColorRGBA color) {
-        throw std::runtime_error("Not Implemented");
+        Mesh mesh(Mesh::POINT, {
+                Vertex(Vec3f(point.x, point.y, 0))
+        });
+
+        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+        allocatedMeshes.insert(buffer);
+
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = screenSize.x;
+        camera.top = 0;
+        camera.bottom = screenSize.y;
+
+        RenderCommand command;
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.shader = defaultShader;
+        command.meshBuffers.emplace_back(buffer);
+
+        Mat4f modelMatrix(1);
+        modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                               (float) color.g() / 255,
+                                               (float) color.b() / 255,
+                                               (float) color.a() / 255));
+
+        renderDevice->getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color) {
