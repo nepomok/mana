@@ -36,6 +36,7 @@ namespace mana {
             GLuint EBO;
 
             size_t elementCount;
+            GLuint elementType;
 
             bool indexed;
 
@@ -47,6 +48,7 @@ namespace mana {
                                        VBO(0),
                                        EBO(0),
                                        elementCount(0),
+                                       elementType(GL_TRIANGLES),
                                        indexed(false),
                                        instanced(false),
                                        instanceCount(0),

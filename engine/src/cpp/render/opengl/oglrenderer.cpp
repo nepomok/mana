@@ -176,19 +176,24 @@ namespace mana {
                     throw std::runtime_error("nullptr mesh");
                 }
                 auto &mesh = dynamic_cast<const OGLMeshBuffer &>(*meshBuffer);
-
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {
                     if (mesh.instanced)
-                        glDrawElementsInstanced(GL_TRIANGLES, mesh.elementCount * 3, GL_UNSIGNED_INT, 0,
+                        glDrawElementsInstanced(mesh.elementType,
+                                                mesh.elementCount,
+                                                GL_UNSIGNED_INT,
+                                                0,
                                                 mesh.instanceCount);
                     else
-                        glDrawElements(GL_TRIANGLES, mesh.elementCount * 3, GL_UNSIGNED_INT, 0);
+                        glDrawElements(mesh.elementType,
+                                       mesh.elementCount,
+                                       GL_UNSIGNED_INT,
+                                       0);
                 } else {
                     if (mesh.instanced)
-                        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh.elementCount * 3, mesh.instanceCount);
+                        glDrawArraysInstanced(mesh.elementType, 0, mesh.elementCount, mesh.instanceCount);
                     else
-                        glDrawArrays(GL_TRIANGLES, 0, mesh.elementCount * 3);
+                        glDrawArrays(mesh.elementType, 0, mesh.elementCount);
                 }
                 glBindVertexArray(0);
             }

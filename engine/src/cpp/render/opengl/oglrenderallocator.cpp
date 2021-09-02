@@ -27,6 +27,19 @@
 
 namespace mana {
     namespace opengl {
+        static GLenum getElementType(Mesh::Primitive primitive) {
+            switch (primitive) {
+                case Mesh::POINT:
+                    return GL_POINTS;
+                case Mesh::LINE:
+                    return GL_LINES;
+                case Mesh::TRI:
+                    return GL_TRIANGLES;
+                default:
+                    throw std::runtime_error("Unsupported primitive");
+            }
+        }
+
         RenderTarget *OGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
             return new OGLRenderTarget(size, samples);
         }
@@ -36,11 +49,14 @@ namespace mana {
         }
 
         MeshBuffer *OGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
-            if (mesh.primitive != Mesh::TRI) {
-                throw std::runtime_error("Unsupported primitive");
-            }
-
             auto *ret = new OGLMeshBuffer();
+
+            try {
+                ret->elementType = getElementType(mesh.primitive);
+            } catch (std::exception &e) {
+                delete ret;
+                throw e;
+            }
 
             ret->indexed = mesh.indexed;
             ret->instanced = false;
@@ -48,7 +64,7 @@ namespace mana {
             Mat4f offset(1); // Default instancing offset is identity.
 
             if (mesh.indexed) {
-                ret->elementCount = mesh.indices.size() / 3;
+                ret->elementCount = mesh.indices.size();
 
                 glGenVertexArrays(1, &ret->VAO);
                 glGenBuffers(1, &ret->VBO);
@@ -107,9 +123,8 @@ namespace mana {
 
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
             } else {
-                ret->elementCount = mesh.vertices.size() / 3;
+                ret->elementCount = mesh.vertices.size();
 
                 glGenVertexArrays(1, &ret->VAO);
                 glGenBuffers(1, &ret->VBO);
@@ -171,13 +186,16 @@ namespace mana {
             return ret;
         }
 
-        MeshBuffer *
-        OGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) {
-            if (mesh.primitive != Mesh::TRI) {
-                throw std::runtime_error("Unsupported primitive");
-            }
-
+        MeshBuffer *OGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
+                                                                  const std::vector<Transform> &offsets) {
             auto *ret = new OGLMeshBuffer();
+
+            try {
+                ret->elementType = getElementType(mesh.primitive);
+            } catch (std::exception &e) {
+                delete ret;
+                throw e;
+            }
 
             ret->indexed = mesh.indexed;
 
@@ -193,7 +211,7 @@ namespace mana {
             }
 
             if (mesh.indexed) {
-                ret->elementCount = mesh.indices.size() / 3;
+                ret->elementCount = mesh.indices.size();
 
                 glGenVertexArrays(1, &ret->VAO);
                 glGenBuffers(1, &ret->VBO);
@@ -203,7 +221,9 @@ namespace mana {
                 glBindVertexArray(ret->VAO);
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->VBO);
-                glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * mesh.vertices.size(), mesh.vertices.data(),
+                glBufferData(GL_ARRAY_BUFFER,
+                             sizeof(Vertex) * mesh.vertices.size(),
+                             mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ret->EBO);
@@ -256,7 +276,7 @@ namespace mana {
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
             } else {
-                ret->elementCount = mesh.vertices.size() / 3;
+                ret->elementCount = mesh.vertices.size();
 
                 glGenVertexArrays(1, &ret->VAO);
                 glGenBuffers(1, &ret->VBO);
