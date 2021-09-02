@@ -49,10 +49,7 @@ namespace mana {
      * For example when drawing a rectangle texture first and then drawing a triangle texture afterwards
      * the triangle will be drawn on top of the rectangle.
      *
-     * Blending with existing render target contents is only possible by drawing the target content as a texture and then
-     * drawing the 2d content ontop.
-     *
-     * This way the renderer2d will blend the two.
+     * Drawing operations support blending between draw objects and previous target contents.
      */
     class Renderer2D {
     public:
