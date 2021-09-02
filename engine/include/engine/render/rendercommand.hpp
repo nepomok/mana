@@ -101,8 +101,8 @@ namespace mana {
         bool faceCullClockwiseWinding = false;
 
         bool enableBlending = false;
-        BlendMode blendSourceMode = BlendMode::ONE;
-        BlendMode blendDestinationMode = BlendMode::ZERO;
+        BlendMode blendSourceMode = BlendMode::SRC_ALPHA;
+        BlendMode blendDestinationMode = BlendMode::ONE_MINUS_SRC_ALPHA;
     };
 
     struct RenderCommand {

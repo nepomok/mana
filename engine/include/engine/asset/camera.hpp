@@ -76,10 +76,10 @@ namespace mana {
         float aspectRatio = 4.0f / 3.0f;
 
         //Orthographic
-        float left = -10;
-        float top = 10;
-        float right = 10;
-        float bottom = -10;
+        float left = -1;
+        float top = 1;
+        float right = 1;
+        float bottom = -1;
     };
 }
 

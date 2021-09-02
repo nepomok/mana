@@ -34,6 +34,8 @@ protected:
         archive = ArchiveDirectory(std::filesystem::current_path().c_str());
         assetImporter = std::make_unique<AssetImporter>(archive);
 
+        ren2d = Renderer2D(device);
+
         auto *assemblyStream = archive.open("mana.dll");
         manaAssembly = domain.loadAssembly(*assemblyStream);
         delete assemblyStream;
@@ -57,6 +59,16 @@ protected:
 
         ecs.update(deltaTime, scene);
 
+        rot += deltaTime * 180;
+        if (rot >= 360)
+            rot = 0;
+
+        ren2d.renderBegin(window.getRenderTarget(), false);
+        ren2d.draw(Recti(Vec2i(100, 100), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 255), false, {50, 50}, rot);
+        ren2d.draw(Recti(Vec2i(100, 300), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 255), true, {50, 50}, -rot);
+        ren2d.draw(Recti(Vec2i(125, 325), Vec2i(50, 50)), ColorRGBA(255, 0, 0, 125), true, {25, 25}, rot);
+        ren2d.renderPresent();
+
         window.swapBuffers();
     }
 
@@ -77,6 +89,8 @@ private:
 
     ECS ecs;
 
+    Renderer2D ren2d;
+
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
 
@@ -85,6 +99,8 @@ private:
     ArchiveDirectory archive;
 
     std::unique_ptr<AssetImporter> assetImporter;
+
+    float rot = 0;
 };
 
 #endif //MANA_SAMPLE0_HPP

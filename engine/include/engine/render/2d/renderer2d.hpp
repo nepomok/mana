@@ -20,6 +20,8 @@
 #ifndef MANA_RENDERER2D_HPP
 #define MANA_RENDERER2D_HPP
 
+#include <set>
+
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/2d/text/character.hpp"
@@ -46,6 +48,11 @@ namespace mana {
      *
      * For example when drawing a rectangle texture first and then drawing a triangle texture afterwards
      * the triangle will be drawn on top of the rectangle.
+     *
+     * Blending with existing render target contents is only possible by drawing the target content as a texture and then
+     * drawing the 2d content ontop.
+     *
+     * This way the renderer2d will blend the two.
      */
     class Renderer2D {
     public:
@@ -53,25 +60,25 @@ namespace mana {
 
         explicit Renderer2D(RenderDevice &device);
 
-        void renderBegin(const RenderTarget &target, bool clear);
+        void renderBegin(RenderTarget &target, bool clear);
 
-        void renderBegin(const RenderTarget &target,
+        void renderBegin(RenderTarget &target,
                          bool clear,
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
         void draw(Rectf srcRect,
                   Rectf dstRect,
-                  const TextureBuffer &texture,
-                  const ShaderProgram &shader,
+                  TextureBuffer &texture,
+                  ShaderProgram &shader,
                   Vec2f center,
                   float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, const ShaderProgram &shader);
+        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, ShaderProgram &shader);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture, Vec2f center, float rotation);
+        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation);
 
-        void draw(Rectf srcRect, Rectf dstRect, const TextureBuffer &texture);
+        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture);
 
         void draw(Rectf rectangle, ColorRGBA color, bool fill, Vec2f center, float rotation);
 
@@ -85,16 +92,16 @@ namespace mana {
 
         void draw(Recti srcRect,
                   Recti dstRect,
-                  const TextureBuffer &texture,
-                  const ShaderProgram &shader,
+                  TextureBuffer &texture,
+                  ShaderProgram &shader,
                   Vec2i center,
                   float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, const ShaderProgram &shader);
+        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, ShaderProgram &shader);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture, Vec2i center, float rotation);
+        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation);
 
-        void draw(Recti srcRect, Recti dstRect, const TextureBuffer &texture);
+        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture);
 
         void draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation);
 
@@ -122,6 +129,11 @@ namespace mana {
 
     private:
         RenderDevice *renderDevice = nullptr;
+        ShaderProgram *defaultShader = nullptr;
+
+        std::set<MeshBuffer *> allocatedMeshes;
+
+        Vec2i screenSize;
     };
 }
 
