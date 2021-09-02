@@ -37,6 +37,12 @@ namespace mana {
 
         explicit ArchiveDirectory(std::string directory) : directory(std::move(directory)) {}
 
+        ~ArchiveDirectory() override = default;
+
+        bool exists(const std::string &name) override {
+            return std::filesystem::exists(name);
+        }
+
         std::iostream *open(const std::string &path) override {
             return new std::fstream(directory + "/" + path);
         }
