@@ -80,15 +80,19 @@ protected:
             rot = 0;
 
         ren2d.renderBegin(window.getRenderTarget(), false);
-        ren2d.draw(Recti(Vec2i(100, 100), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 255), false, {50, 50}, rot);
-        ren2d.draw(Recti(Vec2i(100, 300), Vec2i(100, 100)), ColorRGBA(0, 125, 125, 125), true, {50, 50}, -rot);
-        ren2d.draw(Recti(Vec2i(125, 325), Vec2i(50, 50)), ColorRGBA(255, 0, 0, 125), true, {25, 25}, rot);
-        ren2d.draw(Recti(Vec2i(100, 500), Vec2i(100, 100)), *texture, {50, 50}, rot);
-        ren2d.draw(Recti({0, 0}, {50, 50}), Recti(Vec2i(100, 700), Vec2i(100, 100)), *texture, {50, 50}, -rot);
-        ren2d.draw(Vec2f(1, 0), Vec2f(0, 1), ColorRGBA(255, 0, 0, 125));
-        ren2d.draw(window.getFramebufferSize(), Vec2i(), ColorRGBA(0, 255, 0, 125));
+        ren2d.draw(Rectf(Vec2f(100, 100), Vec2f(100, 100)), ColorRGBA(0, 125, 125, 255), false, {50, 50}, rot);
+        ren2d.draw(Rectf(Vec2f(100, 300), Vec2f(100, 100)), ColorRGBA(0, 125, 125, 125), true, {50, 50}, -rot);
+        ren2d.draw(Rectf(Vec2f(125, 325), Vec2f(50, 50)), ColorRGBA(255, 0, 0, 125), true, {25, 25}, rot);
+        ren2d.draw(Rectf(Vec2f(100, 500), Vec2f(100, 100)), *texture, {50, 50}, rot);
+        ren2d.draw(Rectf({0, 0}, {50, 50}), Rectf(Vec2f(100, 700), Vec2f(100, 100)), *texture, {50, 50}, -rot);
+        ren2d.draw(window.getFramebufferSize().convert<float>(), Vec2f(), ColorRGBA(0, 255, 0, 125));
         ren2d.draw(Vec2f(0.5, 0.4), ColorRGBA(255, 255, 255, 255));
         ren2d.draw(Vec2f(0.3, 0.1), "Hello World !!", charMap, ColorRGBA(255, 255, 255, 125));
+
+        //Normalized screen coordinates through setting the projection bounds
+        ren2d.setProjection(Rectf({}, {1, 1}));
+        ren2d.draw(Vec2f(1, 0), Vec2f(0, 1), ColorRGBA(255, 0, 0, 125));
+
         ren2d.renderPresent();
 
         window.swapBuffers();

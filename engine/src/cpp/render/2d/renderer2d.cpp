@@ -203,6 +203,7 @@ namespace mana {
                                                                       {},
                                                                       clear, clear, clear));
         screenSize = target.getSize();
+        setProjection({{}, screenSize.convert<float>()});
     }
 
     void Renderer2D::renderBegin(RenderTarget &target,
@@ -215,6 +216,17 @@ namespace mana {
                                                                       {},
                                                                       clear, clear, clear));
         screenSize = viewportSize;
+        setProjection({{}, screenSize.convert<float>()});
+    }
+
+
+    void Renderer2D::setProjection(const Rectf &projection) {
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = projection.position.x;
+        camera.right = projection.dimensions.x;
+        camera.top = projection.position.y;
+        camera.bottom = projection.dimensions.y;
     }
 
     void Renderer2D::draw(Rectf srcRect,
@@ -223,20 +235,10 @@ namespace mana {
                           ShaderProgram &shader,
                           Vec2f center,
                           float rotation) {
-        Mesh mesh;
-
-        mesh = getPlane(dstRect.dimensions, center, srcRect);
+        Mesh mesh = getPlane(dstRect.dimensions, center, srcRect);
 
         auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
         allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = 1;
-        camera.top = 0;
-        camera.bottom = 1;
 
         RenderCommand command;
         command.properties.enableDepthTest = false;
@@ -282,14 +284,6 @@ namespace mana {
         auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
         allocatedMeshes.insert(buffer);
 
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = 1;
-        camera.top = 0;
-        camera.bottom = 1;
-
         RenderCommand command;
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
@@ -315,19 +309,15 @@ namespace mana {
         renderDevice->getRenderer().addCommand(command);
     }
 
-    void Renderer2D::draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center, float rotation) {
+    void Renderer2D::draw(Vec2f start,
+                          Vec2f end,
+                          ColorRGBA color,
+                          Vec2f center,
+                          float rotation) {
         Mesh mesh = getLine(start, end, center);
 
         auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
         allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = 1;
-        camera.top = 0;
-        camera.bottom = 1;
 
         RenderCommand command;
         command.properties.enableDepthTest = false;
@@ -358,185 +348,6 @@ namespace mana {
         auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
         allocatedMeshes.insert(buffer);
 
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = 1;
-        camera.top = 0;
-        camera.bottom = 1;
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
-
-        Mat4f modelMatrix(1);
-        modelMatrix = camera.projection() * camera.view() * modelMatrix;
-
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
-
-        renderDevice->getRenderer().addCommand(command);
-    }
-
-    void Renderer2D::draw(Recti srcRect,
-                          Recti dstRect,
-                          TextureBuffer &texture,
-                          ShaderProgram &shader,
-                          Vec2i center,
-                          float rotation) {
-        Mesh mesh;
-
-        mesh = getPlane(dstRect.dimensions.convert<float>(),
-                        center.convert<float>(),
-                        srcRect.convert<float>());
-
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = screenSize.x;
-        camera.top = 0;
-        camera.bottom = screenSize.y;
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = &shader;
-        command.meshBuffers.emplace_back(buffer);
-        command.textures.emplace_back(&texture);
-
-        Mat4f modelMatrix(1);
-        modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
-                dstRect.position.x + center.x,
-                dstRect.position.y + center.y,
-                0));
-        modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
-
-        modelMatrix = camera.projection() * camera.view() * modelMatrix;
-
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 1);
-        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
-
-        command.shader->setTexture("diffuse", 0);
-
-        renderDevice->getRenderer().addCommand(command);
-    }
-
-    void Renderer2D::draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation) {
-        draw(srcRect, dstRect, texture, *defaultShader, center, rotation);
-    }
-
-    void Renderer2D::draw(Recti dstRect, TextureBuffer &texture, Vec2i center, float rotation) {
-        draw(Recti({}, dstRect.dimensions), dstRect, texture, center, rotation);
-    }
-
-    void Renderer2D::draw(Recti rectangle, ColorRGBA color, bool fill, Vec2i center, float rotation) {
-        Mesh mesh;
-
-        if (fill)
-            mesh = getPlane(rectangle.dimensions.convert<float>(), center.convert<float>(),
-                            Rectf(Vec2f(), rectangle.dimensions.convert<float>()));
-        else
-            mesh = getSquare(rectangle.dimensions.convert<float>(), center.convert<float>());
-
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = screenSize.x;
-        camera.top = 0;
-        camera.bottom = screenSize.y;
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
-
-        Mat4f modelMatrix(1);
-        modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
-                rectangle.position.x + center.x,
-                rectangle.position.y + center.y,
-                0));
-        modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
-
-        modelMatrix = camera.projection() * camera.view() * modelMatrix;
-
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
-
-        renderDevice->getRenderer().addCommand(command);
-    }
-
-    void Renderer2D::draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center, float rotation) {
-        Mesh mesh = getLine(start.convert<float>(), end.convert<float>(), center.convert<float>());
-
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = screenSize.x;
-        camera.top = 0;
-        camera.bottom = screenSize.y;
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
-
-        Mat4f modelMatrix(1);
-        modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
-
-        modelMatrix = camera.projection() * camera.view() * modelMatrix;
-
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
-
-        renderDevice->getRenderer().addCommand(command);
-    }
-
-    void Renderer2D::draw(Vec2i point, ColorRGBA color) {
-        Mesh mesh(Mesh::POINT, {
-                Vertex(Vec3f(point.x, point.y, 0))
-        });
-
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = screenSize.x;
-        camera.top = 0;
-        camera.bottom = screenSize.y;
-
         RenderCommand command;
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
@@ -559,14 +370,6 @@ namespace mana {
     void Renderer2D::draw(Vec2f position,
                           const std::string &text, std::map<char, Character> &mapping,
                           ColorRGBA color) {
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = 1;
-        camera.top = 0;
-        camera.bottom = 1;
-
         float x = position.x;
         float y = position.y;
 
@@ -579,58 +382,6 @@ namespace mana {
             float h = static_cast<float>(character.getSize().y) / screenSize.y;
 
             x += static_cast<float>(static_cast<float>(character.getAdvance()) / screenSize.x);
-
-            Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
-
-            auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-            allocatedMeshes.insert(buffer);
-
-            RenderCommand command;
-            command.properties.enableDepthTest = false;
-            command.properties.enableBlending = true;
-            command.shader = defaultTextShader;
-            command.meshBuffers.emplace_back(buffer);
-            command.textures.emplace_back(&character.getTexture());
-
-            Mat4f modelMatrix(1);
-            modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
-            modelMatrix = camera.projection() * camera.view() * modelMatrix;
-
-            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                                   (float) color.g() / 255,
-                                                   (float) color.b() / 255,
-                                                   (float) color.a() / 255));
-
-            command.shader->setTexture("diffuse", 0);
-
-            renderDevice->getRenderer().addCommand(command);
-        }
-    }
-
-    void Renderer2D::draw(Vec2i position,
-                          const std::string &text, std::map<char, Character> &mapping,
-                          ColorRGBA color) {
-        Camera camera;
-        camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
-        camera.left = 0;
-        camera.right = screenSize.x;
-        camera.top = 0;
-        camera.bottom = screenSize.y;
-
-        float x = position.x;
-        float y = position.y;
-
-        for (auto &c : text) {
-            auto &character = mapping.at(c);
-            float xpos = x + character.getBearing().x;
-            float ypos = y - character.getBearing().y;
-
-            float w = character.getSize().x;
-            float h = character.getSize().y;
-
-            x += static_cast<float>(character.getAdvance());
 
             Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
 

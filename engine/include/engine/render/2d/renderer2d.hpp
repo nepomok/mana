@@ -26,6 +26,8 @@
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/2d/text/character.hpp"
 
+#include "engine/asset/camera.hpp"
+
 namespace mana {
     /**
      * This is a SDL inspired 2d renderer.
@@ -38,10 +40,7 @@ namespace mana {
      *       |
      *      +Y
      *
-     * with 0,0 at the top left and depending on the argument types of the called function either:
-     *
-     *  float(Normalized screen coordinates) = 1,1 the lower right
-     *  int(Pixel coordinates) = viewport width - 1, viewport height - 1 at the lower right.
+     * with default boundary of 0,0 at the top left ond targetsize.x,targetsize.y at the bottom right.
      *
      * The Renderer2D ignores depth information stored in the render target.
      * The order in which methods are invoked controls which elements are drawn below / above.
@@ -70,6 +69,14 @@ namespace mana {
                          Vec2i viewportOffset,
                          Vec2i viewportSize);
 
+        /**
+         * Set the projection bounds.
+         * The projection bounds are set to 0,0 and target size when calling renderBegin
+         *
+         * @param projection The projection bounds to set
+         */
+        void setProjection(const Rectf &projection);
+
         void draw(Rectf srcRect,
                   Rectf dstRect,
                   TextureBuffer &texture,
@@ -77,48 +84,31 @@ namespace mana {
                   Vec2f center = {},
                   float rotation = 0);
 
-        void draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center = {}, float rotation = 0);
+        void draw(Rectf srcRect,
+                  Rectf dstRect,
+                  TextureBuffer &texture,
+                  Vec2f center = {},
+                  float rotation = 0);
 
         void draw(Rectf dstRect, TextureBuffer &texture, Vec2f center = {}, float rotation = 0);
 
-        void draw(Rectf rectangle, ColorRGBA color, bool fill = true, Vec2f center = {}, float rotation = 0);
+        void draw(Rectf rectangle,
+                  ColorRGBA color,
+                  bool fill = true,
+                  Vec2f center = {},
+                  float rotation = 0);
 
         void draw(Vec2f start, Vec2f end, ColorRGBA color, Vec2f center = {}, float rotation = 0);
 
         void draw(Vec2f point, ColorRGBA color = {});
 
-        void draw(Recti srcRect,
-                  Recti dstRect,
-                  TextureBuffer &texture,
-                  ShaderProgram &shader,
-                  Vec2i center = {},
-                  float rotation = 0);
-
-        void draw(Recti srcRect, Recti dstRect, TextureBuffer &texture, Vec2i center = {}, float rotation = 0);
-
-        void draw(Recti dstRect, TextureBuffer &texture, Vec2i center = {}, float rotation = 0);
-
-        void draw(Recti rectangle, ColorRGBA color, bool fill = true, Vec2i center = {}, float rotation = 0);
-
-        void draw(Vec2i start, Vec2i end, ColorRGBA color, Vec2i center = {}, float rotation = 0);
-
-        void draw(Vec2i point, ColorRGBA color = {});
-
-         /**
-          * @param position The origin of the first glyph in normalized screen coordinates
-          * @param text The text to be drawn
-          * @param mapping The mapping of characters
-          * @param color The color of the text
-          */
-        void draw(Vec2f position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
-
         /**
-          * @param position The origin of the first glyph in pixel coordinates
-          * @param text The text to be drawn
-          * @param mapping The mapping of characters
-          * @param color The color of the text
-          */
-        void draw(Vec2i position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
+         * @param position The origin of the first glyph
+         * @param text The text to be drawn
+         * @param mapping The mapping of characters
+         * @param color The color of the text
+         */
+        void draw(Vec2f position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
 
         void renderPresent();
 
@@ -130,6 +120,8 @@ namespace mana {
         std::set<MeshBuffer *> allocatedMeshes;
 
         Vec2i screenSize;
+
+        Camera camera;
     };
 }
 
