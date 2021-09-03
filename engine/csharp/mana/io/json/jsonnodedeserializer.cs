@@ -4,7 +4,7 @@ namespace Mana.IO
     {
         public Node deserialize(System.IO.Stream stream)
         {
-            return new Node();
+            return JsonCommon.convertNode(Newtonsoft.Json.Linq.JObject.Parse(new System.IO.StreamReader(stream).ReadToEnd()));
         }
     }
 }
