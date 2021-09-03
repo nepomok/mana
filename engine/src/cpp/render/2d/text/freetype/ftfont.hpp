@@ -29,11 +29,16 @@ namespace mana {
     class FTFont : public Font {
     public:
         FT_Face face{};
+        std::vector<char> bytes; //Freetype requires the data to stay in memory when loading with FT_New_Memory_Face
 
         FTFont() = default;
 
         explicit FTFont(FT_Face face)
                 : face(face) {}
+
+        ~FTFont() override {
+            FT_Done_Face(face);
+        }
 
         void setPixelSize(Vec2i size) override {
             FT_Set_Pixel_Sizes(face, size.x, size.y);

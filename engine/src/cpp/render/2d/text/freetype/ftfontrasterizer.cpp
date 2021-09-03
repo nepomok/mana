@@ -19,6 +19,12 @@
 
 #include "render/2d/text/freetype/ftfontrasterizer.hpp"
 
+#include <vector>
+#include <iterator>
+#include <istream>
+
+#include <freetype/ftbitmap.h>
+
 namespace mana {
     FTFontRasterizer::FTFontRasterizer(RenderAllocator &allocator)
             : renderAllocator(allocator), library() {
@@ -27,49 +33,93 @@ namespace mana {
         }
     }
 
-    FTFontRasterizer::~FTFontRasterizer() = default;
+    FTFontRasterizer::~FTFontRasterizer() {
+        FT_Done_FreeType(library);
+    }
 
     Font *FTFontRasterizer::createFont(std::string filePath) {
         auto *ret = new FTFont();
-        if (FT_New_Face(library, filePath.c_str(), 0, &ret->face)) {
-            throw std::runtime_error("Failed to create face from file at " + filePath);
+        auto r = FT_New_Face(library, filePath.c_str(), 0, &ret->face);
+        if (r != 0) {
+            throw std::runtime_error("Failed to create face from file at " + filePath + " " + std::to_string(r));
         }
+        ret->setPixelSize(Vec2i(0, 50));
         return ret;
     }
 
     Font *FTFontRasterizer::createFont(std::istream &stream) {
-        //TODO: Implement font creation from c++ stream.
-        throw std::runtime_error("Not Implemented");
+        auto *ret = new FTFont();
+        ret->bytes = std::vector<char>((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+        auto r = FT_New_Memory_Face(library,
+                                    reinterpret_cast<const FT_Byte *>(ret->bytes.data()),
+                                    ret->bytes.size(),
+                                    0,
+                                    &ret->face);
+        if (r != 0) {
+            throw std::runtime_error("Failed to create face from memory " + std::to_string(r));
+        }
+        ret->setPixelSize(Vec2i(0, 100));
+        return ret;
     }
 
     Character FTFontRasterizer::rasterizeCharacter(Font &font, char c) {
         auto &ftfont = dynamic_cast<FTFont &>(font);
-        if (FT_Load_Char(ftfont.face, c, FT_LOAD_RENDER)) {
-            throw std::runtime_error("Failed to rasterize character " + std::to_string(c));
+        auto r = FT_Load_Char(ftfont.face, c, FT_LOAD_RENDER);
+        if (r != 0) {
+            throw std::runtime_error("Failed to rasterize character " + std::to_string(c) + " " + std::to_string(r));
         }
 
-        //TODO:PERF: Two copies of the freetype bitmap occur here. Refactor ImageBuffer api for more efficient low level access.
         Vec2i size(ftfont.face->glyph->bitmap.width, ftfont.face->glyph->bitmap.rows);
         Vec2i bearing(ftfont.face->glyph->bitmap_left, ftfont.face->glyph->bitmap_top);
-        int advance = ftfont.face->glyph->advance.x;
+        int advance = ftfont.face->glyph->advance.x >> 6;
 
-        Image<unsigned char> buffer(size.x,
-                                    size.y,
-                                    std::vector<unsigned char>(ftfont.face->glyph->bitmap.buffer,
-                                                                     ftfont.face->glyph->bitmap.buffer +
-                                                                     size.x * size.y));
-        TextureBuffer::Attributes attribs;
-        attribs.format = TextureBuffer::R;
+        auto bitmap = ftfont.face->glyph->bitmap;
+        auto pitch = bitmap.pitch;
 
-        TextureBuffer *texture = renderAllocator.createTextureBuffer(attribs);
+        Image<ColorRGBA> buffer;
+        if (pitch < 0) {
+            //Descending
+            auto rowLength = pitch * -1;
+            if (bitmap.width != rowLength) {
+                throw std::runtime_error("Invalid bitmap format");
+            }
+            buffer = Image<ColorRGBA>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
+            for (int x = 0; x < bitmap.width; x++) {
+                for (int y = 0; y < bitmap.rows; y++) {
+                    //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
+                    auto pixel = bitmap.buffer[x * y + x];
+                    buffer.setPixel(x, y, {pixel, pixel, pixel, pixel});
+                }
+            }
+        } else if (pitch > 0) {
+            //Ascending
+            auto rowLength = pitch;
+            if (bitmap.width != rowLength) {
+                throw std::runtime_error("Invalid bitmap format");
+            }
+            buffer = Image<ColorRGBA>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
+            for (int x = 0; x < bitmap.width; x++) {
+                for (int y = 0; y < bitmap.rows; y++) {
+                    //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
+                    auto pixel = bitmap.buffer[x * y + x];
+                    buffer.setPixel(x, y, {pixel, pixel, pixel, pixel});
+                }
+            }
+        } else {
+            buffer = Image<ColorRGBA>();
+        }
 
-        return Character(texture, size, bearing, advance);
+        TextureBuffer *texture = renderAllocator.createTextureBuffer({});
+
+        texture->upload(buffer);
+
+        return std::move(Character(texture, size, bearing, advance));
     }
 
     std::map<char, Character> FTFontRasterizer::getAscii(Font &font) {
         std::map<char, Character> ret;
-        for (char i = 0; i <= 127; i++) {
-            ret[i] = rasterizeCharacter(font, i);
+        for (int i = 0; i <= 127; i++) {
+            ret[i] = std::move(rasterizeCharacter(font, static_cast<char>(i)));
         }
         return ret;
     }
