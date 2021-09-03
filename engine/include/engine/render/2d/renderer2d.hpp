@@ -57,6 +57,12 @@ namespace mana {
 
         explicit Renderer2D(RenderDevice &device);
 
+        ~Renderer2D();
+
+        Renderer2D(const Renderer2D &other);
+
+        Renderer2D &operator=(const Renderer2D &other);
+
         void renderBegin(RenderTarget &target, bool clear);
 
         void renderBegin(RenderTarget &target,
@@ -102,19 +108,16 @@ namespace mana {
          * Convenience method which handles the spacing of characters in the mapping by rendering
          * a user defined ascii string.
          */
-        void draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
+        void draw(Vec2f position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
 
-        void draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
-
-        void draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ShaderProgram *shader);
-
-        void draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ShaderProgram *shader);
+        void draw(Vec2i position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
 
         void renderPresent();
 
     private:
         RenderDevice *renderDevice = nullptr;
         ShaderProgram *defaultShader = nullptr;
+        ShaderProgram *defaultTextShader = nullptr;
 
         std::set<MeshBuffer *> allocatedMeshes;
 

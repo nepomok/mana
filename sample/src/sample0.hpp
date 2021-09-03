@@ -27,12 +27,24 @@
 
 class Sample0 : public Game {
 public:
-    ~Sample0() override = default;
+    ~Sample0() override {
+        charMap.clear();
+    }
 
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
         archive = ArchiveDirectory(std::filesystem::current_path().c_str());
         assetImporter = std::make_unique<AssetImporter>(archive);
+
+        FontRasterizer *r = FontRasterizer::instantiate(FontRasterizer::FreeType, device.getAllocator());
+
+        auto *stream = archive.open("assets/fonts/roboto/Roboto-Regular.ttf");
+        Font *font = r->createFont(*stream);
+        charMap = std::move(r->getAscii(*font));
+
+        delete font;
+        delete stream;
+        delete r;
 
         texture = device.getAllocator().createTextureBuffer({});
         texture->upload(assetImporter->getBundle("assets/images/smiley.png").getImage());
@@ -76,6 +88,7 @@ protected:
         ren2d.draw(Vec2f(1, 0), Vec2f(0, 1), ColorRGBA(255, 0, 0, 125));
         ren2d.draw(window.getFramebufferSize(), Vec2i(), ColorRGBA(0, 255, 0, 125));
         ren2d.draw(Vec2f(0.5, 0.4), ColorRGBA(255, 255, 255, 255));
+        ren2d.draw(Vec2i(250, 250), "Hello World !!", charMap, ColorRGBA(255, 255, 255, 255));
         ren2d.renderPresent();
 
         window.swapBuffers();
@@ -112,6 +125,8 @@ private:
     float rot = 0;
 
     TextureBuffer *texture;
+
+    std::map<char, Character> charMap;
 };
 
 #endif //MANA_SAMPLE0_HPP

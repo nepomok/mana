@@ -78,9 +78,36 @@ SamplerState samplerState_diffuse
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
     if (USE_TEXTURE != 0)
-        ret.pixel = diffuse.Sample(samplerState_diffuse, v.uv);
+        ret.pixel = diffuse.Sample(samplerState_diffuse, v.uv) * COLOR;
     else
         ret.pixel = COLOR;
+    return ret;
+}
+)###";
+
+static const char *SHADER_TEXT_FRAG = R"###(
+#include "globals.hlsl"
+
+struct PS_INPUT {
+    float2 uv: TEXCOORD0;
+};
+
+struct PS_OUTPUT {
+     float4 pixel     :   SV_TARGET0;
+};
+
+Texture2D diffuse;
+
+SamplerState samplerState_diffuse
+{};
+
+PS_OUTPUT main(PS_INPUT v) {
+    PS_OUTPUT ret;
+    float grayscale = diffuse.Sample(samplerState_diffuse, v.uv).g;
+    ret.pixel.r = grayscale;
+    ret.pixel.g = 0;
+    ret.pixel.b = 0;
+    ret.pixel.a = 1;
     return ret;
 }
 )###";
@@ -96,7 +123,7 @@ namespace mana {
      * @param size
      * @return
      */
-    static Mesh getPlane(Vec2f size, Vec2f center, Rectf uvOffset = {}) {
+    static Mesh getPlane(Vec2f size, Vec2f center, Rectf uvOffset) {
         Rectf scaledOffset(
                 {uvOffset.position.x / size.x, uvOffset.position.y / size.y},
                 {uvOffset.dimensions.x / size.x, uvOffset.dimensions.y / size.y});
@@ -141,6 +168,35 @@ namespace mana {
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
         defaultShader = device.getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {}, includeCallback);
+        defaultTextShader = device.getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
+                                                                      includeCallback);
+    }
+
+    Renderer2D::~Renderer2D() {
+        delete defaultTextShader;
+        delete defaultShader;
+    }
+
+    Renderer2D::Renderer2D(const Renderer2D &other) {
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {},
+                                                                               includeCallback);
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
+                                                                                   includeCallback);
+        renderDevice = other.renderDevice;
+    }
+
+    Renderer2D &Renderer2D::operator=(const Renderer2D &other) {
+        if (this == &other)
+            return *this;
+
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {},
+                                                                               includeCallback);
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
+                                                                                   includeCallback);
+
+        renderDevice = other.renderDevice;
+
+        return *this;
     }
 
     void Renderer2D::renderBegin(RenderTarget &target, bool clear) {
@@ -203,6 +259,8 @@ namespace mana {
 
         command.shader->setMat4("MODEL_MATRIX", modelMatrix);
         command.shader->setFloat("USE_TEXTURE", 1);
+        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
+
         command.shader->setTexture("diffuse", 0);
 
         renderDevice->getRenderer().addCommand(command);
@@ -220,7 +278,7 @@ namespace mana {
         Mesh mesh;
 
         if (fill)
-            mesh = getPlane(rectangle.dimensions, center);
+            mesh = getPlane(rectangle.dimensions, center, Rectf(Vec2f(), rectangle.dimensions));
         else
             mesh = getSquare(rectangle.dimensions, center);
 
@@ -371,6 +429,8 @@ namespace mana {
 
         command.shader->setMat4("MODEL_MATRIX", modelMatrix);
         command.shader->setFloat("USE_TEXTURE", 1);
+        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
+
         command.shader->setTexture("diffuse", 0);
 
         renderDevice->getRenderer().addCommand(command);
@@ -388,7 +448,8 @@ namespace mana {
         Mesh mesh;
 
         if (fill)
-            mesh = getPlane(rectangle.dimensions.convert<float>(), center.convert<float>());
+            mesh = getPlane(rectangle.dimensions.convert<float>(), center.convert<float>(),
+                            Rectf(Vec2f(), rectangle.dimensions.convert<float>()));
         else
             mesh = getSquare(rectangle.dimensions.convert<float>(), center.convert<float>());
 
@@ -498,26 +559,64 @@ namespace mana {
         renderDevice->getRenderer().addCommand(command);
     }
 
-    void Renderer2D::draw(Vec2i pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color) {
+    void Renderer2D::draw(Vec2f position,
+                          const std::string &text, std::map<char, Character> &mapping,
+                          ColorRGBA color) {
         throw std::runtime_error("Not Implemented");
     }
 
-    void Renderer2D::draw(Vec2f pos, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color) {
-        throw std::runtime_error("Not Implemented");
-    }
+    void Renderer2D::draw(Vec2i position,
+                          const std::string &text, std::map<char, Character> &mapping,
+                          ColorRGBA color) {
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = screenSize.x;
+        camera.top = 0;
+        camera.bottom = screenSize.y;
 
-    void Renderer2D::draw(Vec2i pos,
-                          const std::string &text,
-                          std::map<char, Character> &mapping,
-                          ShaderProgram *shader) {
-        throw std::runtime_error("Not Implemented");
-    }
+        float x = position.x;
+        float y = position.y;
 
-    void Renderer2D::draw(Vec2f pos,
-                          const std::string &text,
-                          std::map<char, Character> &mapping,
-                          ShaderProgram *shader) {
-        throw std::runtime_error("Not Implemented");
+        for (auto &c : text) {
+            auto &character = mapping.at(c);
+            float xpos = x + character.getBearing().x;
+            float ypos = y - character.getSize().y - character.getBearing().y;
+
+            float w = character.getSize().x;
+            float h = character.getSize().y;
+
+            x += static_cast<float>(character.getAdvance());
+
+            Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
+
+            auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+            allocatedMeshes.insert(buffer);
+
+            RenderCommand command;
+            command.properties.enableDepthTest = false;
+            command.properties.enableBlending = true;
+            command.shader = defaultTextShader;
+            command.meshBuffers.emplace_back(buffer);
+            command.textures.emplace_back(&character.getTexture());
+
+            Mat4f modelMatrix(1);
+            modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
+            modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                                   (float) color.g() / 255,
+                                                   (float) color.b() / 255,
+                                                   (float) color.a() / 255));
+
+            command.shader->setTexture("diffuse", 0);
+
+            renderDevice->getRenderer().addCommand(command);
+
+            draw(Recti(Vec2i(xpos, ypos), Vec2i(w, h)), ColorRGBA(255, 255, 255, 255), false);
+        }
     }
 
     void Renderer2D::renderPresent() {
