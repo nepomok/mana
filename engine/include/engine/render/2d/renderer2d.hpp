@@ -104,11 +104,15 @@ namespace mana {
 
         /**
          * @param position The origin of the first glyph
+         * @param scale
          * @param text The text to be drawn
          * @param mapping The mapping of characters
          * @param color The color of the text
          */
-        void draw(Vec2f position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
+        void draw(Vec2f position,
+                  Vec2f scale,
+                  const std::string &text, std::map<char, Character> &mapping,
+                  ColorRGBA color);
 
         void renderPresent();
 

@@ -113,6 +113,14 @@ static std::string includeCallback(const char *name) {
     return SHADER_GLOBALS;
 }
 
+static float distance(float val1, float val2) {
+    float abs = val1 - val2;
+    if (abs < 0)
+        return abs * -1;
+    else
+        return abs;
+}
+
 namespace mana {
     /**
      * Get plane mesh with origin at top left offset by center and scaled in the y axis.
@@ -368,6 +376,7 @@ namespace mana {
     }
 
     void Renderer2D::draw(Vec2f position,
+                          Vec2f scale,
                           const std::string &text, std::map<char, Character> &mapping,
                           ColorRGBA color) {
         float x = position.x;
@@ -375,13 +384,14 @@ namespace mana {
 
         for (auto &c : text) {
             auto &character = mapping.at(c);
-            float xpos = x + static_cast<float>(character.getBearing().x) / screenSize.x;
-            float ypos = y - static_cast<float>(character.getBearing().y) / screenSize.y;
 
-            float w = static_cast<float>( character.getSize().x ) / screenSize.x;
-            float h = static_cast<float>(character.getSize().y) / screenSize.y;
+            float xpos = (x + static_cast<float>(character.getBearing().x)) * scale.x;
+            float ypos = (y - static_cast<float>(character.getBearing().y)) * scale.y;
 
-            x += static_cast<float>(static_cast<float>(character.getAdvance()) / screenSize.x);
+            float w = static_cast<float>(character.getSize().x) * scale.x;
+            float h = static_cast<float>(character.getSize().y) * scale.y;
+
+            x += static_cast<float>(static_cast<float>(character.getAdvance()) * scale.x);
 
             Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
 
