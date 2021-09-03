@@ -24,6 +24,9 @@
 using namespace mana;
 using namespace mana::opengl;
 
+//TODO: If users want to use integer texture formats the shaders would need to sample using isampler2d which does not exist in hlsl and therefore cant be cross compiled.
+//For now all textures are sampled using the normalized float format
+
 OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
 
@@ -106,7 +109,7 @@ OGLTextureBuffer::~OGLTextureBuffer() {
 void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::RGB8;
+    attributes.format = TextureBuffer::RGB;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -132,7 +135,7 @@ void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
 void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::RGBA8;
+    attributes.format = TextureBuffer::RGBA;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -158,7 +161,7 @@ void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
 void OGLTextureBuffer::upload(const Image<float> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::R32F;
+    attributes.format = TextureBuffer::R;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -184,7 +187,7 @@ void OGLTextureBuffer::upload(const Image<float> &buffer) {
 void OGLTextureBuffer::upload(const Image<int> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::R32I;
+    attributes.format = TextureBuffer::R;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -210,7 +213,7 @@ void OGLTextureBuffer::upload(const Image<int> &buffer) {
 void OGLTextureBuffer::upload(const Image<char> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::R8I;
+    attributes.format = TextureBuffer::R;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -221,7 +224,7 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
                  attributes.size.x,
                  attributes.size.y,
                  0,
-                 GL_RED_INTEGER,
+                 GL_RED,
                  GL_BYTE,
                  buffer.getData());
 
@@ -237,7 +240,7 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
 void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::R8UI;
+    attributes.format = TextureBuffer::R;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
@@ -248,7 +251,7 @@ void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
                  attributes.size.x,
                  attributes.size.y,
                  0,
-                 GL_RED_INTEGER,
+                 GL_RED,
                  GL_UNSIGNED_BYTE,
                  buffer.getData());
 
@@ -276,7 +279,7 @@ mana::Image<ColorRGBA> OGLTextureBuffer::download() {
 void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_CUBE_MAP);
 
-    attributes.format = TextureBuffer::RGBA8;
+    attributes.format = TextureBuffer::RGBA;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, handle);
