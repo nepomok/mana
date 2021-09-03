@@ -86,7 +86,6 @@ namespace mana {
             buffer = Image<unsigned char>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
             for (int x = 0; x < bitmap.width; x++) {
                 for (int y = 0; y < bitmap.rows; y++) {
-                    //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
                     auto pixel = bitmap.buffer[bitmap.width * y + x];
                     buffer.setPixel(x, y, pixel);
                 }
@@ -100,7 +99,6 @@ namespace mana {
             buffer = Image<unsigned char>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
             for (int x = 0; x < bitmap.width; x++) {
                 for (int y = 0; y < bitmap.rows; y++) {
-                    //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
                     auto pixel = bitmap.buffer[bitmap.width * y + x];
                     buffer.setPixel(x,  y, pixel);
                 }
