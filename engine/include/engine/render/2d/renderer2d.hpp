@@ -104,12 +104,20 @@ namespace mana {
 
         void draw(Vec2i point, ColorRGBA color = {});
 
-        /**
-         * Convenience method which handles the spacing of characters in the mapping by rendering
-         * a user defined ascii string.
-         */
+         /**
+          * @param position The origin of the first glyph in normalized screen coordinates
+          * @param text The text to be drawn
+          * @param mapping The mapping of characters
+          * @param color The color of the text
+          */
         void draw(Vec2f position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
 
+        /**
+          * @param position The origin of the first glyph in pixel coordinates
+          * @param text The text to be drawn
+          * @param mapping The mapping of characters
+          * @param color The color of the text
+          */
         void draw(Vec2i position, const std::string &text, std::map<char, Character> &mapping, ColorRGBA color);
 
         void renderPresent();

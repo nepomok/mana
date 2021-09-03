@@ -88,7 +88,7 @@ protected:
         ren2d.draw(Vec2f(1, 0), Vec2f(0, 1), ColorRGBA(255, 0, 0, 125));
         ren2d.draw(window.getFramebufferSize(), Vec2i(), ColorRGBA(0, 255, 0, 125));
         ren2d.draw(Vec2f(0.5, 0.4), ColorRGBA(255, 255, 255, 255));
-        ren2d.draw(Vec2i(250, 250), "Hello World !!", charMap, ColorRGBA(255, 255, 255, 255));
+        ren2d.draw(Vec2f(0.3, 0.1), "Hello World !!", charMap, ColorRGBA(255, 255, 255, 125));
         ren2d.renderPresent();
 
         window.swapBuffers();

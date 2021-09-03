@@ -78,7 +78,7 @@ SamplerState samplerState_diffuse
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
     if (USE_TEXTURE != 0)
-        ret.pixel = diffuse.Sample(samplerState_diffuse, v.uv) * COLOR;
+        ret.pixel = diffuse.Sample(samplerState_diffuse, v.uv);
     else
         ret.pixel = COLOR;
     return ret;
@@ -103,11 +103,8 @@ SamplerState samplerState_diffuse
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
-    float grayscale = diffuse.Sample(samplerState_diffuse, v.uv).g;
-    ret.pixel.r = grayscale;
-    ret.pixel.g = 0;
-    ret.pixel.b = 0;
-    ret.pixel.a = 1;
+    float grayscale = diffuse.Sample(samplerState_diffuse, v.uv).r;
+    ret.pixel = COLOR * grayscale;
     return ret;
 }
 )###";
@@ -562,7 +559,53 @@ namespace mana {
     void Renderer2D::draw(Vec2f position,
                           const std::string &text, std::map<char, Character> &mapping,
                           ColorRGBA color) {
-        throw std::runtime_error("Not Implemented");
+        Camera camera;
+        camera.type = ORTHOGRAPHIC;
+        camera.transform.position = {0, 0, 1};
+        camera.left = 0;
+        camera.right = 1;
+        camera.top = 0;
+        camera.bottom = 1;
+
+        float x = position.x;
+        float y = position.y;
+
+        for (auto &c : text) {
+            auto &character = mapping.at(c);
+            float xpos = x + static_cast<float>(character.getBearing().x) / screenSize.x;
+            float ypos = y - static_cast<float>(character.getBearing().y) / screenSize.y;
+
+            float w = static_cast<float>( character.getSize().x ) / screenSize.x;
+            float h = static_cast<float>(character.getSize().y) / screenSize.y;
+
+            x += static_cast<float>(static_cast<float>(character.getAdvance()) / screenSize.x);
+
+            Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
+
+            auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
+            allocatedMeshes.insert(buffer);
+
+            RenderCommand command;
+            command.properties.enableDepthTest = false;
+            command.properties.enableBlending = true;
+            command.shader = defaultTextShader;
+            command.meshBuffers.emplace_back(buffer);
+            command.textures.emplace_back(&character.getTexture());
+
+            Mat4f modelMatrix(1);
+            modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
+            modelMatrix = camera.projection() * camera.view() * modelMatrix;
+
+            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                                   (float) color.g() / 255,
+                                                   (float) color.b() / 255,
+                                                   (float) color.a() / 255));
+
+            command.shader->setTexture("diffuse", 0);
+
+            renderDevice->getRenderer().addCommand(command);
+        }
     }
 
     void Renderer2D::draw(Vec2i position,
@@ -582,7 +625,7 @@ namespace mana {
         for (auto &c : text) {
             auto &character = mapping.at(c);
             float xpos = x + character.getBearing().x;
-            float ypos = y - character.getSize().y - character.getBearing().y;
+            float ypos = y - character.getBearing().y;
 
             float w = character.getSize().x;
             float h = character.getSize().y;
@@ -614,8 +657,6 @@ namespace mana {
             command.shader->setTexture("diffuse", 0);
 
             renderDevice->getRenderer().addCommand(command);
-
-            draw(Recti(Vec2i(xpos, ypos), Vec2i(w, h)), ColorRGBA(255, 255, 255, 255), false);
         }
     }
 
