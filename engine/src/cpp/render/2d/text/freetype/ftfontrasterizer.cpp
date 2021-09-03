@@ -76,19 +76,19 @@ namespace mana {
         auto bitmap = ftfont.face->glyph->bitmap;
         auto pitch = bitmap.pitch;
 
-        Image<ColorRGBA> buffer;
+        Image<unsigned char> buffer;
         if (pitch < 0) {
             //Descending
             auto rowLength = pitch * -1;
             if (bitmap.width != rowLength) {
                 throw std::runtime_error("Invalid bitmap format");
             }
-            buffer = Image<ColorRGBA>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
+            buffer = Image<unsigned char>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
             for (int x = 0; x < bitmap.width; x++) {
                 for (int y = 0; y < bitmap.rows; y++) {
                     //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
-                    auto pixel = bitmap.buffer[x * y + x];
-                    buffer.setPixel(x, y, {pixel, pixel, pixel, pixel});
+                    auto pixel = bitmap.buffer[bitmap.width * y + x];
+                    buffer.setPixel(x, y, pixel);
                 }
             }
         } else if (pitch > 0) {
@@ -97,19 +97,24 @@ namespace mana {
             if (bitmap.width != rowLength) {
                 throw std::runtime_error("Invalid bitmap format");
             }
-            buffer = Image<ColorRGBA>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
+            buffer = Image<unsigned char>(static_cast<int>(bitmap.width), static_cast<int>(bitmap.rows));
             for (int x = 0; x < bitmap.width; x++) {
                 for (int y = 0; y < bitmap.rows; y++) {
                     //Returns non random invalid pixels which together produce a pattern of circles instead of the rasterized character.
-                    auto pixel = bitmap.buffer[x * y + x];
-                    buffer.setPixel(x, y, {pixel, pixel, pixel, pixel});
+                    auto pixel = bitmap.buffer[bitmap.width * y + x];
+                    buffer.setPixel(x,  y, pixel);
                 }
             }
         } else {
-            buffer = Image<ColorRGBA>();
+            buffer = Image<unsigned char>();
         }
 
-        TextureBuffer *texture = renderAllocator.createTextureBuffer({});
+        TextureBuffer::Attributes attribs;
+        attribs.filterMin = TextureBuffer::NEAREST;
+        attribs.filterMag = TextureBuffer::NEAREST;
+        attribs.wrapping = TextureBuffer::CLAMP_TO_EDGE;
+
+        TextureBuffer *texture = renderAllocator.createTextureBuffer(attribs);
 
         texture->upload(buffer);
 
