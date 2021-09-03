@@ -62,10 +62,25 @@ namespace mana {
             return *texture;
         }
 
+        /**
+         * The size of the texture in pixels.
+         *
+         * @return
+         */
         Vec2i getSize() const { return size; }
 
+        /**
+         * The bearing of the character in pixels.
+         *
+         * @return
+         */
         Vec2i getBearing() const { return bearing; }
 
+        /**
+         * The advance of the character in pixels.
+         *
+         * @return
+         */
         int getAdvance() const { return advance; }
 
     private:
