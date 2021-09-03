@@ -19,9 +19,7 @@
 
 #include "engine/io/json/ecs/scenedeserializer.hpp"
 
-#include "extern/json.hpp"
-
-#include <sstream>
+#include "io/serialization/json/jsoncommon.hpp"
 
 namespace mana {
     SceneDeserializer::SceneDeserializer() = default;
@@ -29,13 +27,6 @@ namespace mana {
     Scene SceneDeserializer::deserialize(std::istream &stream) {
         nlohmann::json j;
         stream >> j;
-        Scene ret;
-        ret.name = j.at("name");
-        ret.resources = j.at("resources");
-        for (auto &node : j.at("nodes")) {
-            std::istringstream s(node.dump());
-            ret.nodes[node.at("name")] = nodeDeserializer.deserialize(s);
-        }
-        return ret;
+        return convertScene(j);
     }
 }

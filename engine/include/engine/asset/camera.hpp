@@ -24,6 +24,8 @@
 #include "engine/math/matrix.hpp"
 #include "engine/math/matrixmath.hpp"
 
+#include <stdexcept>
+
 namespace mana {
     enum CameraType {
         ORTHOGRAPHIC,

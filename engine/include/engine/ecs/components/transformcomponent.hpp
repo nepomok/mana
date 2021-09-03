@@ -23,18 +23,15 @@
 #include "engine/ecs/component.hpp"
 #include "engine/math/transform.hpp"
 
+#include <string>
+
 namespace mana {
+    struct Scene;
+
     struct TransformComponent : public Component {
-        static Transform walkTransformHierarchy(const TransformComponent &comp) {
-            Transform ret = comp.transform;
-            if (comp.parent != nullptr)
-                ret += walkTransformHierarchy(*comp.parent);
-            return ret;
-        }
-
-        Transform walkTransformHierarchy() const { return walkTransformHierarchy(*this); }
-
         TransformComponent() : Component(TRANSFORM) {}
+
+        static Transform walkHierarchy(const TransformComponent &component, const Scene &scene);
 
         Component *clone() override {
             return new TransformComponent(*this);
@@ -45,7 +42,7 @@ namespace mana {
         }
 
         Transform transform;
-        TransformComponent *parent = nullptr;
+        std::string parent;
     };
 }
 

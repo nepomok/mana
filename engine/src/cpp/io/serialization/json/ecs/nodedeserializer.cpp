@@ -19,9 +19,7 @@
 
 #include "engine/io/json/ecs/nodedeserializer.hpp"
 
-#include "extern/json.hpp"
-
-#include <sstream>
+#include "io/serialization/json/jsoncommon.hpp"
 
 namespace mana {
     NodeDeserializer::NodeDeserializer() = default;
@@ -29,12 +27,6 @@ namespace mana {
     Node NodeDeserializer::deserialize(std::istream &stream) {
         nlohmann::json j;
         stream >> j;
-        Node ret;
-        ret.enabled = j.at("enabled");
-        for (auto &component : j["components"]) {
-            std::istringstream s(component.dump());
-            ret.addComponentPointer(componentDeserializer.deserialize(s));
-        }
-        return ret;
+        return convertNode(j);
     }
 }

@@ -17,12 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/io/json/ecs/componentserializer.hpp"
+#include "engine/ecs/components/transformcomponent.hpp"
 
-#include "io/serialization/json/jsoncommon.hpp"
+#include "engine/ecs/scene.hpp"
 
 namespace mana {
-    void ComponentSerializer::serialize(Component *const &data, std::ostream &stream) {
-        stream << convertComponent(*data);
+    Transform TransformComponent::walkHierarchy(const TransformComponent &component, const Scene &scene) {
+        Transform ret = component.transform;
+        if (!component.parent.empty()) {
+            ret += walkHierarchy(scene.nodes.at(component.parent).getComponent<TransformComponent>(), scene);
+        }
+        return ret;
     }
 }

@@ -167,7 +167,7 @@ namespace mana {
                 continue;
 
             DeferredCommand command;
-            command.transform = transform.walkTransformHierarchy();
+            command.transform = TransformComponent::walkHierarchy(transform, scene);
             command.meshBuffer = &getMesh(render.mesh);
 
             auto &material = getMaterial(render.material);
@@ -259,7 +259,7 @@ namespace mana {
                 continue;
 
             scene3d.camera = comp.camera;
-            scene3d.camera.transform = TransformComponent::walkTransformHierarchy(tcomp);
+            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, scene);
 
             break;
         }

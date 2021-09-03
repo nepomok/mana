@@ -19,8 +19,10 @@
 
 #include "engine/io/json/ecs/sceneserializer.hpp"
 
+#include "io/serialization/json/jsoncommon.hpp"
+
 namespace mana {
     void SceneSerializer::serialize(const Scene &data, std::ostream &stream) {
-        throw std::runtime_error("Not Implemented");
+        stream << convertScene(data);
     }
 }

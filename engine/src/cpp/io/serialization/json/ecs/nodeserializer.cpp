@@ -19,8 +19,10 @@
 
 #include "engine/io/json/ecs/nodeserializer.hpp"
 
+#include "io/serialization/json/jsoncommon.hpp"
+
 namespace mana {
     void NodeSerializer::serialize(const Node &data, std::ostream &stream) {
-        throw std::runtime_error("Not Implemented");
+        stream << convertNode(data);
     }
 }
