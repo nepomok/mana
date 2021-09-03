@@ -194,7 +194,7 @@ void OGLTextureBuffer::upload(const Image<int> &buffer) {
                  attributes.size.x,
                  attributes.size.y,
                  0,
-                 GL_RED,
+                 GL_RED_INTEGER,
                  GL_INT,
                  buffer.getData());
 
@@ -214,13 +214,14 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  OGLTypeConverter::convert(attributes.format),
                  attributes.size.x,
                  attributes.size.y,
                  0,
-                 GL_RED,
+                 GL_RED_INTEGER,
                  GL_BYTE,
                  buffer.getData());
 
@@ -240,13 +241,14 @@ void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glTexImage2D(GL_TEXTURE_2D,
                  0,
                  OGLTypeConverter::convert(attributes.format),
                  attributes.size.x,
                  attributes.size.y,
                  0,
-                 GL_RED,
+                 GL_RED_INTEGER,
                  GL_UNSIGNED_BYTE,
                  buffer.getData());
 
