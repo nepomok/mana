@@ -20,48 +20,50 @@
 using System;
 using System.Collections.Generic;
 
+using Mana.IO;
+
 namespace Mana
 {
-    public class Node
+    public class Scene
     {
-        internal string name;
-        private readonly List<Component> components = new List<Component>();
+        internal static Scene scene_internal;
 
-        public Component GetComponent(int index)
+        internal static void setScene(Scene scene)
         {
-            return components[index];
+            scene_internal = scene;
         }
 
-        public int GetComponentCount()
+        public static Scene scene
         {
-            return components.Count;
+            get { return scene_internal; }
         }
 
-        public Transform GetTransform()
+        private readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+
+        public Node GetNode(string name)
         {
-            foreach (var component in components)
-            {
-                if (component is Transform)
-                    return component as Transform;
-            }
-            return null;
+            if (!nodes.ContainsKey(name))
+                throw new ArgumentException("Node not found " + name);
+            return nodes[name];
         }
 
-        public void AddComponent(Component component)
+        public Node CreateNode(string name)
         {
-            components.Add(component);
-            Mana.Internal.SceneInterface.createComponent(name, component.type);
+            if (nodes.ContainsKey(name))
+                throw new ArgumentException("Node with name " + name + " already exists");
+            Mana.Extern.SceneInterface.createNode(name);
+            return nodes[name];
         }
 
-        public void RemoveComponent(Component component)
+        public void DestroyNode(string name)
         {
-            components.Remove(component);
-            Mana.Internal.SceneInterface.destroyComponent(name, component.type);
+            nodes.Remove(name);
+            Mana.Extern.SceneInterface.destroyNode(name);
         }
 
-        private void _AddComponent(Component component)
+        public int GetNodesCount()
         {
-            components.Add(component);
+            return nodes.Count;
         }
     }
 }

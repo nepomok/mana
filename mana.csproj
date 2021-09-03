@@ -2,9 +2,12 @@
     xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <ItemGroup>
         <Reference Include="System" />
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>engine/csharp/lib/Newtonsoft.Json/Newtonsoft.Json.dll</HintPath>
+        </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="engine/src/csharp/**" />
+        <Compile Include="engine/csharp/mana/**" />
         <Compile Include="sample/assets/scripts/src/**" />
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

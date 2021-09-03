@@ -19,10 +19,17 @@
 
 using System.Runtime.InteropServices;
 
-namespace Mana.Internal
+using Mana.IO;
+
+namespace Mana.Extern
 {
     internal static class SceneInterface
     {
+        internal static void setSceneJson(string json)
+        {
+            Scene.scene_internal = new JsonSceneDeserializer().deserialize(StreamUtil.GetStringStream(json));
+        }
+
         [DllImport("__Internal")]
         public static extern void createNode(string name);
 
