@@ -30,7 +30,7 @@ namespace Mana
         public Vector3 rotation;
         public Vector3 scale;
 
-        public Transform parent;
+        public string parentName;
 
         /**
             Returns the forward unit vector in world space.

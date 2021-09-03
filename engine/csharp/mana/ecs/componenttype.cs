@@ -26,6 +26,6 @@ namespace Mana
         CAMERA,
         LIGHT,
         SCRIPT,
-        RENDER
+        MESH_RENDER
     }
 }

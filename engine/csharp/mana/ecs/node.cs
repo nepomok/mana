@@ -25,7 +25,7 @@ namespace Mana
     public class Node
     {
         internal string name;
-        private readonly List<Component> components = new List<Component>();
+        public readonly List<Component> components = new List<Component>();
 
         public Component GetComponent(int index)
         {

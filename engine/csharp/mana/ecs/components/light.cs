@@ -33,19 +33,19 @@ namespace Mana
             base.type = ComponentType.LIGHT;
         }
 
-        LightType lightType;
+        public LightType lightType;
 
-        Vector3 ambient;
-        Vector3 diffuse;
-        Vector3 specular;
+        public Vector3 ambient;
+        public Vector3 diffuse;
+        public Vector3 specular;
 
-        Vector3 direction;
+        public Vector3 direction;
 
-        float cutOff;
-        float outerCutOff;
+        public float cutOff;
+        public float outerCutOff;
 
-        float constant;
-        float linear;
-        float quadratic;
+        public float constant;
+        public float linear;
+        public float quadratic;
     }
 }

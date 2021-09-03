@@ -38,7 +38,9 @@ namespace Mana
             get { return scene_internal; }
         }
 
-        private readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+        public string name;
+
+        public readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
 
         public Node GetNode(string name)
         {

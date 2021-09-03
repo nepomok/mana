@@ -19,11 +19,16 @@
 
 namespace Mana
 {
-    public class RenderComponent : Component
+    public class MeshRenderer : Component
     {
-        public RenderComponent()
+        public MeshRenderer()
         {
-            base.type = ComponentType.RENDER;
+            base.type = ComponentType.MESH_RENDER;
         }
+
+        public bool castShadows;
+        public bool receiveShadows;
+        public AssetPath mesh;
+        public AssetPath material;
     }
 }

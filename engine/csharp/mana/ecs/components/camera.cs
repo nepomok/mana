@@ -32,17 +32,17 @@ namespace Mana
             base.type = ComponentType.CAMERA;
         }
 
-        CameraType cameraType;
+        public CameraType cameraType;
 
-        float nearClip;
-        float farClip;
+        public float nearClip;
+        public float farClip;
 
-        float left;
-        float top;
-        float right;
-        float bottom;
+        public float fov;
+        public float aspectRatio;
 
-        float fov;
-        float aspectRatio;
+        public float left;
+        public float top;
+        public float right;
+        public float bottom;
     }
 }
