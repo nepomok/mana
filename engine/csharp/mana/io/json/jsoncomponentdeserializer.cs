@@ -1,5 +1,3 @@
-
-
 namespace Mana.IO
 {
     class JsonComponentDeserializer : Deserializer<Component>
