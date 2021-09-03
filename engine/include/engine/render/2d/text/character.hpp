@@ -34,6 +34,30 @@ namespace mana {
             delete texture;
         }
 
+        Character(Character &&other) noexcept {
+            texture = other.texture;
+            size = other.size;
+            bearing = other.bearing;
+            advance = other.advance;
+
+            other.texture = nullptr;
+        }
+
+        Character &operator=(Character &&other) noexcept {
+            texture = other.texture;
+            size = other.size;
+            bearing = other.bearing;
+            advance = other.advance;
+
+            other.texture = nullptr;
+
+            return *this;
+        }
+
+        Character(const Character &copy) = delete;
+
+        Character &operator=(const Character &copy) = delete;
+
         TextureBuffer &getTexture() {
             return *texture;
         }
