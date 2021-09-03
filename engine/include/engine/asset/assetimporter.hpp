@@ -65,8 +65,6 @@ namespace mana {
         const AssetBundle &getBundle(const std::string &path);
 
     private:
-        ThreadPool pool;
-
         Archive &archive;
 
         std::mutex mutex;

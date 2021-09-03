@@ -38,12 +38,12 @@ namespace mana {
             auto taskIterator = tasks.find(path);
             if (taskIterator == tasks.end()) {
                 //Create load task
-                tasks[path] = pool.addTask([this, path]() {
+                tasks[path] = ThreadPool::pool.addTask([this, path]() {
                     AssetBundle bundle;
                     std::string hint = std::filesystem::path(path).extension();
 
                     std::unique_ptr<std::iostream> stream(archive.open(path));
-                    bundle = AssetLoader::loadBundle(*stream, hint, archive, pool);
+                    bundle = AssetLoader::loadBundle(*stream, hint, archive, ThreadPool::pool);
 
                     std::lock_guard<std::mutex> guard(mutex);
                     bundles[path] = bundle;
