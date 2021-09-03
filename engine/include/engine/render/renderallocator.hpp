@@ -36,11 +36,33 @@ namespace mana {
 
         virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
 
+        /**
+         * Create a shader program from the supplied vertex and fragment shader written in hlsl.
+         *
+         * The hardcoded vertex shader input layout is as follows:
+         *
+         *  struct VS_INPUT
+         *  {
+         *      float3 position : POSITION0;
+         *      float3 normal : NORMAL;
+         *      float2 uv : TEXCOORD0;
+         *      float4 instanceRow0 : POSITION1;
+         *      float4 instanceRow1 : POSITION2;
+         *      float4 instanceRow2 : POSITION3;
+         *      float4 instanceRow3 : POSITION4;
+         *  };
+         *
+         * @param vertexShader
+         * @param fragmentShader
+         * @param macros
+         * @param includeCallback
+         * @return
+         */
         virtual ShaderProgram *createShaderProgram(const std::string &vertexShader,
                                                    const std::string &fragmentShader,
                                                    const std::map<std::string, std::string> &macros,
-                                                   const std::function<std::string(
-                                                           const char *)> &includeCallback) = 0;
+                                                   const std::function<std::string(const char *)> &includeCallback)
+        = 0;
     };
 }
 

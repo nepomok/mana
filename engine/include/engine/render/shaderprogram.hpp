@@ -27,19 +27,6 @@
 #include "engine/render/renderobject.hpp"
 
 namespace mana {
-    /**
-     * Vertex shader input layout:
-        struct VS_INPUT
-        {
-            float3 position : POSITION0;
-            float3 normal : NORMAL;
-            float2 uv : TEXCOORD0;
-            float4 instanceRow0 : POSITION1;
-            float4 instanceRow1 : POSITION2;
-            float4 instanceRow2 : POSITION3;
-            float4 instanceRow3 : POSITION4;
-        };
-     */
     class ShaderProgram : public RenderObject {
     public:
         ~ShaderProgram() override = default;

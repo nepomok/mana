@@ -22,9 +22,9 @@
 
 #include "engine/math/rotation.hpp"
 
-#include "oglshaderprogram.hpp"
-#include "oglcheckerror.hpp"
-#include "engine/render/opengl/hlslcrosscompiler.hpp"
+#include "render/opengl/oglshaderprogram.hpp"
+#include "render/opengl/oglcheckerror.hpp"
+#include "render/opengl/hlslcrosscompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
 

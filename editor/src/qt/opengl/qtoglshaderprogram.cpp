@@ -24,7 +24,7 @@
 
 #include "qtoglshaderprogram.hpp"
 #include "qtoglcheckerror.hpp"
-#include "engine/render/opengl/hlslcrosscompiler.hpp"
+#include "render/opengl/hlslcrosscompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
 

@@ -118,7 +118,6 @@
 #include "engine/render/3d/passes/lightingpass.hpp"
 #include "engine/render/3d/passes/outlinepass.hpp"
 #include "engine/render/3d/passes/geometrypass.hpp"
-#include "engine/render/opengl/hlslcrosscompiler.hpp"
 #include "engine/audio/audiodevice.hpp"
 #include "engine/audio/audiobuffer.hpp"
 #include "engine/audio/audiobackend.hpp"
