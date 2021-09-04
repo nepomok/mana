@@ -1,5 +1,5 @@
 set(Engine.Dir.INCLUDE engine/include/)
-set(Engine.Dir.SRC engine/src/cpp/)
+set(Engine.Dir.SRC engine/src/)
 
 # Freetype include path has to be set manually because for some reason freetype in the common repositories is in a
 # freetype2 subfolder which breaks everything. On unix we assume the location is /usr/include/freetype2 if your distro
