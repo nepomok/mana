@@ -136,6 +136,7 @@ nlohmann::json convertVector4(const Vec4f &v) {
 
 Transform convertTransform(const nlohmann::json &component) {
     Transform ret;
+    std::string s = nlohmann::to_string(component);
     ret.position = convertVector3(component["position"]);
     ret.rotation = convertVector3(component["rotation"]);
     ret.scale = convertVector3(component["scale"]);
@@ -200,7 +201,7 @@ nlohmann::json convertCameraComponent(const CameraComponent &component) {
 
 TransformComponent *convertTransformComponent(const nlohmann::json &component) {
     auto *ret = new TransformComponent();
-    ret->transform = convertTransform(component);
+    ret->transform = convertTransform(component["transform"]);
     ret->parent = component["parent"];
     return ret;
 }
@@ -329,7 +330,7 @@ nlohmann::json convertScriptComponent(const ScriptComponent &component) {
 }
 
 Component *convertComponent(const nlohmann::json &component) {
-    Component *ret = nullptr;
+    Component *ret;
     switch (convertComponentType(static_cast<std::string>(component["componentType"]))) {
         case TRANSFORM:
             ret = convertTransformComponent(component);
@@ -358,7 +359,6 @@ Component *convertComponent(const nlohmann::json &component) {
 
 nlohmann::json convertComponent(const Component &component) {
     nlohmann::json ret;
-    ret["enabled"] = component.enabled;
     switch (component.componentType) {
         case TRANSFORM:
             ret = convertTransformComponent(dynamic_cast<const TransformComponent &>(component));
@@ -381,12 +381,15 @@ nlohmann::json convertComponent(const Component &component) {
         default:
             throw std::runtime_error("Unrecognized component type");
     }
+    ret["enabled"] = component.enabled;
+    ret["componentType"] = convertComponentType(component.componentType);
     return ret;
 }
 
 Node convertNode(const nlohmann::json &node) {
     Node ret;
     ret.enabled = node["enabled"];
+    std::string str = nlohmann::to_string(node);
     for (auto &component : node["components"]) {
         ret.addComponentPointer(convertComponent(component));
     }
@@ -397,8 +400,9 @@ nlohmann::json convertNode(const Node &node) {
     nlohmann::json ret;
     ret["enabled"] = node.enabled;
     for (auto &component : node.components) {
-        ret["components"] += convertComponent(*component.second);
+        ret["components"].emplace_back(convertComponent(*component.second));
     }
+    std::string str = nlohmann::to_string(ret);
     return ret;
 }
 
@@ -418,7 +422,7 @@ nlohmann::json convertScene(const Scene &scene) {
     for (auto &pair : scene.nodes) {
         auto node = convertNode(pair.second);
         node["name"] = pair.first;
-        ret["nodes"] += node;
+        ret["nodes"].emplace_back(node);
     }
     return ret;
 }

@@ -24,7 +24,8 @@ namespace Mana
 {
     public class Node
     {
-        internal string name;
+        public string name;
+        public bool enabled;
         public readonly List<Component> components = new List<Component>();
 
         public Component GetComponent(int index)
@@ -57,11 +58,6 @@ namespace Mana
         {
             components.Remove(component);
             Mana.Extern.SceneInterface.destroyComponent(name, component.type);
-        }
-
-        private void _AddComponent(Component component)
-        {
-            components.Add(component);
         }
     }
 }

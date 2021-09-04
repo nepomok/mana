@@ -3,11 +3,11 @@ using Newtonsoft.Json.Linq;
 
 namespace Mana.IO
 {
-    class JsonComponentDeserializer : Deserializer<Component>
+    public class JsonComponentDeserializer : Deserializer<Component>
     {
-        public Component deserialize(Stream stream)
+        public Component deserialize(string data)
         {
-            return JsonCommon.convertComponent(JObject.Parse(new StreamReader(stream).ReadToEnd()));
+            return JsonCommon.convertComponent(JObject.Parse(data));
         }
     }
 }

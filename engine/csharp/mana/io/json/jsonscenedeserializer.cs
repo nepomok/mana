@@ -1,10 +1,10 @@
 namespace Mana.IO
 {
-    class JsonSceneDeserializer : Deserializer<Scene>
+    public class JsonSceneDeserializer : Deserializer<Scene>
     {
-        public Scene deserialize(System.IO.Stream stream)
+        public Scene deserialize(string data)
         {
-            return JsonCommon.convertScene(Newtonsoft.Json.Linq.JObject.Parse(new System.IO.StreamReader(stream).ReadToEnd()));
+            return JsonCommon.convertScene(Newtonsoft.Json.Linq.JObject.Parse(data));
         }
     }
 }

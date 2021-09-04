@@ -16,7 +16,7 @@ namespace Mana.IO
             else if (type == "mesh_render")
                 return ComponentType.MESH_RENDER;
             else
-                throw new System.Exception();
+                return ComponentType.NONE;
         }
 
         public static string convertComponentType(ComponentType type)
@@ -32,7 +32,7 @@ namespace Mana.IO
                 case ComponentType.MESH_RENDER:
                     return "mesh_render";
                 default:
-                    throw new System.Exception();
+                    return "none";
             }
         }
 
@@ -89,9 +89,22 @@ namespace Mana.IO
         public static Vector3 convertVector(JToken vec)
         {
             Vector3 ret = new Vector3();
-            ret.x = vec.Value<float?>("x") ?? vec.Value<float?>("r") ?? 0;
-            ret.y = vec.Value<float?>("y") ?? vec.Value<float?>("g") ?? 0;
-            ret.z = vec.Value<float?>("z") ?? vec.Value<float?>("b") ?? 0;
+
+            if (vec["x"] != null)
+                ret.x = vec.Value<float>("x");
+            else if (vec["r"] != null)
+                ret.x = vec.Value<float>("r");
+
+            if (vec["y"] != null)
+                ret.y = vec.Value<float>("y");
+            else if (vec["g"] != null)
+                ret.y = vec.Value<float>("g");
+
+            if (vec["z"] != null)
+                ret.z = vec.Value<float>("z");
+            else if (vec["b"] != null)
+                ret.z = vec.Value<float>("b");
+
             return ret;
         }
 
@@ -106,21 +119,27 @@ namespace Mana.IO
 
         public static Transform convertTransform(JToken component)
         {
+            if (component == null)
+                throw new System.Exception();
             Transform ret = new Transform();
-            ret.position = convertVector(component.Value<JToken>("position"));
-            ret.rotation = convertVector(component.Value<JToken>("rotation"));
-            ret.scale = convertVector(component.Value<JToken>("scale"));
+            ret.position = convertVector(component["transform"].Value<JToken>("position"));
+            ret.rotation = convertVector(component["transform"].Value<JToken>("rotation"));
+            ret.scale = convertVector(component["transform"].Value<JToken>("scale"));
             ret.parentName = component.Value<string>("parent");
             return ret;
         }
 
-        public static JToken convertTransform(Transform component)
+        public static JObject convertTransform(Transform component)
         {
+            JObject t = new JObject();
+            t.Add("position", convertVector(component.position));
+            t.Add("rotation", convertVector(component.rotation));
+            t.Add("scale", convertVector(component.scale));
+
             JObject ret = new JObject();
-            ret.Add("position", convertVector(component.position));
-            ret.Add("rotation", convertVector(component.rotation));
-            ret.Add("scale", convertVector(component.scale));
+            ret.Add("transform", t);
             ret.Add("parent", component.parentName);
+
             return ret;
         }
 
@@ -147,7 +166,7 @@ namespace Mana.IO
             return ret;
         }
 
-        public static JToken convertCamera(Camera camera)
+        public static JObject convertCamera(Camera camera)
         {
             JObject ret = new JObject();
             ret.Add("cameraType", convertCameraType(camera.cameraType));
@@ -193,7 +212,7 @@ namespace Mana.IO
             return ret;
         }
 
-        public static JToken convertLight(Light light)
+        public static JObject convertLight(Light light)
         {
             JObject ret = new JObject();
             ret.Add("lightType", convertLightType(light.lightType));
@@ -217,7 +236,7 @@ namespace Mana.IO
             return ret;
         }
 
-        public static JToken convertAssetPath(AssetPath path)
+        public static JObject convertAssetPath(AssetPath path)
         {
             JObject ret = new JObject();
             ret.Add("bundle", path.bundle);
@@ -235,7 +254,7 @@ namespace Mana.IO
             return ret;
         }
 
-        public static JToken convertMeshRenderer(MeshRenderer component)
+        public static JObject convertMeshRenderer(MeshRenderer component)
         {
             JObject ret = new JObject();
             ret.Add("castShadows", component.castShadows);
@@ -247,60 +266,86 @@ namespace Mana.IO
 
         public static Component convertComponent(JToken component)
         {
-            var type = convertComponentType(component.Value<string>("type"));
+            var type = convertComponentType(component.Value<string>("componentType"));
+            Component ret;
             switch (type)
             {
                 case ComponentType.TRANSFORM:
-                    return convertTransform(component);
+                    ret = convertTransform(component);
+                    break;
                 case ComponentType.CAMERA:
-                    return convertCamera(component);
+                    ret = convertCamera(component);
+                    break;
                 case ComponentType.LIGHT:
-                    return convertLight(component);
+                    ret = convertLight(component);
+                    break;
                 case ComponentType.MESH_RENDER:
-                    return convertMeshRenderer(component);
+                    ret = convertMeshRenderer(component);
+                    break;
                 default:
-                    return new Component();
+                    ret = new Component();
+                    break;
             }
+            ret.enabled = component.Value<bool>("enabled");
+            ret.type = type;
+            return ret;
         }
 
-        public static JToken convertComponent(Component component)
+        public static JObject convertComponent(Component component)
         {
+            JObject ret;
             switch (component.type)
             {
                 case ComponentType.TRANSFORM:
-                    return convertTransform(component as Transform);
+                    ret = convertTransform(component as Transform);
+                    break;
                 case ComponentType.CAMERA:
-                    return convertCamera(component as Camera);
+                    ret = convertCamera(component as Camera);
+                    break;
                 case ComponentType.LIGHT:
-                    return convertLight(component as Light);
+                    ret = convertLight(component as Light);
+                    break;
                 case ComponentType.MESH_RENDER:
-                    return convertMeshRenderer(component as MeshRenderer);
+                    ret = convertMeshRenderer(component as MeshRenderer);
+                    break;
                 default:
-                    return new JObject();
+                    ret = new JObject();
+                    break;
             }
+            ret.Add("enabled", component.enabled);
+            ret.Add("componentType", convertComponentType(component.type));
+            return ret;
         }
 
         public static Node convertNode(JToken node)
         {
             Node ret = new Node();
             ret.name = node.Value<string>("name");
-            JObject components = node.Value<JObject>("components");
+            ret.enabled = node.Value<bool>("enabled");
+            JArray components = node.Value<JArray>("components");
             foreach (var component in components)
             {
-                ret.AddComponent(convertComponent(component.Value));
+                var comp = convertComponent(component);
+                if (comp.type != ComponentType.NONE)
+                    ret.components.Add(comp);
             }
             return ret;
         }
 
-        public static JToken convertNode(Node node)
+        public static JObject convertNode(Node node)
         {
             JObject ret = new JObject();
             ret.Add("name", node.name);
-            JObject components = new JObject();
+            ret.Add("enabled", node.enabled);
+            JArray components = new JArray();
             foreach (var component in node.components)
             {
-                components.Add(convertComponent(component));
+                if (component.type == ComponentType.NONE)
+                    continue;
+                var comp = convertComponent(component);
+                components.Add(comp);
             }
+            ret.Add("components", components);
             return ret;
         }
 
@@ -308,22 +353,22 @@ namespace Mana.IO
         {
             Scene ret = new Scene();
             ret.name = scene.Value<string>("name");
-            JObject nodes = scene.Value<JObject>("nodes");
+            JArray nodes = scene.Value<JArray>("nodes");
             foreach (var node in nodes)
             {
-                ret.nodes.Add(node.Key, convertNode(node.Value));
+                ret.nodes.Add(node.Value<string>("name"), convertNode(node as JObject));
             }
             return ret;
         }
 
-        public static JToken convertScene(Scene scene)
+        public static JObject convertScene(Scene scene)
         {
             JObject ret = new JObject();
             ret.Add("name", scene.name);
-            JObject nodes = new JObject();
+            JArray nodes = new JArray();
             foreach (var node in scene.nodes)
             {
-                nodes.Add(node.Key, convertNode(node.Value));
+                nodes.Add(convertNode(node.Value));
             }
             ret.Add("nodes", nodes);
             return ret;

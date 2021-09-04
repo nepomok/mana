@@ -1,12 +1,11 @@
 namespace Mana.IO
 {
-    class JsonSceneSerializer : Serializer<Scene>
+    public class JsonSceneSerializer : Serializer<Scene>
     {
-        public void serialize(Scene data, System.IO.Stream stream)
+        public string serialize(Scene data)
         {
             var str = JsonCommon.convertScene(data).ToString();
-            var buf = System.Text.ASCIIEncoding.Default.GetBytes(str);
-            stream.Write(buf, 0, buf.Length);
+            return str;
         }
     }
 }

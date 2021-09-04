@@ -51,7 +51,11 @@ protected:
 
         ren2d = Renderer2D(device);
 
-        auto *assemblyStream = archive.open("mana.dll");
+        auto *assemblyStream = archive.open("Newtonsoft.Json.dll");
+        jsonAssembly = domain.loadAssembly(*assemblyStream);
+        delete assemblyStream;
+
+        assemblyStream = archive.open("mana.dll");
         manaAssembly = domain.loadAssembly(*assemblyStream);
         delete assemblyStream;
 
@@ -63,6 +67,7 @@ protected:
 
     void stop(Window &window, RenderDevice &device, Input &input) override {
         delete manaAssembly;
+        delete jsonAssembly;
         delete texture;
         Game::stop(window, device, input);
     }
@@ -127,6 +132,7 @@ private:
 
     MonoCppDomain domain;
     MonoCppAssembly *manaAssembly;
+    MonoCppAssembly *jsonAssembly;
 
     Node *cameraNode;
 

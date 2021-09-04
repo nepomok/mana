@@ -26,17 +26,8 @@ namespace Mana
 {
     public class Scene
     {
-        internal static Scene scene_internal;
-
-        internal static void setScene(Scene scene)
-        {
-            scene_internal = scene;
-        }
-
-        public static Scene scene
-        {
-            get { return scene_internal; }
-        }
+        public static string sceneStr = "";
+        public static Scene scene = new Scene();
 
         public string name;
 

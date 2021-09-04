@@ -4,6 +4,6 @@ namespace Mana.IO
 {
     public interface Deserializer<T>
     {
-        T deserialize(Stream stream);
+        T deserialize(string data);
     }
 }

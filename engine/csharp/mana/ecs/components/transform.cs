@@ -26,11 +26,11 @@ namespace Mana
             base.type = ComponentType.TRANSFORM;
         }
 
-        public Vector3 position;
-        public Vector3 rotation;
-        public Vector3 scale;
+        public Vector3 position = new Vector3();
+        public Vector3 rotation = new Vector3();
+        public Vector3 scale = new Vector3();
 
-        public string parentName;
+        public string parentName = "";
 
         /**
             Returns the forward unit vector in world space.

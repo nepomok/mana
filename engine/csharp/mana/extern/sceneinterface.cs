@@ -29,14 +29,12 @@ namespace Mana.Extern
     {
         internal static void setSceneJson(string json)
         {
-            Scene.scene_internal = new JsonSceneDeserializer().deserialize(StreamUtil.GetStringStream(json));
+            Scene.scene = new JsonSceneDeserializer().deserialize(json);
         }
 
         internal static string getSceneJson()
         {
-            var stream = new MemoryStream();
-            new JsonSceneSerializer().serialize(Scene.scene_internal, stream);
-            return System.Text.ASCIIEncoding.Default.GetString(stream.ToArray());
+            return new JsonSceneSerializer().serialize(Scene.scene);
         }
 
         [DllImport("__Internal")]
