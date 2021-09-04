@@ -270,7 +270,7 @@ namespace mana {
             if (!node.enabled)
                 continue;
 
-            auto lightComponent = node.getComponent<LightComponent>();
+            auto &lightComponent = node.getComponent<LightComponent>();
             if (!lightComponent.enabled)
                 continue;
 

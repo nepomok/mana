@@ -30,10 +30,6 @@ namespace mana {
     struct SkyboxComponent : public Component {
         SkyboxComponent() : Component(SKYBOX) {}
 
-        Component *clone() override {
-            return new SkyboxComponent(*this);
-        }
-
         const std::type_info &getTypeInfo() override {
             return typeid(SkyboxComponent);
         }

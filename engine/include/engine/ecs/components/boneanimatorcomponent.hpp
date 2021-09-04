@@ -24,10 +24,6 @@
 
 namespace mana {
     struct BoneAnimationComponent : public Component {
-        Component *clone() override {
-            return new BoneAnimationComponent(*this);
-        }
-
         const std::type_info& getTypeInfo() override {
             return typeid(BoneAnimationComponent);
         }

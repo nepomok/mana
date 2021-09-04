@@ -28,10 +28,6 @@ namespace mana {
     struct ScriptComponent : public Component {
         ScriptComponent() : Component(SCRIPT) {}
 
-        Component *clone() override {
-            return new ScriptComponent(*this);
-        }
-
         const std::type_info &getTypeInfo() override {
             return typeid(ScriptComponent);
         }
@@ -42,7 +38,6 @@ namespace mana {
         std::string nameSpace;
         std::string className;
 
-        bool scriptEnabled = false;
         int queue = 0;
     };
 }

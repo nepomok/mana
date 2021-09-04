@@ -27,10 +27,6 @@
 
 namespace mana {
     struct Physics2DComponent : public Component {
-        Component *clone() override {
-            return new Physics2DComponent(*this);
-        }
-
         const std::type_info &getTypeInfo() override {
             return typeid(typeof(Physics2DComponent));
         }

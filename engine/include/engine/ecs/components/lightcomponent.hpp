@@ -28,10 +28,6 @@ namespace mana {
     struct LightComponent : public Component {
         LightComponent() : Component(LIGHT) {}
 
-        Component *clone() override {
-            return new LightComponent(*this);
-        }
-
         const std::type_info &getTypeInfo() override {
             return typeid(LightComponent);
         }

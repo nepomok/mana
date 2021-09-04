@@ -33,10 +33,6 @@ namespace mana {
 
         static Transform walkHierarchy(const TransformComponent &component, const Scene &scene);
 
-        Component *clone() override {
-            return new TransformComponent(*this);
-        }
-
         const std::type_info &getTypeInfo() override {
             return typeid(TransformComponent);
         }

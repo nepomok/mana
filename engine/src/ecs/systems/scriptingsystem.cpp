@@ -18,6 +18,7 @@
  */
 
 #include <algorithm>
+#include <memory>
 #include <sstream>
 
 #include "engine/ecs/systems/scriptingsystem.hpp"
@@ -28,6 +29,11 @@
 #include "script/sceneinterface.hpp"
 
 namespace mana {
+    struct RuntimeScript : Component::UserData {
+        bool enabled = false;
+        std::unique_ptr<Script> script = nullptr; //TODO: OnDisable is not called when the component is destroyed.
+    };
+
     void uploadScene(MonoCppDomain &runtime,
                      MonoCppAssembly &msCorLib,
                      MonoCppAssembly &manaAssembly,
@@ -96,28 +102,34 @@ namespace mana {
         for (auto *node : nodes) {
             auto &comp = node->getComponent<ScriptComponent>();
 
-            if (comp.runtime == "mono") {
-                auto *script = reinterpret_cast<MonoScript *>(comp.userData.get());
+            if (comp.userData == nullptr) {
+                comp.userData = std::make_unique<RuntimeScript>();
+            }
 
+            auto &data = *dynamic_cast<RuntimeScript*>(comp.userData.get());
+
+            if (comp.runtime == "mono") {
                 usedAssemblies.insert(comp.assembly);
 
-                if (script == nullptr) {
+                if (data.script == nullptr) {
                     auto &assembly = getAssembly(comp.assembly);
-                    script = new MonoScript(&assembly, comp.nameSpace, comp.className);
-                    comp.userData = std::shared_ptr<MonoScript>(script);
+                    data.script = std::make_unique<MonoScript>(&assembly, comp.nameSpace, comp.className);
+                    data.enabled = false;
                 }
 
                 if (!node->enabled || !comp.enabled) {
-                    if (comp.scriptEnabled) {
-                        comp.scriptEnabled = false;
-                        script->onDisable();
+                    if (data.enabled) {
+                        data.enabled = false;
+                        data.script->onDisable();
                     }
                 }
-                if (!comp.scriptEnabled) {
-                    comp.scriptEnabled = true;
-                    script->onEnable();
+
+                if (!data.enabled) {
+                    data.enabled = true;
+                    data.script->onEnable();
                 }
-                script->onUpdate();
+
+                data.script->onUpdate();
             }
         }
 

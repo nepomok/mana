@@ -44,12 +44,15 @@ namespace mana {
 
         Node() : enabled(true), components() {}
 
-        Node(const Node &other) {
-            enabled = other.enabled;
-            for (auto &p : other.components) {
-                components[p.first] = p.second->clone();
+        ~Node() {
+            for (auto &p : components) {
+                delete p.second;
             }
         }
+
+        Node(const Node &other) = delete;
+
+        Node &operator=(const Node &other) = delete;
 
         Node(Node &&other) noexcept {
             enabled = other.enabled;
@@ -60,17 +63,13 @@ namespace mana {
             other.components.clear();
         }
 
-        ~Node() {
-            for (auto &p : components) {
-                delete p.second;
-            }
-        }
-
-        Node &operator=(const Node &other) {
+        Node &operator=(Node &&other) noexcept {
             enabled = other.enabled;
             for (auto &p : other.components) {
-                components[p.first] = p.second->clone();
+                components[p.first] = p.second;
             }
+            other.enabled = true;
+            other.components.clear();
             return *this;
         }
 
