@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+using System;
+using System.IO;
 using System.Runtime.InteropServices;
 
 using Mana.IO;
@@ -28,6 +30,13 @@ namespace Mana.Extern
         internal static void setSceneJson(string json)
         {
             Scene.scene_internal = new JsonSceneDeserializer().deserialize(StreamUtil.GetStringStream(json));
+        }
+
+        internal static string getSceneJson()
+        {
+            var stream = new MemoryStream();
+            new JsonSceneSerializer().serialize(Scene.scene_internal, stream);
+            return System.Text.ASCIIEncoding.Default.GetString(stream.ToArray());
         }
 
         [DllImport("__Internal")]
