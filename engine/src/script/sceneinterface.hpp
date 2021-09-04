@@ -22,17 +22,30 @@
 
 namespace mana {
     namespace SceneInterface {
-        void setScene(Scene *s);
+        class SceneInterfaceListener {
+        public:
+            virtual void createNode(const char *name, const char *json) {}
+
+            virtual void destroyNode(const char *name) {}
+
+            virtual void createComponent(const char *node, const char *json) {}
+
+            virtual void destroyComponent(const char *node, ComponentType type) {}
+        };
+
+        void addListener(SceneInterfaceListener *listener);
+
+        void removeListener(SceneInterfaceListener *listener);
 
         extern "C"
         {
-        void createNode(const char *name);
+        void createNode(const char *name, const char *json);
 
         void destroyNode(const char *name);
 
-        void createComponent(const char *nodeName, ComponentType type);
+        void createComponent(const char *node, const char *json);
 
-        void destroyComponent(const char *nodeName, ComponentType type);
+        void destroyComponent(const char *node, ComponentType type);
         }
     }
 }

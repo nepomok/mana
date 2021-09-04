@@ -4,6 +4,6 @@ namespace Mana.IO
 {
     public interface Serializer<T>
     {
-        string serialize(T data);
+        void serialize(T data, Stream stream);
     }
 }

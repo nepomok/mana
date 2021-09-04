@@ -18,7 +18,10 @@
  */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
+
+using Mana.IO;
 
 namespace Mana
 {
@@ -51,13 +54,19 @@ namespace Mana
         public void AddComponent(Component component)
         {
             components.Add(component);
-            Mana.Extern.SceneInterface.createComponent(name, component.type);
+
+            var stream = new MemoryStream();
+            new JsonComponentSerializer().serialize(component, stream);
+            stream.Seek(0, SeekOrigin.Begin);
+            var reader = new StreamReader(stream);
+
+            Mana.Internal.SceneInterface.createComponent(name, reader.ReadToEnd());
         }
 
         public void RemoveComponent(Component component)
         {
             components.Remove(component);
-            Mana.Extern.SceneInterface.destroyComponent(name, component.type);
+            Mana.Internal.SceneInterface.destroyComponent(name, component.type);
         }
     }
 }

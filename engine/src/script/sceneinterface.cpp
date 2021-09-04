@@ -22,49 +22,47 @@
 
 #include "sceneinterface.hpp"
 
+#include <mutex>
+
 namespace mana {
     namespace SceneInterface {
-        Component *createInstance(ComponentType type) {
-            switch (type) {
-                case TRANSFORM:
-                    return new TransformComponent();
-                case CAMERA:
-                    return new CameraComponent();
-                case LIGHT:
-                    return new LightComponent();
-                case SCRIPT:
-                    return new ScriptComponent();
-                default:
-                    throw std::runtime_error("Unrecognized component type " + std::to_string(type));
-            }
+        std::mutex mutex;
+        std::set<SceneInterfaceListener *> listeners;
+
+        void addListener(SceneInterfaceListener *listener) {
+            std::lock_guard<std::mutex> guard(mutex);
+            listeners.insert(listener);
         }
 
-        Scene *scene = nullptr;
-
-        void setScene(Scene *s) {
-            scene = s;
+        void removeListener(SceneInterfaceListener *listener) {
+            std::lock_guard<std::mutex> guard(mutex);
+            listeners.erase(listener);
         }
 
         extern "C"
         {
-        void createNode(const char *name) {
-            assert(scene != nullptr);
-            scene->nodes[name] = Node();
+        void createNode(const char *name, const char *json) {
+            std::lock_guard<std::mutex> guard(mutex);
+            for (auto *listener : listeners)
+                listener->createNode(name, json);
         }
 
         void destroyNode(const char *name) {
-            assert(scene != nullptr);
-            scene->nodes.erase(name);
+            std::lock_guard<std::mutex> guard(mutex);
+            for (auto *listener : listeners)
+                listener->destroyNode(name);
         }
 
-        void createComponent(const char *nodeName, ComponentType type) {
-            assert(scene != nullptr);
-            (*scene)[nodeName].components.insert({Node::getComponentTypeIndex(type), createInstance(type)});
+        void createComponent(const char *node, const char *json) {
+            std::lock_guard<std::mutex> guard(mutex);
+            for (auto *listener : listeners)
+                listener->createComponent(node, json);
         }
 
-        void destroyComponent(const char *nodeName, ComponentType type) {
-            assert(scene != nullptr);
-            (*scene)[nodeName].components.erase(Node::getComponentTypeIndex(type));
+        void destroyComponent(const char *node, ComponentType type) {
+            std::lock_guard<std::mutex> guard(mutex);
+            for (auto *listener : listeners)
+                listener->destroyComponent(node, type);
         }
         }
     }

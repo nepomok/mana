@@ -1,10 +1,13 @@
+using System.IO;
+using Newtonsoft.Json.Linq;
+
 namespace Mana.IO
 {
     public class JsonSceneDeserializer : Deserializer<Scene>
     {
-        public Scene deserialize(string data)
+        public Scene deserialize(Stream stream)
         {
-            return JsonCommon.convertScene(Newtonsoft.Json.Linq.JObject.Parse(data));
+            return JsonCommon.convertScene(JObject.Parse(new StreamReader(stream, System.Text.Encoding.UTF8).ReadToEnd()));
         }
     }
 }

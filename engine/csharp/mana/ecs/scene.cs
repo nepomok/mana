@@ -18,6 +18,7 @@
  */
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 
 using Mana.IO;
@@ -26,12 +27,22 @@ namespace Mana
 {
     public class Scene
     {
-        public static string sceneStr = "";
-        public static Scene scene = new Scene();
+        /*
+            The reference to the active scene object, set by external interfaces
+        */
+        internal static Scene scene_internal;
+
+        /*
+            The user can retrieve the active scene through this static property.
+        */
+        public static Scene scene
+        {
+            get { return scene_internal; }
+        }
 
         public string name;
 
-        public readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
+        internal readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
 
         public Node GetNode(string name)
         {
@@ -40,18 +51,24 @@ namespace Mana
             return nodes[name];
         }
 
-        public Node CreateNode(string name)
+        public Node CreateNode(string name, Node node)
         {
             if (nodes.ContainsKey(name))
                 throw new ArgumentException("Node with name " + name + " already exists");
-            Mana.Extern.SceneInterface.createNode(name);
+            
+            var stream = new MemoryStream();
+            new JsonNodeSerializer().serialize(node, stream);
+            stream.Seek(0, SeekOrigin.Begin);
+            
+            Mana.Internal.SceneInterface.createNode(name, new StreamReader(stream).ReadToEnd());
+
             return nodes[name];
         }
 
         public void DestroyNode(string name)
         {
             nodes.Remove(name);
-            Mana.Extern.SceneInterface.destroyNode(name);
+            Mana.Internal.SceneInterface.destroyNode(name);
         }
 
         public int GetNodesCount()

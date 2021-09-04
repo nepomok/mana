@@ -40,14 +40,14 @@ namespace mana {
 
         MonoCppObject str = runtime.stringFromUtf8(s, true);
         args.add(str);
-        manaAssembly.invokeStaticMethod("Mana.Extern", "SceneInterface", "setSceneJson", args);
+        manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "setSceneJson", args);
     }
 
     void downloadScene(MonoCppDomain &domain,
                        MonoCppAssembly &msCorLib,
                        MonoCppAssembly &manaAssembly,
                        const Scene &scene) {
-        auto str = manaAssembly.invokeStaticMethod("Mana.Extern", "SceneInterface", "getSceneJson");
+        auto str = manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "getSceneJson");
         std::stringstream stream(domain.stringToUtf8(str));
         auto monoScene = SceneDeserializer().deserialize(stream);
 
@@ -82,7 +82,6 @@ namespace mana {
     void ScriptingSystem::update(float deltaTime, Scene &scene) {
         manaAssembly.setStaticField("Mana", "Time", "deltaTime", &deltaTime);
 
-        //SceneInterface::setScene(&scene);
         uploadScene(domain, msCorLib, manaAssembly, scene);
 
         auto nodes = scene.findNodesWithComponent<ScriptComponent>();
@@ -131,7 +130,6 @@ namespace mana {
             assemblies.erase(s);
         }
 
-        //SceneInterface::setScene(nullptr);
         downloadScene(domain, msCorLib, manaAssembly, scene);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd");
     }
