@@ -17,16 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_WORLD2D_HPP
-#define MANA_WORLD2D_HPP
+#ifndef MANA_WORLD_HPP
+#define MANA_WORLD_HPP
 
-#include <vector>
-
-#include "engine/physics/2d/rigidbody2d.hpp"
-#include "engine/math/vector2.hpp"
+#include "engine/physics/rigidbody.hpp"
 
 namespace mana {
-    class World2D {
+    /**
+     *
+     * @tparam T
+     */
+    template<typename T>
+    class World {
     public:
         class CollisionListener {
         public:
@@ -35,20 +37,23 @@ namespace mana {
             //TODO: Add Collision events
         };
 
-        virtual ~World2D() = 0;
+        virtual ~World() = 0;
 
-        virtual RigidBody2D *createRigidBody() = 0;
+        virtual RigidBody<T> *createRigidBody() = 0;
 
-        virtual Collider2D *createCollider() = 0;
+        virtual Collider<T> *createCollider() = 0;
 
         virtual void addCollisionListener(CollisionListener *listener) = 0;
 
         virtual void removeCollisionListener(CollisionListener *listener) = 0;
 
-        virtual void setGravity(const Vec2f &gravity) = 0;
+        virtual void setGravity(const Vec3f &gravity) = 0;
 
         virtual void step(float deltaTime) const = 0;
     };
+
+    typedef World<Vec2f> World2D;
+    typedef World<Vec3f> World3D;
 }
 
-#endif //MANA_WORLD2D_HPP
+#endif //MANA_WORLD_HPP

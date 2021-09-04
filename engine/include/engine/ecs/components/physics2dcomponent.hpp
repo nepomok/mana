@@ -22,9 +22,6 @@
 
 #include "engine/ecs/component.hpp"
 
-#include "engine/physics/2d/collider2d.hpp"
-#include "engine/physics/2d/rigidbody2d.hpp"
-
 namespace mana {
     struct Physics2DComponent : public Component {
         const std::type_info &getTypeInfo() override {

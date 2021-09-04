@@ -17,22 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COLLIDER3D_HPP
-#define MANA_COLLIDER3D_HPP
-
-#include <vector>
-
-#include "engine/math/vector3.hpp"
+#include "engine/physics/physics.hpp"
 
 namespace mana {
-    class Collider3D {
-    public:
-        virtual ~Collider3D() = 0;
+    World2D *Physics::createWorld2D(Physics::PhysicsBackend backend) {
+        return nullptr;
+    }
 
-        virtual void setShape(const std::vector<Vec3f> &vertices) = 0;
-
-        virtual void setShape(const std::vector<Vec3f> &vertices, const std::vector<size_t> &indices) = 0;
-    };
+    World3D *Physics::createWorld3D(Physics::PhysicsBackend backend) {
+        return nullptr;
+    }
 }
-
-#endif //MANA_COLLIDER3D_HPP

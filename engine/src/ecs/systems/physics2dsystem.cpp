@@ -21,8 +21,6 @@
 
 #include "engine/ecs/components/physics2dcomponent.hpp"
 
-#include "engine/physics/2d/world2d.hpp"
-
 namespace mana {
     Physics2DSystem::Physics2DSystem(const World2D &world) : world(&world) {}
 

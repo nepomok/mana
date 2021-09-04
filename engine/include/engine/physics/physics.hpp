@@ -20,12 +20,15 @@
 #ifndef MANA_PHYSICS_HPP
 #define MANA_PHYSICS_HPP
 
-#include "engine/physics/physicsbackend.hpp"
-#include "engine/physics/2d/world2d.hpp"
-#include "engine/physics/3d/world3d.hpp"
+#include "engine/physics/world.hpp"
 
 namespace mana {
     namespace Physics {
+        enum PhysicsBackend {
+            BULLET,
+            BOX2D
+        };
+
         World2D *createWorld2D(PhysicsBackend backend);
 
         World3D *createWorld3D(PhysicsBackend backend);

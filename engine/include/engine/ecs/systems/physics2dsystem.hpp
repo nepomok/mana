@@ -22,6 +22,8 @@
 
 #include "engine/ecs/system.hpp"
 
+#include "engine/physics/world.hpp"
+
 namespace mana {
     class Physics2DSystem : public System {
     public:

@@ -17,22 +17,29 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COLLIDER2D_HPP
-#define MANA_COLLIDER2D_HPP
+#ifndef MANA_COLLIDER_HPP
+#define MANA_COLLIDER_HPP
 
 #include <vector>
 
 #include "engine/math/vector2.hpp"
+#include "engine/math/vector3.hpp"
 
-namespace mana {
-    class Collider2D {
+namespace mana
+{
+    template<typename T>
+    class Collider
+    {
     public:
-        virtual ~Collider2D() = 0;
-        
-        virtual void setShape(const std::vector<Vec2f> &vertices) = 0;
+        virtual ~Collider() = 0;
 
-        virtual void setShape(const std::vector<Vec2f> &vertices, const std::vector<size_t> &indices) = 0;
+        virtual void setShape(const std::vector<T> &vertices) = 0;
+
+        virtual void setShape(const std::vector<T> &vertices, const std::vector<std::size_t> &indices) = 0;
     };
+
+    typedef Collider<Vec2f> Collider2D;
+    typedef Collider<Vec3f> Collider3D;
 }
 
-#endif //MANA_COLLIDER2D_HPP
+#endif //MANA_COLLIDER_HPP
