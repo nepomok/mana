@@ -17,46 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_WORLD_HPP
-#define MANA_WORLD_HPP
+#ifndef MANA_JOINT_HPP
+#define MANA_JOINT_HPP
 
-#include "engine/physics/rigidbody.hpp"
-#include "engine/physics/joint.hpp"
+#include "engine/math/vector2.hpp"
+#include "engine/math/vector3.hpp"
 
 namespace mana {
     /**
+     * A joint influences one or more rigidbodies according to some rules.
      *
-     * @tparam T
+     * The joint could be motorized etc.
      */
     template<typename T>
-    class World {
+    class Joint {
     public:
-        class CollisionListener {
-        public:
-            virtual ~CollisionListener() = default;
+        virtual ~Joint() = default;
 
-            //TODO: Add Collision events
-        };
-
-        virtual ~World() = 0;
-
-        virtual RigidBody<T> *createRigidBody() = 0;
-
-        virtual Collider<T> *createCollider() = 0;
-
-        virtual Joint<T> *createJoint() = 0;
-
-        virtual void addCollisionListener(CollisionListener *listener) = 0;
-
-        virtual void removeCollisionListener(CollisionListener *listener) = 0;
-
-        virtual void setGravity(const Vec3f &gravity) = 0;
-
-        virtual void step(float deltaTime) const = 0;
+        //TODO: Define physics joints api
     };
 
-    typedef World<Vec2f> World2D;
-    typedef World<Vec3f> World3D;
+    typedef Joint<Vec2f> Joint2D;
+    typedef Joint<Vec3f> Joint3D;
 }
 
-#endif //MANA_WORLD_HPP
+#endif //MANA_JOINT_HPP
