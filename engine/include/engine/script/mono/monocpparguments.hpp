@@ -37,9 +37,9 @@ namespace mana {
 
         void clear();
 
-        const std::vector<void *> &data();
+        const std::vector<void *> &data() const;
 
-        size_t size();
+        size_t count() const;
 
     private:
         std::vector<void *> args;

@@ -42,7 +42,7 @@ namespace mana {
         MonoCppObject invokeStaticMethod(const std::string &nameSpace,
                                          const std::string &className,
                                          const std::string &functionName,
-                                         MonoCppArguments &args) const;
+                                         const MonoCppArguments &args = {}) const;
 
         void setStaticField(const std::string &nameSpace,
                             const std::string &className,

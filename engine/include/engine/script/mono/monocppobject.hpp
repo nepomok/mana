@@ -45,9 +45,9 @@ namespace mana {
 
         MonoCppObject &operator=(const MonoCppObject &other);
 
-        MonoCppObject &operator=(MonoCppObject &&other);
+        MonoCppObject &operator=(MonoCppObject &&other) noexcept;
 
-        MonoCppObject invokeMethod(const std::string &name, MonoCppArguments args = {}) const;
+        MonoCppObject invokeMethod(const std::string &name, const MonoCppArguments& args = {}) const;
 
         void setField(const std::string &name, const MonoCppValue &value) const;
 

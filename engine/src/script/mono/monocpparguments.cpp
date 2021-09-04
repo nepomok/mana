@@ -41,10 +41,10 @@ void mana::MonoCppArguments::clear() {
     args.clear();
 }
 
-const std::vector<void *> &mana::MonoCppArguments::data() {
+const std::vector<void *> &mana::MonoCppArguments::data() const {
     return args;
 }
 
-size_t mana::MonoCppArguments::size() {
+size_t mana::MonoCppArguments::count() const {
     return args.size();
 }

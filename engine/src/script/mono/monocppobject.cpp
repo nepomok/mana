@@ -71,7 +71,7 @@ namespace mana {
         return *this;
     }
 
-    MonoCppObject &MonoCppObject::operator=(MonoCppObject &&other) {
+    MonoCppObject &MonoCppObject::operator=(MonoCppObject &&other)  noexcept {
         objectPointer = other.objectPointer;
         gcHandle = other.gcHandle;
         pinned = other.pinned;
@@ -81,19 +81,21 @@ namespace mana {
         return *this;
     }
 
-    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, MonoCppArguments args) const {
+    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, const MonoCppArguments& args) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
+
         auto *classPointer = mono_object_get_class(static_cast<MonoObject *>(objectPointer));
-        auto *method = mono_class_get_method_from_name(classPointer, name.c_str(), args.size());
+        auto *method = mono_class_get_method_from_name(classPointer, name.c_str(), args.count());
         if (method == nullptr)
             throw std::runtime_error("Failed to find method " + name);
-        void *a[args.size()];
-        for (int i = 0; i < args.size(); i++) {
+
+        void *a[args.count()];
+        for (int i = 0; i < args.count(); i++) {
             a[i] = args.data()[i];
         }
-        auto *o = mono_runtime_invoke(method, objectPointer, a, nullptr);
-        return std::move(MonoCppObject(o));
+
+        return std::move(MonoCppObject(mono_runtime_invoke(method, objectPointer, a, nullptr)));
     }
 
     void MonoCppObject::setField(const std::string &name, const MonoCppValue &value) const {
