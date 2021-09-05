@@ -1,9 +1,8 @@
 {
   "name": "SampleScene",
-  "nodes": [
-    {
+  "nodes": {
+    "MainCamera": {
       "enabled": true,
-      "name": "MainCamera",
       "components": [
         {
           "enabled": true,
@@ -38,9 +37,8 @@
         }
       ]
     },
-    {
+    "Plane": {
       "enabled": true,
-      "name": "Plane",
       "components": [
         {
           "enabled": true,
@@ -67,6 +65,8 @@
         {
           "enabled": true,
           "componentType": "mesh_render",
+          "castShadows": true,
+          "receiveShadows": true,
           "mesh": {
             "bundle": "assets/meshes/plane.obj",
             "asset": "Plane"
@@ -87,9 +87,8 @@
         }
       ]
     },
-    {
+    "Skybox": {
       "enabled": false,
-      "name": "Skybox",
       "components": [
         {
           "enabled": true,
@@ -145,9 +144,8 @@
         }
       ]
     },
-    {
+    "DirectionalLight": {
       "enabled": true,
-      "name": "DirectionalLight",
       "components": [
         {
           "enabled": true,
@@ -198,5 +196,5 @@
         }
       ]
     }
-  ]
+  }
 }

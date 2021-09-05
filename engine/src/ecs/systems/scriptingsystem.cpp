@@ -23,8 +23,9 @@
 
 #include "engine/ecs/systems/scriptingsystem.hpp"
 #include "engine/ecs/components.hpp"
-#include "engine/io/json/ecs/sceneserializer.hpp"
-#include "engine/io/json/ecs/scenedeserializer.hpp"
+
+#include "engine/io/schema/ecsschema.hpp"
+#include "engine/io/json/jsonprotocol.hpp"
 
 #include "script/sceneinterface.hpp"
 
@@ -39,7 +40,9 @@ namespace mana {
                      MonoCppAssembly &manaAssembly,
                      const Scene &scene) {
         std::stringstream stream;
-        SceneSerializer().serialize(scene, stream);
+
+        Message message;
+        JsonProtocol().serialize(stream, message << scene);
 
         std::string s = stream.str();
 
@@ -59,7 +62,10 @@ namespace mana {
         auto str = manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "getSceneJson");
 
         std::stringstream stream(domain.stringToUtf8(str));
-        auto monoScene = SceneDeserializer().deserialize(stream);
+        Scene monoScene;
+        auto message = JsonProtocol().deserialize(stream);
+
+        monoScene << message;
 
         //Synchronize transforms
         for (auto &node : monoScene.nodes) {

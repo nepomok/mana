@@ -320,7 +320,6 @@ namespace Mana.IO
         public static Node convertNode(JToken node)
         {
             Node ret = new Node();
-            ret.name = node.Value<string>("name");
             ret.enabled = node.Value<bool>("enabled");
             JArray components = node.Value<JArray>("components");
             foreach (var component in components)
@@ -335,7 +334,6 @@ namespace Mana.IO
         public static JObject convertNode(Node node)
         {
             JObject ret = new JObject();
-            ret.Add("name", node.name);
             ret.Add("enabled", node.enabled);
             JArray components = new JArray();
             foreach (var component in node.components)
@@ -353,10 +351,10 @@ namespace Mana.IO
         {
             Scene ret = new Scene();
             ret.name = scene.Value<string>("name");
-            JArray nodes = scene.Value<JArray>("nodes");
+            JObject nodes = scene.Value<JObject>("nodes");
             foreach (var node in nodes)
             {
-                ret.nodes.Add(node.Value<string>("name"), convertNode(node as JObject));
+                ret.nodes.Add(node.Key, convertNode(node.Value as JObject));
             }
             return ret;
         }
@@ -365,10 +363,10 @@ namespace Mana.IO
         {
             JObject ret = new JObject();
             ret.Add("name", scene.name);
-            JArray nodes = new JArray();
+            JObject nodes = new JObject();
             foreach (var node in scene.nodes)
             {
-                nodes.Add(convertNode(node.Value));
+                nodes.Add(node.Key, convertNode(node.Value));
             }
             ret.Add("nodes", nodes);
             return ret;

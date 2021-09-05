@@ -20,18 +20,13 @@
 #ifndef MANA_MANA_HPP
 #define MANA_MANA_HPP
 
-#include "engine/io/serializer.hpp"
-#include "engine/io/deserializer.hpp"
+#include "engine/io/protocol.hpp"
+#include "engine/io/message.hpp"
 #include "engine/io/archive.hpp"
 #include "engine/io/archivedirectory.hpp"
-#include "engine/io/json/jsonserializer.hpp"
-#include "engine/io/json/jsondeserializer.hpp"
-#include "engine/io/json/ecs/componentdeserializer.hpp"
-#include "engine/io/json/ecs/componentserializer.hpp"
-#include "engine/io/json/ecs/sceneserializer.hpp"
-#include "engine/io/json/ecs/scenedeserializer.hpp"
-#include "engine/io/json/ecs/nodeserializer.hpp"
-#include "engine/io/json/ecs/nodedeserializer.hpp"
+#include "engine/io/json/jsonprotocol.hpp"
+#include "engine/io/schema/ecsschema.hpp"
+#include "engine/io/schema/mathschema.hpp"
 #include "engine/asset/audio.hpp"
 #include "engine/asset/camera.hpp"
 #include "engine/asset/vertex.hpp"

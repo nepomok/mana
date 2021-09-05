@@ -30,13 +30,11 @@
 #include <sndfile.h>
 
 #include "engine/audio/audioformat.hpp"
-#include "engine/io/json/ecs/scenedeserializer.hpp"
 #include "engine/async/threadpool.hpp"
 
-#include "../extern/json.hpp"
+#include "extern/json.hpp"
 
 namespace mana {
-
     static ColorRGBA convertJsonColor(const nlohmann::json &j) {
         return ColorRGBA(j["r"], j["g"], j["b"], j["a"]);
     }

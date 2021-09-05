@@ -113,7 +113,9 @@ protected:
 
     void loadScene(RenderDevice &device) override {
         auto *sceneStream = archive.open("assets/scene.json");
-        scene = SceneDeserializer().deserialize(*sceneStream);
+
+        scene << JsonProtocol().deserialize(*sceneStream);
+
         delete sceneStream;
 
         cameraNode = &scene.nodes.at("MainCamera");

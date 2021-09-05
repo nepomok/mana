@@ -17,24 +17,20 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_NODEDESERIALIZER_HPP
-#define MANA_NODEDESERIALIZER_HPP
+#ifndef MANA_PROTOCOL_HPP
+#define MANA_PROTOCOL_HPP
 
-#include "engine/io/json/jsondeserializer.hpp"
-#include "engine/io/json/ecs/componentdeserializer.hpp"
+#include <ostream>
 
-#include "engine/ecs/node.hpp"
+#include "engine/io/message.hpp"
 
 namespace mana {
-    class NodeDeserializer : public JsonDeserializer<Node> {
+    class Protocol {
     public:
-        NodeDeserializer();
+        virtual void serialize(std::ostream &stream, const Message &message) = 0;
 
-        Node deserialize(std::istream &stream) override;
-
-    private:
-        ComponentDeserializer componentDeserializer;
+        virtual Message deserialize(std::istream &stream) = 0;
     };
 }
 
-#endif //MANA_NODEDESERIALIZER_HPP
+#endif //MANA_PROTOCOL_HPP
