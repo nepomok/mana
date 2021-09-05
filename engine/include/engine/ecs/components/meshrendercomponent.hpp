@@ -29,6 +29,10 @@ namespace mana {
     struct MeshRenderComponent : public Component {
         MeshRenderComponent() : Component(MESH_RENDER) {}
 
+        Component *clone() override {
+            return new MeshRenderComponent(*this);
+        }
+
         const std::type_info &getTypeInfo() override {
             return typeid(MeshRenderComponent);
         }

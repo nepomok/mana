@@ -28,6 +28,10 @@ namespace mana {
     struct RigidBodyComponent3D : public Component {
         RigidBodyComponent3D() : Component(RIGIDBODY_3D) {}
 
+        Component *clone() override {
+            return new RigidBodyComponent3D(*this);
+        }
+
         const std::type_info &getTypeInfo() override {
             return typeid(RigidBodyComponent3D);
         }

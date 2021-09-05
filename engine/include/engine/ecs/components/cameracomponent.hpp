@@ -28,6 +28,10 @@ namespace mana {
     struct CameraComponent : public Component {
         CameraComponent() : Component(CAMERA) {}
 
+        Component *clone() override {
+            return new CameraComponent(*this);
+        }
+
         const std::type_info &getTypeInfo() override {
             return typeid(CameraComponent);
         }

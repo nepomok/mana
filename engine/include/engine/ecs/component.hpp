@@ -71,6 +71,13 @@ namespace mana {
 
         virtual ~Component() = default;
 
+        Component(const Component &copy)
+                : componentType(copy.componentType) {
+            userData = nullptr;
+        }
+
+        virtual Component *clone() = 0;
+
         virtual const std::type_info &getTypeInfo() = 0;
     };
 }

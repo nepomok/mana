@@ -20,7 +20,6 @@
 #ifndef MANA_COMPONENTS_HPP
 #define MANA_COMPONENTS_HPP
 
-#include "engine/ecs/components/boneanimatorcomponent.hpp"
 #include "engine/ecs/components/collidercomponent2d.hpp"
 #include "engine/ecs/components/collidercomponent3d.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"

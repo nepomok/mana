@@ -53,7 +53,6 @@
 #include "engine/ecs/system.hpp"
 #include "engine/ecs/scene.hpp"
 #include "engine/ecs/ecs.hpp"
-#include "engine/ecs/components/boneanimatorcomponent.hpp"
 #include "engine/ecs/components/collidercomponent2d.hpp"
 #include "engine/ecs/components/collidercomponent3d.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"

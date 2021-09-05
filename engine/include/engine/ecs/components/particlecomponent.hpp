@@ -24,6 +24,10 @@
 
 namespace mana {
     struct ParticleComponent : public Component {
+        Component *clone() override {
+            return new ParticleComponent(*this);
+        }
+
         const std::type_info& getTypeInfo() override {
             return typeid(ParticleComponent);
         }

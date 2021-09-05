@@ -50,9 +50,20 @@ namespace mana {
             }
         }
 
-        Node(const Node &other) = delete;
+        Node(const Node &other) {
+            enabled = other.enabled;
+            for (auto &p : other.components) {
+                components.insert({p.first, p.second->clone()});
+            }
+        }
 
-        Node &operator=(const Node &other) = delete;
+        Node &operator=(const Node &other) {
+            enabled = other.enabled;
+            for (auto &p : other.components) {
+                components.insert({p.first, p.second->clone()});
+            }
+            return *this;
+        }
 
         Node(Node &&other) noexcept {
             enabled = other.enabled;

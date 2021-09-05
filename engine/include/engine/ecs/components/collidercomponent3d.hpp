@@ -28,6 +28,10 @@ namespace mana {
     struct ColliderComponent3D : public Component {
         ColliderComponent3D() : Component(COLLIDER_3D) {}
 
+        Component *clone() override {
+            return new ColliderComponent3D(*this);
+        }
+
         const std::type_info &getTypeInfo() override {
             return typeid(ColliderComponent3D);
         }
