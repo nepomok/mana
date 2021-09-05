@@ -21,7 +21,7 @@
 #include <memory>
 #include <sstream>
 
-#include "engine/ecs/systems/scriptingsystem.hpp"
+#include "engine/ecs/systems/monoscriptingsystem.hpp"
 #include "engine/ecs/components.hpp"
 
 #include "engine/io/schema/ecsschema.hpp"
@@ -77,25 +77,25 @@ namespace mana {
         }
     }
 
-    ScriptingSystem::ScriptingSystem(Input &input,
-                                     MonoCppDomain &domain,
-                                     MonoCppAssembly &manaAssembly,
-                                     Archive &archive)
+    MonoScriptingSystem::MonoScriptingSystem(Input &input,
+                                             MonoCppDomain &domain,
+                                             MonoCppAssembly &manaAssembly,
+                                             Archive &archive)
             : domain(domain),
               msCorLib(domain.getMsCorLibAssembly()),
               manaAssembly(manaAssembly),
               input(input),
               archive(archive) {}
 
-    void ScriptingSystem::start() {
+    void MonoScriptingSystem::start() {
         input.registerListener(*this);
     }
 
-    void ScriptingSystem::stop() {
+    void MonoScriptingSystem::stop() {
         input.unregisterListener(*this);
     }
 
-    void ScriptingSystem::update(float deltaTime, Scene &scene) {
+    void MonoScriptingSystem::update(float deltaTime, Scene &scene) {
         manaAssembly.setStaticField("Mana", "Time", "deltaTime", &deltaTime);
 
         uploadScene(domain, msCorLib, manaAssembly, scene);
@@ -156,55 +156,55 @@ namespace mana {
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd");
     }
 
-    void ScriptingSystem::onKeyDown(Key key) {
+    void MonoScriptingSystem::onKeyDown(Key key) {
         MonoCppArguments args;
         int v = key;
         args.add(v);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnKeyDown", args);
     }
 
-    void ScriptingSystem::onKeyUp(Key key) {
+    void MonoScriptingSystem::onKeyUp(Key key) {
         MonoCppArguments args;
         int v = key;
         args.add(v);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnKeyUp", args);
     }
 
-    void ScriptingSystem::onMouseMove(double xpos, double ypos) {
+    void MonoScriptingSystem::onMouseMove(double xpos, double ypos) {
         MonoCppArguments args;
         args.add(xpos);
         args.add(ypos);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseMove", args);
     }
 
-    void ScriptingSystem::onMouseWheelScroll(double ammount) {
+    void MonoScriptingSystem::onMouseWheelScroll(double ammount) {
         MonoCppArguments args;
         args.add(ammount);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseWheelScroll", args);
     }
 
-    void ScriptingSystem::onMouseKeyDown(MouseKey key) {
+    void MonoScriptingSystem::onMouseKeyDown(MouseKey key) {
         int v = key;
         MonoCppArguments args;
         args.add(v);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseKeyDown", args);
     }
 
-    void ScriptingSystem::onMouseKeyUp(MouseKey key) {
+    void MonoScriptingSystem::onMouseKeyUp(MouseKey key) {
         int v = key;
         MonoCppArguments args;
         args.add(v);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnMouseKeyUp", args);
     }
 
-    void ScriptingSystem::onTextInput(const std::string &text) {
+    void MonoScriptingSystem::onTextInput(const std::string &text) {
         MonoCppArguments args;
         auto monostr = domain.stringFromUtf8(text);
         args.add(monostr);
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnTextInput", args);
     }
 
-    MonoCppAssembly &ScriptingSystem::getAssembly(const std::string &path) {
+    MonoCppAssembly &MonoScriptingSystem::getAssembly(const std::string &path) {
         if (assemblies.find(path) == assemblies.end()) {
             std::unique_ptr<std::iostream> stream(archive.open(path));
             assemblies[path] = domain.loadAssembly(*stream);

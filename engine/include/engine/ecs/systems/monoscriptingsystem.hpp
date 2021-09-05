@@ -30,14 +30,14 @@
 #include "engine/io/archive.hpp"
 
 namespace mana {
-    class ScriptingSystem : public System, InputListener {
+    class MonoScriptingSystem : public System, InputListener {
     public:
-        ScriptingSystem(Input &input,
-                        MonoCppDomain &domain,
-                        MonoCppAssembly &manaAssembly,
-                        Archive &archive);
+        MonoScriptingSystem(Input &input,
+                            MonoCppDomain &domain,
+                            MonoCppAssembly &manaAssembly,
+                            Archive &archive);
 
-        ~ScriptingSystem() override = default;
+        ~MonoScriptingSystem() override = default;
 
         void start() override;
 

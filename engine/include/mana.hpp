@@ -70,7 +70,7 @@
 #include "engine/ecs/systems/physics2dsystem.hpp"
 #include "engine/ecs/systems/animationsystem.hpp"
 #include "engine/ecs/systems/eventsystem.hpp"
-#include "engine/ecs/systems/scriptingsystem.hpp"
+#include "engine/ecs/systems/monoscriptingsystem.hpp"
 #include "engine/ecs/systems/physics3dsystem.hpp"
 #include "engine/ecs/systems/rendersystem.hpp"
 #include "engine/script/script.hpp"

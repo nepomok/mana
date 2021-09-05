@@ -25,20 +25,16 @@
 namespace mana {
     /**
      * Systems provide logic.
-     *
-     * Only systems and scripts invoked by a script system invoke logic on the scene data.
-     *
-     * Examples are invoking script lifecycle, handle rendering, manage memory allocation etc.
      */
     class System {
     public:
         virtual ~System() = default;
 
-        virtual void start() = 0;
+        virtual void start() {};
 
-        virtual void stop() = 0;
+        virtual void stop() {};
 
-        virtual void update(float deltaTime, Scene &scene) = 0;
+        virtual void update(float deltaTime, Scene &scene) {};
     };
 }
 #endif //MANA_SYSTEM_HPP
