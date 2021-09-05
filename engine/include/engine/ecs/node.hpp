@@ -92,8 +92,8 @@ namespace mana {
                     return typeid(CameraComponent);
                 case LIGHT:
                     return typeid(LightComponent);
-                case SCRIPT:
-                    return typeid(ScriptComponent);
+                case SCRIPT_MONO:
+                    return typeid(MonoScriptComponent);
                 case MESH_RENDER:
                     return typeid(MeshRenderComponent);
                 case SKYBOX:
@@ -110,8 +110,8 @@ namespace mana {
                 return CAMERA;
             } else if (index == typeid(LightComponent)) {
                 return LIGHT;
-            } else if (index == typeid(ScriptComponent)) {
-                return SCRIPT;
+            } else if (index == typeid(MonoScriptComponent)) {
+                return SCRIPT_MONO;
             } else if (index == typeid(MeshRenderComponent)) {
                 return MESH_RENDER;
             } else if (index == typeid(SkyboxComponent)) {

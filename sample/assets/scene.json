@@ -34,6 +34,14 @@
           "farClip": 1000,
           "fov": 60,
           "aspectRatio": 1.0
+        },
+        {
+          "enabled": true,
+          "componentType": "script_mono",
+          "assembly": "assets/scripts/script.dll",
+          "nameSpace": "",
+          "className": "InputController",
+          "queue": 0
         }
       ]
     },
@@ -75,15 +83,6 @@
             "bundle": "assets/materials/colormap.json",
             "asset": ""
           }
-        },
-        {
-          "enabled": true,
-          "componentType": "script",
-          "runtime": "mono",
-          "assembly": "assets/scripts/script.dll",
-          "nameSpace": "",
-          "className": "InputController",
-          "queue": 0
         }
       ]
     },

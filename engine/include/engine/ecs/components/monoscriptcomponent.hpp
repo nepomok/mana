@@ -17,26 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCRIPTCOMPONENT_HPP
-#define MANA_SCRIPTCOMPONENT_HPP
+#ifndef MANA_MONOSCRIPTCOMPONENT_HPP
+#define MANA_MONOSCRIPTCOMPONENT_HPP
 
 #include "engine/ecs/component.hpp"
 
 #include "engine/script/script.hpp"
 
 namespace mana {
-    struct ScriptComponent : public Component {
-        ScriptComponent() : Component(SCRIPT) {}
+    struct MonoScriptComponent : public Component {
+        MonoScriptComponent() : Component(SCRIPT_MONO) {}
 
         Component *clone() override {
-            return new ScriptComponent(*this);
+            return new MonoScriptComponent(*this);
         }
 
         const std::type_info &getTypeInfo() override {
-            return typeid(ScriptComponent);
+            return typeid(MonoScriptComponent);
         }
-
-        std::string runtime;
 
         std::string assembly;
         std::string nameSpace;
@@ -46,4 +44,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_SCRIPTCOMPONENT_HPP
+#endif //MANA_MONOSCRIPTCOMPONENT_HPP

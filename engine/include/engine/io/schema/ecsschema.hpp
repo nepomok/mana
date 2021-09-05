@@ -62,9 +62,9 @@ namespace mana {
 
     Message &operator<<(Message &message, const LightComponent *&component);
 
-    ScriptComponent *&operator<<(ScriptComponent *&component, const Message &message);
+    MonoScriptComponent *&operator<<(MonoScriptComponent *&component, const Message &message);
 
-    Message &operator<<(Message &message, const ScriptComponent *&component);
+    Message &operator<<(Message &message, const MonoScriptComponent *&component);
 
     Component *&operator<<(Component *&, const Message &message);
 

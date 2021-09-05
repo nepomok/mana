@@ -100,17 +100,18 @@ namespace mana {
 
         uploadScene(domain, msCorLib, manaAssembly, scene);
 
-        auto nodes = scene.findNodesWithComponent<ScriptComponent>();
+        auto nodes = scene.findNodesWithComponent<MonoScriptComponent>();
 
         std::sort(nodes.begin(), nodes.end(),
                   [](const Node *a, const Node *b) -> bool {
-                      return a->getComponent<ScriptComponent>().queue < b->getComponent<ScriptComponent>().queue;
+                      return a->getComponent<MonoScriptComponent>().queue <
+                             b->getComponent<MonoScriptComponent>().queue;
                   });
 
         std::set<std::string> usedAssemblies;
 
         for (auto *node : nodes) {
-            auto &comp = node->getComponent<ScriptComponent>();
+            auto &comp = node->getComponent<MonoScriptComponent>();
 
             if (comp.userData == nullptr) {
                 comp.userData = std::make_unique<RuntimeScript>();
@@ -118,29 +119,27 @@ namespace mana {
 
             auto &data = *dynamic_cast<RuntimeScript *>(comp.userData.get());
 
-            if (comp.runtime == "mono") {
-                usedAssemblies.insert(comp.assembly);
+            usedAssemblies.insert(comp.assembly);
 
-                if (data.script == nullptr) {
-                    auto &assembly = getAssembly(comp.assembly);
-                    data.script = std::make_unique<MonoScript>(&assembly, comp.nameSpace, comp.className);
-                    data.enabled = false;
-                }
-
-                if (!node->enabled || !comp.enabled) {
-                    if (data.enabled) {
-                        data.enabled = false;
-                        data.script->onDisable();
-                    }
-                }
-
-                if (!data.enabled) {
-                    data.enabled = true;
-                    data.script->onEnable();
-                }
-
-                data.script->onUpdate();
+            if (data.script == nullptr) {
+                auto &assembly = getAssembly(comp.assembly);
+                data.script = std::make_unique<MonoScript>(&assembly, comp.nameSpace, comp.className);
+                data.enabled = false;
             }
+
+            if (!node->enabled || !comp.enabled) {
+                if (data.enabled) {
+                    data.enabled = false;
+                    data.script->onDisable();
+                }
+            }
+
+            if (!data.enabled) {
+                data.enabled = true;
+                data.script->onEnable();
+            }
+
+            data.script->onUpdate();
         }
 
         std::set<std::string> unused;

@@ -61,7 +61,7 @@
 #include "engine/ecs/components/particlecomponent.hpp"
 #include "engine/ecs/components/rigidbodycomponent3d.hpp"
 #include "engine/ecs/components/rigidbodycomponent2d.hpp"
-#include "engine/ecs/components/scriptcomponent.hpp"
+#include "engine/ecs/components/monoscriptcomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/gui/textcomponent.hpp"

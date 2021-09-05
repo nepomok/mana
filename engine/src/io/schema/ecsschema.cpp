@@ -30,8 +30,8 @@ namespace mana {
             value = CAMERA;
         else if (str == "light")
             value = LIGHT;
-        else if (str == "script")
-            value = SCRIPT;
+        else if (str == "script_mono")
+            value = SCRIPT_MONO;
         else if (str == "mesh_render")
             value = MESH_RENDER;
         else if (str == "skybox")
@@ -52,8 +52,8 @@ namespace mana {
             case LIGHT:
                 message = "light";
                 break;
-            case SCRIPT:
-                message = "script";
+            case SCRIPT_MONO:
+                message = "script_mono";
                 break;
             case MESH_RENDER:
                 message = "mesh_render";
@@ -284,9 +284,8 @@ namespace mana {
         return message;
     }
 
-    ScriptComponent *&operator<<(ScriptComponent *&component, const Message &message) {
-        component = new ScriptComponent();
-        component->runtime = message["runtime"].getString();
+    MonoScriptComponent *&operator<<(MonoScriptComponent *&component, const Message &message) {
+        component = new MonoScriptComponent();
         component->assembly = message["assembly"].getString();
         component->nameSpace = message["nameSpace"].getString();
         component->className = message["className"].getString();
@@ -294,9 +293,8 @@ namespace mana {
         return component;
     }
 
-    Message &operator<<(Message &message, const ScriptComponent *&component) {
+    Message &operator<<(Message &message, const MonoScriptComponent *&component) {
         message = std::map<std::string, Message>();
-        message["runtime"] = component->runtime;
         message["assembly"] = component->assembly;
         message["nameSpace"] = component->nameSpace;
         message["className"] = component->className;
@@ -327,8 +325,8 @@ namespace mana {
                 light << message;
                 ret = light;
                 break;
-            case SCRIPT:
-                ScriptComponent *script;
+            case SCRIPT_MONO:
+                MonoScriptComponent *script;
                 script << message;
                 ret = script;
                 break;
@@ -354,7 +352,7 @@ namespace mana {
         const TransformComponent *transform;
         const CameraComponent *camera;
         const LightComponent *light;
-        const ScriptComponent *script;
+        const MonoScriptComponent *script;
         const MeshRenderComponent *render;
         const SkyboxComponent *skybox;
         switch (component->componentType) {
@@ -370,8 +368,8 @@ namespace mana {
                 light = dynamic_cast<const LightComponent *>(component);
                 message << light;
                 break;
-            case SCRIPT:
-                script = dynamic_cast<const ScriptComponent *>(component);
+            case SCRIPT_MONO:
+                script = dynamic_cast<const MonoScriptComponent *>(component);
                 message << script;
                 break;
             case MESH_RENDER:

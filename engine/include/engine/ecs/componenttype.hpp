@@ -26,7 +26,7 @@ namespace mana {
         TRANSFORM,
         CAMERA,
         LIGHT,
-        SCRIPT,
+        SCRIPT_MONO,
         MESH_RENDER,
         SKYBOX,
         COLLIDER_2D,
