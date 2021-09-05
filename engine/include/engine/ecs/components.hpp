@@ -21,14 +21,16 @@
 #define MANA_COMPONENTS_HPP
 
 #include "engine/ecs/components/boneanimatorcomponent.hpp"
+#include "engine/ecs/components/collidercomponent2d.hpp"
+#include "engine/ecs/components/collidercomponent3d.hpp"
 #include "engine/ecs/components/cameracomponent.hpp"
 #include "engine/ecs/components/transformcomponent.hpp"
 #include "engine/ecs/components/lightcomponent.hpp"
 #include "engine/ecs/components/particlecomponent.hpp"
-#include "engine/ecs/components/physics2dcomponent.hpp"
+#include "engine/ecs/components/rigidbodycomponent3d.hpp"
+#include "engine/ecs/components/rigidbodycomponent2d.hpp"
 #include "engine/ecs/components/scriptcomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
-#include "engine/ecs/components/physics3dcomponent.hpp"
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/gui/textcomponent.hpp"
 #include "engine/ecs/components/gui/canvascomponent.hpp"

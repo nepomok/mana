@@ -22,12 +22,12 @@
 
 #include "engine/ecs/system.hpp"
 
-#include "engine/physics/world.hpp"
+#include "engine/physics/2d/world2d.hpp"
 
 namespace mana {
     class Physics2DSystem : public System {
     public:
-        explicit Physics2DSystem(const World2D &world);
+        explicit Physics2DSystem(World2D &world);
 
         ~Physics2DSystem() override = default;
 
@@ -38,7 +38,7 @@ namespace mana {
         void update(float deltaTime, Scene &scene) override;
 
     private:
-        const World2D *world;
+        World2D *world;
     };
 }
 

@@ -17,29 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYISCS3DSYSTEM_HPP
-#define MANA_PHYISCS3DSYSTEM_HPP
+#ifndef MANA_COLLIDERBOX2D_HPP
+#define MANA_COLLIDERBOX2D_HPP
 
-#include "engine/ecs/system.hpp"
+#include <box2d/box2d.h>
 
-#include "engine/physics/3d/world3d.hpp"
+#include "engine/physics/2d/collider2d.hpp"
 
 namespace mana {
-    class Physics3DSystem : public System {
+    class ColliderBox2D : public Collider2D {
     public:
-        explicit Physics3DSystem(World3D &world);
+        b2Fixture *fixture;
 
-        ~Physics3DSystem() override = default;
+        explicit ColliderBox2D(b2Body &body);
 
-        void start() override;
+        ~ColliderBox2D() override;
 
-        void stop() override;
+        void setShape(const std::vector<Vec2f> &vertices) override;
 
-        void update(float deltaTime, Scene &scene) override;
+        void setShape(const std::vector<Vec2f> &vertices, const std::vector<std::size_t> &indices) override;
 
-    private:
-        World3D *world;
+        void setDensity(float density) override;
+
+        float getDensity() override;
     };
 }
 
-#endif //MANA_PHYISCS3DSYSTEM_HPP
+#endif //MANA_COLLIDERBOX2D_HPP

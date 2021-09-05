@@ -8,7 +8,8 @@
 - [OpenAL-Soft](https://github.com/kcat/openal-soft)
 - [libsndfile](https://github.com/libsndfile/libsndfile)
 - [Mono](https://github.com/mono/mono)
-- [Freetype2](https://www.freetype.org/)
+- [Freetype2](https://freetype.org/)
+- [Box2D](https://box2d.org/)
 
 ### Editor
 - Qt 5

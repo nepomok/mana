@@ -17,29 +17,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYISCS3DSYSTEM_HPP
-#define MANA_PHYISCS3DSYSTEM_HPP
+#ifndef MANA_JOINT_HPP
+#define MANA_JOINT_HPP
 
-#include "engine/ecs/system.hpp"
-
-#include "engine/physics/3d/world3d.hpp"
+#include "engine/math/vector2.hpp"
+#include "engine/math/vector3.hpp"
 
 namespace mana {
-    class Physics3DSystem : public System {
+    class Joint2D {
     public:
-        explicit Physics3DSystem(World3D &world);
-
-        ~Physics3DSystem() override = default;
-
-        void start() override;
-
-        void stop() override;
-
-        void update(float deltaTime, Scene &scene) override;
-
-    private:
-        World3D *world;
+        //TODO: Define physics joints api
+    protected:
+        virtual ~Joint2D() = default;
     };
 }
 
-#endif //MANA_PHYISCS3DSYSTEM_HPP
+#endif //MANA_JOINT_HPP

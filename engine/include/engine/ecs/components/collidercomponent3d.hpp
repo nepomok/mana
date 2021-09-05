@@ -17,29 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYISCS3DSYSTEM_HPP
-#define MANA_PHYISCS3DSYSTEM_HPP
+#ifndef MANA_COLLIDERCOMPONENT3D_HPP
+#define MANA_COLLIDERCOMPONENT3D_HPP
 
-#include "engine/ecs/system.hpp"
+#include "engine/ecs/component.hpp"
 
-#include "engine/physics/3d/world3d.hpp"
+#include "engine/math/vector3.hpp"
 
 namespace mana {
-    class Physics3DSystem : public System {
-    public:
-        explicit Physics3DSystem(World3D &world);
+    struct ColliderComponent3D : public Component {
+        ColliderComponent3D() : Component(COLLIDER_3D) {}
 
-        ~Physics3DSystem() override = default;
+        const std::type_info &getTypeInfo() override {
+            return typeid(ColliderComponent3D);
+        }
 
-        void start() override;
-
-        void stop() override;
-
-        void update(float deltaTime, Scene &scene) override;
-
-    private:
-        World3D *world;
+        std::vector<Vec3f> shape;
     };
 }
 
-#endif //MANA_PHYISCS3DSYSTEM_HPP
+#endif //MANA_COLLIDERCOMPONENT3D_HPP

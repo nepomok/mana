@@ -19,23 +19,85 @@
 
 #include "engine/ecs/systems/physics2dsystem.hpp"
 
-#include "engine/ecs/components/physics2dcomponent.hpp"
+#include "engine/ecs/components.hpp"
 
 namespace mana {
-    Physics2DSystem::Physics2DSystem(const World2D &world) : world(&world) {}
+    struct RigidBodyData : public Component::UserData {
+        World2D *world;
+        RigidBody2D *body;
+
+        ~RigidBodyData() override {
+            world->destroyRigidBody(body);
+        }
+    };
+
+    struct ColliderData : public Component::UserData {
+        RigidBody2D *body;
+        Collider2D *collider;
+
+        ~ColliderData() override {
+            body->destroyCollider(collider);
+        }
+    };
+
+    Physics2DSystem::Physics2DSystem(World2D &world) : world(&world) {}
 
     void Physics2DSystem::start() {}
 
     void Physics2DSystem::stop() {}
 
     void Physics2DSystem::update(float deltaTime, Scene &scene) {
+        for (auto &node : scene.findNodesWithComponent<RigidBodyComponent2D>()) {
+            auto &transform = node->getComponent<TransformComponent>();
+            auto &rb = node->getComponent<RigidBodyComponent2D>();
+
+            if (rb.userData == nullptr) {
+                auto *data = new RigidBodyData();
+                data->world = world;
+                data->body = world->createRigidBody();
+                data->body->setRigidBodyType(rb.type);
+                rb.userData = std::unique_ptr<RigidBodyData>(data);
+            }
+
+            auto &rbData = *dynamic_cast<RigidBodyData *>(rb.userData.get());
+
+            //Apply rigid body
+            rbData.body->setRigidBodyType(rb.type);
+
+            //Apply transform
+            rbData.body->setPosition(Vec2f(transform.transform.position.x, transform.transform.position.y));
+            rbData.body->setRotation(transform.transform.rotation.z);
+
+            if (!node->hasComponent<ColliderComponent2D>())
+                continue;;
+
+            auto &collider = node->getComponent<ColliderComponent2D>();
+
+            if (collider.userData == nullptr) {
+                auto *data = new ColliderData();
+                data->body = rbData.body;
+                data->collider = rbData.body->createCollider();
+                collider.userData = std::unique_ptr<ColliderData>(data);
+            }
+
+            auto &colData = *dynamic_cast<ColliderData *>(collider.userData.get());
+
+            //Apply collider
+            colData.collider->setShape(collider.shape);
+        }
+
         world->step(deltaTime);
-        for (auto &node : scene.findNodesWithComponent<Physics2DComponent>()) {
-            /*auto &transform = node->getComponent<TransformComponent>();
-            auto &physicsComponent = node->getComponent<Physics2DComponent>();
-            Vec2f pos = physicsComponent.rigidbody.get().getPosition();
-            transform.transform.position = {pos.x, pos.y, transform.transform.position.z};
-            transform.transform.rotation.z = physicsComponent.rigidbody.get().getRotation();*/
+
+        for (auto &node : scene.findNodesWithComponent<RigidBodyComponent2D>()) {
+            auto &transform = node->getComponent<TransformComponent>();
+            auto &rb = node->getComponent<RigidBodyComponent2D>();
+
+            auto &rbData = *dynamic_cast<RigidBodyData *>(rb.userData.get());
+
+            //Synchronize transform
+            auto position = rbData.body->getPosition();
+            transform.transform.position = Vec3f(position.x, position.y, 0);
+            transform.transform.rotation = Vec3f(0, 0, rbData.body->getRotation());
         }
     }
 }

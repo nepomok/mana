@@ -20,46 +20,48 @@
 #ifndef MANA_RIGIDBODY_HPP
 #define MANA_RIGIDBODY_HPP
 
-#include "engine/physics/collider.hpp"
+#include <set>
+#include <memory>
 
-namespace mana
-{
-    template<typename T>
-    class RigidBody
-    {
+#include "engine/physics/2d/collider2d.hpp"
+
+namespace mana {
+    class RigidBody2D {
     public:
-        enum Type {
+        enum RigidBodyType {
             STATIC,
             KINEMATIC,
             DYNAMIC
         };
 
-        virtual ~RigidBody() = 0;
+        virtual void setRigidBodyType(RigidBodyType type) = 0;
 
-        virtual void setRigidBodyType(Type type) const = 0;
+        virtual RigidBodyType getRigidBodyType() = 0;
 
-        virtual Type getRigidBodyType() const = 0;
+        virtual void setPosition(const Vec2f &position) = 0;
 
-        virtual void setPosition(const T &position) const = 0;
+        virtual Vec2f getPosition() = 0;
 
-        virtual const T &getPosition() const = 0;
+        virtual void setVelocity(const Vec2f &velocity) = 0;
 
-        virtual void setVelocity(const T &velocity) const = 0;
+        virtual Vec2f getVelocity() = 0;
 
-        virtual const T &getVelocity() const = 0;
+        virtual void setRotation(float rotation) = 0;
 
-        virtual void setRotation(const T &rotation) const = 0;
+        virtual float getRotation() = 0;
 
-        virtual const T &getRotation() const = 0;
+        virtual void setAngularVelocity(float angularVelocity) = 0;
 
-        virtual void setAngularVelocity(const T &angularVelocity) const = 0;
+        virtual float getAngularVelocity() = 0;
 
-        virtual const T &getAngularVelocity() const = 0;
+        virtual Collider2D* createCollider() = 0;
 
-        virtual void setColliders(const std::vector<Collider<T>> &collider) const = 0;
+        virtual void destroyCollider(Collider2D* collider) = 0;
+
+        virtual std::set<Collider2D*> getColliders() = 0;
+
+    protected:
+        virtual ~RigidBody2D() = default;
     };
-
-    typedef RigidBody<Vec2f> RigidBody2D;
-    typedef RigidBody<Vec3f> RigidBody3D;
 }
 #endif //MANA_RIGIDBODY_HPP

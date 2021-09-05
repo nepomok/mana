@@ -17,28 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_JOINT_HPP
-#define MANA_JOINT_HPP
+#ifndef MANA_COLLIDERCOMPONENT2D_HPP
+#define MANA_COLLIDERCOMPONENT2D_HPP
+
+#include "engine/ecs/component.hpp"
 
 #include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
 
 namespace mana {
-    /**
-     * A joint influences one or more rigidbodies according to some rules.
-     *
-     * The joint could be motorized etc.
-     */
-    template<typename T>
-    class Joint {
-    public:
-        virtual ~Joint() = default;
+    struct ColliderComponent2D : public Component {
+        ColliderComponent2D() : Component(COLLIDER_2D) {}
 
-        //TODO: Define physics joints api
+        const std::type_info &getTypeInfo() override {
+            return typeid(ColliderComponent2D);
+        }
+
+        std::vector<Vec2f> shape;
     };
-
-    typedef Joint<Vec2f> Joint2D;
-    typedef Joint<Vec3f> Joint3D;
 }
 
-#endif //MANA_JOINT_HPP
+#endif //MANA_COLLIDERCOMPONENT2D_HPP

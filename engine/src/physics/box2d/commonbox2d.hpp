@@ -17,29 +17,24 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYISCS3DSYSTEM_HPP
-#define MANA_PHYISCS3DSYSTEM_HPP
+#ifndef MANA_COMMONBOX2D_HPP
+#define MANA_COMMONBOX2D_HPP
 
-#include "engine/ecs/system.hpp"
+#include <stdexcept>
+#include <box2d/box2d.h>
 
-#include "engine/physics/3d/world3d.hpp"
+#include "engine/physics/2d/rigidbody2d.hpp"
 
 namespace mana {
-    class Physics3DSystem : public System {
-    public:
-        explicit Physics3DSystem(World3D &world);
+    Vec2f convert(const b2Vec2 &vec);
 
-        ~Physics3DSystem() override = default;
+    b2Vec2 convert(const Vec2f &vec);
 
-        void start() override;
+    RigidBody2D::RigidBodyType convert(b2BodyType type);
 
-        void stop() override;
+    b2BodyType convert(RigidBody2D::RigidBodyType type);
 
-        void update(float deltaTime, Scene &scene) override;
-
-    private:
-        World3D *world;
-    };
+    b2PolygonShape convert(const std::vector<Vec2f> &points);
 }
 
-#endif //MANA_PHYISCS3DSYSTEM_HPP
+#endif //MANA_COMMONBOX2D_HPP

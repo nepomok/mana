@@ -17,17 +17,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYSICS2DCOMPONENT_HPP
-#define MANA_PHYSICS2DCOMPONENT_HPP
+#include "physics/box2d/jointbox2d.hpp"
 
-#include "engine/ecs/component.hpp"
-
-namespace mana {
-    struct Physics2DComponent : public Component {
-        const std::type_info &getTypeInfo() override {
-            return typeid(typeof(Physics2DComponent));
-        }
-    };
-}
-
-#endif //MANA_PHYSICS2DCOMPONENT_HPP
+namespace mana {}

@@ -28,7 +28,11 @@ namespace mana {
         LIGHT,
         SCRIPT,
         MESH_RENDER,
-        SKYBOX
+        SKYBOX,
+        COLLIDER_2D,
+        RIGIDBODY_2D,
+        COLLIDER_3D,
+        RIGIDBODY_3D
     };
 }
 

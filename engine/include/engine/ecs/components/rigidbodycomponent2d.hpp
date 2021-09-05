@@ -17,29 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COLLIDER_HPP
-#define MANA_COLLIDER_HPP
+#ifndef MANA_RIGIDBODYCOMPONENT2D_HPP
+#define MANA_RIGIDBODYCOMPONENT2D_HPP
 
-#include <vector>
+#include "engine/ecs/component.hpp"
 
-#include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
+#include "engine/physics/2d/rigidbody2d.hpp"
 
-namespace mana
-{
-    template<typename T>
-    class Collider
-    {
-    public:
-        virtual ~Collider() = 0;
+namespace mana {
+    struct RigidBodyComponent2D : public Component {
+        RigidBodyComponent2D() : Component(RIGIDBODY_2D) {}
 
-        virtual void setShape(const std::vector<T> &vertices) = 0;
+        const std::type_info &getTypeInfo() override {
+            return typeid(RigidBodyComponent2D);
+        }
 
-        virtual void setShape(const std::vector<T> &vertices, const std::vector<std::size_t> &indices) = 0;
+        RigidBody2D::RigidBodyType type;
     };
-
-    typedef Collider<Vec2f> Collider2D;
-    typedef Collider<Vec3f> Collider3D;
 }
 
-#endif //MANA_COLLIDER_HPP
+#endif //MANA_RIGIDBODYCOMPONENT2D_HPP

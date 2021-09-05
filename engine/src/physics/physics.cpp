@@ -17,14 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include <stdexcept>
+
 #include "engine/physics/physics.hpp"
+
+#include "physics/box2d/worldbox2d.hpp"
 
 namespace mana {
     World2D *Physics::createWorld2D(Physics::PhysicsBackend backend) {
-        return nullptr;
+        switch (backend) {
+            case BOX2D:
+                return new WorldBox2D();
+            default:
+                throw std::runtime_error("");
+        }
     }
 
     World3D *Physics::createWorld3D(Physics::PhysicsBackend backend) {
-        return nullptr;
+        switch (backend) {
+            default:
+                throw std::runtime_error("");
+        }
     }
 }

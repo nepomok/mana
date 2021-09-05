@@ -20,7 +20,8 @@
 #ifndef MANA_PHYSICS_HPP
 #define MANA_PHYSICS_HPP
 
-#include "engine/physics/world.hpp"
+#include "engine/physics/2d/world2d.hpp"
+#include "engine/physics/3d/world3d.hpp"
 
 namespace mana {
     namespace Physics {

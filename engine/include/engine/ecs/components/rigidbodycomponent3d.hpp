@@ -17,17 +17,23 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHYSICS3DCOMPONENT_HPP
-#define MANA_PHYSICS3DCOMPONENT_HPP
+#ifndef MANA_RIGIDBODYCOMPONENT3D_HPP
+#define MANA_RIGIDBODYCOMPONENT3D_HPP
 
 #include "engine/ecs/component.hpp"
 
+#include "engine/physics/3d/rigidbody3d.hpp"
+
 namespace mana {
-    struct Physics3DComponent : public Component {
+    struct RigidBodyComponent3D : public Component {
+        RigidBodyComponent3D() : Component(RIGIDBODY_3D) {}
+
         const std::type_info &getTypeInfo() override {
-            return typeid(typeof(Physics3DComponent));
+            return typeid(RigidBodyComponent3D);
         }
+
+        RigidBody3D::RigidBodyType type;
     };
 }
 
-#endif //MANA_PHYSICS3DCOMPONENT_HPP
+#endif //MANA_RIGIDBODYCOMPONENT3D_HPP
