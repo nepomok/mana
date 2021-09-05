@@ -38,14 +38,17 @@ namespace mana {
                      MonoCppAssembly &msCorLib,
                      MonoCppAssembly &manaAssembly,
                      const Scene &scene) {
-        MonoCppArguments args;
         std::stringstream stream;
         SceneSerializer().serialize(scene, stream);
 
         std::string s = stream.str();
 
-        MonoCppObject str = runtime.stringFromUtf8(s, true);
+        MonoCppObject str = runtime.stringFromUtf8(s);
+
+        MonoCppArguments args;
         args.add(str);
+
+        //This call causes a memory leak, most likely in the csharp json deserializer.
         manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "setSceneJson", args);
     }
 
@@ -54,6 +57,7 @@ namespace mana {
                        MonoCppAssembly &manaAssembly,
                        const Scene &scene) {
         auto str = manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "getSceneJson");
+
         std::stringstream stream(domain.stringToUtf8(str));
         auto monoScene = SceneDeserializer().deserialize(stream);
 
@@ -106,7 +110,7 @@ namespace mana {
                 comp.userData = std::make_unique<RuntimeScript>();
             }
 
-            auto &data = *dynamic_cast<RuntimeScript*>(comp.userData.get());
+            auto &data = *dynamic_cast<RuntimeScript *>(comp.userData.get());
 
             if (comp.runtime == "mono") {
                 usedAssemblies.insert(comp.assembly);

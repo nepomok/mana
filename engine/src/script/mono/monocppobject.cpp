@@ -46,32 +46,13 @@ namespace mana {
         other.pinned = false;
     }
 
-    MonoCppObject::MonoCppObject(const MonoCppObject &other) {
-        objectPointer = mono_object_clone(static_cast<MonoObject *>(other.objectPointer));
-        if (other.pinned) {
-            gcHandle = mono_gchandle_new(static_cast<MonoObject *>(objectPointer), true);
-        }
-        pinned = other.pinned;
-    }
-
     MonoCppObject::~MonoCppObject() {
         if (pinned) {
             mono_gchandle_free(gcHandle);
         }
     }
 
-    MonoCppObject &MonoCppObject::operator=(const MonoCppObject &other) {
-        if (&other == this)
-            return *this;
-        objectPointer = mono_object_clone(static_cast<MonoObject *>(other.objectPointer));
-        if (other.pinned) {
-            gcHandle = mono_gchandle_new(static_cast<MonoObject *>(objectPointer), true);
-        }
-        pinned = other.pinned;
-        return *this;
-    }
-
-    MonoCppObject &MonoCppObject::operator=(MonoCppObject &&other)  noexcept {
+    MonoCppObject &MonoCppObject::operator=(MonoCppObject &&other) noexcept {
         objectPointer = other.objectPointer;
         gcHandle = other.gcHandle;
         pinned = other.pinned;
@@ -81,7 +62,7 @@ namespace mana {
         return *this;
     }
 
-    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, const MonoCppArguments& args) const {
+    MonoCppObject MonoCppObject::invokeMethod(const std::string &name, const MonoCppArguments &args) const {
         if (objectPointer == nullptr)
             throw std::runtime_error("Null object");
 

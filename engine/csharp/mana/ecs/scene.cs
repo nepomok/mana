@@ -30,7 +30,7 @@ namespace Mana
         /*
             The reference to the active scene object, set by external interfaces
         */
-        internal static Scene scene_internal;
+        internal static Scene scene_internal = new Scene();
 
         /*
             The user can retrieve the active scene through this static property.
@@ -40,7 +40,7 @@ namespace Mana
             get { return scene_internal; }
         }
 
-        public string name;
+        public string name = "";
 
         internal readonly Dictionary<string, Node> nodes = new Dictionary<string, Node>();
 
@@ -55,13 +55,7 @@ namespace Mana
         {
             if (nodes.ContainsKey(name))
                 throw new ArgumentException("Node with name " + name + " already exists");
-            
-            var stream = new MemoryStream();
-            new JsonNodeSerializer().serialize(node, stream);
-            stream.Seek(0, SeekOrigin.Begin);
-            
-            Mana.Internal.SceneInterface.createNode(name, new StreamReader(stream).ReadToEnd());
-
+            Mana.Internal.SceneInterface.createNode(name, JsonCommon.convertNode(node).ToString());
             return nodes[name];
         }
 

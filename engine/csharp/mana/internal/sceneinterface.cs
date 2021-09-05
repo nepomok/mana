@@ -29,15 +29,15 @@ namespace Mana.Internal
     {
         internal static void setSceneJson(string json)
         {
-            Scene.scene_internal = new JsonSceneDeserializer().deserialize(new MemoryStream(System.Text.Encoding.UTF8.GetBytes(json)));
+            // Calling Newtonsoft.Json.Linq.JObject.Parse here results in a memory leak.
+            var o =  Newtonsoft.Json.Linq.JObject.Parse(json);
+
+            Scene.scene_internal = JsonCommon.convertScene(o);
         }
 
         internal static string getSceneJson()
         {
-            var stream = new MemoryStream();
-            new JsonSceneSerializer().serialize(Scene.scene_internal, stream);
-            stream.Seek(0, SeekOrigin.Begin);
-            return new StreamReader(stream).ReadToEnd();
+            return JsonCommon.convertScene(Scene.scene_internal).ToString();
         }
 
         [DllImport("__Internal")]

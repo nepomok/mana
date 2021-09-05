@@ -54,13 +54,7 @@ namespace Mana
         public void AddComponent(Component component)
         {
             components.Add(component);
-
-            var stream = new MemoryStream();
-            new JsonComponentSerializer().serialize(component, stream);
-            stream.Seek(0, SeekOrigin.Begin);
-            var reader = new StreamReader(stream);
-
-            Mana.Internal.SceneInterface.createComponent(name, reader.ReadToEnd());
+            Mana.Internal.SceneInterface.createComponent(name, JsonCommon.convertComponent(component).ToString());
         }
 
         public void RemoveComponent(Component component)

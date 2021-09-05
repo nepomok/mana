@@ -37,17 +37,17 @@ namespace mana {
 
         explicit MonoCppObject(void *objectPointer, bool pinned = false);
 
-        MonoCppObject(MonoCppObject &&other) noexcept;
-
-        MonoCppObject(const MonoCppObject &other);
-
         ~MonoCppObject();
 
-        MonoCppObject &operator=(const MonoCppObject &other);
+        MonoCppObject(const MonoCppObject &other) = delete;
+
+        MonoCppObject &operator=(const MonoCppObject &other) = delete;
+
+        MonoCppObject(MonoCppObject &&other) noexcept;
 
         MonoCppObject &operator=(MonoCppObject &&other) noexcept;
 
-        MonoCppObject invokeMethod(const std::string &name, const MonoCppArguments& args = {}) const;
+        MonoCppObject invokeMethod(const std::string &name, const MonoCppArguments &args = {}) const;
 
         void setField(const std::string &name, const MonoCppValue &value) const;
 
