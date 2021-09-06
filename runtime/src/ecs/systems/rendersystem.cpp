@@ -31,11 +31,11 @@
 #include "engine/asset/assetimporter.hpp"
 
 namespace engine::runtime {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, AssetImporter &importer)
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),
               device(device),
               ren(device, {new GeometryPass(device), new LightingPass(device)}),
-              assetImporter(importer) {
+              archive(archive) {
     }
 
     void RenderSystem::start() {
@@ -81,12 +81,7 @@ namespace engine::runtime {
             activeCubeMaps.insert(comp.paths);
         }
 
-        for (auto &bundle : activeBundles) {
-            if (loadedBundles.find(bundle) != loadedBundles.end())
-                continue;;
-            loadedBundles.insert(bundle);
-            assetImporter.import(bundle);
-        }
+        setActiveBundles(activeBundles);
 
         //Get referenced asset bundles in material.
         for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
@@ -102,7 +97,7 @@ namespace engine::runtime {
             if (!render.enabled)
                 continue;
 
-            auto &material = assetImporter.getBundle(render.material.bundle).getMaterial(render.material.asset);
+            auto &material = getBundle(render.material.bundle).getMaterial(render.material.asset);
 
             if (!material.diffuseTexture.empty()) {
                 activeBundles.insert(material.diffuseTexture.bundle);
@@ -130,25 +125,15 @@ namespace engine::runtime {
             }
         }
 
-        for (auto &bundle : activeBundles) {
-            if (loadedBundles.find(bundle) != loadedBundles.end())
-                continue;;
-            loadedBundles.insert(bundle);
-            assetImporter.import(bundle);
-        }
+        setActiveBundles(activeBundles);
 
         // Retrieve image bundles from active textures
         for (auto &texture : activeTextures) {
-            auto &t = assetImporter.getBundle(texture.bundle).getTexture(texture.asset);
+            auto &t = getBundle(texture.bundle).getTexture(texture.asset);
             activeBundles.insert(t.image.bundle);
         }
 
-        for (auto &bundle : activeBundles) {
-            if (loadedBundles.find(bundle) != loadedBundles.end())
-                continue;;
-            loadedBundles.insert(bundle);
-            assetImporter.import(bundle);
-        }
+        setActiveBundles(activeBundles);
 
         RenderScene scene3d;
 
@@ -210,10 +195,7 @@ namespace engine::runtime {
         }
 
         //Unload bundles which are not referenced anymore
-        for (auto &bundle : loadedBundles) {
-            if (activeBundles.find(bundle) == activeBundles.end())
-                assetImporter.clear(bundle);
-        }
+        setActiveBundles(activeBundles);
 
         //Delete unused texture buffers
         std::set<AssetPath> unused;
@@ -287,8 +269,8 @@ namespace engine::runtime {
 
     TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {
         if (textures.find(path) == textures.end()) {
-            auto &texture = assetImporter.getBundle(path.bundle).getTexture(path.asset);
-            auto &image = assetImporter.getBundle(texture.image.bundle).getImage(texture.image.asset);
+            auto &texture = getBundle(path.bundle).getTexture(path.asset);
+            auto &image = getBundle(texture.image.bundle).getImage(texture.image.asset);
 
             textures[path] = std::shared_ptr<TextureBuffer>(
                     device.getAllocator().createTextureBuffer(texture.attributes)
@@ -305,7 +287,7 @@ namespace engine::runtime {
             TextureBuffer *buffer = device.getAllocator().createTextureBuffer({});
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
                 auto path = paths.at(i);
-                auto &image = assetImporter.getBundle(path.bundle);
+                auto &image = getBundle(path.bundle);
 
                 if (path.asset.empty()) {
                     buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.begin()->second);
@@ -320,7 +302,7 @@ namespace engine::runtime {
 
     MeshBuffer &RenderSystem::getMesh(const AssetPath &path) {
         if (meshes.find(path) == meshes.end()) {
-            auto bundle = assetImporter.getBundle(path.bundle);
+            auto bundle = getBundle(path.bundle);
 
             Mesh *mesh;
             if (path.asset.empty()) {
@@ -337,6 +319,61 @@ namespace engine::runtime {
     }
 
     const Material &RenderSystem::getMaterial(const AssetPath &path) {
-        return assetImporter.getBundle(path.bundle).getMaterial(path.asset);
+        return getBundle(path.bundle).getMaterial(path.asset);
+    }
+
+    const AssetBundle &RenderSystem::getBundle(const std::string &bundle) {
+        mutex.lock();
+        auto it = loadingBundles.find(bundle);
+        if (it != loadingBundles.end()) {
+            auto ptrCopy = it->second;
+            mutex.unlock();
+            ptrCopy->wait();
+            mutex.lock();
+        }
+        auto &ret = bundles.at(bundle);
+        mutex.unlock();
+        return ret;
+    }
+
+    void RenderSystem::loadBundle(const std::string &bundle) {
+        std::lock_guard<std::mutex> guard(mutex);
+
+        if (bundles.find(bundle) != bundles.end()
+            || loadingBundles.find(bundle) != loadingBundles.end())
+            return;
+
+        loadingBundles.insert({bundle, ThreadPool::pool.addTask([this, bundle]() {
+            auto b = AssetImporter::import(bundle, archive);
+            std::lock_guard<std::mutex> guard(mutex);
+            loadingBundles.erase(bundle);
+            bundles[bundle] = b;
+        })});
+    }
+
+    void RenderSystem::setActiveBundles(const std::set<std::string> &active) {
+        for(auto &a : active)
+            loadBundle(a);
+        mutex.lock();
+        std::set<std::shared_ptr<Task>> tasks;
+        for (auto &bundle : loadingBundles) {
+            if (active.find(bundle.first) == active.end()) {
+                tasks.insert(bundle.second);
+            }
+        }
+        mutex.unlock();
+        for (auto &task : tasks)
+            task->wait();
+        mutex.lock();
+        std::set<std::string> delBundle;
+        for (auto &bundle : bundles) {
+            if (active.find(bundle.first) == active.end()) {
+                delBundle.insert(bundle.first);
+            }
+        }
+        for (auto &del : delBundle) {
+            bundles.erase(del);
+        }
+        mutex.unlock();
     }
 }

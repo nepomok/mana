@@ -35,7 +35,6 @@
 #include "engine/asset/assetimporter.hpp"
 #include "engine/asset/light.hpp"
 #include "engine/asset/texture.hpp"
-#include "engine/asset/assetloader.hpp"
 #include "engine/asset/material.hpp"
 #include "engine/asset/assetpath.hpp"
 #include "engine/input/input.hpp"

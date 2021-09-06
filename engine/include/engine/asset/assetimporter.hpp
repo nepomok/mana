@@ -34,38 +34,34 @@
 namespace engine {
     /**
      * The asset importer imports bundles.
-     *
-     * A asset bundle is the smallest unit loaded by the importer.
-     *
-     * The user can configure how much data is loaded at once through the asset bundle mechanism.
-     *
-     * A user can for example specify each fbx as a bundle in the scene in which case the fbx is loaded only
-     * when a component references the fbx directly.
-     *
-     * Alternatively the user can define a json bundle which includes multiple fbx files. When this bundle
-     * is loaded all referenced assets are loaded into memory as long as json bundle is referenced in some component.
      */
     class AssetImporter {
     public:
-        explicit AssetImporter(Archive &archive);
+        /**
+         * Import the bundle from the stream.
+         *
+         * If the bundle format references other bundles and nullptr archive is passed a exception is thrown.
+         *
+         * @param stream
+         * @param hint
+         * @param archive
+         * @return
+         */
+        static AssetBundle import(std::istream &stream, const std::string &hint = "", Archive *archive = nullptr);
 
         /**
-         * Import asset bundle identified by path asynchronously.
+         * Import the bundle from the path.
          *
-         * @param path
+         * The bundle path is resolved using the passed archive instance.
+         *
+         * If the bundle format references other bundles by name they are resolved using the
+         * passed archive instance.
+         *
+         * @param stream
+         * @param archive
+         * @return
          */
-        void import(const std::string &path);
-
-        void clear(const std::string &path);
-
-        const AssetBundle &getBundle(const std::string &path);
-
-    private:
-        Archive &archive;
-
-        std::mutex mutex;
-        std::map<std::string, std::shared_ptr<Task>> tasks;
-        std::map<std::string, AssetBundle> bundles;
+        static AssetBundle import(const std::string &path, Archive &archive);
     };
 }
 

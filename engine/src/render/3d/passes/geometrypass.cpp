@@ -23,7 +23,7 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-#include "engine/asset/assetloader.hpp"
+#include "engine/asset/assetimporter.hpp"
 
 static const char *SHADER_VERT_GEOMETRY = R"###(
 #include "mana.hlsl"
@@ -288,7 +288,6 @@ namespace engine {
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
         auto &allocator = device.getAllocator();
-
         shaderTextureNormals = allocator.createShaderProgram(SHADER_VERT_GEOMETRY,
                                                              SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
                                                              Renderer3D::getShaderMacros(),
@@ -323,9 +322,7 @@ namespace engine {
         shaderSkybox->setTexture("diffuse", 0);
 
         std::stringstream skyboxStream((std::string(SKYBOX_OBJ)));
-
-        Archive archive;
-        Mesh skyboxMesh = AssetLoader::loadBundle(skyboxStream, ".obj", archive, ThreadPool::pool).meshes.at("Cube");
+        Mesh skyboxMesh = AssetImporter::import(skyboxStream, ".obj").meshes.at("Cube");
         skyboxCube = allocator.createMeshBuffer(skyboxMesh);
     }
 

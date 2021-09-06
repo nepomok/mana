@@ -1,7 +1,7 @@
 # Mana
 A 3D+2D game engine written in C++.
 
-## Modules
+## Directories
 ### /engine
 The engine provides the low level api for rendering, sound, input, etc.
 

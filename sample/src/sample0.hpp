@@ -36,7 +36,6 @@ public:
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
         archive = DirectoryArchive(std::filesystem::current_path().c_str());
-        assetImporter = std::make_unique<AssetImporter>(archive);
 
         FontRasterizer *r = FontRasterizer::instantiate(FontRasterizer::FreeType, device.getAllocator());
 
@@ -49,7 +48,7 @@ protected:
         delete r;
 
         texture = device.getAllocator().createTextureBuffer({});
-        texture->upload(assetImporter->getBundle("assets/images/smiley.png").getImage());
+        texture->upload(AssetImporter::import("assets/images/smiley.png", archive).getImage());
 
         ren2d = Renderer2D(device);
 
@@ -62,7 +61,7 @@ protected:
         delete assemblyStream;
 
         ecs.addSystem(new MonoScriptingSystem(input, domain, *manaAssembly, archive));
-        ecs.addSystem(new RenderSystem(window.getRenderTarget(), device, *assetImporter));
+        ecs.addSystem(new RenderSystem(window.getRenderTarget(), device, archive));
 
         Game::start(window, device, input);
     }
@@ -138,8 +137,6 @@ private:
     Node *cameraNode;
 
     DirectoryArchive archive;
-
-    std::unique_ptr<AssetImporter> assetImporter;
 
     float rot = 0;
 

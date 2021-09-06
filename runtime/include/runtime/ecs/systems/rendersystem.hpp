@@ -37,7 +37,7 @@ namespace engine::runtime {
 
     class RenderSystem : public System {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, AssetImporter &importer);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
 
         ~RenderSystem() override = default;
 
@@ -52,7 +52,7 @@ namespace engine::runtime {
     private:
         RenderTarget &screenTarget;
         RenderDevice &device;
-        AssetImporter &assetImporter;
+        Archive &archive;
 
         Renderer3D ren;
 
@@ -72,7 +72,15 @@ namespace engine::runtime {
 
         const Material &getMaterial(const AssetPath &path);
 
-        std::set<std::string> loadedBundles;
+        const AssetBundle&getBundle(const std::string &bundle);
+
+        void loadBundle(const std::string &bundle);
+
+        void setActiveBundles(const std::set<std::string> &bundles);
+
+        std::mutex mutex;
+        std::map<std::string, std::shared_ptr<Task>> loadingBundles;
+        std::map<std::string, AssetBundle> bundles;
 
         std::map<AssetPath, std::shared_ptr<MeshBuffer>> meshes;
         std::map<AssetPath, std::shared_ptr<TextureBuffer>> textures;
