@@ -67,6 +67,30 @@ namespace engine {
             return mval.at(name);
         }
 
+        Message &operator[](int index) {
+            if (type != LIST)
+                throw std::runtime_error("Type error");
+            return vval.at(index);
+        }
+
+        const Message &operator[](int index) const {
+            if (type != LIST)
+                throw std::runtime_error("Type error");
+            return vval.at(index);
+        }
+
+        Message &at(const char *name) {
+            if (type != DICTIONARY)
+                throw std::runtime_error("Type error");
+            return mval.at(name);
+        }
+
+        const Message &at(const char *name) const {
+            if (type != DICTIONARY)
+                throw std::runtime_error("Type error");
+            return mval.at(name);
+        }
+
         operator int() const {
             if (type != INT)
                 throw std::runtime_error("Type mismatch");
