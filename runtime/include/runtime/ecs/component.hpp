@@ -24,7 +24,7 @@
 
 #include <memory>
 
-namespace mana {
+namespace engine::runtime {
     struct Node;
 
     /**

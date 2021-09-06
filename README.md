@@ -3,12 +3,11 @@ A 3D+2D game engine written in C++.
 
 ## Directories
 ### /engine
-The engine provides the api for rendering, sound, input, etc.
-
-### /editor
-The editor provides a gui for handling scenes in json format.
+The engine provides the low level api for rendering, sound, input, etc.
 
 ### /runtime
-The runtime defines a packaged scene format for the json scenes and referenced assets 
-and defines the code which executes the packaged format. 
-The packaged format includes all asset data in compressed and optionally encrypted form.
+The runtime defines a higher level interface around the engine api, including
+ecs, scripting and io schema.
+
+### /editor
+The editor provides a toolset for creating applications using the the runtime interface.

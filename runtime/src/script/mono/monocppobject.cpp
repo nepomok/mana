@@ -24,9 +24,9 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 
-#include "engine/script/mono/monocppobject.hpp"
+#include "runtime/script/mono/monocppobject.hpp"
 
-namespace engine {
+namespace engine::runtime {
     MonoCppObject::MonoCppObject() : objectPointer(nullptr), gcHandle(0), pinned(false) {}
 
     MonoCppObject::MonoCppObject(void *objectPointer, bool pinned) : objectPointer(objectPointer),

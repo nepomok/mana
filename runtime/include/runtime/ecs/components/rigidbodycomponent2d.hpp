@@ -20,11 +20,11 @@
 #ifndef MANA_RIGIDBODYCOMPONENT2D_HPP
 #define MANA_RIGIDBODYCOMPONENT2D_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/physics/2d/rigidbody2d.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct RigidBodyComponent2D : public Component {
         RigidBodyComponent2D() : Component(RIGIDBODY_2D) {}
 

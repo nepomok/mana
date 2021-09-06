@@ -20,7 +20,7 @@
 #ifndef MANA_SCRIPT_HPP
 #define MANA_SCRIPT_HPP
 
-namespace mana {
+namespace engine::runtime {
     class Script {
     public:
         virtual void onEnable() const {};

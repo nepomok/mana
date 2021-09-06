@@ -17,11 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/ecs/components/transformcomponent.hpp"
+#include "runtime/ecs/components/transformcomponent.hpp"
 
-#include "engine/ecs/scene.hpp"
+#include "runtime/ecs/scene.hpp"
 
-namespace engine {
+namespace engine::runtime {
     Transform TransformComponent::walkHierarchy(const TransformComponent &component, const Scene &scene) {
         Transform ret = component.transform;
         if (!component.parent.empty()) {

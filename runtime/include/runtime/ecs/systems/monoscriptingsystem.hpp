@@ -20,16 +20,15 @@
 #ifndef MANA_SCRIPTINGSYSTEM_H
 #define MANA_SCRIPTINGSYSTEM_H
 
-#include "../system.hpp"
+#include "runtime/ecs/system.hpp"
 
-#include "engine/script/mono/monoscript.hpp"
-#include "engine/script/mono/monocppassembly.hpp"
+#include "runtime/script/mono/monoscript.hpp"
+#include "runtime/script/mono/monocppassembly.hpp"
 
 #include "engine/input/input.hpp"
-
 #include "engine/io/archive.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class MonoScriptingSystem : public System, InputListener {
     public:
         MonoScriptingSystem(Input &input,

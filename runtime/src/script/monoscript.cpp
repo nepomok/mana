@@ -17,9 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/script/mono/monoscript.hpp"
+#include "runtime/script/mono/monoscript.hpp"
 
-namespace engine {
+namespace engine::runtime {
     MonoScript::MonoScript() : object(nullptr),
                                assembly(nullptr) {}
 

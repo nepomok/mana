@@ -20,11 +20,11 @@
 #ifndef MANA_LIGHTCOMPONENT_HPP
 #define MANA_LIGHTCOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/asset/light.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct LightComponent : public Component {
         LightComponent() : Component(LIGHT) {}
 

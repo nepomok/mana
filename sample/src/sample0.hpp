@@ -25,6 +25,8 @@
 #include <filesystem>
 #include <memory>
 
+using namespace engine::runtime;
+
 class Sample0 : public Game {
 public:
     ~Sample0() override {

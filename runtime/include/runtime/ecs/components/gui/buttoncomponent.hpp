@@ -20,9 +20,9 @@
 #ifndef MANA_BUTTONCOMPONENT_HPP
 #define MANA_BUTTONCOMPONENT_HPP
 
-#include "../../component.hpp"
+#include "runtime/ecs/component.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct ButtonComponent : public Component {
     };
 }

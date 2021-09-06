@@ -25,9 +25,9 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/object.h>
 
-#include "engine/script/mono/monocppassembly.hpp"
+#include "runtime/script/mono/monocppassembly.hpp"
 
-namespace engine {
+namespace engine::runtime {
     MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer, void *imagePointer)
             : domainPointer(domainPointer),
               assemblyPointer(assemblyPointer),

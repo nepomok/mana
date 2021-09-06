@@ -20,7 +20,7 @@
 #ifndef MANA_EVENTBUS_HPP
 #define MANA_EVENTBUS_HPP
 
-namespace mana {
+namespace engine::runtime {
     class EventBus {
     public:
         void invoke();

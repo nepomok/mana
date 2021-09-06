@@ -20,11 +20,11 @@
 #ifndef MANA_CAMERACOMPONENT_HPP
 #define MANA_CAMERACOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/asset/camera.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct CameraComponent : public Component {
         CameraComponent() : Component(CAMERA) {}
 

@@ -21,15 +21,15 @@
 #include <memory>
 #include <sstream>
 
-#include "engine/ecs/systems/monoscriptingsystem.hpp"
-#include "engine/ecs/components.hpp"
+#include "runtime/ecs/systems/monoscriptingsystem.hpp"
+#include "runtime/ecs/components.hpp"
 
-#include "../../../include/runtime/io/schema/ecsschema.hpp"
-#include "engine/io/json/jsonprotocol.hpp"
+#include "runtime/io/schema/ecsschema.hpp"
+#include "engine/io/protocol/jsonprotocol.hpp"
 
 #include "script/sceneinterface.hpp"
 
-namespace engine {
+namespace engine::runtime {
     struct RuntimeScript : Component::UserData {
         bool enabled = false;
         std::unique_ptr<Script> script = nullptr; //TODO: OnDisable is not called when the component is destroyed.

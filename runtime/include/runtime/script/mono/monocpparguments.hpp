@@ -23,7 +23,7 @@
 #include <vector>
 #include <string>
 
-namespace mana {
+namespace engine::runtime {
     class MonoCppObject;
 
     struct MonoCppArguments {

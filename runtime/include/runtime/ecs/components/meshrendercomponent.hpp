@@ -20,12 +20,12 @@
 #ifndef MANA_MESHRENDERCOMPONENT_HPP
 #define MANA_MESHRENDERCOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/asset/image.hpp"
 #include "engine/asset/assetpath.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct MeshRenderComponent : public Component {
         MeshRenderComponent() : Component(MESH_RENDER) {}
 

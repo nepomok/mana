@@ -20,12 +20,13 @@
 #ifndef MANA_TRANSFORMCOMPONENT_HPP
 #define MANA_TRANSFORMCOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
+
 #include "engine/math/transform.hpp"
 
 #include <string>
 
-namespace mana {
+namespace engine::runtime {
     struct Scene;
 
     struct TransformComponent : public Component {

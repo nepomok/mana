@@ -3,5 +3,9 @@ set(Runtime.Dir.SRC runtime/src/)
 
 file(GLOB_RECURSE Runtime.File.SRC ${Runtime.Dir.SRC}*.cpp ${Runtime.Dir.SRC}*.c)
 
-add_executable(mana-runtime ${Runtime.File.SRC})
-target_link_libraries(mana-runtime mana mono-2.0)
+add_library(mana-runtime STATIC SHARED ${Runtime.File.SRC})
+
+target_include_directories(mana-runtime PUBLIC ${Runtime.Dir.INCLUDE})
+target_include_directories(mana-runtime PRIVATE ${Runtime.Dir.SRC})
+
+target_link_libraries(mana-runtime mana-engine mono-2.0)

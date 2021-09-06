@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/ecs/ecs.hpp"
+#include "runtime/ecs/ecs.hpp"
 
 #include <utility>
 #include <algorithm>
 
-namespace engine {
+namespace engine::runtime {
     ECS::ECS() {}
 
     ECS::~ECS() {

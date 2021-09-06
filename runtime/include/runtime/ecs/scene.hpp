@@ -25,7 +25,7 @@
 
 #include "node.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class Scene {
     public:
         std::string name;

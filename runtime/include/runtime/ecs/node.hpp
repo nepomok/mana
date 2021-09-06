@@ -29,7 +29,7 @@
 
 #include "components.hpp"
 
-namespace mana {
+namespace engine::runtime {
     /**
      * The basic building block of the scene (Entity).
      * A node contains components.

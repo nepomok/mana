@@ -32,7 +32,7 @@
 
 #include "engine/asset/assetimporter.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class ECS;
 
     class RenderSystem : public System {

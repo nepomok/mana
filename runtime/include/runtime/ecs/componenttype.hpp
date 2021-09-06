@@ -20,7 +20,7 @@
 #ifndef MANA_COMPONENTTYPE_HPP
 #define MANA_COMPONENTTYPE_HPP
 
-namespace mana {
+namespace engine::runtime {
     enum ComponentType {
         NONE,
         TRANSFORM,

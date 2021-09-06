@@ -24,7 +24,7 @@
 
 #include "engine/physics/3d/world3d.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class Physics3DSystem : public System {
     public:
         explicit Physics3DSystem(World3D &world);

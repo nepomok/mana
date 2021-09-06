@@ -20,9 +20,9 @@
 #ifndef MANA_TEXTCOMPONENT_HPP
 #define MANA_TEXTCOMPONENT_HPP
 
-#include "../../component.hpp"
+#include "runtime/ecs/component.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct Text : public Component {
     };
 }

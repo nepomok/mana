@@ -22,10 +22,10 @@
 
 #include "engine/io/message.hpp"
 
-#include "engine/ecs/component.hpp"
-#include "engine/ecs/scene.hpp"
+#include "runtime/ecs/component.hpp"
+#include "runtime/ecs/scene.hpp"
 
-namespace engine {
+namespace engine::runtime {
     ComponentType &operator<<(ComponentType &value, const Message &message);
 
     Message &operator<<(Message &message, ComponentType type);

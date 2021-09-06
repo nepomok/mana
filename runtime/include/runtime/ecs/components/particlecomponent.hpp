@@ -20,9 +20,9 @@
 #ifndef MANA_PARTICLECOMPONENT_HPP
 #define MANA_PARTICLECOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct ParticleComponent : public Component {
         Component *clone() override {
             return new ParticleComponent(*this);

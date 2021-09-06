@@ -20,9 +20,9 @@
 #ifndef MANA_MONOCPPDOMAIN_HPP
 #define MANA_MONOCPPDOMAIN_HPP
 
-#include "monocppassembly.hpp"
+#include "runtime/script/mono/monocppassembly.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class MonoCppDomain {
     public:
         MonoCppDomain();

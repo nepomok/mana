@@ -20,11 +20,11 @@
 #ifndef MANA_COLLIDERCOMPONENT2D_HPP
 #define MANA_COLLIDERCOMPONENT2D_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct ColliderComponent2D : public Component {
         ColliderComponent2D() : Component(COLLIDER_2D) {}
 

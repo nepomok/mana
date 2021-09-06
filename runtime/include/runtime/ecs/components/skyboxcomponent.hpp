@@ -22,11 +22,11 @@
 
 #include <string>
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/asset/assetpath.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct SkyboxComponent : public Component {
         SkyboxComponent() : Component(SKYBOX) {}
 

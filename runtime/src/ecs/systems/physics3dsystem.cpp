@@ -17,11 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/ecs/systems/physics3dsystem.hpp"
+#include "runtime/ecs/systems/physics3dsystem.hpp"
 
-#include "engine/ecs/components.hpp"
+#include "runtime/ecs/components.hpp"
 
-namespace engine {
+namespace engine::runtime {
     struct RigidBodyData3D : public Component::UserData {
         World3D *world;
         RigidBody3D *body;

@@ -22,9 +22,9 @@
 
 #include <set>
 
-#include "system.hpp"
+#include "runtime/ecs/system.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class ECS {
     public:
         ECS();

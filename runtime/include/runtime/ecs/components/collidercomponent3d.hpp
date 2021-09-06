@@ -20,11 +20,11 @@
 #ifndef MANA_COLLIDERCOMPONENT3D_HPP
 #define MANA_COLLIDERCOMPONENT3D_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
 #include "engine/math/vector3.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct ColliderComponent3D : public Component {
         ColliderComponent3D() : Component(COLLIDER_3D) {}
 

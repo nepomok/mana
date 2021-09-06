@@ -20,11 +20,11 @@
 #ifndef MANA_MONOSCRIPTCOMPONENT_HPP
 #define MANA_MONOSCRIPTCOMPONENT_HPP
 
-#include "../component.hpp"
+#include "runtime/ecs/component.hpp"
 
-#include "engine/script/script.hpp"
+#include "runtime/script/script.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct MonoScriptComponent : public Component {
         MonoScriptComponent() : Component(SCRIPT_MONO) {}
 

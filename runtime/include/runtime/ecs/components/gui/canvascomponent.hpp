@@ -20,9 +20,9 @@
 #ifndef MANA_CANVASCOMPONENT_HPP
 #define MANA_CANVASCOMPONENT_HPP
 
-#include "../../component.hpp"
+#include "runtime/ecs/component.hpp"
 
-namespace mana {
+namespace engine::runtime {
     struct CanvasComponent : public Component {
     };
 }

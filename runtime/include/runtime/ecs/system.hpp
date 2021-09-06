@@ -22,7 +22,7 @@
 
 #include "scene.hpp"
 
-namespace mana {
+namespace engine::runtime {
     /**
      * Systems provide logic.
      */

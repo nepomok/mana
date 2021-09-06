@@ -27,9 +27,9 @@
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-config.h>
 
-#include "engine/script/mono/monocppdomain.hpp"
+#include "runtime/script/mono/monocppdomain.hpp"
 
-namespace engine {
+namespace engine::runtime {
     MonoCppDomain::MonoCppDomain()
             : msCorLib(nullptr, nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
@@ -60,7 +60,7 @@ namespace engine {
         auto *ap = mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer), filePath.c_str());
         if (ap == nullptr)
             throw std::runtime_error("Failed to load assembly " + filePath);
-        return new engine::MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
+        return new MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
     }
 
     MonoCppAssembly *MonoCppDomain::loadAssembly(std::istream &source) {

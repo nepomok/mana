@@ -20,10 +20,10 @@
 #ifndef MANA_MONOSCRIPT_HPP
 #define MANA_MONOSCRIPT_HPP
 
-#include "../script.hpp"
-#include "monocppdomain.hpp"
+#include "runtime/script/script.hpp"
+#include "runtime/script/mono/monocppdomain.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class MonoScript : public Script {
     public:
         MonoScript();

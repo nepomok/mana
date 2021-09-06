@@ -12,6 +12,9 @@ endif ()
 
 file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 
-add_library(mana STATIC SHARED ${Engine.File.SRC})
-target_include_directories(mana PUBLIC ${Engine.Dir.INCLUDE} ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
-target_link_libraries(mana glfw GL dl ShaderConductor dxcompiler assimp openal sndfile Threads::Threads freetype box2d)
+add_library(mana-engine STATIC SHARED ${Engine.File.SRC})
+
+target_include_directories(mana-engine PUBLIC ${Engine.Dir.INCLUDE})
+target_include_directories(mana-engine PRIVATE ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
+
+target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal sndfile Threads::Threads freetype box2d)

@@ -25,7 +25,7 @@
 
 #include "engine/io/archive.hpp"
 
-namespace mana {
+namespace engine::runtime {
     /**
      * A directory representing an archive.
      */

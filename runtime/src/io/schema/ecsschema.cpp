@@ -21,7 +21,7 @@
 
 #include "../../../include/runtime/io/schema/mathschema.hpp"
 
-namespace engine {
+namespace engine::runtime {
     ComponentType &operator<<(ComponentType &value, const Message &message) {
         auto str = message.getString();
         if (str == "transform")

@@ -22,10 +22,10 @@
 
 #include <string>
 
-#include "monocpparguments.hpp"
-#include "monocppvalue.hpp"
+#include "runtime/script/mono/monocpparguments.hpp"
+#include "runtime/script/mono/monocppvalue.hpp"
 
-namespace mana {
+namespace engine::runtime {
     /**
      * A monocpp object wraps a MonoObject instance.
      *

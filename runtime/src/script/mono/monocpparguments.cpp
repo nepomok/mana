@@ -17,34 +17,36 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/script/mono/monocpparguments.hpp"
+#include "runtime/script/mono/monocpparguments.hpp"
 
-#include "engine/script/mono/monocppobject.hpp"
+#include "runtime/script/mono/monocppobject.hpp"
 
-void mana::MonoCppArguments::add(int &value) {
-    args.emplace_back(&value);
-}
+namespace engine::runtime {
+    void MonoCppArguments::add(int &value) {
+        args.emplace_back(&value);
+    }
 
-void mana::MonoCppArguments::add(float &value) {
-    args.emplace_back(&value);
-}
+    void MonoCppArguments::add(float &value) {
+        args.emplace_back(&value);
+    }
 
-void mana::MonoCppArguments::add(double &value) {
-    args.emplace_back(&value);
-}
+    void MonoCppArguments::add(double &value) {
+        args.emplace_back(&value);
+    }
 
-void mana::MonoCppArguments::add(const mana::MonoCppObject &value) {
-    args.emplace_back(value.getObjectPointer());
-}
+    void MonoCppArguments::add(const MonoCppObject &value) {
+        args.emplace_back(value.getObjectPointer());
+    }
 
-void mana::MonoCppArguments::clear() {
-    args.clear();
-}
+    void MonoCppArguments::clear() {
+        args.clear();
+    }
 
-const std::vector<void *> &mana::MonoCppArguments::data() const {
-    return args;
-}
+    const std::vector<void *> &MonoCppArguments::data() const {
+        return args;
+    }
 
-size_t mana::MonoCppArguments::count() const {
-    return args.size();
+    size_t MonoCppArguments::count() const {
+        return args.size();
+    }
 }

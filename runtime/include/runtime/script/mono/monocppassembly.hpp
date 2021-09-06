@@ -22,12 +22,12 @@
 
 #include <string>
 
-#include "monocppobject.hpp"
+#include "runtime/script/mono/monocppobject.hpp"
 
-#include "monocpparguments.hpp"
-#include "monocppvalue.hpp"
+#include "runtime/script/mono/monocpparguments.hpp"
+#include "runtime/script/mono/monocppvalue.hpp"
 
-namespace mana {
+namespace engine::runtime {
     //TODO: Refactor mono abstraction
     class MonoCppAssembly {
     public:

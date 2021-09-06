@@ -20,9 +20,9 @@
 #include <algorithm>
 #include <filesystem>
 
-#include "engine/ecs/systems/rendersystem.hpp"
+#include "runtime/ecs/systems/rendersystem.hpp"
 
-#include "engine/ecs/components.hpp"
+#include "runtime/ecs/components.hpp"
 
 #include "engine/render/3d/forwardpipeline.hpp"
 #include "engine/render/3d/passes/geometrypass.hpp"
@@ -30,7 +30,7 @@
 
 #include "engine/asset/assetimporter.hpp"
 
-namespace engine {
+namespace engine::runtime {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, AssetImporter &importer)
             : screenTarget(scr),
               device(device),

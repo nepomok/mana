@@ -22,7 +22,7 @@
 
 #include <stdexcept>
 
-namespace mana {
+namespace engine::runtime {
     struct MonoCppValue {
         MonoCppValue() = default;
 

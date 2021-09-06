@@ -30,7 +30,7 @@
 #include "engine/math/vector3.hpp"
 #include "engine/math/vector4.hpp"
 
-namespace engine {
+namespace engine::runtime {
     Grid &operator<<(Grid &grid, const Message &message);
 
     Message &operator<<(Message &message, const Grid &grid);

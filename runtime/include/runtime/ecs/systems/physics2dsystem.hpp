@@ -24,7 +24,7 @@
 
 #include "engine/physics/2d/world2d.hpp"
 
-namespace mana {
+namespace engine::runtime {
     class Physics2DSystem : public System {
     public:
         explicit Physics2DSystem(World2D &world);
