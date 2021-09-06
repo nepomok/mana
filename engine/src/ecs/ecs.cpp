@@ -32,16 +32,13 @@ namespace mana {
     }
 
     void ECS::addSystem(System *system) {
-        systems.emplace_back(system);
+        systems.insert(system);
         system->start();
     }
 
     void ECS::removeSystem(System *system) {
-        auto it = std::find(systems.begin(), systems.end(), system);
-        if (it == systems.end())
-            throw std::runtime_error("System not found");
+        systems.erase(system);
         system->stop();
-        systems.erase(it);
     }
 
     void ECS::update(float deltaTime, Scene &scene) {

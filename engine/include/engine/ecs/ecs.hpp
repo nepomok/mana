@@ -20,6 +20,8 @@
 #ifndef MANA_ECS_HPP
 #define MANA_ECS_HPP
 
+#include <set>
+
 #include "engine/ecs/system.hpp"
 
 namespace mana {
@@ -36,7 +38,7 @@ namespace mana {
         void update(float deltaTime, Scene &scene);
 
     private:
-        std::vector<System *> systems;
+        std::set<System *> systems;
     };
 }
 
