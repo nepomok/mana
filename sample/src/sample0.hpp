@@ -59,7 +59,7 @@ protected:
         manaAssembly = domain.loadAssembly(*assemblyStream);
         delete assemblyStream;
 
-        ecs.addSystem(new ScriptingSystem(input, domain, *manaAssembly, archive));
+        ecs.addSystem(new MonoScriptingSystem(input, domain, *manaAssembly, archive));
         ecs.addSystem(new RenderSystem(window.getRenderTarget(), device, *assetImporter));
 
         Game::start(window, device, input);
@@ -80,32 +80,21 @@ protected:
 
         auto windowSize = window.getFramebufferSize();
 
+        if (deltaTime > 0) {
+            float fps = 1.0f / deltaTime;
+            float alpha = 0.9;
+            rollingAverage = alpha * rollingAverage + (1.0 - alpha) * fps;
+        }
+
         ecs.update(deltaTime, scene);
 
-        rot += deltaTime * 180;
-        if (rot >= 360)
-            rot = 0;
-
         ren2d.renderBegin(window.getRenderTarget(), false);
-
-        ren2d.draw(Rectf(Vec2f(100, 100), Vec2f(100, 100)), ColorRGBA(0, 125, 125, 255), false, {50, 50}, rot);
-        ren2d.draw(Rectf(Vec2f(100, 300), Vec2f(100, 100)), ColorRGBA(0, 125, 125, 125), true, {50, 50}, -rot);
-        ren2d.draw(Rectf(Vec2f(125, 325), Vec2f(50, 50)), ColorRGBA(255, 0, 0, 125), true, {25, 25}, rot);
-        ren2d.draw(Rectf(Vec2f(100, 500), Vec2f(100, 100)), *texture, {50, 50}, rot);
-        ren2d.draw(Rectf({0, 0}, {50, 50}), Rectf(Vec2f(100, 700), Vec2f(100, 100)), *texture, {50, 50}, -rot);
-        ren2d.draw(windowSize.convert<float>(), Vec2f(), ColorRGBA(0, 255, 0, 125));
-        ren2d.draw(Vec2f(0.5, 0.4), ColorRGBA(255, 255, 255, 255));
-
-        //Normalized screen coordinates through setting the projection bounds
-        ren2d.setProjection(Rectf({}, {1, 1}));
-        ren2d.draw(Vec2f(1, 0), Vec2f(0, 1), ColorRGBA(255, 0, 0, 125));
-
-        //Fixed size projection
-        Vec2f fixedSize(840, 480);
-        ren2d.setProjection(Rectf({}, {fixedSize.x, fixedSize.y}));
-        ren2d.draw(Rectf(Vec2f(120, 120), Vec2f(600, 240)), ColorRGBA(10, 10, 125, 200));
-        ren2d.draw(Vec2f(120, 260), Vec2f(1, 1), "Hello World !!", charMap, ColorRGBA(255, 255, 255, 125));
-
+        ren2d.draw(Rectf({150, 300}, {100, 100}), *texture);
+        ren2d.draw(Vec2f(50, 150),
+                   Vec2f(1, 1),
+                   std::to_string(rollingAverage),
+                   charMap,
+                   {255, 255, 255, 255});
         ren2d.renderPresent();
 
         window.swapBuffers();
@@ -119,6 +108,14 @@ protected:
         delete sceneStream;
 
         cameraNode = &scene.nodes.at("MainCamera");
+
+        auto &plane = scene.nodes.at("Plane");
+
+        for (int i = 0; i < 100; i++) {
+            std::string name = "Plane_Copy" + std::to_string(i);
+            scene.nodes[name] = plane;
+            scene.nodes[name].getComponent<TransformComponent>().transform.position += Vec3f(i * 20, 0, 0);
+        }
     }
 
     void destroyScene() override {
@@ -143,6 +140,8 @@ private:
     std::unique_ptr<AssetImporter> assetImporter;
 
     float rot = 0;
+
+    float rollingAverage = 1;
 
     TextureBuffer *texture;
 

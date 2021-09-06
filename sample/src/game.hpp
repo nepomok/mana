@@ -45,9 +45,9 @@ public:
         auto lastUpdate = std::chrono::high_resolution_clock::now();
         while (!wnd->shouldClose()) {
             auto start = std::chrono::high_resolution_clock::now();
+            deltaTime = static_cast<std::chrono::duration<float>>(start - lastUpdate).count();
+            lastUpdate = start;
             update(deltaTime, *wnd, device, input);
-            auto stop = std::chrono::high_resolution_clock::now();
-            deltaTime = static_cast<std::chrono::duration<float>>(stop - start).count();
         }
 
         stop(*wnd, device, input);
