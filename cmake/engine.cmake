@@ -12,7 +12,8 @@ endif ()
 
 file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 
-add_library(mana-engine STATIC SHARED ${Engine.File.SRC})
+
+add_library(mana-engine SHARED ${Engine.File.SRC})
 
 target_include_directories(mana-engine PUBLIC ${Engine.Dir.INCLUDE})
 target_include_directories(mana-engine PRIVATE ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
