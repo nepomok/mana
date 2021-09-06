@@ -33,7 +33,7 @@ public:
 
 protected:
     void start(Window &window, RenderDevice &device, Input &input) override {
-        archive = ArchiveDirectory(std::filesystem::current_path().c_str());
+        archive = DirectoryArchive(std::filesystem::current_path().c_str());
         assetImporter = std::make_unique<AssetImporter>(archive);
 
         FontRasterizer *r = FontRasterizer::instantiate(FontRasterizer::FreeType, device.getAllocator());
@@ -135,7 +135,7 @@ private:
 
     Node *cameraNode;
 
-    ArchiveDirectory archive;
+    DirectoryArchive archive;
 
     std::unique_ptr<AssetImporter> assetImporter;
 

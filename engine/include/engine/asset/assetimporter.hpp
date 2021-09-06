@@ -23,15 +23,11 @@
 #include <string>
 #include <vector>
 
-#include "engine/ecs/scene.hpp"
-
 #include "engine/io/archive.hpp"
 
 #include "engine/asset/material.hpp"
 #include "engine/asset/audio.hpp"
 #include "engine/asset/assetbundle.hpp"
-
-#include "engine/script/script.hpp"
 
 #include "engine/async/threadpool.hpp"
 

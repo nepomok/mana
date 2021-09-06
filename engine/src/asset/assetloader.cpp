@@ -25,7 +25,7 @@
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
 
-#include "../extern/stb_image.h"
+#include "extern/stb_image.h"
 
 #include <sndfile.h>
 

@@ -21,7 +21,7 @@
 
 #include "engine/asset/assetloader.hpp"
 
-#include "../extern/json.hpp"
+#include "extern/json.hpp"
 
 #include <filesystem>
 #include <sstream>
