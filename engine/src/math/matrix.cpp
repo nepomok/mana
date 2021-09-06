@@ -19,7 +19,7 @@
 
 #include "engine/math/matrix.hpp"
 
-namespace mana {
+namespace engine {
     Vector4<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector4<float> &rhs) {
         Vector4<float> ret;
         for (int row = 0; row < lhs.height(); row++) {

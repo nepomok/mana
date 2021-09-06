@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_DISPLAYBACKEND_HPP
-#define MANA_DISPLAYBACKEND_HPP
+#ifndef ENGINE_DISPLAYBACKEND_HPP
+#define ENGINE_DISPLAYBACKEND_HPP
 
-namespace mana {
+namespace engine {
     enum DisplayBackend {
         GLFW
     };
 }
-#endif //MANA_DISPLAYBACKEND_HPP
+#endif //ENGINE_DISPLAYBACKEND_HPP

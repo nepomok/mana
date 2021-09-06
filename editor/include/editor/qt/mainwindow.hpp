@@ -26,7 +26,7 @@
 
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
-#include "mana.hpp"
+#include "engine.hpp"
 #include "mana-editor.hpp"
 
 class MainWindow : public QMainWindow {
@@ -51,10 +51,10 @@ private:
 
     SceneDisplayWidget *sceneDisplay;
 
-    mana::Resources *resources;
-    mana::Scene scene;
+    engine::Resources *resources;
+    engine::Scene scene;
 
-    mana::MonoCppDomain domain;
+    engine::MonoCppDomain domain;
 };
 
 #endif //MANA_MAINWINDOW_HPP

@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OBJECT_HPP
-#define MANA_OBJECT_HPP
+#ifndef ENGINE_OBJECT_HPP
+#define ENGINE_OBJECT_HPP
 
-namespace mana {
+namespace engine {
     /**
      * A render object is a dynamically allocated graphics api dependent object which can be deallocated by
      * calling the destructor.
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_OBJECT_HPP
+#endif //ENGINE_OBJECT_HPP

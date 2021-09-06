@@ -21,7 +21,7 @@
 
 #include "freetype/ftfontrasterizer.hpp"
 
-namespace mana {
+namespace engine {
     FontRasterizer *FontRasterizer::instantiate(FontRasterizer::Backend backend, RenderAllocator &allocator) {
         switch (backend) {
             case FreeType:

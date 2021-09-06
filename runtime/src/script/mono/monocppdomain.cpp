@@ -29,7 +29,7 @@
 
 #include "engine/script/mono/monocppdomain.hpp"
 
-namespace mana {
+namespace engine {
     MonoCppDomain::MonoCppDomain()
             : msCorLib(nullptr, nullptr, nullptr) {
         domainPointer = mono_jit_init("DefaultDomain");
@@ -60,7 +60,7 @@ namespace mana {
         auto *ap = mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer), filePath.c_str());
         if (ap == nullptr)
             throw std::runtime_error("Failed to load assembly " + filePath);
-        return new mana::MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
+        return new engine::MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
     }
 
     MonoCppAssembly *MonoCppDomain::loadAssembly(std::istream &source) {

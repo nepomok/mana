@@ -20,7 +20,7 @@
 #ifndef KEY_HPP
 #define KEY_HPP
 
-namespace mana {
+namespace engine {
     enum Key {
         KEY_UNKNOWN,
 

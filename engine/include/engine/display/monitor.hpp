@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONITOR_HPP
-#define MANA_MONITOR_HPP
+#ifndef ENGINE_MONITOR_HPP
+#define ENGINE_MONITOR_HPP
 
 #include <vector>
 #include <string>
@@ -27,7 +27,7 @@
 #include "engine/math/vector2.hpp"
 #include "engine/math/rectangle.hpp"
 
-namespace mana {
+namespace engine {
     class Monitor {
     public:
         virtual ~Monitor() = default;
@@ -48,4 +48,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MONITOR_HPP
+#endif //ENGINE_MONITOR_HPP

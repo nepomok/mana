@@ -119,7 +119,7 @@ PS_OUTPUT main(PS_INPUT v) {
 }
 )###";
 
-namespace mana {
+namespace engine {
     LightingPass::LightingPass(RenderDevice &device)
             : renderDevice(device) {
         auto &allocator = device.getAllocator();

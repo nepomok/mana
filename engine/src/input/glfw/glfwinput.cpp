@@ -24,7 +24,7 @@
 
 #include "glfwtypeconverter.hpp"
 
-namespace mana {
+namespace engine {
     std::map<GLFWwindow *, GLFWInput *> windowMapping;
 
     void glfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
@@ -53,9 +53,9 @@ namespace mana {
 
     GLFWInput::GLFWInput(GLFWwindow &wndH) : wndH(wndH) {
         windowMapping[&wndH] = this;
-        glfwSetKeyCallback(&wndH, mana::glfwKeyCallback);
-        glfwSetCursorPosCallback(&wndH, mana::glfwCursorCallback);
-        glfwSetMouseButtonCallback(&wndH, mana::glfwMouseKeyCallback);
+        glfwSetKeyCallback(&wndH, engine::glfwKeyCallback);
+        glfwSetCursorPosCallback(&wndH, engine::glfwCursorCallback);
+        glfwSetMouseButtonCallback(&wndH, engine::glfwMouseKeyCallback);
     }
 
     GLFWInput::~GLFWInput() {

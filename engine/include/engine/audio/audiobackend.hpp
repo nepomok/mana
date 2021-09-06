@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOBACKEND_HPP
-#define MANA_AUDIOBACKEND_HPP
+#ifndef ENGINE_AUDIOBACKEND_HPP
+#define ENGINE_AUDIOBACKEND_HPP
 
-namespace mana {
+namespace engine {
     enum AudioBackend {
         OpenAL
     };
 }
 
-#endif //MANA_AUDIOBACKEND_HPP
+#endif //ENGINE_AUDIOBACKEND_HPP

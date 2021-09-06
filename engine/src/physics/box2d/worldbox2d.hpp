@@ -27,7 +27,7 @@
 #include "physics/box2d/rigidbodybox2d.hpp"
 #include "physics/box2d/jointbox2d.hpp"
 
-namespace mana {
+namespace engine {
     class WorldBox2D : public World2D {
     public:
         b2World world;

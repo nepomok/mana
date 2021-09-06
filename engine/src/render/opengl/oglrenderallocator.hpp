@@ -20,10 +20,10 @@
 #ifndef MANA_OGLRENDERALLOCATOR_HPP
 #define MANA_OGLRENDERALLOCATOR_HPP
 
-#include <mana.hpp>
+#include <engine.hpp>
 #include "engine/render/renderallocator.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class OGLRenderAllocator : public RenderAllocator {
         public:

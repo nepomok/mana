@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOLISTENER_HPP
-#define MANA_AUDIOLISTENER_HPP
+#ifndef ENGINE_AUDIOLISTENER_HPP
+#define ENGINE_AUDIOLISTENER_HPP
 
 #include "engine/math/vector3.hpp"
 
-namespace mana {
+namespace engine {
     class AudioListener {
     public:
         virtual ~AudioListener() = default;
@@ -45,4 +45,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_AUDIOLISTENER_HPP
+#endif //ENGINE_AUDIOLISTENER_HPP

@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GEOMETRYPASS_HPP
-#define MANA_GEOMETRYPASS_HPP
+#ifndef ENGINE_GEOMETRYPASS_HPP
+#define ENGINE_GEOMETRYPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana {
+namespace engine {
     class GeometryPass : public RenderPass {
     public:
         explicit GeometryPass(RenderDevice &device);
@@ -51,4 +51,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_GEOMETRYPASS_HPP
+#endif //ENGINE_GEOMETRYPASS_HPP

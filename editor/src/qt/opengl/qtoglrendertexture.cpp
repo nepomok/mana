@@ -21,8 +21,8 @@
 #include "qtoglcheckerror.hpp"
 #include "qtogltypeconverter.hpp"
 
-using namespace mana;
-using namespace mana::opengl;
+using namespace engine;
+using namespace engine::opengl;
 
 QtOGLRenderTexture::QtOGLRenderTexture(Attributes attributes) : TextureBuffer(attributes), handle() {
     initializeOpenGLFunctions();
@@ -138,7 +138,7 @@ void QtOGLRenderTexture::upload(const Image<ColorRGBA> &buffer) {
     checkQtGLError("QtOGLRenderTexture::upload(RGBA)");
 }
 
-mana::Image<ColorRGBA> QtOGLRenderTexture::download() {
+engine::Image<ColorRGBA> QtOGLRenderTexture::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 

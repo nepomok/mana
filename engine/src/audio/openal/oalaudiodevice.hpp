@@ -22,7 +22,7 @@
 
 #include "engine/audio/audiodevice.hpp"
 
-namespace mana {
+namespace engine {
     typedef struct ALCdevice ALCdevice;
 
     class OALAudioDevice : public AudioDevice {

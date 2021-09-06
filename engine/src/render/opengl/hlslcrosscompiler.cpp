@@ -36,7 +36,7 @@ std::function<ShaderConductor::Blob(const char *)> wrap(FunctionWrapper &func) {
     return std::bind(&FunctionWrapper::getBlob, &func, std::placeholders::_1);
 }
 
-namespace mana {
+namespace engine {
 
     std::string HlslCrossCompiler::compileVertexShader(const std::string &source, const std::string &entryPoint) {
         ::ShaderConductor::Compiler::SourceDesc sourceDesc{};

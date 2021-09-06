@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERCOMMAND_HPP
-#define MANA_RENDERCOMMAND_HPP
+#ifndef ENGINE_RENDERCOMMAND_HPP
+#define ENGINE_RENDERCOMMAND_HPP
 
 #include <vector>
 
@@ -26,7 +26,7 @@
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 
-namespace mana {
+namespace engine {
     enum DepthTestMode {
         DEPTH_TEST_ALWAYS,
         DEPTH_TEST_NEVER,
@@ -115,4 +115,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERCOMMAND_HPP
+#endif //ENGINE_RENDERCOMMAND_HPP

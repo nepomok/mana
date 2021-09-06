@@ -21,7 +21,7 @@
 
 #include "engine/ecs/scene.hpp"
 
-namespace mana {
+namespace engine {
     Transform TransformComponent::walkHierarchy(const TransformComponent &component, const Scene &scene) {
         Transform ret = component.transform;
         if (!component.parent.empty()) {

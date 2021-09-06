@@ -27,7 +27,7 @@
 
 #include "engine/script/mono/monocppassembly.hpp"
 
-namespace mana {
+namespace engine {
     MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer, void *imagePointer)
             : domainPointer(domainPointer),
               assemblyPointer(assemblyPointer),

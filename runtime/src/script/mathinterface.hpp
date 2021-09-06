@@ -20,7 +20,7 @@
 #ifndef MANA_MATHINTERFACE_HPP
 #define MANA_MATHINTERFACE_HPP
 
-namespace mana {
+namespace engine {
     namespace MathInterface {
         extern "C"
         {

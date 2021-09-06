@@ -27,7 +27,7 @@
 
 #include "ftfont.hpp"
 
-namespace mana {
+namespace engine {
     class FTFontRasterizer : public FontRasterizer {
     public:
         explicit FTFontRasterizer(RenderAllocator &allocator);

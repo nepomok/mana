@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MATERIAL_HPP
-#define MANA_MATERIAL_HPP
+#ifndef ENGINE_MATERIAL_HPP
+#define ENGINE_MATERIAL_HPP
 
 #include "engine/asset/image.hpp"
 
 #include "engine/asset/assetpath.hpp"
 
-namespace mana {
+namespace engine {
     struct Material {
         AssetPath shader;
 
@@ -44,4 +44,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MATERIAL_HPP
+#endif //ENGINE_MATERIAL_HPP

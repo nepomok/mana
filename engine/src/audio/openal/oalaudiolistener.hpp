@@ -23,7 +23,7 @@
 #include "engine/audio/audiolistener.hpp"
 #include "engine/audio/audiocontext.hpp"
 
-namespace mana {
+namespace engine {
     class OALAudioListener : public AudioListener {
     public:
         OALAudioListener();

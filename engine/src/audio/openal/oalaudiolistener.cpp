@@ -22,7 +22,7 @@
 
 #include <AL/al.h>
 
-namespace mana {
+namespace engine {
     OALAudioListener::OALAudioListener() {}
 
     OALAudioListener::~OALAudioListener() = default;

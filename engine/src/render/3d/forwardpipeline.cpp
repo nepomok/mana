@@ -90,7 +90,7 @@ PS_OUTPUT main(PS_INPUT v) {
 }
 )###";
 
-namespace mana {
+namespace engine {
     static ShaderProgram *getDefaultOutlineShader(RenderAllocator &alloc) {
         return alloc.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
                                          SHADER_FRAG_OUTLINE_DEFAULT,

@@ -22,7 +22,7 @@
 
 #include "engine/render/renderer.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class OGLRenderer : public Renderer {
         public:

@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SHADOWPASS_HPP
-#define MANA_SHADOWPASS_HPP
+#ifndef ENGINE_SHADOWPASS_HPP
+#define ENGINE_SHADOWPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana {
+namespace engine {
     class ShadowPass : public RenderPass {
     public:
         ~ShadowPass() override = default;
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_SHADOWPASS_HPP
+#endif //ENGINE_SHADOWPASS_HPP

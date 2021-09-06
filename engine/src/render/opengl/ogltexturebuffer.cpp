@@ -21,8 +21,8 @@
 #include "oglcheckerror.hpp"
 #include "ogltypeconverter.hpp"
 
-using namespace mana;
-using namespace mana::opengl;
+using namespace engine;
+using namespace engine::opengl;
 
 //TODO: If users want to use integer texture formats the shaders would need to sample using isampler2d which does not exist in hlsl and therefore cant be cross compiled.
 //For now all textures are sampled using the normalized float format
@@ -264,7 +264,7 @@ void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     checkGLError("OGLTextureBuffer::upload(unsigned char)");
 }
 
-mana::Image<ColorRGBA> OGLTextureBuffer::download() {
+engine::Image<ColorRGBA> OGLTextureBuffer::download() {
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 

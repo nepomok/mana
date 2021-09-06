@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_THREADPOOL_HPP
-#define MANA_THREADPOOL_HPP
+#ifndef ENGINE_THREADPOOL_HPP
+#define ENGINE_THREADPOOL_HPP
 
 #include <memory>
 #include <vector>
@@ -29,7 +29,7 @@
 
 #include "engine/async/task.hpp"
 
-namespace mana {
+namespace engine {
     class ThreadPool {
     public:
         static ThreadPool pool;
@@ -113,4 +113,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_THREADPOOL_HPP
+#endif //ENGINE_THREADPOOL_HPP

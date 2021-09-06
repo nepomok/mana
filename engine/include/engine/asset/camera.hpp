@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_CAMERA_HPP
-#define MANA_CAMERA_HPP
+#ifndef ENGINE_CAMERA_HPP
+#define ENGINE_CAMERA_HPP
 
 #include "engine/math/transform.hpp"
 #include "engine/math/matrix.hpp"
@@ -26,7 +26,7 @@
 
 #include <stdexcept>
 
-namespace mana {
+namespace engine {
     enum CameraType {
         ORTHOGRAPHIC,
         PERSPECTIVE
@@ -85,4 +85,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_CAMERA_HPP
+#endif //ENGINE_CAMERA_HPP

@@ -26,7 +26,7 @@
 
 #include "engine/script/mono/monocppobject.hpp"
 
-namespace mana {
+namespace engine {
     MonoCppObject::MonoCppObject() : objectPointer(nullptr), gcHandle(0), pinned(false) {}
 
     MonoCppObject::MonoCppObject(void *objectPointer, bool pinned) : objectPointer(objectPointer),

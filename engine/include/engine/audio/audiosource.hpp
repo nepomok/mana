@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOSOURCE_HPP
-#define MANA_AUDIOSOURCE_HPP
+#ifndef ENGINE_AUDIOSOURCE_HPP
+#define ENGINE_AUDIOSOURCE_HPP
 
 #include "engine/audio/audiobuffer.hpp"
 
 #include "engine/math/vector3.hpp"
 
-namespace mana {
+namespace engine {
     class AudioSource {
     public:
         enum SourceType {
@@ -120,4 +120,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_AUDIOSOURCE_HPP
+#endif //ENGINE_AUDIOSOURCE_HPP

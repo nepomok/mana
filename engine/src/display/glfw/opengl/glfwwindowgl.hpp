@@ -35,7 +35,7 @@
 
 #include "../../../input/glfw/glfwinput.hpp"
 
-namespace mana {
+namespace engine {
     namespace glfw {
         class GLFWWindowGL : public Window {
         public:

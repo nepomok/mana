@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TRANSFORM_HPP
-#define MANA_TRANSFORM_HPP
+#ifndef ENGINE_TRANSFORM_HPP
+#define ENGINE_TRANSFORM_HPP
 
 #include "engine/math/vector3.hpp"
 
-namespace mana {
+namespace engine {
     struct Transform {
         Vec3f position;
         Vec3f rotation;
@@ -43,4 +43,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_TRANSFORM_HPP
+#endif //ENGINE_TRANSFORM_HPP

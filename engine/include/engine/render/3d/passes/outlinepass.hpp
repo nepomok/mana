@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OUTLINEPASS_HPP
-#define MANA_OUTLINEPASS_HPP
+#ifndef ENGINE_OUTLINEPASS_HPP
+#define ENGINE_OUTLINEPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana {
+namespace engine {
     class OutlinePass : public RenderPass {
     public:
         ~OutlinePass() override = default;
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_OUTLINEPASS_HPP
+#endif //ENGINE_OUTLINEPASS_HPP

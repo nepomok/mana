@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDCOMMAND_HPP
-#define MANA_FORWARDCOMMAND_HPP
+#ifndef ENGINE_FORWARDCOMMAND_HPP
+#define ENGINE_FORWARDCOMMAND_HPP
 
 #include <utility>
 
@@ -26,7 +26,7 @@
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/rendercommand.hpp"
 
-namespace mana {
+namespace engine {
     struct ForwardCommand {
         ForwardCommand() : transform(), command() {}
 
@@ -38,4 +38,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_FORWARDCOMMAND_HPP
+#endif //ENGINE_FORWARDCOMMAND_HPP

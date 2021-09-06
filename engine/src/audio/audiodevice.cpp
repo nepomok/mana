@@ -23,7 +23,7 @@
 
 #include "openal/oalaudiodevice.hpp"
 
-namespace mana {
+namespace engine {
     std::vector<std::string> AudioDevice::getDeviceNames(AudioBackend backend) {
         switch (backend) {
             case OpenAL:

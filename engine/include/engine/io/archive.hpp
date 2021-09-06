@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ARCHIVE_HPP
-#define MANA_ARCHIVE_HPP
+#ifndef ENGINE_ARCHIVE_HPP
+#define ENGINE_ARCHIVE_HPP
 
 #include <iostream>
 
-namespace mana {
+namespace engine {
     /**
      * Archive interface, implementations may be directories or custom archive format.
      *
@@ -38,4 +38,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_ARCHIVE_HPP
+#endif //ENGINE_ARCHIVE_HPP

@@ -26,7 +26,7 @@
 #include "engine/math/rectangle.hpp"
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine {
     class Grid {
     public:
         int nCol, nRow;

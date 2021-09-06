@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_VERTEX_HPP
-#define MANA_VERTEX_HPP
+#ifndef ENGINE_VERTEX_HPP
+#define ENGINE_VERTEX_HPP
 
-namespace mana {
+namespace engine {
     struct Vertex {
         float data[8];
 
@@ -43,4 +43,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_VERTEX_HPP
+#endif //ENGINE_VERTEX_HPP

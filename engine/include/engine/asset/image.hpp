@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_IMAGE_HPP
-#define MANA_IMAGE_HPP
+#ifndef ENGINE_IMAGE_HPP
+#define ENGINE_IMAGE_HPP
 
 #include <vector>
 #include <stdexcept>
@@ -27,7 +27,7 @@
 
 #include "engine/math/rectangle.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * Stores 2d image data in row major format.
      *
@@ -144,4 +144,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_IMAGE_HPP
+#endif //ENGINE_IMAGE_HPP

@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MESSAGE_HPP
-#define MANA_MESSAGE_HPP
+#ifndef ENGINE_MESSAGE_HPP
+#define ENGINE_MESSAGE_HPP
 
 #include <map>
 #include <vector>
 #include <stdexcept>
 
-namespace mana {
+namespace engine {
     class Message;
 
     class Message {
@@ -178,4 +178,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MESSAGE_HPP
+#endif //ENGINE_MESSAGE_HPP

@@ -24,7 +24,7 @@
 
 #include <QOpenGLFunctions_3_3_Core>
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class QtOGLRenderer : public Renderer, public QOpenGLFunctions_3_3_Core {
         public:

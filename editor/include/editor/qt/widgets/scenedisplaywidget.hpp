@@ -24,7 +24,7 @@
 #include <QTimer>
 #include <QElapsedTimer>
 
-#include "mana.hpp"
+#include "engine.hpp"
 
 #include "opengl/qtoglrenderer.hpp"
 #include "opengl/qtoglrenderdevice.hpp"
@@ -39,23 +39,23 @@ public:
 
     ~SceneDisplayWidget() override;
 
-    mana::RenderDevice &getDevice();
+    engine::RenderDevice &getDevice();
 
     void setFps(int fps);
 
     int getFps();
 
-    void setScene(const mana::Scene &scene);
+    void setScene(const engine::Scene &scene);
 
-    mana::Scene &getScene();
+    engine::Scene &getScene();
 
-    void setViewerType(mana::CameraType cameraType);
+    void setViewerType(engine::CameraType cameraType);
 
-    mana::Transform &getViewerTransform();
+    engine::Transform &getViewerTransform();
 
-    void setHighlightColor(mana::ColorRGB color);
+    void setHighlightColor(engine::ColorRGB color);
 
-    mana::ColorRGB getHighlightColor();
+    engine::ColorRGB getHighlightColor();
 
     void setHighlightScale(float scale);
 
@@ -73,13 +73,13 @@ public:
 
     float getViewerRotationSpeed();
 
-    void setViewerInputMovement(const mana::Vec3f &movement);
+    void setViewerInputMovement(const engine::Vec3f &movement);
 
-    const mana::Vec3f &getViewerInputMovement();
+    const engine::Vec3f &getViewerInputMovement();
 
-    void setViewerInputRotation(const mana::Vec3f &rotation);
+    void setViewerInputRotation(const engine::Vec3f &rotation);
 
-    const mana::Vec3f &getViewerInputRotation();
+    const engine::Vec3f &getViewerInputRotation();
 
 protected:
     void paintGL() override;
@@ -101,26 +101,26 @@ private:
 
     QElapsedTimer delta;
 
-    mana::opengl::QtOGLRenderDevice device;
+    engine::opengl::QtOGLRenderDevice device;
 
-    mana::Scene scene;
+    engine::Scene scene;
 
-    mana::Vec3f inputMovement;
-    mana::Vec3f inputRotation;
+    engine::Vec3f inputMovement;
+    engine::Vec3f inputRotation;
 
-    mana::Transform viewerTransform;
+    engine::Transform viewerTransform;
 
-    mana::CameraType camType = mana::CameraType::PERSPECTIVE;
-    mana::Camera pCam;
+    engine::CameraType camType = engine::CameraType::PERSPECTIVE;
+    engine::Camera pCam;
 
     float movSpeed = 5;
     float rotSpeed = 50;
 
-    mana::opengl::QtOGLRenderTarget frameBuffer;
+    engine::opengl::QtOGLRenderTarget frameBuffer;
 
     std::vector<std::string> highlightedNodes;
 
-    mana::ColorRGB highlightColor = {10, 210, 50};
+    engine::ColorRGB highlightColor = {10, 210, 50};
 
     float highlightScale = 1.01f;
 };

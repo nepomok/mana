@@ -29,7 +29,7 @@
 
 #include "script/sceneinterface.hpp"
 
-namespace mana {
+namespace engine {
     struct RuntimeScript : Component::UserData {
         bool enabled = false;
         std::unique_ptr<Script> script = nullptr; //TODO: OnDisable is not called when the component is destroyed.

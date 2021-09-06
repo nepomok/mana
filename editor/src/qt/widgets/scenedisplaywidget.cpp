@@ -26,7 +26,7 @@
 #include <QResizeEvent>
 #include <utility>
 
-using namespace mana;
+using namespace engine;
 
 SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget(parent), fps(fps) {
     makeCurrent();
@@ -45,27 +45,27 @@ SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget
 
 SceneDisplayWidget::~SceneDisplayWidget() = default;
 
-void SceneDisplayWidget::setScene(const mana::Scene &s) {
+void SceneDisplayWidget::setScene(const engine::Scene &s) {
     scene = s;
 }
 
-mana::Scene &SceneDisplayWidget::getScene() {
+engine::Scene &SceneDisplayWidget::getScene() {
     return scene;
 }
 
-void SceneDisplayWidget::setViewerType(mana::CameraType cameraType) {
+void SceneDisplayWidget::setViewerType(engine::CameraType cameraType) {
     camType = cameraType;
 }
 
-mana::Transform &SceneDisplayWidget::getViewerTransform() {
+engine::Transform &SceneDisplayWidget::getViewerTransform() {
     return viewerTransform;
 }
 
-void SceneDisplayWidget::setHighlightColor(mana::ColorRGB color) {
+void SceneDisplayWidget::setHighlightColor(engine::ColorRGB color) {
     highlightColor = color;
 }
 
-mana::ColorRGB SceneDisplayWidget::getHighlightColor() {
+engine::ColorRGB SceneDisplayWidget::getHighlightColor() {
     return highlightColor;
 }
 
@@ -85,7 +85,7 @@ const std::vector<std::string> &SceneDisplayWidget::getHighlightedNodes() {
     return highlightedNodes;
 }
 
-mana::RenderDevice &SceneDisplayWidget::getDevice() {
+engine::RenderDevice &SceneDisplayWidget::getDevice() {
     return device;
 }
 
@@ -113,26 +113,26 @@ float SceneDisplayWidget::getViewerRotationSpeed() {
     return rotSpeed;
 }
 
-void SceneDisplayWidget::setViewerInputMovement(const mana::Vec3f &movement) {
+void SceneDisplayWidget::setViewerInputMovement(const engine::Vec3f &movement) {
     inputMovement = movement;
 }
 
-const mana::Vec3f &SceneDisplayWidget::getViewerInputMovement() {
+const engine::Vec3f &SceneDisplayWidget::getViewerInputMovement() {
     return inputMovement;
 }
 
-void SceneDisplayWidget::setViewerInputRotation(const mana::Vec3f &rotation) {
+void SceneDisplayWidget::setViewerInputRotation(const engine::Vec3f &rotation) {
     inputRotation = rotation;
 }
 
-const mana::Vec3f &SceneDisplayWidget::getViewerInputRotation() {
+const engine::Vec3f &SceneDisplayWidget::getViewerInputRotation() {
     return inputRotation;
 }
 
 void SceneDisplayWidget::onTimerUpdate() {
     float deltaTime = (float) delta.restart() / 1000;
 
-    mana::Mat4f mat = MatrixMath::inverse(MatrixMath::rotate(viewerTransform.rotation));
+    engine::Mat4f mat = MatrixMath::inverse(MatrixMath::rotate(viewerTransform.rotation));
     Vec4f tmp = mat * Vec4f(0, 0, 1, 0);
     Vec3f forward(tmp.x, tmp.y, tmp.z);
     tmp = mat * Vec4f(1, 0, 0, 0);
@@ -163,9 +163,9 @@ struct RenderData {
 void SceneDisplayWidget::paintGL() {
     device.initializeOpenGLFunctions();
 
-    auto ren3d = mana::Renderer3D(device, {});
+    auto ren3d = engine::Renderer3D(device, {});
 
-    device.getRenderer().setClearColor(mana::ColorRGBA(38, 38, 38, 255));
+    device.getRenderer().setClearColor(engine::ColorRGBA(38, 38, 38, 255));
     device.getRenderer().setViewport({}, frameBuffer.size);
 
     RenderScene scene3d;

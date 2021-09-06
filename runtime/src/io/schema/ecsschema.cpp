@@ -21,7 +21,7 @@
 
 #include "../../../include/runtime/io/schema/mathschema.hpp"
 
-namespace mana {
+namespace engine {
     ComponentType &operator<<(ComponentType &value, const Message &message) {
         auto str = message.getString();
         if (str == "transform")
@@ -262,12 +262,12 @@ namespace mana {
         message["specular"] << component->light.specular;
 
         switch (component->light.type) {
-            case mana::LIGHT_POINT:
+            case engine::LIGHT_POINT:
                 message["constant"] = component->light.constant;
                 message["linear"] = component->light.linear;
                 message["quadratic"] = component->light.quadratic;
                 break;
-            case mana::LIGHT_SPOT:
+            case engine::LIGHT_SPOT:
                 message["direction"] << component->light.direction;
                 message["cutOff"] = component->light.cutOff;
                 message["outerCutOff"] = component->light.outerCutOff;
@@ -275,7 +275,7 @@ namespace mana {
                 message["linear"] = component->light.linear;
                 message["quadratic"] = component->light.quadratic;
                 break;
-            case mana::LIGHT_DIRECTIONAL:
+            case engine::LIGHT_DIRECTIONAL:
                 message["direction"] << component->light.direction;
                 break;
             default:

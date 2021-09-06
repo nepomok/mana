@@ -20,7 +20,7 @@
 #ifndef MANA_SCENEINTERFACE_HPP
 #define MANA_SCENEINTERFACE_HPP
 
-namespace mana {
+namespace engine {
     namespace SceneInterface {
         class SceneInterfaceListener {
         public:

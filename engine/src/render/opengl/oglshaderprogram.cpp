@@ -28,7 +28,7 @@
 
 #include "engine/math/matrixmath.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         OGLShaderProgram::OGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 

@@ -19,7 +19,7 @@
 
 #include "engine/script/mono/monoscript.hpp"
 
-namespace mana {
+namespace engine {
     MonoScript::MonoScript() : object(nullptr),
                                assembly(nullptr) {}
 

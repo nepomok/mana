@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_INPUT_HPP
-#define MANA_INPUT_HPP
+#ifndef ENGINE_INPUT_HPP
+#define ENGINE_INPUT_HPP
 
 #include "engine/input/key.hpp"
 #include "engine/input/mouse.hpp"
 #include "engine/input/inputlistener.hpp"
 
-namespace mana {
+namespace engine {
     class Input {
     public:
         virtual ~Input() = default;
@@ -43,4 +43,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_INPUT_HPP
+#endif //ENGINE_INPUT_HPP

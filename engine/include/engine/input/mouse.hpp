@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MOUSE_HPP
-#define MANA_MOUSE_HPP
+#ifndef ENGINE_MOUSE_HPP
+#define ENGINE_MOUSE_HPP
 
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine {
     struct Mouse {
         Vec2d position;
         bool leftButtonDown;
@@ -39,4 +39,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MOUSE_HPP
+#endif //ENGINE_MOUSE_HPP

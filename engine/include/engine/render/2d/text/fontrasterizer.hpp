@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FONTRASTERIZER_HPP
-#define MANA_FONTRASTERIZER_HPP
+#ifndef ENGINE_FONTRASTERIZER_HPP
+#define ENGINE_FONTRASTERIZER_HPP
 
 #include "engine/render/2d/text/character.hpp"
 #include "engine/render/2d/text/font.hpp"
 
 #include "engine/render/renderdevice.hpp"
 
-namespace mana {
+namespace engine {
     class FontRasterizer {
     public:
         enum Backend {
@@ -67,4 +67,4 @@ namespace mana {
         //TODO: Unicode character rasterization
     };
 }
-#endif //MANA_FONTRASTERIZER_HPP
+#endif //ENGINE_FONTRASTERIZER_HPP

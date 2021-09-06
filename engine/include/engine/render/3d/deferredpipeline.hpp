@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_DEFERREDPIPELINE_HPP
-#define MANA_DEFERREDPIPELINE_HPP
+#ifndef ENGINE_DEFERREDPIPELINE_HPP
+#define ENGINE_DEFERREDPIPELINE_HPP
 
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/renderer.hpp"
@@ -26,7 +26,7 @@
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana {
+namespace engine {
     class DeferredPipeline {
     public:
         DeferredPipeline() = default;
@@ -56,4 +56,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_DEFERREDPIPELINE_HPP
+#endif //ENGINE_DEFERREDPIPELINE_HPP

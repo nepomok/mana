@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_JSONPROTOCOL_HPP
-#define MANA_JSONPROTOCOL_HPP
+#ifndef ENGINE_JSONPROTOCOL_HPP
+#define ENGINE_JSONPROTOCOL_HPP
 
 #include "engine/io/protocol.hpp"
 
-namespace mana {
+namespace engine {
     class JsonProtocol : public Protocol {
     public:
         void serialize(std::ostream &stream, const Message &message) override;
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_JSONPROTOCOL_HPP
+#endif //ENGINE_JSONPROTOCOL_HPP

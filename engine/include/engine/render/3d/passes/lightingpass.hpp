@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTINGPASS_HPP
-#define MANA_LIGHTINGPASS_HPP
+#ifndef ENGINE_LIGHTINGPASS_HPP
+#define ENGINE_LIGHTINGPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
-namespace mana {
+namespace engine {
     class LightingPass : public RenderPass {
     public:
         explicit LightingPass(RenderDevice &device);
@@ -38,4 +38,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_LIGHTINGPASS_HPP
+#endif //ENGINE_LIGHTINGPASS_HPP

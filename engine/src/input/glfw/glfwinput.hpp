@@ -27,7 +27,7 @@
 
 #include "engine/input/input.hpp"
 
-namespace mana {
+namespace engine {
     class GLFWInput : public Input {
     public:
         explicit GLFWInput(GLFWwindow &wndH);

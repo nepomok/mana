@@ -19,7 +19,7 @@
 
 #include "physics/box2d/commonbox2d.hpp"
 
-namespace mana {
+namespace engine {
     Vec2f convert(const b2Vec2 &vec) {
         return {vec.x, vec.y};
     }

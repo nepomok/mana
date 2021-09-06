@@ -25,7 +25,7 @@
 
 #include <freetype/ftbitmap.h>
 
-namespace mana {
+namespace engine {
     FTFontRasterizer::FTFontRasterizer(RenderAllocator &allocator)
             : renderAllocator(allocator), library() {
         if (FT_Init_FreeType(&library)) {

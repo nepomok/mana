@@ -23,11 +23,11 @@
 
 #include "glfw/glfwdisplay.hpp"
 
-mana::DisplayManager::DisplayManager(mana::DisplayBackend displayApi) : displayApi(displayApi) {}
+engine::DisplayManager::DisplayManager(engine::DisplayBackend displayApi) : displayApi(displayApi) {}
 
-mana::DisplayManager::~DisplayManager() = default;
+engine::DisplayManager::~DisplayManager() = default;
 
-mana::Monitor *mana::DisplayManager::getPrimaryMonitor() const {
+engine::Monitor *engine::DisplayManager::getPrimaryMonitor() const {
     switch (displayApi) {
         case GLFW:
             return glfw::getPrimaryMonitor();
@@ -36,7 +36,7 @@ mana::Monitor *mana::DisplayManager::getPrimaryMonitor() const {
     }
 }
 
-std::set<mana::Monitor *> mana::DisplayManager::getMonitors() const {
+std::set<engine::Monitor *> engine::DisplayManager::getMonitors() const {
     switch (displayApi) {
         case GLFW:
             return glfw::getMonitors();
@@ -45,7 +45,7 @@ std::set<mana::Monitor *> mana::DisplayManager::getMonitors() const {
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend) const {
+engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend) const {
     switch (displayApi) {
         case GLFW:
             return glfw::createWindow(graphicsBackend);
@@ -54,8 +54,8 @@ mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsB
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend, std::string title, mana::Vec2i size,
-                                                 mana::WindowAttributes attributes) const {
+engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend, std::string title, engine::Vec2i size,
+                                                     engine::WindowAttributes attributes) const {
     switch (displayApi) {
         case GLFW:
             return glfw::createWindow(graphicsBackend, std::move(title), size, attributes);
@@ -64,9 +64,9 @@ mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsB
     }
 }
 
-mana::Window *mana::DisplayManager::createWindow(mana::GraphicsBackend graphicsBackend, std::string title, mana::Vec2i size,
-                                                 mana::WindowAttributes attributes, mana::Monitor &monitor,
-                                                 mana::VideoMode mode) const {
+engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend, std::string title, engine::Vec2i size,
+                                                     engine::WindowAttributes attributes, engine::Monitor &monitor,
+                                                     engine::VideoMode mode) const {
     switch (displayApi) {
         case GLFW:
             return glfw::createWindow(graphicsBackend, std::move(title), size, attributes, monitor, mode);

@@ -22,7 +22,7 @@
 #include "physics/box2d/colliderbox2d.hpp"
 #include "physics/box2d/commonbox2d.hpp"
 
-namespace mana {
+namespace engine {
     ColliderBox2D::ColliderBox2D(b2Body &body) {
         b2FixtureDef def;
         fixture = body.CreateFixture(&def);

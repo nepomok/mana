@@ -30,7 +30,7 @@
 #include "engine/math/vector3.hpp"
 #include "engine/math/vector4.hpp"
 
-namespace mana {
+namespace engine {
     Grid &operator<<(Grid &grid, const Message &message);
 
     Message &operator<<(Message &message, const Grid &grid);

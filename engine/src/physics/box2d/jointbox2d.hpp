@@ -24,7 +24,7 @@
 
 #include "engine/physics/2d/joint2d.hpp"
 
-namespace mana {
+namespace engine {
     class JointBox2D : public Joint2D {
     public:
         b2Joint *joint;

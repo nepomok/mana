@@ -19,6 +19,6 @@
 
 #include "engine/async/threadpool.hpp"
 
-namespace mana {
+namespace engine {
     ThreadPool ThreadPool::pool;
 }

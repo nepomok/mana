@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_WINDOW_HPP
-#define MANA_WINDOW_HPP
+#ifndef ENGINE_WINDOW_HPP
+#define ENGINE_WINDOW_HPP
 
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/rendertarget.hpp"
@@ -31,7 +31,7 @@
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine {
     class Window {
     public:
         virtual ~Window() = default;
@@ -131,4 +131,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_WINDOW_HPP
+#endif //ENGINE_WINDOW_HPP

@@ -23,8 +23,8 @@
 #include "qtoglrendertexture.hpp"
 #include "qtoglcheckerror.hpp"
 
-using namespace mana;
-using namespace mana::opengl;
+using namespace engine;
+using namespace engine::opengl;
 
 opengl::QtOGLRenderTarget::QtOGLRenderTarget() : FBO(0),
                                                  size() {}

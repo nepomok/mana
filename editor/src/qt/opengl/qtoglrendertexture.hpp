@@ -26,7 +26,7 @@
 
 #include <QOpenGLFunctions_3_3_Core>
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class QtOGLRenderTexture : public TextureBuffer, public QOpenGLFunctions_3_3_Core {
         public:

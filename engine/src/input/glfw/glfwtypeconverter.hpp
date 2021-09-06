@@ -25,7 +25,7 @@
 
 #include "engine/input/key.hpp"
 
-namespace mana {
+namespace engine {
     class GLFWTypeConverter {
     public:
         static int convertKey(Key key) {

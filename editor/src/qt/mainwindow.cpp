@@ -26,7 +26,7 @@
 #include <QKeyEvent>
 #include <QMenuBar>
 
-using namespace mana;
+using namespace engine;
 
 MainWindow::MainWindow() {
     menuBar()->addMenu("File");

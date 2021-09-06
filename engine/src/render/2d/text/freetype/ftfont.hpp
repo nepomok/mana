@@ -25,7 +25,7 @@
 
 #include "engine/render/2d/text/font.hpp"
 
-namespace mana {
+namespace engine {
     class FTFont : public Font {
     public:
         FT_Face face{};

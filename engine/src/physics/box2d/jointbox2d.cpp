@@ -19,4 +19,4 @@
 
 #include "physics/box2d/jointbox2d.hpp"
 
-namespace mana {}
+namespace engine {}

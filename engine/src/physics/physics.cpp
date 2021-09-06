@@ -23,7 +23,7 @@
 
 #include "physics/box2d/worldbox2d.hpp"
 
-namespace mana {
+namespace engine {
     World2D *Physics::createWorld2D(Physics::PhysicsBackend backend) {
         switch (backend) {
             case BOX2D:

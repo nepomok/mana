@@ -19,7 +19,7 @@
 
 #include "../../../include/runtime/io/schema/mathschema.hpp"
 
-namespace mana {
+namespace engine {
     Grid &operator<<(Grid &value, const Message &message) {
         value.size << message["size"];
         value.nCol = message["nCol"];

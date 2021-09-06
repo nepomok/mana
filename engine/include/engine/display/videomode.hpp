@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MONITORMODE_HPP
-#define MANA_MONITORMODE_HPP
+#ifndef ENGINE_MONITORMODE_HPP
+#define ENGINE_MONITORMODE_HPP
 
-namespace mana {
+namespace engine {
     struct VideoMode {
         int width;
         int height;
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MONITORMODE_HPP
+#endif //ENGINE_MONITORMODE_HPP

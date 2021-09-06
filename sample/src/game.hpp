@@ -22,16 +22,16 @@
 
 #include <chrono>
 
-#include "mana.hpp"
+#include "engine.hpp"
 
-using namespace mana;
+using namespace engine;
 
 class Game : public InputListener, public WindowListener {
 public:
     virtual ~Game() = default;
 
     virtual int loop(GraphicsBackend api) {
-        DisplayManager dm(mana::GLFW);
+        DisplayManager dm(engine::GLFW);
 
         Window *wnd = dm.createWindow(api, "Game", {640, 480}, {});
 

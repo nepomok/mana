@@ -26,8 +26,8 @@
 
 #include "engine/math/matrixmath.hpp"
 
-using namespace mana;
-using namespace mana::opengl;
+using namespace engine;
+using namespace engine::opengl;
 
 Renderer &QtOGLRenderDevice::getRenderer() {
     return renderer;

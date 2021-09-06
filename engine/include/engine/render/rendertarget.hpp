@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERTARGET_HPP
-#define MANA_RENDERTARGET_HPP
+#ifndef ENGINE_RENDERTARGET_HPP
+#define ENGINE_RENDERTARGET_HPP
 
 #include "engine/render/renderobject.hpp"
 #include "engine/render/texturebuffer.hpp"
 
-namespace mana {
+namespace engine {
     class RenderTarget : public RenderObject {
     public:
         ~RenderTarget() override = default;
@@ -81,4 +81,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERTARGET_HPP
+#endif //ENGINE_RENDERTARGET_HPP

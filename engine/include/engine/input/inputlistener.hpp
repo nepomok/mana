@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_INPUTLISTENER_HPP
-#define MANA_INPUTLISTENER_HPP
+#ifndef ENGINE_INPUTLISTENER_HPP
+#define ENGINE_INPUTLISTENER_HPP
 
 #include <string>
 
 #include "engine/input/key.hpp"
 #include "engine/input/mousekey.hpp"
 
-namespace mana {
+namespace engine {
     class InputListener {
     public:
         virtual void onKeyDown(Key key) {};
@@ -46,4 +46,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_INPUTLISTENER_HPP
+#endif //ENGINE_INPUTLISTENER_HPP

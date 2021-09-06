@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETLOADER_HPP
-#define MANA_ASSETLOADER_HPP
+#ifndef ENGINE_ASSETLOADER_HPP
+#define ENGINE_ASSETLOADER_HPP
 
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@
 
 #include "engine/async/threadpool.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * The asset loader defines functions to convert raw data streams into asset bundle objects.
      */
@@ -101,4 +101,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_ASSETLOADER_HPP
+#endif //ENGINE_ASSETLOADER_HPP

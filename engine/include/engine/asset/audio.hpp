@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIO_HPP
-#define MANA_AUDIO_HPP
+#ifndef ENGINE_AUDIO_HPP
+#define ENGINE_AUDIO_HPP
 
 #include "engine/audio/audioformat.hpp"
 
-namespace mana {
+namespace engine {
     class Audio {
     public:
         std::vector<uint8_t> buffer;
@@ -31,4 +31,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_AUDIO_HPP
+#endif //ENGINE_AUDIO_HPP

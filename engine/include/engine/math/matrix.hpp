@@ -25,7 +25,7 @@
 
 #include "engine/math/vector4.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * Data is stored in COLUMN MAJOR layout.
      *

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_DISPLAYMANAGER_HPP
-#define MANA_DISPLAYMANAGER_HPP
+#ifndef ENGINE_DISPLAYMANAGER_HPP
+#define ENGINE_DISPLAYMANAGER_HPP
 
 #include <set>
 
@@ -26,7 +26,7 @@
 #include "engine/display/window.hpp"
 #include "engine/display/monitor.hpp"
 
-namespace mana {
+namespace engine {
     class DisplayManager {
     public:
         const DisplayBackend displayApi;
@@ -54,4 +54,4 @@ namespace mana {
                              VideoMode mode) const;
     };
 }
-#endif //MANA_DISPLAYMANAGER_HPP
+#endif //ENGINE_DISPLAYMANAGER_HPP

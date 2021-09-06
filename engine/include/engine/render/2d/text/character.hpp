@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_CHARACTER_HPP
-#define MANA_CHARACTER_HPP
+#ifndef ENGINE_CHARACTER_HPP
+#define ENGINE_CHARACTER_HPP
 
 #include "engine/render/texturebuffer.hpp"
 
-namespace mana {
+namespace engine {
     class Character {
     public:
         Character() = default;
@@ -91,4 +91,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_CHARACTER_HPP
+#endif //ENGINE_CHARACTER_HPP

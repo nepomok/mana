@@ -22,7 +22,7 @@
 #include "engine/math/matrix.hpp"
 #include "engine/math/matrixmath.hpp"
 
-namespace mana {
+namespace engine {
     namespace MathInterface {
         MarshalMatrix convert(const Mat4f mat) {
             MarshalMatrix ret{};

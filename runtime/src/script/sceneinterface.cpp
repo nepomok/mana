@@ -24,7 +24,7 @@
 
 #include <mutex>
 
-namespace mana {
+namespace engine {
     namespace SceneInterface {
         std::mutex mutex;
         std::set<SceneInterfaceListener *> listeners;

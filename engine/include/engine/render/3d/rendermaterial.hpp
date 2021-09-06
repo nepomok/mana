@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERMATERIAL_HPP
-#define MANA_RENDERMATERIAL_HPP
+#ifndef ENGINE_RENDERMATERIAL_HPP
+#define ENGINE_RENDERMATERIAL_HPP
 
 #include <memory>
 
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 
-namespace mana {
+namespace engine {
     struct RenderMaterial {
         ColorRGBA diffuse{};
         ColorRGBA ambient{};
@@ -47,4 +47,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERMATERIAL_HPP
+#endif //ENGINE_RENDERMATERIAL_HPP

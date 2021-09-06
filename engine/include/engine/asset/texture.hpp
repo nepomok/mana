@@ -17,16 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TEXTURE_HPP
-#define MANA_TEXTURE_HPP
+#ifndef ENGINE_TEXTURE_HPP
+#define ENGINE_TEXTURE_HPP
 
 #include "engine/render/texturebuffer.hpp"
 
-namespace mana {
+namespace engine {
     struct Texture {
         AssetPath image;
         TextureBuffer::Attributes attributes;
     };
 }
 
-#endif //MANA_TEXTURE_HPP
+#endif //ENGINE_TEXTURE_HPP

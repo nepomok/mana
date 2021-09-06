@@ -24,7 +24,7 @@
 
 typedef unsigned int ALuint;
 
-namespace mana {
+namespace engine {
     class OALAudioBuffer : public AudioBuffer {
     public:
         const ALuint handle;

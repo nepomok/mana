@@ -26,7 +26,7 @@
 
 typedef struct ALCcontext ALCcontext;
 
-namespace mana {
+namespace engine {
     class OALAudioContext : public AudioContext {
     public:
         explicit OALAudioContext(ALCcontext *context);

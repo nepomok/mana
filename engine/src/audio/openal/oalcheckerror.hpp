@@ -25,7 +25,7 @@
 
 #include <AL/al.h>
 
-namespace mana {
+namespace engine {
     void checkOALError(const std::string &caller = "None");
 }
 

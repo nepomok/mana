@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHT_HPP
-#define MANA_LIGHT_HPP
+#ifndef ENGINE_LIGHT_HPP
+#define ENGINE_LIGHT_HPP
 
 #include "engine/math/transform.hpp"
 
-namespace mana {
+namespace engine {
     enum LightType {
         LIGHT_DIRECTIONAL,
         LIGHT_POINT,
@@ -55,4 +55,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_LIGHT_HPP
+#endif //ENGINE_LIGHT_HPP

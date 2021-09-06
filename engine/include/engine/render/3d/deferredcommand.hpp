@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_DEFERREDCOMMAND_HPP
-#define MANA_DEFERREDCOMMAND_HPP
+#ifndef ENGINE_DEFERREDCOMMAND_HPP
+#define ENGINE_DEFERREDCOMMAND_HPP
 
 #include <utility>
 
@@ -26,7 +26,7 @@
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/3d/rendermaterial.hpp"
 
-namespace mana {
+namespace engine {
     struct DeferredCommand {
         DeferredCommand() : transform(), meshBuffer() {}
 
@@ -45,4 +45,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_DEFERREDCOMMAND_HPP
+#endif //ENGINE_DEFERREDCOMMAND_HPP

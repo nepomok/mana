@@ -22,7 +22,7 @@
 #include <utility>
 #include <algorithm>
 
-namespace mana {
+namespace engine {
     ECS::ECS() {}
 
     ECS::~ECS() {

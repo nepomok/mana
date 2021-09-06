@@ -19,7 +19,7 @@
 
 #include "engine/render/3d/geometrybuffer.hpp"
 
-namespace mana {
+namespace engine {
     GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(&allocator), size(size) {
         TextureBuffer::Attributes attr;
         attr.size = size;

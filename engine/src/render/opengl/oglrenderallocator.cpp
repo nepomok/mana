@@ -25,7 +25,7 @@
 #include "oglmeshbuffer.hpp"
 #include "oglshaderprogram.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         static GLenum getElementType(Mesh::Primitive primitive) {
             switch (primitive) {

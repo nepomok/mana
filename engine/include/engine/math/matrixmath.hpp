@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GRAPHICSMATH_HPP
-#define MANA_GRAPHICSMATH_HPP
+#ifndef ENGINE_GRAPHICSMATH_HPP
+#define ENGINE_GRAPHICSMATH_HPP
 
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector3.hpp"
 #include "engine/math/vector4.hpp"
 #include "engine/math/matrix.hpp"
 
-namespace mana {
+namespace engine {
     namespace MatrixMath {
         Mat4f inverse(const Mat4f &mat);
 
@@ -91,4 +91,4 @@ namespace mana {
     }
 }
 
-#endif //MANA_GRAPHICSMATH_HPP
+#endif //ENGINE_GRAPHICSMATH_HPP

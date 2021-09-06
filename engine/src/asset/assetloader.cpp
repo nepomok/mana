@@ -34,7 +34,7 @@
 
 #include "extern/json.hpp"
 
-namespace mana {
+namespace engine {
     static ColorRGBA convertJsonColor(const nlohmann::json &j) {
         return ColorRGBA(j["r"], j["g"], j["b"], j["a"]);
     }

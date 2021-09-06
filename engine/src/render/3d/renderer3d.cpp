@@ -24,7 +24,7 @@
 #include <algorithm>
 #include <utility>
 
-namespace mana {
+namespace engine {
     std::string includeCallback(const char *n) {
         std::string name(n);
         if (name == "mana.hlsl") {

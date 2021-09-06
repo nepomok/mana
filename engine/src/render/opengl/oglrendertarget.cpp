@@ -22,7 +22,7 @@
 #include "oglcheckerror.hpp"
 #include "ogltexturebuffer.hpp"
 
-namespace mana {
+namespace engine {
     opengl::OGLRenderTarget::OGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size(), samples() {}
 
     opengl::OGLRenderTarget::OGLRenderTarget(Vec2i size, int samples)

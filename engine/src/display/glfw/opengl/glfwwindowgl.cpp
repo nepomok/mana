@@ -40,7 +40,7 @@ public:
 
 int GLFWCounter::counter = 0;
 
-namespace mana {
+namespace engine {
     namespace glfw {
         std::map<GLFWwindow *, GLFWWindowGL *> _windowMapping;
 

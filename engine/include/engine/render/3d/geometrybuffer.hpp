@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GEOMETRYBUFFER_HPP
-#define MANA_GEOMETRYBUFFER_HPP
+#ifndef ENGINE_GEOMETRYBUFFER_HPP
+#define ENGINE_GEOMETRYBUFFER_HPP
 
 #include "engine/render/renderdevice.hpp"
 
 #include "engine/render/texturebuffer.hpp"
 
-namespace mana {
+namespace engine {
     class GeometryBuffer {
     public:
         GeometryBuffer() = default;
@@ -124,4 +124,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_GEOMETRYBUFFER_HPP
+#endif //ENGINE_GEOMETRYBUFFER_HPP

@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PROTOCOL_HPP
-#define MANA_PROTOCOL_HPP
+#ifndef ENGINE_PROTOCOL_HPP
+#define ENGINE_PROTOCOL_HPP
 
 #include <ostream>
 
 #include "engine/io/message.hpp"
 
-namespace mana {
+namespace engine {
     class Protocol {
     public:
         virtual void serialize(std::ostream &stream, const Message &message) = 0;
@@ -33,4 +33,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_PROTOCOL_HPP
+#endif //ENGINE_PROTOCOL_HPP

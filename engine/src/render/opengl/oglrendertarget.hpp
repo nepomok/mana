@@ -24,7 +24,7 @@
 
 typedef unsigned int GLuint;
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class OGLRenderTarget : public RenderTarget {
         public:

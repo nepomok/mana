@@ -24,7 +24,7 @@
 
 #include "openglinclude.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         namespace OGLTypeConverter {
             GLenum getColorAttachment(int index);

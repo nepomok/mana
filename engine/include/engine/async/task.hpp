@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TASK_HPP
-#define MANA_TASK_HPP
+#ifndef ENGINE_TASK_HPP
+#define ENGINE_TASK_HPP
 
 #include <functional>
 #include <condition_variable>
 #include <mutex>
 #include <atomic>
 
-namespace mana {
+namespace engine {
     class Task {
     public:
         Task() : work(),
@@ -88,4 +88,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_TASK_HPP
+#endif //ENGINE_TASK_HPP

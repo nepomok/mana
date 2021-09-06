@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SHADERPROGRAM_HPP
-#define MANA_SHADERPROGRAM_HPP
+#ifndef ENGINE_SHADERPROGRAM_HPP
+#define ENGINE_SHADERPROGRAM_HPP
 
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector3.hpp"
@@ -26,7 +26,7 @@
 
 #include "engine/render/renderobject.hpp"
 
-namespace mana {
+namespace engine {
     class ShaderProgram : public RenderObject {
     public:
         ~ShaderProgram() override = default;
@@ -69,4 +69,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_SHADERPROGRAM_HPP
+#endif //ENGINE_SHADERPROGRAM_HPP

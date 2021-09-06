@@ -23,7 +23,7 @@
 
 #include <AL/al.h>
 
-namespace mana {
+namespace engine {
     int convertType(AudioSource::SourceType type) {
         switch (type) {
             case AudioSource::UNDETERMINED:

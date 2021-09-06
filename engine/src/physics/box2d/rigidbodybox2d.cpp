@@ -20,7 +20,7 @@
 #include "physics/box2d/rigidbodybox2d.hpp"
 #include "physics/box2d/commonbox2d.hpp"
 
-namespace mana {
+namespace engine {
     RigidBodyBox2D::RigidBodyBox2D(b2World &world) {
         b2BodyDef def;
         body = world.CreateBody(&def);

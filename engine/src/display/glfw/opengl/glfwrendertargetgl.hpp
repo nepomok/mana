@@ -25,7 +25,7 @@
 #include "../../../render/opengl/ogltypeconverter.hpp"
 #include "../../../render/opengl/oglcheckerror.hpp"
 
-namespace mana {
+namespace engine {
     namespace glfw {
         class GLFWRenderTargetGL : public opengl::OGLRenderTarget {
         public:

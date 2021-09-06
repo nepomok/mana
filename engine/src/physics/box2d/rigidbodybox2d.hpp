@@ -24,7 +24,7 @@
 
 #include "physics/box2d/colliderbox2d.hpp"
 
-namespace mana {
+namespace engine {
     class WorldBox2D;
 
     class RigidBodyBox2D : public RigidBody2D {

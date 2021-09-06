@@ -21,7 +21,7 @@
 
 #include "engine/ecs/components.hpp"
 
-namespace mana {
+namespace engine {
     struct RigidBodyData : public Component::UserData {
         World2D *world;
         RigidBody2D *body;

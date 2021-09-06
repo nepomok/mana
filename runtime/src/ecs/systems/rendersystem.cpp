@@ -30,7 +30,7 @@
 
 #include "engine/asset/assetimporter.hpp"
 
-namespace mana {
+namespace engine {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, AssetImporter &importer)
             : screenTarget(scr),
               device(device),

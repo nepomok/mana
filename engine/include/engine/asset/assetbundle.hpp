@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETBUNDLE_HPP
-#define MANA_ASSETBUNDLE_HPP
+#ifndef ENGINE_ASSETBUNDLE_HPP
+#define ENGINE_ASSETBUNDLE_HPP
 
 #include <map>
 #include <string>
@@ -29,7 +29,7 @@
 #include "engine/asset/texture.hpp"
 #include "engine/asset/shader.hpp"
 
-namespace mana {
+namespace engine {
     class AssetBundle {
     public:
         template<typename T>
@@ -61,4 +61,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_ASSETBUNDLE_HPP
+#endif //ENGINE_ASSETBUNDLE_HPP

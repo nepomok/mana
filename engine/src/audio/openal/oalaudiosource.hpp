@@ -23,7 +23,7 @@
 
 typedef unsigned int ALuint;
 
-namespace mana {
+namespace engine {
     class OALAudioSource : public AudioSource {
     public:
         explicit OALAudioSource(ALuint sourceHandle);

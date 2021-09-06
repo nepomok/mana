@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETPATH_HPP
-#define MANA_ASSETPATH_HPP
+#ifndef ENGINE_ASSETPATH_HPP
+#define ENGINE_ASSETPATH_HPP
 
 #include <string>
 
-namespace mana {
+namespace engine {
     struct AssetPath {
         std::string bundle;
         std::string asset;
@@ -34,4 +34,4 @@ namespace mana {
         }
     };
 }
-#endif //MANA_ASSETPATH_HPP
+#endif //ENGINE_ASSETPATH_HPP

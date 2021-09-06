@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-namespace mana {
+namespace engine {
     template<typename T>
     class Vector3 {
     public:

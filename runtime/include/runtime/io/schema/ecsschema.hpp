@@ -25,7 +25,7 @@
 #include "engine/ecs/component.hpp"
 #include "engine/ecs/scene.hpp"
 
-namespace mana {
+namespace engine {
     ComponentType &operator<<(ComponentType &value, const Message &message);
 
     Message &operator<<(Message &message, ComponentType type);

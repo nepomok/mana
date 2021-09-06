@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERER3D_HPP
-#define MANA_RENDERER3D_HPP
+#ifndef ENGINE_RENDERER3D_HPP
+#define ENGINE_RENDERER3D_HPP
 
 #include <utility>
 #include <map>
@@ -32,7 +32,7 @@
 #include "engine/render/3d/forwardpipeline.hpp"
 #include "engine/render/3d/deferredpipeline.hpp"
 
-namespace mana {
+namespace engine {
     class Renderer3D {
     public:
         static const std::map<std::string, std::string> &getShaderMacros();
@@ -55,4 +55,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERER3D_HPP
+#endif //ENGINE_RENDERER3D_HPP

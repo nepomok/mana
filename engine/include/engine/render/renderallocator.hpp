@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERALLOCATOR_HPP
-#define MANA_RENDERALLOCATOR_HPP
+#ifndef ENGINE_RENDERALLOCATOR_HPP
+#define ENGINE_RENDERALLOCATOR_HPP
 
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
 
-namespace mana {
+namespace engine {
     class RenderAllocator {
     public:
         virtual RenderTarget *createRenderTarget(Vec2i size, int samples) = 0;
@@ -66,4 +66,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERALLOCATOR_HPP
+#endif //ENGINE_RENDERALLOCATOR_HPP

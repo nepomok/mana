@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_JOINT3D_HPP
-#define MANA_JOINT3D_HPP
+#ifndef ENGINE_JOINT3D_HPP
+#define ENGINE_JOINT3D_HPP
 
-namespace mana {
+namespace engine {
     class Joint3D {
     public:
         //TODO: Define physics joints api
@@ -29,4 +29,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_JOINT3D_HPP
+#endif //ENGINE_JOINT3D_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERER2D_HPP
-#define MANA_RENDERER2D_HPP
+#ifndef ENGINE_RENDERER2D_HPP
+#define ENGINE_RENDERER2D_HPP
 
 #include <set>
 
@@ -28,7 +28,7 @@
 
 #include "engine/asset/camera.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * This is a SDL inspired 2d renderer.
      * It uses a similar interface to SDL in a object oriented manner.
@@ -129,4 +129,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERER2D_HPP
+#endif //ENGINE_RENDERER2D_HPP

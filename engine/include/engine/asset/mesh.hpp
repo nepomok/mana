@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MESH_HPP
-#define MANA_MESH_HPP
+#ifndef ENGINE_MESH_HPP
+#define ENGINE_MESH_HPP
 
 #include <vector>
 
@@ -27,7 +27,7 @@
 
 #include "engine/asset/vertex.hpp"
 
-namespace mana {
+namespace engine {
     struct Mesh {
         enum Primitive {
             POINT,
@@ -56,4 +56,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_MESH_HPP
+#endif //ENGINE_MESH_HPP

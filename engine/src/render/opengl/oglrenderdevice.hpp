@@ -20,12 +20,12 @@
 #ifndef MANA_OGLRENDERDEVICE_HPP
 #define MANA_OGLRENDERDEVICE_HPP
 
-#include <mana.hpp>
+#include <engine.hpp>
 
 #include "oglrenderer.hpp"
 #include "oglrenderallocator.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class OGLRenderDevice : public RenderDevice {
         public:

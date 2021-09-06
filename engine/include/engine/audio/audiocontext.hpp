@@ -17,14 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIOCONTEXT_HPP
-#define MANA_AUDIOCONTEXT_HPP
+#ifndef ENGINE_AUDIOCONTEXT_HPP
+#define ENGINE_AUDIOCONTEXT_HPP
 
 #include "engine/audio/audiolistener.hpp"
 #include "engine/audio/audiobuffer.hpp"
 #include "engine/audio/audiosource.hpp"
 
-namespace mana {
+namespace engine {
     class AudioContext {
     public:
         virtual ~AudioContext() = default;
@@ -39,4 +39,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_AUDIOCONTEXT_HPP
+#endif //ENGINE_AUDIOCONTEXT_HPP

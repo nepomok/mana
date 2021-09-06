@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_WORLD3D_HPP
-#define MANA_WORLD3D_HPP
+#ifndef ENGINE_WORLD3D_HPP
+#define ENGINE_WORLD3D_HPP
 
 #include "engine/physics/3d/rigidbody3d.hpp"
 #include "engine/physics/3d/joint3d.hpp"
 
-namespace mana {
+namespace engine {
     class World3D {
     public:
         struct Contact {
@@ -66,4 +66,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_WORLD3D_HPP
+#endif //ENGINE_WORLD3D_HPP

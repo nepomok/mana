@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETIMPORTER_HPP
-#define MANA_ASSETIMPORTER_HPP
+#ifndef ENGINE_ASSETIMPORTER_HPP
+#define ENGINE_ASSETIMPORTER_HPP
 
 #include <string>
 #include <vector>
@@ -31,7 +31,7 @@
 
 #include "engine/async/threadpool.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * The asset importer imports bundles.
      *
@@ -69,4 +69,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_ASSETIMPORTER_HPP
+#endif //ENGINE_ASSETIMPORTER_HPP

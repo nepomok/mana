@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AUDIODEVICE_HPP
-#define MANA_AUDIODEVICE_HPP
+#ifndef ENGINE_AUDIODEVICE_HPP
+#define ENGINE_AUDIODEVICE_HPP
 
 #include <string>
 
 #include "engine/audio/audiocontext.hpp"
 #include "engine/audio/audiobackend.hpp"
 
-namespace mana {
+namespace engine {
     class AudioDevice {
     public:
         static std::vector<std::string> getDeviceNames(AudioBackend backend);
@@ -40,4 +40,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_AUDIODEVICE_HPP
+#endif //ENGINE_AUDIODEVICE_HPP

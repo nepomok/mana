@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SHADER_HPP
-#define MANA_SHADER_HPP
+#ifndef ENGINE_SHADER_HPP
+#define ENGINE_SHADER_HPP
 
 #include <map>
 
 #include "engine/asset/texture.hpp"
 #include "engine/asset/assetpath.hpp"
 
-namespace mana {
+namespace engine {
     struct Shader {
         AssetPath vertexSource;
         AssetPath fragmentSource;
@@ -33,4 +33,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_SHADER_HPP
+#endif //ENGINE_SHADER_HPP

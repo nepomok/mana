@@ -20,7 +20,7 @@
 #include "opengl/glfwwindowgl.hpp"
 #include "glfwmonitor.hpp" //Has to come after glfwwindow because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
 
-namespace mana {
+namespace engine {
     namespace glfw {
         Monitor *getPrimaryMonitor() {
             auto *mon = new GLFWMonitor();

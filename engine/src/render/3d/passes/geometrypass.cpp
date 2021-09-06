@@ -284,7 +284,7 @@ f 1/3/5 3/16/5 4/11/5
 f 5/1/6 1/3/6 2/12/6
 )###");
 
-namespace mana {
+namespace engine {
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
         auto &allocator = device.getAllocator();

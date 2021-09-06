@@ -35,7 +35,7 @@
 
 #include "openglinclude.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         GLuint getTextureSlot(int slot) {
             switch (slot) {

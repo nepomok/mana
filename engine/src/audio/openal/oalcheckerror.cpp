@@ -19,7 +19,7 @@
 
 #include "oalcheckerror.hpp"
 
-namespace mana {
+namespace engine {
     void checkOALError(const std::string &caller) {
         auto error = alGetError();
         if (error != AL_NO_ERROR) {

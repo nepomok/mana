@@ -26,32 +26,32 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-namespace mana {
+namespace engine {
     OALAudioContext::OALAudioContext(ALCcontext *context) : context(context), listener() {}
 
-    mana::OALAudioContext::~OALAudioContext() {
+    engine::OALAudioContext::~OALAudioContext() {
         if (alcGetCurrentContext() == context)
             alcMakeContextCurrent(nullptr);
         alcDestroyContext(context); //TODO:Fix: Destroying a openal context seems to always set invalid operation error
     }
 
-    void mana::OALAudioContext::makeCurrent() {
+    void engine::OALAudioContext::makeCurrent() {
         alcMakeContextCurrent(context);
         checkOALError();
     }
 
-    AudioListener &mana::OALAudioContext::getListener() {
+    AudioListener &engine::OALAudioContext::getListener() {
         return listener;
     }
 
-    AudioBuffer *mana::OALAudioContext::createBuffer() {
+    AudioBuffer *engine::OALAudioContext::createBuffer() {
         ALuint n;
         alGenBuffers(1, &n);
         checkOALError();
         return new OALAudioBuffer(n);
     }
 
-    AudioSource *mana::OALAudioContext::createSource() {
+    AudioSource *engine::OALAudioContext::createSource() {
         ALuint n;
         alGenSources(1, &n);
         checkOALError();

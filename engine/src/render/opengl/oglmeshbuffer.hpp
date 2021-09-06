@@ -27,7 +27,7 @@
 
 #include "openglinclude.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         class OGLMeshBuffer : public MeshBuffer {
         public:

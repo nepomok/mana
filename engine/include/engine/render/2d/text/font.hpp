@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FONT_HPP
-#define MANA_FONT_HPP
+#ifndef ENGINE_FONT_HPP
+#define ENGINE_FONT_HPP
 
-namespace mana {
+namespace engine {
     /**
      * The rasterizer dependent font data.
      */
@@ -37,4 +37,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_FONT_HPP
+#endif //ENGINE_FONT_HPP

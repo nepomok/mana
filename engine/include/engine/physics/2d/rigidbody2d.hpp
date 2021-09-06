@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RIGIDBODY_HPP
-#define MANA_RIGIDBODY_HPP
+#ifndef ENGINE_RIGIDBODY_HPP
+#define ENGINE_RIGIDBODY_HPP
 
 #include <set>
 #include <memory>
 
 #include "engine/physics/2d/collider2d.hpp"
 
-namespace mana {
+namespace engine {
     class RigidBody2D {
     public:
         enum RigidBodyType {
@@ -64,4 +64,4 @@ namespace mana {
         virtual ~RigidBody2D() = default;
     };
 }
-#endif //MANA_RIGIDBODY_HPP
+#endif //ENGINE_RIGIDBODY_HPP

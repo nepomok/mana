@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERDEVICE_HPP
-#define MANA_RENDERDEVICE_HPP
+#ifndef ENGINE_RENDERDEVICE_HPP
+#define ENGINE_RENDERDEVICE_HPP
 
 #include <map>
 #include <functional>
@@ -29,7 +29,7 @@
 #include "engine/asset/mesh.hpp"
 #include "engine/render/renderallocator.hpp"
 
-namespace mana {
+namespace engine {
     class RenderDevice {
     public:
         virtual ~RenderDevice() = default;
@@ -40,4 +40,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERDEVICE_HPP
+#endif //ENGINE_RENDERDEVICE_HPP

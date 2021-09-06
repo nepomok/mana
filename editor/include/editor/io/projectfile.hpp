@@ -23,7 +23,7 @@
 #include "engine/io/resourcefile.hpp"
 #include "engine/io/scenefile.hpp"
 
-namespace mana {
+namespace engine {
     namespace editor {
         class ProjectFile : public File {
         public:

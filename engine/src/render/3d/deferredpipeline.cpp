@@ -19,7 +19,7 @@
 
 #include "engine/render/3d/deferredpipeline.hpp"
 
-namespace mana {
+namespace engine {
     DeferredPipeline::DeferredPipeline(RenderDevice &device, std::vector<RenderPass *> passes)
             : renderDevice(&device),
               passes(std::move(passes)),

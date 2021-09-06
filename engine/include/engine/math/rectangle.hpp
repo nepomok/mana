@@ -22,7 +22,7 @@
 
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * A axis aligned rectangle defining position and dimensions.
      * */

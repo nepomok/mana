@@ -24,7 +24,7 @@
 
 #include "engine/display/monitor.hpp"
 
-namespace mana {
+namespace engine {
     namespace glfw {
         class GLFWMonitor : public Monitor {
         public:

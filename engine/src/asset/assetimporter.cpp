@@ -26,7 +26,7 @@
 #include <filesystem>
 #include <sstream>
 
-namespace mana {
+namespace engine {
     AssetImporter::AssetImporter(Archive &archive)
             : archive(archive) {}
 

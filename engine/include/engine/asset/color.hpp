@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COLOR_HPP
-#define MANA_COLOR_HPP
+#ifndef ENGINE_COLOR_HPP
+#define ENGINE_COLOR_HPP
 
 #include <cstdint>
 
-namespace mana {
+namespace engine {
     struct ColorRGB {
         uint8_t data[3];
 
@@ -94,4 +94,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_COLOR_HPP
+#endif //ENGINE_COLOR_HPP

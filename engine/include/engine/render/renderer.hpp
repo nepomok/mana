@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERER_HPP
-#define MANA_RENDERER_HPP
+#ifndef ENGINE_RENDERER_HPP
+#define ENGINE_RENDERER_HPP
 
 #include "engine/asset/image.hpp"
 #include "engine/render/rendercommand.hpp"
@@ -27,7 +27,7 @@
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/graphicsbackend.hpp"
 
-namespace mana {
+namespace engine {
     struct RenderOptions {
         explicit RenderOptions(Vec2i viewportOffset = {},
                                Vec2i viewportSize = {},
@@ -64,4 +64,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_RENDERER_HPP
+#endif //ENGINE_RENDERER_HPP

@@ -17,12 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_WINDOWLISTENER_HPP
-#define MANA_WINDOWLISTENER_HPP
+#ifndef ENGINE_WINDOWLISTENER_HPP
+#define ENGINE_WINDOWLISTENER_HPP
 
 #include "engine/math/vector2.hpp"
 
-namespace mana {
+namespace engine {
     class WindowListener {
     public:
         virtual void onWindowClose() {};
@@ -45,4 +45,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_WINDOWLISTENER_HPP
+#endif //ENGINE_WINDOWLISTENER_HPP

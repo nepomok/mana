@@ -21,7 +21,7 @@
 #include "physics/box2d/rigidbodybox2d.hpp"
 #include "physics/box2d/commonbox2d.hpp"
 
-namespace mana {
+namespace engine {
     WorldBox2D::WorldBox2D()
             : world(b2Vec2(0.0f, -1.0f)) {}
 

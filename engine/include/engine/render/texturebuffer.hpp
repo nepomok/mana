@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_TEXTUREBUFFER_HPP
-#define MANA_TEXTUREBUFFER_HPP
+#ifndef ENGINE_TEXTUREBUFFER_HPP
+#define ENGINE_TEXTUREBUFFER_HPP
 
 #include "engine/asset/image.hpp"
 #include "engine/render/renderobject.hpp"
 
-namespace mana {
+namespace engine {
     /**
      * A texture buffer.
      * The texture type, size and format is changed when calling the upload methods.
@@ -181,4 +181,4 @@ namespace mana {
     };
 }
 
-#endif //MANA_TEXTUREBUFFER_HPP
+#endif //ENGINE_TEXTUREBUFFER_HPP

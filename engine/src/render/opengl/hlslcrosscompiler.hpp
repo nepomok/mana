@@ -24,7 +24,7 @@
 #include <string>
 #include <functional>
 
-namespace mana {
+namespace engine {
     class HlslCrossCompiler {
     public:
         /**

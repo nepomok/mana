@@ -1,4 +1,4 @@
-#include <mana.hpp>
+#include <engine.hpp>
 #include "oglrendertarget.hpp"
 
 /**
@@ -26,7 +26,7 @@
 #include "oglmeshbuffer.hpp"
 #include "oglshaderprogram.hpp"
 
-namespace mana {
+namespace engine {
     namespace opengl {
         Renderer &OGLRenderDevice::getRenderer() {
             return dynamic_cast<Renderer &>(renderer);
