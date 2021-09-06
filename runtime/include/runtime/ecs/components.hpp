@@ -29,6 +29,7 @@
 #include "components/rigidbodycomponent3d.hpp"
 #include "components/rigidbodycomponent2d.hpp"
 #include "components/monoscriptcomponent.hpp"
+#include "components/monosynccomponent.hpp"
 #include "components/skyboxcomponent.hpp"
 #include "components/meshrendercomponent.hpp"
 #include "components/gui/textcomponent.hpp"

@@ -38,11 +38,17 @@ namespace engine::runtime {
     void uploadScene(MonoCppDomain &runtime,
                      MonoCppAssembly &msCorLib,
                      MonoCppAssembly &manaAssembly,
-                     const Scene &scene) {
+                     Scene &scene) {
+        Scene upload;
+        for (auto &n : scene.nodes) {
+            if (n.second.hasComponent<MonoSyncComponent>())
+                upload.nodes.insert(n);
+        }
+
         std::stringstream stream;
 
         Message message;
-        JsonProtocol().serialize(stream, message << scene);
+        JsonProtocol().serialize(stream, message << upload);
 
         std::string s = stream.str();
 
@@ -58,7 +64,7 @@ namespace engine::runtime {
     void downloadScene(MonoCppDomain &domain,
                        MonoCppAssembly &msCorLib,
                        MonoCppAssembly &manaAssembly,
-                       const Scene &scene) {
+                       Scene &scene) {
         auto str = manaAssembly.invokeStaticMethod("Mana.Internal", "SceneInterface", "getSceneJson");
 
         std::stringstream stream(domain.stringToUtf8(str));

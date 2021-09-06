@@ -17,24 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENTTYPE_HPP
-#define MANA_COMPONENTTYPE_HPP
+#ifndef MANA_MONOSYNCCOMPONENT_HPP
+#define MANA_MONOSYNCCOMPONENT_HPP
+
+#include "runtime/ecs/component.hpp"
+
+#include "runtime/script/script.hpp"
 
 namespace engine::runtime {
-    enum ComponentType {
-        NONE,
-        TRANSFORM,
-        CAMERA,
-        LIGHT,
-        SCRIPT_MONO,
-        SYNC_MONO,
-        MESH_RENDER,
-        SKYBOX,
-        COLLIDER_2D,
-        RIGIDBODY_2D,
-        COLLIDER_3D,
-        RIGIDBODY_3D
+    struct MonoSyncComponent : public Component {
+        MonoSyncComponent() : Component(SYNC_MONO) {}
+
+        Component *clone() override {
+            return new MonoSyncComponent(*this);
+        }
+
+        const std::type_info &getTypeInfo() override {
+            return typeid(MonoSyncComponent);
+        }
     };
 }
 
-#endif //MANA_COMPONENTTYPE_HPP
+
+#endif //MANA_MONOSYNCCOMPONENT_HPP

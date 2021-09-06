@@ -81,8 +81,6 @@ namespace engine::runtime {
             activeCubeMaps.insert(comp.paths);
         }
 
-        setActiveBundles(activeBundles);
-
         //Get referenced asset bundles in material.
         for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
             auto &node = *nodePtr;
@@ -125,15 +123,11 @@ namespace engine::runtime {
             }
         }
 
-        setActiveBundles(activeBundles);
-
         // Retrieve image bundles from active textures
         for (auto &texture : activeTextures) {
             auto &t = getBundle(texture.bundle).getTexture(texture.asset);
             activeBundles.insert(t.image.bundle);
         }
-
-        setActiveBundles(activeBundles);
 
         RenderScene scene3d;
 
@@ -324,9 +318,21 @@ namespace engine::runtime {
 
     const AssetBundle &RenderSystem::getBundle(const std::string &bundle) {
         mutex.lock();
-        auto it = loadingBundles.find(bundle);
-        if (it != loadingBundles.end()) {
-            auto ptrCopy = it->second;
+        auto it = bundles.find(bundle);
+        if (it != bundles.end()) {
+            auto &ret = it->second;
+            mutex.unlock();
+            return ret;
+        }
+        auto itl = loadingBundles.find(bundle);
+        if (itl == loadingBundles.end()) {
+            mutex.unlock();
+            loadBundle(bundle);
+            mutex.lock();
+        }
+        itl = loadingBundles.find(bundle);
+        if (itl != loadingBundles.end()) {
+            auto ptrCopy = itl->second;
             mutex.unlock();
             ptrCopy->wait();
             mutex.lock();
@@ -352,7 +358,7 @@ namespace engine::runtime {
     }
 
     void RenderSystem::setActiveBundles(const std::set<std::string> &active) {
-        for(auto &a : active)
+        for (auto &a : active)
             loadBundle(a);
         mutex.lock();
         std::set<std::shared_ptr<Task>> tasks;

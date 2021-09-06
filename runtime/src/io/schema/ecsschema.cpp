@@ -32,6 +32,8 @@ namespace engine::runtime {
             value = LIGHT;
         else if (str == "script_mono")
             value = SCRIPT_MONO;
+        else if (str == "sync_mono")
+            value = SYNC_MONO;
         else if (str == "mesh_render")
             value = MESH_RENDER;
         else if (str == "skybox")
@@ -54,6 +56,9 @@ namespace engine::runtime {
                 break;
             case SCRIPT_MONO:
                 message = "script_mono";
+                break;
+            case SYNC_MONO:
+                message = "sync_mono";
                 break;
             case MESH_RENDER:
                 message = "mesh_render";
@@ -302,6 +307,16 @@ namespace engine::runtime {
         return message;
     }
 
+    MonoSyncComponent *&operator<<(MonoSyncComponent *&component, const Message &message) {
+        component = new MonoSyncComponent();
+        return component;
+    }
+
+    Message &operator<<(Message &message, const MonoSyncComponent *&component) {
+        message = std::map<std::string, Message>();
+        return message;
+    }
+
     Component *&operator<<(Component *&value, const Message &message) {
         auto map = message.getMap();
 
@@ -330,6 +345,11 @@ namespace engine::runtime {
                 script << message;
                 ret = script;
                 break;
+            case SYNC_MONO:
+                MonoSyncComponent *sync;
+                sync << message;
+                ret = sync;
+                break;
             case MESH_RENDER:
                 MeshRenderComponent *render;
                 render << message;
@@ -353,6 +373,7 @@ namespace engine::runtime {
         const CameraComponent *camera;
         const LightComponent *light;
         const MonoScriptComponent *script;
+        const MonoSyncComponent *sync;
         const MeshRenderComponent *render;
         const SkyboxComponent *skybox;
         switch (component->componentType) {
@@ -371,6 +392,10 @@ namespace engine::runtime {
             case SCRIPT_MONO:
                 script = dynamic_cast<const MonoScriptComponent *>(component);
                 message << script;
+                break;
+            case SYNC_MONO:
+                sync = dynamic_cast<const MonoSyncComponent*>(component);
+                message << sync;
                 break;
             case MESH_RENDER:
                 render = dynamic_cast<const MeshRenderComponent *>(component);

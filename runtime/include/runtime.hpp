@@ -43,6 +43,7 @@
 #include "runtime/ecs/components/collidercomponent3d.hpp"
 #include "runtime/ecs/components/cameracomponent.hpp"
 #include "runtime/ecs/components/monoscriptcomponent.hpp"
+#include "runtime/ecs/components/monosynccomponent.hpp"
 #include "runtime/ecs/components/transformcomponent.hpp"
 #include "runtime/ecs/components/lightcomponent.hpp"
 #include "runtime/ecs/components/particlecomponent.hpp"

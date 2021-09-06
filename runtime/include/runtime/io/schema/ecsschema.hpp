@@ -66,6 +66,10 @@ namespace engine::runtime {
 
     Message &operator<<(Message &message, const MonoScriptComponent *&component);
 
+    MonoSyncComponent *&operator<<(MonoSyncComponent *&component, const Message &message);
+
+    Message &operator<<(Message &message, const MonoSyncComponent *&component);
+
     Component *&operator<<(Component *&, const Message &message);
 
     Message &operator<<(Message &message, const Component *&component);

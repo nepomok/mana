@@ -42,6 +42,10 @@
           "nameSpace": "",
           "className": "InputController",
           "queue": 0
+        },
+        {
+          "enabled": true,
+          "componentType": "sync_mono"
         }
       ]
     },
