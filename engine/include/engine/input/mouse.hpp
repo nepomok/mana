@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_MOUSE_HPP
-#define ENGINE_MOUSE_HPP
+#ifndef MANA_MOUSE_HPP
+#define MANA_MOUSE_HPP
 
 #include "engine/math/vector2.hpp"
 
@@ -39,4 +39,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_MOUSE_HPP
+#endif //MANA_MOUSE_HPP

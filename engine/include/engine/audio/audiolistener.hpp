@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_AUDIOLISTENER_HPP
-#define ENGINE_AUDIOLISTENER_HPP
+#ifndef MANA_AUDIOLISTENER_HPP
+#define MANA_AUDIOLISTENER_HPP
 
 #include "engine/math/vector3.hpp"
 
@@ -45,4 +45,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_AUDIOLISTENER_HPP
+#endif //MANA_AUDIOLISTENER_HPP

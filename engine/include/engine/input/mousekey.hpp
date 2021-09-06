@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_MOUSEKEY_HPP
-#define ENGINE_MOUSEKEY_HPP
+#ifndef MANA_MOUSEKEY_HPP
+#define MANA_MOUSEKEY_HPP
 namespace engine {
     enum MouseKey {
         MOUSE_LEFT,
@@ -26,4 +26,4 @@ namespace engine {
         MOUSE_RIGHT
     };
 }
-#endif //ENGINE_MOUSEKEY_HPP
+#endif //MANA_MOUSEKEY_HPP

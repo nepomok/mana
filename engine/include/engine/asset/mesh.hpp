@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_MESH_HPP
-#define ENGINE_MESH_HPP
+#ifndef MANA_MESH_HPP
+#define MANA_MESH_HPP
 
 #include <vector>
 
@@ -56,4 +56,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_MESH_HPP
+#endif //MANA_MESH_HPP

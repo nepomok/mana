@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_CAMERA_HPP
-#define ENGINE_CAMERA_HPP
+#ifndef MANA_CAMERA_HPP
+#define MANA_CAMERA_HPP
 
 #include "engine/math/transform.hpp"
 #include "engine/math/matrix.hpp"
@@ -85,4 +85,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_CAMERA_HPP
+#endif //MANA_CAMERA_HPP

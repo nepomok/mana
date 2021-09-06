@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_OUTLINEPASS_HPP
-#define ENGINE_OUTLINEPASS_HPP
+#ifndef MANA_OUTLINEPASS_HPP
+#define MANA_OUTLINEPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
@@ -31,4 +31,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_OUTLINEPASS_HPP
+#endif //MANA_OUTLINEPASS_HPP

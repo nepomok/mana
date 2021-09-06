@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_RIGIDBODY3D_HPP
-#define ENGINE_RIGIDBODY3D_HPP
+#ifndef MANA_RIGIDBODY3D_HPP
+#define MANA_RIGIDBODY3D_HPP
 
 #include <set>
 #include <memory>
@@ -64,4 +64,4 @@ namespace engine {
         virtual ~RigidBody3D() = default;
     };
 }
-#endif //ENGINE_RIGIDBODY3D_HPP
+#endif //MANA_RIGIDBODY3D_HPP

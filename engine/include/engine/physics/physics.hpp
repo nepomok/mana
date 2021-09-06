@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_PHYSICS_HPP
-#define ENGINE_PHYSICS_HPP
+#ifndef MANA_PHYSICS_HPP
+#define MANA_PHYSICS_HPP
 
 #include "engine/physics/2d/world2d.hpp"
 #include "engine/physics/3d/world3d.hpp"
@@ -36,4 +36,4 @@ namespace engine {
     }
 }
 
-#endif //ENGINE_PHYSICS_HPP
+#endif //MANA_PHYSICS_HPP

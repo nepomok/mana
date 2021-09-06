@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_SHADERPROGRAM_HPP
-#define ENGINE_SHADERPROGRAM_HPP
+#ifndef MANA_SHADERPROGRAM_HPP
+#define MANA_SHADERPROGRAM_HPP
 
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector3.hpp"
@@ -69,4 +69,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_SHADERPROGRAM_HPP
+#endif //MANA_SHADERPROGRAM_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_JOINT_HPP
-#define ENGINE_JOINT_HPP
+#ifndef MANA_JOINT_HPP
+#define MANA_JOINT_HPP
 
 #include "engine/math/vector2.hpp"
 #include "engine/math/vector3.hpp"
@@ -32,4 +32,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_JOINT_HPP
+#endif //MANA_JOINT_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_AUDIODEVICE_HPP
-#define ENGINE_AUDIODEVICE_HPP
+#ifndef MANA_AUDIODEVICE_HPP
+#define MANA_AUDIODEVICE_HPP
 
 #include <string>
 
@@ -40,4 +40,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_AUDIODEVICE_HPP
+#endif //MANA_AUDIODEVICE_HPP

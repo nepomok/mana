@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_THREADPOOL_HPP
-#define ENGINE_THREADPOOL_HPP
+#ifndef MANA_THREADPOOL_HPP
+#define MANA_THREADPOOL_HPP
 
 #include <memory>
 #include <vector>
@@ -113,4 +113,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_THREADPOOL_HPP
+#endif //MANA_THREADPOOL_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_JSONPROTOCOL_HPP
-#define ENGINE_JSONPROTOCOL_HPP
+#ifndef MANA_JSONPROTOCOL_HPP
+#define MANA_JSONPROTOCOL_HPP
 
 #include "engine/io/protocol.hpp"
 
@@ -31,4 +31,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_JSONPROTOCOL_HPP
+#endif //MANA_JSONPROTOCOL_HPP

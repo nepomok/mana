@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_ASSETIMPORTER_HPP
-#define ENGINE_ASSETIMPORTER_HPP
+#ifndef MANA_ASSETIMPORTER_HPP
+#define MANA_ASSETIMPORTER_HPP
 
 #include <string>
 #include <vector>
@@ -69,4 +69,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_ASSETIMPORTER_HPP
+#endif //MANA_ASSETIMPORTER_HPP

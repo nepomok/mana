@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_AUDIO_HPP
-#define ENGINE_AUDIO_HPP
+#ifndef MANA_AUDIO_HPP
+#define MANA_AUDIO_HPP
 
 #include "engine/audio/audioformat.hpp"
 
@@ -31,4 +31,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_AUDIO_HPP
+#endif //MANA_AUDIO_HPP

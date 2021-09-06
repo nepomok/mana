@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_SHADOWPASS_HPP
-#define ENGINE_SHADOWPASS_HPP
+#ifndef MANA_SHADOWPASS_HPP
+#define MANA_SHADOWPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
@@ -31,4 +31,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_SHADOWPASS_HPP
+#endif //MANA_SHADOWPASS_HPP

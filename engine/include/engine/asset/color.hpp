@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_COLOR_HPP
-#define ENGINE_COLOR_HPP
+#ifndef MANA_COLOR_HPP
+#define MANA_COLOR_HPP
 
 #include <cstdint>
 
@@ -94,4 +94,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_COLOR_HPP
+#endif //MANA_COLOR_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_FONTRASTERIZER_HPP
-#define ENGINE_FONTRASTERIZER_HPP
+#ifndef MANA_FONTRASTERIZER_HPP
+#define MANA_FONTRASTERIZER_HPP
 
 #include "engine/render/2d/text/character.hpp"
 #include "engine/render/2d/text/font.hpp"
@@ -67,4 +67,4 @@ namespace engine {
         //TODO: Unicode character rasterization
     };
 }
-#endif //ENGINE_FONTRASTERIZER_HPP
+#endif //MANA_FONTRASTERIZER_HPP

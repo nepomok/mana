@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_GEOMETRYBUFFER_HPP
-#define ENGINE_GEOMETRYBUFFER_HPP
+#ifndef MANA_GEOMETRYBUFFER_HPP
+#define MANA_GEOMETRYBUFFER_HPP
 
 #include "engine/render/renderdevice.hpp"
 
@@ -124,4 +124,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_GEOMETRYBUFFER_HPP
+#endif //MANA_GEOMETRYBUFFER_HPP

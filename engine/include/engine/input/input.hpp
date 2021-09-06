@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_INPUT_HPP
-#define ENGINE_INPUT_HPP
+#ifndef MANA_INPUT_HPP
+#define MANA_INPUT_HPP
 
 #include "engine/input/key.hpp"
 #include "engine/input/mouse.hpp"
@@ -43,4 +43,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_INPUT_HPP
+#endif //MANA_INPUT_HPP

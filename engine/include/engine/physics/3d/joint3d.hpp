@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_JOINT3D_HPP
-#define ENGINE_JOINT3D_HPP
+#ifndef MANA_JOINT3D_HPP
+#define MANA_JOINT3D_HPP
 
 namespace engine {
     class Joint3D {
@@ -29,4 +29,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_JOINT3D_HPP
+#endif //MANA_JOINT3D_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_HPP
-#define ENGINE_HPP
+#ifndef MANA_HPP
+#define MANA_HPP
 
 #include "engine/io/protocol.hpp"
 #include "engine/io/message.hpp"
@@ -105,4 +105,4 @@
 #include "engine/async/threadpool.hpp"
 #include "engine/async/task.hpp"
 
-#endif // ENGINE_HPP
+#endif // MANA_HPP

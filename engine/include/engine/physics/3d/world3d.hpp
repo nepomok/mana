@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_WORLD3D_HPP
-#define ENGINE_WORLD3D_HPP
+#ifndef MANA_WORLD3D_HPP
+#define MANA_WORLD3D_HPP
 
 #include "engine/physics/3d/rigidbody3d.hpp"
 #include "engine/physics/3d/joint3d.hpp"
@@ -66,4 +66,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_WORLD3D_HPP
+#endif //MANA_WORLD3D_HPP

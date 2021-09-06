@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_FORWARDPIPELINE_HPP
-#define ENGINE_FORWARDPIPELINE_HPP
+#ifndef MANA_FORWARDPIPELINE_HPP
+#define MANA_FORWARDPIPELINE_HPP
 
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/3d/renderscene.hpp"
@@ -40,4 +40,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_FORWARDPIPELINE_HPP
+#endif //MANA_FORWARDPIPELINE_HPP

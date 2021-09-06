@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef ENGINE_SHADER_HPP
-#define ENGINE_SHADER_HPP
+#ifndef MANA_SHADER_HPP
+#define MANA_SHADER_HPP
 
 #include <map>
 
@@ -33,4 +33,4 @@ namespace engine {
     };
 }
 
-#endif //ENGINE_SHADER_HPP
+#endif //MANA_SHADER_HPP
