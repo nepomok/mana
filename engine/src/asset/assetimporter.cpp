@@ -167,6 +167,8 @@ namespace engine {
 
                 //TODO: Parse json texture attributes
 
+                texture.attributes.generateMipmap = true;
+
                 ret.textures[name] = texture;
             }
         }

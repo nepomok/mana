@@ -20,4 +20,82 @@
 #ifndef MANA_APPLICATION_HPP
 #define MANA_APPLICATION_HPP
 
+#include "engine/io/archive.hpp"
+
+#include "runtime/ecs/ecs.hpp"
+
+namespace engine::runtime {
+    class Application {
+    public:
+        explicit Application(int argc, char *argv[], Archive *archive)
+                : archive(archive), display() {
+            std::vector<std::string> args;
+            for (int i = 0; i < argc; i++)
+                args.emplace_back(argv[i]);
+
+            DisplayBackend displayBackend = DisplayBackend::GLFW;
+            for (int i = 0; i < args.size(); i++) {
+                if (args.at(i) == "--display") {
+                    auto str = args.at(i + 1);
+                    if (str == "glfw") {
+                        displayBackend = DisplayBackend::GLFW;
+                    }
+                }
+            }
+            display = DisplayManager(displayBackend);
+
+            GraphicsBackend graphicsBackend = GraphicsBackend::OPENGL;
+            for (int i = 0; i < args.size(); i++) {
+                if (args.at(i) == "--graphics") {
+                    auto str = args.at(i + 1);
+                    if (str == "opengl") {
+                        graphicsBackend = GraphicsBackend::OPENGL;
+                    } else if (str == "directx") {
+                        graphicsBackend = GraphicsBackend::DIRECTX;
+                    } else if (str == "vulkan") {
+                        graphicsBackend = GraphicsBackend::VULKAN;
+                    }
+                }
+            }
+            window = display.createWindow(graphicsBackend);
+        }
+
+        virtual ~Application() {
+            delete window;
+        }
+
+        virtual int loop() {
+            start();
+            auto lastFrame = std::chrono::high_resolution_clock::now();
+            while (!window->shouldClose()) {
+                auto frame = std::chrono::high_resolution_clock::now();
+                auto frameDelta = frame - lastFrame;
+                float deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(frameDelta).count();
+                lastFrame = frame;
+                update(deltaTime);
+            }
+            stop();
+            return 0;
+        }
+
+    protected:
+        DisplayManager display;
+        ECS ecs;
+        Scene scene;
+
+        Archive *archive = nullptr;
+        Window *window = nullptr;
+
+        virtual void start() {}
+
+        virtual void stop() {}
+
+        virtual void update(float deltaTime) {
+            window->update();
+            ecs.update(deltaTime, scene);
+            window->swapBuffers();
+        }
+    };
+}
+
 #endif //MANA_APPLICATION_HPP

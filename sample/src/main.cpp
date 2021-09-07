@@ -17,29 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "sample0.hpp"
-
-void printUsage() {
-    printf("Usage: samples SAMPLE_NUMBER\n");
-}
+#include "sampleapplication.hpp"
 
 int main(int argc, char *argv[]) {
-    int n = 0;
-    if (argc == 2) {
-        n = std::stoi(argv[1]);
-    }
-
-    Game *game;
-    switch (n) {
-        case 0:
-            game = new Sample0();
-            break;
-        default:
-            printUsage();
-            return 0;
-    }
-
-    int ret = game->loop(OPENGL);
-    delete game;
-    return ret;
+    return SampleApplication(argc, argv).loop();
 }
