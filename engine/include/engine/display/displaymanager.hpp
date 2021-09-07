@@ -29,7 +29,7 @@
 namespace engine {
     class DisplayManager {
     public:
-        const DisplayBackend displayApi;
+        DisplayManager();
 
         explicit DisplayManager(DisplayBackend displayApi);
 
@@ -52,6 +52,11 @@ namespace engine {
                              WindowAttributes attributes,
                              Monitor &monitor,
                              VideoMode mode) const;
+
+        DisplayBackend getApi() const;
+
+    private:
+        DisplayBackend displayApi;
     };
 }
 #endif //MANA_DISPLAYMANAGER_HPP

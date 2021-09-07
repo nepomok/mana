@@ -23,54 +23,66 @@
 
 #include "glfw/glfwdisplay.hpp"
 
-engine::DisplayManager::DisplayManager(engine::DisplayBackend displayApi) : displayApi(displayApi) {}
+namespace engine {
+    DisplayManager::DisplayManager() = default;
 
-engine::DisplayManager::~DisplayManager() = default;
+    DisplayManager::DisplayManager(DisplayBackend displayApi) : displayApi(displayApi) {}
 
-engine::Monitor *engine::DisplayManager::getPrimaryMonitor() const {
-    switch (displayApi) {
-        case GLFW:
-            return glfw::getPrimaryMonitor();
-        default:
-            throw std::runtime_error("Unsupported display api");
+    DisplayManager::~DisplayManager() = default;
+
+    Monitor *DisplayManager::getPrimaryMonitor() const {
+        switch (displayApi) {
+            case GLFW:
+                return glfw::getPrimaryMonitor();
+            default:
+                throw std::runtime_error("Unsupported display api");
+        }
     }
-}
 
-std::set<engine::Monitor *> engine::DisplayManager::getMonitors() const {
-    switch (displayApi) {
-        case GLFW:
-            return glfw::getMonitors();
-        default:
-            throw std::runtime_error("Unsupported display api");
+    std::set<Monitor *> DisplayManager::getMonitors() const {
+        switch (displayApi) {
+            case GLFW:
+                return glfw::getMonitors();
+            default:
+                throw std::runtime_error("Unsupported display api");
+        }
     }
-}
 
-engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend) const {
-    switch (displayApi) {
-        case GLFW:
-            return glfw::createWindow(graphicsBackend);
-        default:
-            throw std::runtime_error("Unsupported display api");
+    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend) const {
+        switch (displayApi) {
+            case GLFW:
+                return glfw::createWindow(graphicsBackend);
+            default:
+                throw std::runtime_error("Unsupported display api");
+        }
     }
-}
 
-engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend, std::string title, engine::Vec2i size,
-                                                     engine::WindowAttributes attributes) const {
-    switch (displayApi) {
-        case GLFW:
-            return glfw::createWindow(graphicsBackend, std::move(title), size, attributes);
-        default:
-            throw std::runtime_error("Unsupported display api");
+    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend,
+                                         std::string title,
+                                         Vec2i size,
+                                         WindowAttributes attributes) const {
+        switch (displayApi) {
+            case GLFW:
+                return glfw::createWindow(graphicsBackend, std::move(title), size, attributes);
+            default:
+                throw std::runtime_error("Unsupported display api");
+        }
     }
-}
 
-engine::Window *engine::DisplayManager::createWindow(engine::GraphicsBackend graphicsBackend, std::string title, engine::Vec2i size,
-                                                     engine::WindowAttributes attributes, engine::Monitor &monitor,
-                                                     engine::VideoMode mode) const {
-    switch (displayApi) {
-        case GLFW:
-            return glfw::createWindow(graphicsBackend, std::move(title), size, attributes, monitor, mode);
-        default:
-            throw std::runtime_error("Unsupported display api");
+    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend,
+                                         std::string title,
+                                         Vec2i size,
+                                         WindowAttributes attributes, Monitor &monitor,
+                                         VideoMode mode) const {
+        switch (displayApi) {
+            case GLFW:
+                return glfw::createWindow(graphicsBackend, std::move(title), size, attributes, monitor, mode);
+            default:
+                throw std::runtime_error("Unsupported display api");
+        }
+    }
+
+    DisplayBackend DisplayManager::getApi() const {
+        return displayApi;
     }
 }
