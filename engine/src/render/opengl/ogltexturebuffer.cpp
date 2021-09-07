@@ -106,7 +106,7 @@ OGLTextureBuffer::~OGLTextureBuffer() {
     glDeleteTextures(1, &handle);
 }
 
-void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::RGB;
@@ -130,9 +130,11 @@ void OGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(RGB)");
+
+    return this;
 }
 
-void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::RGBA;
@@ -156,9 +158,11 @@ void OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(RGBA)");
+
+    return this;
 }
 
-void OGLTextureBuffer::upload(const Image<float> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<float> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -182,9 +186,11 @@ void OGLTextureBuffer::upload(const Image<float> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(float)");
+
+    return this;
 }
 
-void OGLTextureBuffer::upload(const Image<int> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<int> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -208,9 +214,11 @@ void OGLTextureBuffer::upload(const Image<int> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(int)");
+
+    return this;
 }
 
-void OGLTextureBuffer::upload(const Image<char> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<char> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -235,9 +243,11 @@ void OGLTextureBuffer::upload(const Image<char> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(char)");
+
+    return this;
 }
 
-void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -262,6 +272,8 @@ void OGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     checkGLError("OGLTextureBuffer::upload(unsigned char)");
+
+    return this;
 }
 
 engine::Image<ColorRGBA> OGLTextureBuffer::download() {
@@ -276,7 +288,7 @@ engine::Image<ColorRGBA> OGLTextureBuffer::download() {
     return output;
 }
 
-void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
+TextureBuffer *OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_CUBE_MAP);
 
     attributes.format = TextureBuffer::RGBA;
@@ -300,6 +312,8 @@ void OGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
     checkGLError("OGLTextureBuffer::upload(CUBEMAP)");
+
+    return this;
 }
 
 Image<ColorRGBA> OGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
@@ -309,7 +323,7 @@ Image<ColorRGBA> OGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
     throw std::runtime_error("Not Implemented");
 }
 
-void OGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
+TextureBuffer *OGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
     auto faceSize = buffer.getSize();
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
@@ -318,6 +332,8 @@ void OGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
     for (int i = 0; i < 6; i++) {
         upload(static_cast<CubeMapFace>(i), buffer.slice(Recti(Vec2i(faceSize.x * i, 0), faceSize)));
     }
+
+    return this;
 }
 
 Image<ColorRGBA> OGLTextureBuffer::downloadCubeMap() {
