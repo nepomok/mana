@@ -43,13 +43,16 @@ protected:
 
         auto &device = window->getRenderDevice();
 
-        FontRasterizer *r = FontRasterizer::instantiate(FontRasterizer::FreeType, device.getAllocator());
         auto *stream = archive->open("assets/fonts/roboto/Roboto-Regular.ttf");
-        Font *font = r->createFont(*stream);
-        charMap = std::move(r->getAscii(*font));
+        Font *font = Font::createFont(*stream);
+        font->setPixelSize({0, 30});
+        characters = std::move(font->renderAscii());
         delete font;
         delete stream;
-        delete r;
+
+        for (auto &p : characters) {
+            textures[p.first] = device.getAllocator().createTextureBuffer({})->upload(p.second.image);
+        }
 
         texture = device.getAllocator().createTextureBuffer({});
         texture->upload(AssetImporter::import("assets/images/smiley.png", *archive).getImage());
@@ -87,11 +90,16 @@ protected:
 
     void stop() override {
         scene = {};
-        charMap.clear();
 
         delete manaAssembly;
         delete jsonAssembly;
         delete texture;
+
+        for (auto &p : textures)
+            delete p.second;
+
+        characters.clear();
+        textures.clear();
 
         Application::stop();
     }
@@ -114,11 +122,14 @@ protected:
 
         ren2d.renderBegin(wnd.getRenderTarget(), false);
         ren2d.draw(Rectf({150, 300}, {100, 100}), *texture);
-        ren2d.draw(Vec2f(50, 150),
-                   Vec2f(1, 1),
-                   std::to_string(fpsAverage),
-                   charMap,
-                   {255, 255, 255, 255});
+
+        auto str = std::to_string(fpsAverage);
+        ren2d.draw(Vec2f(10, 10 + Character::getMetrics(str, characters).position.y),
+                   str,
+                   {255, 255, 255, 255},
+                   characters,
+                   textures);
+
         ren2d.renderPresent();
 
         window->swapBuffers();
@@ -134,7 +145,9 @@ private:
     Node *cameraNode = nullptr;
     TextureBuffer *texture = nullptr;
     double fpsAverage = 1;
-    std::map<char, Character> charMap;
+
+    std::map<char, Character> characters;
+    std::map<char, TextureBuffer *> textures;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

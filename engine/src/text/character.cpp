@@ -17,36 +17,26 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FTFONTRASTERIZER_HPP
-#define MANA_FTFONTRASTERIZER_HPP
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
-#include "engine/render/2d/text/fontrasterizer.hpp"
-
-#include "ftfont.hpp"
+#include "engine/text/character.hpp"
 
 namespace engine {
-    class FTFontRasterizer : public FontRasterizer {
-    public:
-        explicit FTFontRasterizer(RenderAllocator &allocator);
+    Recti Character::getMetrics(const std::string &str, const std::map<char, Character> &chars) {
+        Vec2i origin(0); //The origin of the text
+        Vec2i size(0); //The size of the text
+        for (auto c : str) {
+            //Add advance (The only factor for size x increment)
+            size.x += chars.at(c).advance;
 
-        ~FTFontRasterizer() override;
+            auto min = origin.y - chars.at(c).bearing.y;
+            if (min < 0) {
+                origin.y += min * -1;
+            }
 
-        Font *createFont(std::string filePath) override;
-
-        Font *createFont(std::istream &stream) override;
-
-        Character rasterizeCharacter(Font &font, char c) override;
-
-        std::map<char, Character> getAscii(Font &font) override;
-
-    private:
-        RenderAllocator &renderAllocator;
-
-        FT_Library library;
-    };
+            int height = origin.y + chars.at(c).image.getHeight() - chars.at(c).bearing.y;
+            if (size.y < height) {
+                size.y = height;
+            }
+        }
+        return {origin, size};
+    }
 }
-
-#endif //MANA_FTFONTRASTERIZER_HPP

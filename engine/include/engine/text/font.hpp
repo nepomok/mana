@@ -17,44 +17,44 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FONTRASTERIZER_HPP
-#define MANA_FONTRASTERIZER_HPP
+#ifndef MANA_FONT_HPP
+#define MANA_FONT_HPP
 
-#include "engine/render/2d/text/character.hpp"
-#include "engine/render/2d/text/font.hpp"
+#include <istream>
 
-#include "engine/render/renderdevice.hpp"
+#include "engine/math/vector2.hpp"
+
+#include "engine/text/character.hpp"
 
 namespace engine {
-    class FontRasterizer {
+    class Font {
     public:
-        enum Backend {
-            FreeType
-        };
-
         /**
-         * To avoid exposing library headers to users we will also put the font rasterization api behind an interface.
+         * Load the font from the stream.
          *
-         * @param backend
-         * @param allocator
+         * Supported font formats include ttf.
+         *
+         * @param stream The stream pointing to the font data.
          * @return
          */
-        static FontRasterizer *instantiate(Backend backend, RenderAllocator &allocator);
+        static Font *createFont(std::istream &stream);
 
-        virtual ~FontRasterizer() = default;
-
-        virtual Font *createFont(std::string filePath) = 0;
-
-        virtual Font *createFont(std::istream &stream) = 0;
+        virtual ~Font() = default;
 
         /**
-         *  Rasterize the given ascii character using the given font.
+         * Set the requested pixel size.
          *
-         * @param font
+         * @param size
+         */
+        virtual void setPixelSize(Vec2i size) = 0;
+
+        /**
+         *  Rasterize the given ascii character.
+         *
          * @param c
          * @return
          */
-        virtual Character rasterizeCharacter(Font &font, char c) = 0;
+        virtual Character renderAscii(char c) = 0;
 
         /**
          * Convenience method which rasterizes all ascii characters and returns the character mapping.
@@ -62,9 +62,10 @@ namespace engine {
          * @param font
          * @return
          */
-        virtual std::map<char, Character> getAscii(Font &font) = 0;
+        virtual std::map<char, Character> renderAscii() = 0;
 
         //TODO: Unicode character rasterization
     };
 }
-#endif //MANA_FONTRASTERIZER_HPP
+
+#endif //MANA_FONT_HPP

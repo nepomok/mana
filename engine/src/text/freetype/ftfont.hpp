@@ -17,24 +17,32 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FONT_HPP
-#define MANA_FONT_HPP
+#ifndef MANA_FTFONT_HPP
+#define MANA_FTFONT_HPP
+
+#include <ft2build.h>
+
+#include "freetype/freetype.h"
+
+#include "engine/text/font.hpp"
 
 namespace engine {
-    /**
-     * The rasterizer dependent font data.
-     */
-    class Font {
+    class FTFont : public Font {
     public:
-        virtual ~Font() = default;
+        FT_Library library{};
+        FT_Face face{};
+        std::vector<char> bytes; //Freetype requires the data to stay in memory when loading with FT_New_Memory_Face
 
-        /**
-         * Set the requested pixel size.
-         *
-         * @param size
-         */
-        virtual void setPixelSize(Vec2i size) = 0;
+        FTFont(std::istream &stream);
+
+        ~FTFont() override;
+
+        void setPixelSize(Vec2i size) override;
+
+        Character renderAscii(char c) override;
+
+        std::map<char, Character> renderAscii() override;
     };
 }
 
-#endif //MANA_FONT_HPP
+#endif //MANA_FTFONT_HPP

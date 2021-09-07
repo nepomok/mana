@@ -24,7 +24,9 @@
 
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
-#include "engine/render/2d/text/character.hpp"
+
+#include "engine/text/character.hpp"
+#include "engine/text/font.hpp"
 
 #include "engine/asset/camera.hpp"
 
@@ -103,16 +105,15 @@ namespace engine {
         void draw(Vec2f point, ColorRGBA color = {});
 
         /**
-         * @param position The origin of the first glyph
-         * @param scale
-         * @param text The text to be drawn
-         * @param mapping The mapping of characters
-         * @param color The color of the text
+         * @param position The origin of the text
+         * @param text
+         * @param color
          */
         void draw(Vec2f position,
-                  Vec2f scale,
-                  const std::string &text, std::map<char, Character> &mapping,
-                  ColorRGBA color);
+                  const std::string &text,
+                  ColorRGBA color,
+                  std::map<char, Character> &characters,
+                  std::map<char, TextureBuffer *> &textures);
 
         void renderPresent();
 

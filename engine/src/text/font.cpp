@@ -17,17 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/2d/text/fontrasterizer.hpp"
+#include "engine/text/font.hpp"
 
-#include "freetype/ftfontrasterizer.hpp"
+#include "text/freetype/ftfont.hpp"
 
 namespace engine {
-    FontRasterizer *FontRasterizer::instantiate(FontRasterizer::Backend backend, RenderAllocator &allocator) {
-        switch (backend) {
-            case FreeType:
-                return new FTFontRasterizer(allocator);
-            default:
-                throw std::runtime_error("Not recognized font rasterizer backend " + std::to_string(backend));
-        }
+    Font *Font::createFont(std::istream &stream) {
+        return new FTFont(stream);
     }
 }

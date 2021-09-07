@@ -376,22 +376,23 @@ namespace engine {
     }
 
     void Renderer2D::draw(Vec2f position,
-                          Vec2f scale,
-                          const std::string &text, std::map<char, Character> &mapping,
-                          ColorRGBA color) {
+                          const std::string &text,
+                          ColorRGBA color,
+                          std::map<char, Character> &characters,
+                          std::map<char, TextureBuffer *> &textures) {
         float x = position.x;
         float y = position.y;
 
         for (auto &c : text) {
-            auto &character = mapping.at(c);
+            auto &character = characters.at(c);
 
-            float xpos = (x + static_cast<float>(character.getBearing().x)) * scale.x;
-            float ypos = (y - static_cast<float>(character.getBearing().y)) * scale.y;
+            float xpos = (x + static_cast<float>(character.bearing.x));
+            float ypos = (y - static_cast<float>(character.bearing.y));
 
-            float w = static_cast<float>(character.getSize().x) * scale.x;
-            float h = static_cast<float>(character.getSize().y) * scale.y;
+            float w = static_cast<float>(character.image.getSize().x);
+            float h = static_cast<float>(character.image.getSize().y);
 
-            x += static_cast<float>(static_cast<float>(character.getAdvance()) * scale.x);
+            x += static_cast<float>(static_cast<float>(character.advance));
 
             Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
 
@@ -403,7 +404,7 @@ namespace engine {
             command.properties.enableBlending = true;
             command.shader = defaultTextShader;
             command.meshBuffers.emplace_back(buffer);
-            command.textures.emplace_back(&character.getTexture());
+            command.textures.emplace_back(textures.at(c));
 
             Mat4f modelMatrix(1);
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
