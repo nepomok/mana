@@ -165,7 +165,7 @@ TextureBuffer *OGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
 TextureBuffer *OGLTextureBuffer::upload(const Image<float> &buffer) {
     setTextureType(TextureBuffer::TEXTURE_2D);
 
-    attributes.format = TextureBuffer::R;
+    attributes.format = TextureBuffer::R32F;
     attributes.size = buffer.getSize();
 
     glBindTexture(GL_TEXTURE_2D, handle);
