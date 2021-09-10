@@ -75,7 +75,7 @@ struct PS_OUTPUT {
      float4 diffuse      :   SV_TARGET2;
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
-     float4 lighting     :   SV_TARGET5;
+     float4 shininess    :   SV_TARGET5;
      float4 id           :   SV_TARGET6;
 };
 
@@ -106,9 +106,8 @@ PS_OUTPUT main(PS_INPUT v) {
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.lighting.r = shininess.Sample(samplerState_shininess, v.fUv).r;
-    ret.lighting.g = 1.0f;
-    ret.id = 1;
+    ret.shininess.r = shininess.Sample(samplerState_shininess, v.fUv).r;
+    ret.id.x = 1;
     return ret;
 }
 )###";
@@ -126,7 +125,7 @@ struct PS_OUTPUT {
      float4 diffuse      :   SV_TARGET2;
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
-     float4 lighting     :   SV_TARGET5;
+     float4 shininess     :   SV_TARGET5;
      float4 id           :   SV_TARGET6;
 };
 
@@ -154,9 +153,8 @@ PS_OUTPUT main(PS_INPUT v) {
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.lighting.r = shininess.Sample(samplerState_shininess, v.fUv).r;
-    ret.lighting.g = 1.0f;
-    ret.id = 1;
+    ret.shininess.r = shininess.Sample(samplerState_shininess, v.fUv).r;
+    ret.id.x = 1;
     return ret;
 }
 )###";
@@ -209,13 +207,7 @@ struct PS_INPUT {
 };
 
 struct PS_OUTPUT {
-     float4 position     :   SV_TARGET0;
-     float4 normal       :   SV_TARGET1;
-     float4 diffuse      :   SV_TARGET2;
-     float4 ambient      :   SV_TARGET3;
-     float4 specular     :   SV_TARGET4;
-     float4 lighting     :   SV_TARGET5;
-     float4 id           :   SV_TARGET6;
+     float4 color     :   SV_TARGET0;
 };
 
 TextureCube diffuse;
@@ -225,14 +217,7 @@ SamplerState samplerState_diffuse
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
-    ret.position = float4(v.fPos, 1);
-    ret.normal = float4(v.fNorm, 1);
-    ret.diffuse = diffuse.Sample(samplerState_diffuse, v.worldPos);
-    ret.ambient = float4(0,0,0,0);
-    ret.specular = float4(0,0,0,0);
-    ret.lighting.r = 0.0f;
-    ret.lighting.g = 0.0f;
-    ret.id = 0;
+    ret.color = diffuse.Sample(samplerState_diffuse, v.worldPos);
     return ret;
 }
 )###";
@@ -319,7 +304,6 @@ namespace engine {
                                                      SHADER_FRAG_SKYBOX,
                                                      Renderer3D::getShaderMacros(),
                                                      Renderer3D::getShaderIncludeCallback());
-        shaderSkybox->setTexture("diffuse", 0);
 
         std::stringstream skyboxStream((std::string(SKYBOX_OBJ)));
         Mesh skyboxMesh = AssetImporter::import(skyboxStream, ".obj").meshes.at("Cube");
@@ -338,9 +322,22 @@ namespace engine {
         delete skyboxCube;
     }
 
-    void GeometryPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
+    void GeometryPass::prepareBuffer(GeometryBuffer &gBuffer) {
+        gBuffer.addBuffer("depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
+        gBuffer.addBuffer("position", TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer("normal", TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer("diffuse", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("ambient", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("specular", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("shininess", TextureBuffer::ColorFormat::R32F);
+        gBuffer.addBuffer("id", TextureBuffer::ColorFormat::R8UI);
+        gBuffer.addBuffer("skybox", TextureBuffer::ColorFormat::RGBA);
+    }
+
+    void GeometryPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
         auto &ren = renderDevice.getRenderer();
 
+        //Set shader texture attachment points
         shaderTextureNormals->setTexture("diffuse", 0);
         shaderTextureNormals->setTexture("ambient", 1);
         shaderTextureNormals->setTexture("specular", 2);
@@ -354,8 +351,7 @@ namespace engine {
         shaderVertexNormals->setTexture("shininess", 3);
         shaderVertexNormals->setTexture("emissive", 4);
 
-        //Clear geometry buffer
-        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
+        shaderSkybox->setTexture("diffuse", 0);
 
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
@@ -363,34 +359,52 @@ namespace engine {
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
         //Draw skybox
-        {
-            RenderCommand command;
-            command.meshBuffers.emplace_back(skyboxCube);
+        gBuffer.attachColor({"skybox"});
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
-            if (scene.skybox == nullptr) {
-                for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
-                    skyboxDefault->upload(static_cast<TextureBuffer::CubeMapFace>(i),
-                                          Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
-                }
-                command.textures.emplace_back(skyboxDefault);
-            } else {
-                command.textures.emplace_back(scene.skybox);
+        RenderCommand skyboxCommand;
+        skyboxCommand.meshBuffers.emplace_back(skyboxCube);
+
+        if (scene.skybox == nullptr) {
+            for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
+                skyboxDefault->upload(static_cast<TextureBuffer::CubeMapFace>(i),
+                                      Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
             }
-
-            command.properties.enableDepthTest = false;
-            command.properties.enableFaceCulling = false;
-
-            command.shader = shaderSkybox;
-
-            command.shader->setMat4("MANA_M", model);
-            command.shader->setMat4("MANA_V", view);
-            command.shader->setMat4("MANA_P", projection);
-            command.shader->setMat4("MANA_MVP", projection * view * model);
-            command.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-            command.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
-
-            ren.addCommand(command);
+            skyboxCommand.textures.emplace_back(skyboxDefault);
+        } else {
+            skyboxCommand.textures.emplace_back(scene.skybox);
         }
+
+        skyboxCommand.properties.enableDepthTest = false;
+        skyboxCommand.properties.enableFaceCulling = false;
+
+        skyboxCommand.shader = shaderSkybox;
+
+        skyboxCommand.shader->setMat4("MANA_M", model);
+        skyboxCommand.shader->setMat4("MANA_V", view);
+        skyboxCommand.shader->setMat4("MANA_P", projection);
+        skyboxCommand.shader->setMat4("MANA_MVP", projection * view * model);
+        skyboxCommand.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+        skyboxCommand.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+
+        ren.addCommand(skyboxCommand);
+
+        ren.renderFinish();
+
+        // Draw deferred geometry
+        gBuffer.attachDepthStencil("depth");
+        gBuffer.attachColor({
+                                    "position",
+                                    "normal",
+                                    "diffuse",
+                                    "ambient",
+                                    "specular",
+                                    "shininess",
+                                    "id"
+                            });
+
+        //Clear geometry buffer
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command : scene.deferred) {
@@ -452,5 +466,7 @@ namespace engine {
         }
 
         ren.renderFinish();
+
+        gBuffer.detachDepthStencil();
     }
 }

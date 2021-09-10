@@ -21,37 +21,7 @@
 
 namespace engine {
     GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(&allocator), size(size) {
-        TextureBuffer::Attributes attr;
-        attr.size = size;
-        attr.format = TextureBuffer::RGB32F;
-
-        position = allocator.createTextureBuffer(attr);
-        normal = allocator.createTextureBuffer(attr);
-        attr.format = TextureBuffer::RGB;
-        diffuse = allocator.createTextureBuffer(attr);
-        ambient = allocator.createTextureBuffer(attr);
-        specular = allocator.createTextureBuffer(attr);
-
-        attr.format = TextureBuffer::RG32F;
-        lighting = allocator.createTextureBuffer(attr);
-
-        attr.format = TextureBuffer::R32UI;
-        id = allocator.createTextureBuffer(attr);
-
         renderTarget = allocator.createRenderTarget(size, 0);
-        renderTarget->setNumberOfColorAttachments(6);
-        renderTarget->attachColor(0, *position);
-        renderTarget->attachColor(1, *normal);
-        renderTarget->attachColor(2, *diffuse);
-        renderTarget->attachColor(3, *ambient);
-        renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *lighting);
-        renderTarget->attachColor(6, *id);
-
-        attr.format = TextureBuffer::DEPTH_STENCIL;
-        depthStencil = allocator.createTextureBuffer(attr);
-
-        renderTarget->attachDepthStencil(*depthStencil);
 
         const Mesh quadMesh(Mesh::TRI,
                             {
@@ -67,17 +37,7 @@ namespace engine {
     }
 
     GeometryBuffer::~GeometryBuffer() {
-        for (int i = 0; i < 6; i++)
-            renderTarget->detachColor(i);
         renderTarget->detachDepthStencil();
-        delete position;
-        delete normal;
-        delete diffuse;
-        delete ambient;
-        delete specular;
-        delete lighting;
-        delete depthStencil;
-        delete id;
         delete renderTarget;
         delete screenQuad;
     }
@@ -88,52 +48,29 @@ namespace engine {
 
         size = s;
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < currentColor.size(); i++)
             renderTarget->detachColor(i);
 
         renderTarget->detachDepthStencil();
 
-        delete position;
-        delete normal;
-        delete diffuse;
-        delete ambient;
-        delete specular;
-        delete lighting;
-        delete depthStencil;
-        delete id;
+        for (auto &buf : buffers) {
+            TextureBuffer::Attributes attr;
+            attr.size = size;
+            attr.format = formats.at(buf.first);
+            buf.second = std::unique_ptr<TextureBuffer>(renderAllocator->createTextureBuffer(attr));
+        }
+
         delete renderTarget;
 
-        auto &allocator = *renderAllocator;
+        renderTarget = renderAllocator->createRenderTarget(size, 0);
 
-        TextureBuffer::Attributes attr;
-        attr.size = size;
-        attr.format = TextureBuffer::RGB32F;
-        position = allocator.createTextureBuffer(attr);
-        normal = allocator.createTextureBuffer(attr);
-        attr.format = TextureBuffer::RGB;
-        diffuse = allocator.createTextureBuffer(attr);
-        ambient = allocator.createTextureBuffer(attr);
-        specular = allocator.createTextureBuffer(attr);
-        attr.format = TextureBuffer::RG32F;
-        lighting = allocator.createTextureBuffer(attr);
+        if (!currentDepthStencil.empty())
+            renderTarget->attachDepthStencil(*buffers.at(currentDepthStencil));
 
-        attr.format = TextureBuffer::R32UI;
-        id = allocator.createTextureBuffer(attr);
-
-        renderTarget = allocator.createRenderTarget(size, 0);
-        renderTarget->setNumberOfColorAttachments(6);
-        renderTarget->attachColor(0, *position);
-        renderTarget->attachColor(1, *normal);
-        renderTarget->attachColor(2, *diffuse);
-        renderTarget->attachColor(3, *ambient);
-        renderTarget->attachColor(4, *specular);
-        renderTarget->attachColor(5, *lighting);
-        renderTarget->attachColor(6, *id);
-
-        attr.format = TextureBuffer::DEPTH_STENCIL;
-        depthStencil = allocator.createTextureBuffer(attr);
-
-        renderTarget->attachDepthStencil(*depthStencil);
+        renderTarget->setNumberOfColorAttachments(currentColor.size());
+        for (int i = 0; i < currentColor.size(); i++) {
+            renderTarget->attachColor(i, *buffers.at(currentColor.at(i)));
+        }
     }
 
     Vec2i GeometryBuffer::getSize() {
@@ -145,44 +82,46 @@ namespace engine {
         return *renderTarget;
     }
 
-    TextureBuffer &GeometryBuffer::getPosition() {
-        assert(position != nullptr);
-        return *position;
+    void GeometryBuffer::addBuffer(const std::string &name, TextureBuffer::ColorFormat format) {
+        auto it = buffers.find(name);
+        if (it != buffers.end()) {
+            if (it->second->getAttributes().format != format)
+                throw std::runtime_error("Buffer with different format already exists " + name);
+            return;
+        }
+
+        TextureBuffer::Attributes attr;
+        attr.size = size;
+        attr.format = format;
+        buffers[name] = std::unique_ptr<TextureBuffer>(renderAllocator->createTextureBuffer(attr));
+        formats[name] = format;
     }
 
-    TextureBuffer &GeometryBuffer::getNormal() {
-        assert(normal != nullptr);
-        return *normal;
+    TextureBuffer &GeometryBuffer::getBuffer(const std::string &name) {
+        return *buffers.at(name);
     }
 
-    TextureBuffer &GeometryBuffer::getDiffuse() {
-        assert(diffuse != nullptr);
-        return *diffuse;
+    void GeometryBuffer::attachColor(const std::vector<std::string> &attachments) {
+        for (int i = 0; i < currentColor.size(); i++)
+            renderTarget->detachColor(i);
+        renderTarget->setNumberOfColorAttachments(attachments.size());
+        for (int i = 0; i < attachments.size(); i++)
+            renderTarget->attachColor(i, *buffers.at(attachments.at(i)));
+        currentColor = attachments;
     }
 
-    TextureBuffer &GeometryBuffer::getAmbient() {
-        assert(ambient != nullptr);
-        return *ambient;
+    void GeometryBuffer::attachDepthStencil(const std::string &name) {
+        auto &buffer = getBuffer(name);
+        if (buffer.getAttributes().format != TextureBuffer::ColorFormat::DEPTH_STENCIL)
+            throw std::runtime_error("Invalid depth stencil texture " + name);
+        renderTarget->detachDepthStencil();
+        renderTarget->attachDepthStencil(buffer);
+        currentDepthStencil = name;
     }
 
-    TextureBuffer &GeometryBuffer::getSpecular() {
-        assert(specular != nullptr);
-        return *specular;
-    }
-
-    TextureBuffer &GeometryBuffer::getLighting() {
-        assert(lighting != nullptr);
-        return *lighting;
-    }
-
-    TextureBuffer &GeometryBuffer::getDepthStencil() {
-        assert(depthStencil != nullptr);
-        return *depthStencil;
-    }
-
-    TextureBuffer &GeometryBuffer::getId() {
-        assert(id != nullptr);
-        return *id;
+    void GeometryBuffer::detachDepthStencil() {
+        renderTarget->detachDepthStencil();
+        currentDepthStencil = "";
     }
 
     MeshBuffer &GeometryBuffer::getScreenQuad() {

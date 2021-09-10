@@ -17,105 +17,40 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/renderdevice.hpp"
-
-#include "engine/render/3d/forwardpipeline.hpp"
+#include "engine/render/3d/passes/forwardpass.hpp"
 
 #include "engine/math/rotation.hpp"
 
-const char *SHADER_VERT_OUTLINE_DEFAULT = R"###(
-float4x4 MANA_M;
-float4x4 MANA_V;
-float4x4 MANA_P;
-float4x4 MANA_MVP;
-float4x4 MANA_M_INVERT;
-float3 COLOR_OUTLINE;
-
-struct VS_INPUT
-{
-    float3 position : POSITION0;
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-    float4 instanceRow0 : POSITION1;
-    float4 instanceRow1 : POSITION2;
-    float4 instanceRow2 : POSITION3;
-    float4 instanceRow3 : POSITION4;
-};
-
-struct VS_OUTPUT
-{
-    float3  fPos : POSITION;
-    float3  fNorm : NORMAL;
-    float2  fUv : TEXCOORD0;
-    float4 vPos : SV_Position;
-};
-
-VS_OUTPUT main(const VS_INPUT v)
-{
-    VS_OUTPUT ret;
-
-    float4x4 instanceMatrix = float4x4(v.instanceRow0, v.instanceRow1, v.instanceRow2, v.instanceRow3);
-
-    ret.vPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_MVP));
-    ret.fPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_M)).xyz;
-    ret.fNorm = mul(float4(v.normal, 1), transpose(mul(MANA_M_INVERT, instanceMatrix))).xyz;
-    ret.fUv = v.uv;
-
-    return ret;
-}
-)###";
-
-const char *SHADER_FRAG_OUTLINE_DEFAULT = R"###(
-float4x4 MANA_M;
-float4x4 MANA_V;
-float4x4 MANA_P;
-float4x4 MANA_MVP;
-float4x4 MANA_M_INVERT;
-float3 COLOR_OUTLINE;
-
-struct PS_INPUT {
-    float3 fPos: POSITION;
-    float3 fNorm: NORMAL;
-    float2 fUv: TEXCOORD0;
-};
-
-struct PS_OUTPUT {
-    float4 FragColor: SV_TARGET;
-};
-
-PS_OUTPUT main(PS_INPUT v) {
-    PS_OUTPUT ret;
-    ret.FragColor = float4(COLOR_OUTLINE.x, COLOR_OUTLINE.y, COLOR_OUTLINE.z, 1.0);
-    return ret;
-}
-)###";
-
 namespace engine {
-    static ShaderProgram *getDefaultOutlineShader(RenderAllocator &alloc) {
-        return alloc.createShaderProgram(SHADER_VERT_OUTLINE_DEFAULT,
-                                         SHADER_FRAG_OUTLINE_DEFAULT,
-                                         {},
-                                         {});
+    ForwardPass::ForwardPass(RenderDevice &device)
+            : device(device) {
+
     }
 
-    ForwardPipeline::ForwardPipeline(RenderDevice &device) : renderDevice(&device) {}
+    ForwardPass::~ForwardPass() {}
 
-    ForwardPipeline::~ForwardPipeline() = default;
+    void ForwardPass::prepareBuffer(GeometryBuffer &gBuffer) {
+        gBuffer.addBuffer("forward", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("forward_depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
+    }
 
-    void ForwardPipeline::render(RenderTarget &screen, RenderScene &scene) {
+    void ForwardPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+        gBuffer.attachDepthStencil("forward_depth");
+        gBuffer.attachColor({"forward"});
+
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
-        auto &ren = renderDevice->getRenderer();
+        auto &ren = device.getRenderer();
 
-        // Dont clear color and depth
-        ren.renderBegin(screen, RenderOptions({},
-                                              screen.getSize(),
-                                              true,
-                                              {},
-                                              false, false, false));
+        // Clear forward color and depth textures
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({},
+                                                                 gBuffer.getRenderTarget().getSize(),
+                                                                 true,
+                                                                 {},
+                                                                 true, true, true));
 
         for (auto &unit : scene.forward) {
             model = MatrixMath::translate(unit.transform.position);
@@ -185,5 +120,7 @@ namespace engine {
         }
 
         ren.renderFinish();
+
+        gBuffer.detachDepthStencil();
     }
 }

@@ -17,25 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_LIGHTINGPASS_HPP
-#define MANA_LIGHTINGPASS_HPP
+#ifndef MANA_COMPOSITEPASS_HPP
+#define MANA_COMPOSITEPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    class LightingPass : public RenderPass {
+    class CompositePass : public RenderPass {
     public:
-        explicit LightingPass(RenderDevice &device);
+        explicit CompositePass(RenderDevice &device);
 
-        ~LightingPass() override = default;
+        ~CompositePass() override;
 
-        void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) override;
+        void presentBuffer(RenderTarget &screen, GeometryBuffer &buffer) override;
 
     private:
-        RenderDevice &renderDevice;
+        RenderDevice &device;
 
         ShaderProgram *shader;
     };
 }
 
-#endif //MANA_LIGHTINGPASS_HPP
+#endif //MANA_COMPOSITEPASS_HPP

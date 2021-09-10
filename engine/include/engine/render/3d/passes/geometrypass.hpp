@@ -29,7 +29,9 @@ namespace engine {
 
         ~GeometryPass() override;
 
-        void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) override;
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
 
     private:
         RenderDevice &renderDevice;

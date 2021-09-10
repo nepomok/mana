@@ -17,27 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDPIPELINE_HPP
-#define MANA_FORWARDPIPELINE_HPP
+#ifndef MANA_PHONGSHADEPASS_HPP
+#define MANA_PHONGSHADEPASS_HPP
 
-#include "engine/render/rendertarget.hpp"
-#include "engine/render/3d/renderscene.hpp"
-#include "engine/render/renderer.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    class ForwardPipeline {
+    class PhongShadePass : public RenderPass {
     public:
-        ForwardPipeline() = default;
+        explicit PhongShadePass(RenderDevice &device);
 
-        explicit ForwardPipeline(RenderDevice &device);
+        ~PhongShadePass() override = default;
 
-        ~ForwardPipeline();
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
 
-        void render(RenderTarget &screen, RenderScene &scene);
+        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
 
     private:
-        RenderDevice *renderDevice{};
+        RenderDevice &renderDevice;
+
+        ShaderProgram *shader;
     };
 }
 
-#endif //MANA_FORWARDPIPELINE_HPP
+#endif //MANA_PHONGSHADEPASS_HPP

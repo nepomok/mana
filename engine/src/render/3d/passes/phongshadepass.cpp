@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/lightingpass.hpp"
+#include "engine/render/3d/passes/phongshadepass.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
 
@@ -66,7 +66,9 @@ struct PS_INPUT {
 };
 
 struct PS_OUTPUT {
-    float4 FragColor: SV_TARGET;
+    float4 phong_ambient: SV_TARGET0;
+    float4 phong_diffuse: SV_TARGET1;
+    float4 phong_specular: SV_TARGET2;
 };
 
 Texture2D position;
@@ -74,7 +76,7 @@ Texture2D normal;
 Texture2D diffuse;
 Texture2D ambient;
 Texture2D specular;
-Texture2D lighting;
+Texture2D shininess;
 Texture2D depth;
 
 SamplerState samplerState_position
@@ -92,7 +94,7 @@ SamplerState samplerState_ambient
 SamplerState samplerState_specular
 {};
 
-SamplerState samplerState_lighting
+SamplerState samplerState_shininess
 {};
 
 SamplerState samplerState_depth
@@ -100,27 +102,31 @@ SamplerState samplerState_depth
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
+
     float3 fragPos = position.Sample(samplerState_position, v.fUv).xyz;
     float3 fragNorm = normal.Sample(samplerState_normal, v.fUv).xyz;
     float4 fragDiffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     float4 fragSpecular = specular.Sample(samplerState_specular, v.fUv);
-    float fragShininess = lighting.Sample(samplerState_lighting, v.fUv).r;
+    float fragShininess = shininess.Sample(samplerState_shininess, v.fUv).r;
+
     float fragDepth = depth.Sample(samplerState_depth, v.fUv).r;
-    float influence = lighting.Sample(samplerState_lighting, v.fUv).g;
-    if (influence == 0)
-        ret.FragColor = fragDiffuse;
-    else
-        ret.FragColor = mana_calculate_light(fragPos,
+
+    LightComponents comp = mana_calculate_light(fragPos,
                                                 fragNorm,
                                                 fragDiffuse,
                                                 fragSpecular,
                                                 fragShininess);
+
+    ret.phong_ambient = float4(comp.ambient, 1);
+    ret.phong_diffuse = float4(comp.diffuse, 1);
+    ret.phong_specular = float4(comp.specular, 1);
+
     return ret;
 }
 )###";
 
 namespace engine {
-    LightingPass::LightingPass(RenderDevice &device)
+    PhongShadePass::PhongShadePass(RenderDevice &device)
             : renderDevice(device) {
         auto &allocator = device.getAllocator();
 
@@ -130,8 +136,13 @@ namespace engine {
                                                Renderer3D::getShaderIncludeCallback());
     }
 
-    void LightingPass::render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) {
-        //Render screen quad, calculate lighting, store result in screen buffer overwriting existing values.
+    void PhongShadePass::prepareBuffer(GeometryBuffer &gBuffer) {
+        gBuffer.addBuffer("phong_ambient", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("phong_diffuse", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("phong_specular", TextureBuffer::ColorFormat::RGBA);
+    }
+
+    void PhongShadePass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
         int dirCount = 0;
         int pointCount = 0;
         int spotCount = 0;
@@ -193,16 +204,16 @@ namespace engine {
         command.shader->setTexture("diffuse", 2);
         command.shader->setTexture("ambient", 3);
         command.shader->setTexture("specular", 4);
-        command.shader->setTexture("lighting", 5);
+        command.shader->setTexture("shininess", 5);
         command.shader->setTexture("depth", 6);
 
-        command.textures.emplace_back(&gBuffer.getPosition());
-        command.textures.emplace_back(&gBuffer.getNormal());
-        command.textures.emplace_back(&gBuffer.getDiffuse());
-        command.textures.emplace_back(&gBuffer.getAmbient());
-        command.textures.emplace_back(&gBuffer.getSpecular());
-        command.textures.emplace_back(&gBuffer.getLighting());
-        command.textures.emplace_back(&gBuffer.getDepthStencil());
+        command.textures.emplace_back(&gBuffer.getBuffer("position"));
+        command.textures.emplace_back(&gBuffer.getBuffer("normal"));
+        command.textures.emplace_back(&gBuffer.getBuffer("diffuse"));
+        command.textures.emplace_back(&gBuffer.getBuffer("ambient"));
+        command.textures.emplace_back(&gBuffer.getBuffer("specular"));
+        command.textures.emplace_back(&gBuffer.getBuffer("shininess"));
+        command.textures.emplace_back(&gBuffer.getBuffer("depth"));
 
         command.properties.enableDepthTest = false;
         command.properties.enableStencilTest = false;
@@ -211,7 +222,11 @@ namespace engine {
 
         auto &ren = renderDevice.getRenderer();
 
-        ren.renderBegin(screen, RenderOptions({}, screen.getSize(), true, {255, 0, 0, 255}));
+        gBuffer.attachColor({"phong_ambient",
+                             "phong_diffuse",
+                             "phong_specular"});
+
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getSize()));
         ren.addCommand(command);
         ren.renderFinish();
     }

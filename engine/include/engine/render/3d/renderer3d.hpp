@@ -29,8 +29,6 @@
 
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
-#include "engine/render/3d/forwardpipeline.hpp"
-#include "engine/render/3d/deferredpipeline.hpp"
 
 namespace engine {
     class Renderer3D {
@@ -47,11 +45,12 @@ namespace engine {
 
         void render(RenderTarget &target, RenderScene &scene);
 
+        GeometryBuffer &getGeometryBuffer();
+
     private:
         RenderDevice *device{};
-
-        DeferredPipeline deferredPipeline;
-        ForwardPipeline forwardPipeline;
+        std::vector<RenderPass *> passes;
+        GeometryBuffer geometryBuffer;
     };
 }
 

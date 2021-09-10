@@ -17,25 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_ASSETPATH_HPP
-#define MANA_ASSETPATH_HPP
+#ifndef MANA_FORWARDPASS_HPP
+#define MANA_FORWARDPASS_HPP
 
-#include <string>
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    struct AssetPath {
-        std::string bundle;
-        std::string asset;
+    class ForwardPass : public RenderPass {
+    public:
+        explicit ForwardPass(RenderDevice &device);
 
-        bool empty() const { return bundle.empty() && asset.empty(); }
+        ~ForwardPass() override;
 
-        bool operator<(const AssetPath &other) const {
-            return bundle < other.bundle && asset < other.asset;
-        }
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
 
-        bool operator==(const AssetPath &other) const {
-            return bundle == other.bundle && asset == other.asset;
-        }
+        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+
+    private:
+        RenderDevice &device;
     };
 }
-#endif //MANA_ASSETPATH_HPP
+
+#endif //MANA_FORWARDPASS_HPP

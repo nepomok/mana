@@ -34,7 +34,20 @@ namespace engine {
     public:
         virtual ~RenderPass() = default;
 
-        virtual void render(RenderTarget &screen, RenderScene &scene, GeometryBuffer &gBuffer) = 0;
+        /**
+         * Create the textures required for this render pass in the geometry buffer.
+         */
+        virtual void prepareBuffer(GeometryBuffer &gBuffer) {};
+
+        /**
+         * Run the pass and store the results in the geometry buffer.
+         *
+         * @param gBuffer
+         * @param scene
+         */
+        virtual void render(GeometryBuffer &gBuffer, RenderScene &scene) {};
+
+        virtual void presentBuffer(RenderTarget &screen, GeometryBuffer &buffer) {};
     };
 }
 

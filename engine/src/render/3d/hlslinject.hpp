@@ -26,7 +26,7 @@
  * The hlsl source packaged with the binary which is injected when SHADER_INCLUDE is found in a user shader,
  * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
  */
- const char *SHADER_MANA = R"###(
+const char *SHADER_MANA = R"###(
 float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
@@ -79,9 +79,17 @@ MANA_T_LIGHT_SPOT MANA_LIGHTS_SPOT[MANA_MAX_LIGHTS];
 
 int MANA_LIGHT_COUNT_SPOT;
 
-float4 mana_calculate_light_directional(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+struct LightComponents
 {
-    float4 ret;
+    float3 ambient;
+    float3 diffuse;
+    float3 specular;
+};
+
+LightComponents mana_calculate_light_directional(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+{
+    LightComponents ret;
+
     for (int i = 0; i < MANA_LIGHT_COUNT_DIRECTIONAL; i++)
     {
         float3 ambient = MANA_LIGHTS_DIRECTIONAL[i].ambient * float3(diffuseColor.xyz);
@@ -97,15 +105,18 @@ float4 mana_calculate_light_directional(float3 fPos, float3 fNorm, float4 diffus
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
         float3 specular = MANA_LIGHTS_DIRECTIONAL[i].specular * float3((spec * specularColor).xyz);
 
-        ret += float4(ambient + diffuse + specular, 1);
+        ret.ambient += ambient;
+        ret.diffuse += diffuse;
+        ret.specular += specular;
     }
 
     return ret;
 }
 
-float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float shininess)
+LightComponents mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float shininess)
 {
-    float4 ret;
+    LightComponents ret;
+
     for (int i = 0; i < MANA_LIGHT_COUNT_POINT; i++)
     {
         float distance    = length(MANA_LIGHTS_POINT[i].position - fPos);
@@ -123,19 +134,23 @@ float4 mana_calculate_light_point(float3 fPos, float3 fNorm, float4 diffuseColor
         float3 reflectDir = reflect(-lightDir, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
         float3 specular = MANA_LIGHTS_POINT[i].specular * float3((spec * specularColor).xyz);
+
         ambient  *= attenuation;
         diffuse  *= attenuation;
         specular *= attenuation;
 
-        ret += float4(ambient + diffuse + specular, 1);
+        ret.ambient += ambient;
+        ret.diffuse += diffuse;
+        ret.specular += specular;
     }
 
     return ret;
 }
 
-float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
+LightComponents mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor, float4 specularColor, float roughness)
 {
-    float4 ret;
+    LightComponents ret;
+
     for (int i = 0; i < MANA_LIGHT_COUNT_SPOT; i++)
     {
         float3 lightDir = normalize(MANA_LIGHTS_SPOT[i].position - fPos);
@@ -154,6 +169,7 @@ float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor,
         float theta = dot(lightDir, normalize(-MANA_LIGHTS_SPOT[i].direction));
         float epsilon = (MANA_LIGHTS_SPOT[i].cutOff - MANA_LIGHTS_SPOT[i].outerCutOff);
         float intensity = clamp((theta - MANA_LIGHTS_SPOT[i].outerCutOff) / epsilon, 0.0, 1.0);
+
         diffuse  *= intensity;
         specular *= intensity;
 
@@ -163,17 +179,25 @@ float4 mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diffuseColor,
         diffuse   *= attenuation;
         specular *= attenuation;
 
-        float3 result = ambient + diffuse + specular;
-        ret += float4(result, 1);
+        ret.ambient += ambient;
+        ret.diffuse += diffuse;
+        ret.specular += specular;
     }
+
     return ret;
 }
 
-float4 mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse, float4 fSpecular, float roughness)
+LightComponents mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse, float4 fSpecular, float roughness)
 {
-    return mana_calculate_light_directional(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + mana_calculate_light_point(fPos, fNorm, fDiffuse, fSpecular, roughness)
-            + mana_calculate_light_spot(fPos, fNorm, fDiffuse, fSpecular, roughness);
+    LightComponents dirLight = mana_calculate_light_directional(fPos, fNorm, fDiffuse, fSpecular, roughness);
+    LightComponents pointLight = mana_calculate_light_point(fPos, fNorm, fDiffuse, fSpecular, roughness);
+    LightComponents spotLight = mana_calculate_light_spot(fPos, fNorm, fDiffuse, fSpecular, roughness);
+
+    LightComponents ret;
+    ret.ambient = dirLight.ambient + pointLight.ambient + spotLight.ambient;
+    ret.diffuse = dirLight.diffuse + pointLight.diffuse + spotLight.diffuse;
+    ret.specular = dirLight.specular + pointLight.specular + spotLight.specular;
+    return ret;
 }
 )###";
 

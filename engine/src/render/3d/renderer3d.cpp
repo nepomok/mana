@@ -48,8 +48,12 @@ namespace engine {
 
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes)
             : device(&device),
-              forwardPipeline(device),
-              deferredPipeline(device, std::move(passes)) {}
+              passes(std::move(passes)),
+              geometryBuffer(device.getAllocator()) {
+        for (auto &pass : this->passes) {
+            pass->prepareBuffer(geometryBuffer);
+        }
+    }
 
     Renderer3D::~Renderer3D() = default;
 
@@ -58,7 +62,18 @@ namespace engine {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
-        deferredPipeline.render(target, scene);
-        forwardPipeline.render(target, scene);
+        geometryBuffer.setSize(target.getSize());
+
+        for (auto *pass : passes) {
+            pass->render(geometryBuffer, scene);
+        }
+
+        for (auto *pass : passes) {
+            pass->presentBuffer(target, geometryBuffer);
+        }
+    }
+
+    GeometryBuffer &Renderer3D::getGeometryBuffer() {
+        return geometryBuffer;
     }
 }

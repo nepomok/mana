@@ -82,9 +82,15 @@ namespace engine::runtime {
         std::map<std::string, std::shared_ptr<Task>> loadingBundles;
         std::map<std::string, AssetBundle> bundles;
 
-        std::map<AssetPath, std::shared_ptr<MeshBuffer>> meshes;
-        std::map<AssetPath, std::shared_ptr<TextureBuffer>> textures;
-        std::map<std::array<AssetPath, 6>, std::shared_ptr<TextureBuffer>> cubeMaps;
+        uint idCounter;
+        std::set<uint> idBin;
+
+        std::map<uint, AssetPath> paths;
+        std::map<uint, std::shared_ptr<MeshBuffer>> meshes;
+        std::map<uint, std::shared_ptr<TextureBuffer>> textures;
+
+        std::map<uint, std::array<AssetPath, 6>> cubeMapPaths;
+        std::map<uint, std::shared_ptr<TextureBuffer>> cubeMaps;
     };
 }
 

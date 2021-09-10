@@ -24,6 +24,8 @@
 
 #include "engine/render/texturebuffer.hpp"
 
+#include <memory>
+
 namespace engine {
     class GeometryBuffer {
     public:
@@ -33,76 +35,42 @@ namespace engine {
 
         ~GeometryBuffer();
 
+        /**
+         * Set the geometry buffer size, this reallocates the render target and buffers.
+         *
+         * @param s
+         */
         void setSize(const Vec2i &s);
 
         Vec2i getSize();
 
         /**
-        * The geometry buffer textures are bound to the following targets:
-        *
-        * position     :   SV_TARGET0
-        * normal       :   SV_TARGET1
-        * diffuse      :   SV_TARGET2
-        * ambient      :   SV_TARGET3
-        * specular     :   SV_TARGET4
-        * lighting     :   SV_TARGET5
-        * id           :   SV_TARGET6
-        *
-        * Contained textures and render target are reallocated whenever the size changes.
-        */
+         *
+         * @return
+         */
         RenderTarget &getRenderTarget();
 
-        /**
-         * 3 * 32 bit float
-         * @return
-         */
-        TextureBuffer &getPosition();
+        void addBuffer(const std::string &name, TextureBuffer::ColorFormat format);
+
+        TextureBuffer &getBuffer(const std::string &name);
 
         /**
-         * 3 * 32 bit float
-         * @return
+         * Attach the color buffers previously added to the render target.
+         * The attachment point is SV_TARGET_INDEX_ where _INDEX_ is the position of the attachment name in the passed vector
+         *
+         * @param attachments
          */
-        TextureBuffer &getNormal();
+        void attachColor(const std::vector<std::string> &attachments);
+
+        void attachDepthStencil(const std::string &name);
+
+        void detachDepthStencil();
 
         /**
-         * 3 * 32 bit float
+         * A mesh buffer of a plane which fills viewport without a transformation.
+         *
          * @return
          */
-        TextureBuffer &getDiffuse();
-
-        /**
-         * 3 * 32 bit float
-         * @return
-         */
-        TextureBuffer &getAmbient();
-
-        /**
-         * 3 * 32 bit float
-         * @return
-         */
-        TextureBuffer &getSpecular();
-
-        /**
-         * 2 * 32 bit float
-         *  [0] = shininess
-         *  [1] = if this value is 0 the pixel color is diffuse color otherwise it is the phong shaded color
-         * @return
-         */
-        TextureBuffer &getLighting();
-
-        /**
-         * 24 bit depth + 8 bit stencil
-         * @return
-         */
-        TextureBuffer &getDepthStencil();
-
-        /**
-         * 1 * 32 bit unsigned integer
-         *  [0] = id of the command that has drawn the pixel
-         * @return
-         */
-        TextureBuffer &getId();
-
         MeshBuffer &getScreenQuad();
 
     private:
@@ -111,14 +79,11 @@ namespace engine {
 
         Vec2i size;
 
-        TextureBuffer *position{};
-        TextureBuffer *normal{};
-        TextureBuffer *diffuse{};
-        TextureBuffer *ambient{};
-        TextureBuffer *specular{};
-        TextureBuffer *lighting{};
-        TextureBuffer *depthStencil{};
-        TextureBuffer *id{};
+        std::map<std::string, TextureBuffer::ColorFormat> formats;
+        std::map<std::string, std::unique_ptr<TextureBuffer>> buffers;
+
+        std::vector<std::string> currentColor;
+        std::string currentDepthStencil;
 
         MeshBuffer *screenQuad{};
     };

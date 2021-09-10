@@ -24,9 +24,10 @@
 
 #include "runtime/ecs/components.hpp"
 
-#include "engine/render/3d/forwardpipeline.hpp"
 #include "engine/render/3d/passes/geometrypass.hpp"
-#include "engine/render/3d/passes/lightingpass.hpp"
+#include "engine/render/3d/passes/phongshadepass.hpp"
+#include "engine/render/3d/passes/compositepass.hpp"
+#include "engine/render/3d/passes/forwardpass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 
@@ -34,7 +35,10 @@ namespace engine::runtime {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),
               device(device),
-              ren(device, {new GeometryPass(device), new LightingPass(device)}),
+              ren(device, {new ForwardPass(device),
+                           new GeometryPass(device),
+                           new PhongShadePass(device),
+                           new CompositePass(device)}),
               archive(archive) {
     }
 
@@ -192,7 +196,7 @@ namespace engine::runtime {
         setActiveBundles(activeBundles);
 
         //Delete unused texture buffers
-        std::set<AssetPath> unused;
+      /*  std::set<AssetPath> unused;
         for (auto &pair : textures) {
             if (activeTextures.find(pair.first) == activeTextures.end())
                 unused.insert(pair.first);
@@ -221,7 +225,7 @@ namespace engine::runtime {
         for (auto &s : unusedCubeMaps) {
             cubeMaps.erase(s); //Deallocate cube map texture buffer
         }
-        unusedCubeMaps.clear();
+        unusedCubeMaps.clear();*/
 
         //Get Camera
         for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
@@ -262,22 +266,53 @@ namespace engine::runtime {
     }
 
     TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {
-        if (textures.find(path) == textures.end()) {
+        bool found = false;
+        uint id;
+        for (auto &p : paths) {
+            if (p.second == path) {
+                id = p.first;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
             auto &texture = getBundle(path.bundle).getTexture(path.asset);
             auto &image = getBundle(texture.image.bundle).getImage(texture.image.asset);
 
-            textures[path] = std::shared_ptr<TextureBuffer>(
+            if (!idBin.empty()) {
+                id = *idBin.begin();
+                idBin.erase(0);
+            } else {
+                if (idCounter == std::numeric_limits<uint>::max())
+                    throw std::runtime_error("Overflow");
+                id = idCounter++;
+            }
+
+            textures[id] = std::shared_ptr<TextureBuffer>(
                     device.getAllocator().createTextureBuffer(texture.attributes)
             );
 
-            textures[path]->upload(image);
+            textures[id]->upload(image);
+
+            paths[id] = path;
         }
 
-        return *textures.find(path)->second;
+        return *textures.at(id);
     }
 
     TextureBuffer &RenderSystem::getCubemap(const std::array<AssetPath, 6> &paths) {
-        if (cubeMaps.find(paths) == cubeMaps.end()) {
+        bool found = false;
+        uint id;
+        for (auto &p : cubeMapPaths) {
+            if (p.second == paths) {
+                id = p.first;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
             TextureBuffer *buffer = device.getAllocator().createTextureBuffer({});
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
                 auto path = paths.at(i);
@@ -289,13 +324,34 @@ namespace engine::runtime {
                     buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.at(path.asset));
                 }
             }
-            cubeMaps[paths] = std::shared_ptr<TextureBuffer>(buffer);
+
+            if (!idBin.empty()) {
+                id = *idBin.begin();
+                idBin.erase(0);
+            } else {
+                if (idCounter == std::numeric_limits<uint>::max())
+                    throw std::runtime_error("Overflow");
+                id = idCounter++;
+            }
+            cubeMaps[id] = std::shared_ptr<TextureBuffer>(buffer);
+            cubeMapPaths[id] = paths;
         }
-        return *cubeMaps.find(paths)->second;
+
+        return *cubeMaps.find(id)->second;
     }
 
     MeshBuffer &RenderSystem::getMesh(const AssetPath &path) {
-        if (meshes.find(path) == meshes.end()) {
+        bool found = false;
+        uint id;
+        for (auto &p : paths) {
+            if (p.second == path) {
+                id = p.first;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
             auto bundle = getBundle(path.bundle);
 
             Mesh *mesh;
@@ -307,9 +363,11 @@ namespace engine::runtime {
                 mesh = &bundle.meshes.at(path.asset);
             }
 
-            meshes[path] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
+            meshes[id] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
+            paths[id] = path;
         }
-        return *meshes[path];
+
+        return *meshes[id];
     }
 
     const Material &RenderSystem::getMaterial(const AssetPath &path) {
