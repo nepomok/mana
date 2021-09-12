@@ -17,6 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define STB_IMAGE_IMPLEMENTATION
+#ifndef MANA_ASSETEXPORTER_HPP
+#define MANA_ASSETEXPORTER_HPP
 
-#include "stb_image.h"
+#include "engine/asset/image.hpp"
+#include "engine/asset/color.hpp"
+
+#include <ostream>
+
+namespace engine {
+    namespace AssetExporter {
+        void exportImage(std::ostream &stream, const Image<ColorRGBA> &image);
+    }
+}
+
+#endif //MANA_ASSETEXPORTER_HPP

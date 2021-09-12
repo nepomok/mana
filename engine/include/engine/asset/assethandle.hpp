@@ -17,6 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#define STB_IMAGE_IMPLEMENTATION
+#ifndef MANA_ASSETHANDLE_HPP
+#define MANA_ASSETHANDLE_HPP
 
-#include "stb_image.h"
+namespace engine {
+    template<typename T>
+    class AssetHandle {
+    public:
+        std::string bundle;
+        std::string name;
+    };
+}
+
+#endif //MANA_ASSETHANDLE_HPP

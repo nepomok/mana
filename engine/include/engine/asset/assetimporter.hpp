@@ -32,11 +32,7 @@
 #include "engine/async/threadpool.hpp"
 
 namespace engine {
-    /**
-     * The asset importer imports bundles.
-     */
-    class AssetImporter {
-    public:
+    namespace AssetImporter {
         /**
          * Import the bundle from the stream.
          *
@@ -47,7 +43,7 @@ namespace engine {
          * @param archive
          * @return
          */
-        static AssetBundle import(std::istream &stream, const std::string &hint = "", Archive *archive = nullptr);
+        AssetBundle import(std::istream &stream, const std::string &hint = "", Archive *archive = nullptr);
 
         /**
          * Import the bundle from the path.
@@ -61,8 +57,8 @@ namespace engine {
          * @param archive
          * @return
          */
-        static AssetBundle import(const std::string &path, Archive &archive);
-    };
+        AssetBundle import(const std::string &path, Archive &archive);
+    }
 }
 
 #endif //MANA_ASSETIMPORTER_HPP
