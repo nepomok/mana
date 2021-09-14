@@ -21,11 +21,12 @@
 
 #include "engine/math/rotation.hpp"
 
-#include "oglshaderprogram.hpp"
-#include "oglcheckerror.hpp"
-#include "shadercompiler.hpp"
+#include "engine/render/shadercompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
+
+#include "oglshaderprogram.hpp"
+#include "oglcheckerror.hpp"
 
 #define PREFIX_GLOBAL "Globals."
 
