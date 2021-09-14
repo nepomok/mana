@@ -32,31 +32,28 @@ namespace engine {
         };
 
         enum ShaderLanguage {
-            GLSL,
-            HLSL
+            HLSL,
+            GLSL
         };
 
-        std::string compileGlslToHlsl(const std::string &source,
-                                      ShaderStage stage,
-                                      const std::function<std::string(const char *)> &includeCallback = {},
-                                      const std::map<std::string, std::string> &macros = {});
+        std::vector<uint32_t> compileToSPIRV(const std::string &source,
+                                             const std::string &entryPoint,
+                                             ShaderStage stage,
+                                             ShaderLanguage language);
 
-        std::string compileHlslToGlsl(const std::string &source,
-                                      const std::string &entryPoint,
-                                      ShaderStage stage,
-                                      const std::function<std::string(const char *)> &includeCallback = {},
-                                      const std::map<std::string, std::string> &macros = {});
+        std::string decompileSPIRV(const std::vector<uint32_t> &source, ShaderLanguage targetLanguage);
 
-        std::vector<uint32_t> compileGlslToSPIRV(const std::string &source,
-                                                 ShaderStage stage,
-                                                 const std::function<std::string(const char *)> &include = {},
-                                                 const std::map<std::string, std::string> &macros = {});
+        std::string preprocess(const std::string &source,
+                               ShaderStage stage,
+                               ShaderLanguage language,
+                               const std::function<std::string(const char *)> &include = {},
+                               const std::map<std::string, std::string> &macros = {});
 
-        std::vector<uint32_t> compileHlslToSPIRV(const std::string &source,
-                                                 const std::string &entryPoint,
-                                                 ShaderStage stage,
-                                                 const std::function<std::string(const char *)> &include = {},
-                                                 const std::map<std::string, std::string> &macros = {});
+        std::string crossCompile(const std::string &source,
+                                 const std::string &entryPoint,
+                                 ShaderStage stage,
+                                 ShaderLanguage sourceLanguage,
+                                 ShaderLanguage targetLanguage);
     }
 }
 

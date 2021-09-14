@@ -34,21 +34,32 @@ namespace engine {
     namespace opengl {
         OGLShaderProgram::OGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
 
-        OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
+        OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader,
+                                           const std::string &fragmentShader,
                                            const std::map<std::string, std::string> &macros,
                                            const std::function<std::string(const char *)> &includeCallback)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            std::string vs = ShaderCompiler::compileHlslToGlsl(vertexShader,
-                                                               "main",
-                                                               ShaderCompiler::VERTEX,
-                                                               includeCallback,
-                                                               macros);
+            std::string vs = ShaderCompiler::preprocess(vertexShader,
+                                                        ShaderCompiler::VERTEX,
+                                                        ShaderCompiler::HLSL,
+                                                        includeCallback,
+                                                        macros);
+            vs = ShaderCompiler::crossCompile(vs,
+                                              "main",
+                                              ShaderCompiler::VERTEX,
+                                              ShaderCompiler::HLSL,
+                                              ShaderCompiler::GLSL);
 
-            std::string fs = ShaderCompiler::compileHlslToGlsl(fragmentShader,
-                                                               "main",
-                                                               ShaderCompiler::FRAGMENT,
-                                                               includeCallback,
-                                                               macros);
+            std::string fs = ShaderCompiler::preprocess(fragmentShader,
+                                                        ShaderCompiler::FRAGMENT,
+                                                        ShaderCompiler::HLSL,
+                                                        includeCallback,
+                                                        macros);
+            fs = ShaderCompiler::crossCompile(fs,
+                                              "main",
+                                              ShaderCompiler::FRAGMENT,
+                                              ShaderCompiler::HLSL,
+                                              ShaderCompiler::GLSL);
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();

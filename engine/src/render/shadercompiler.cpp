@@ -59,16 +59,96 @@ namespace engine {
         }
     };
 
-    std::vector<uint32_t> compileToSPIRV(const std::string &source,
-                                         const std::string &entryPoint,
-                                         ShaderCompiler::ShaderStage stage,
-                                         ShaderCompiler::ShaderLanguage sourceLanguage,
-                                         const std::function<std::string(const char *)> &includeCallback,
-                                         const std::map<std::string, std::string> &macros) {
+    std::vector<uint32_t> ShaderCompiler::compileToSPIRV(const std::string &source,
+                                                         const std::string &entryPoint,
+                                                         ShaderCompiler::ShaderStage stage,
+                                                         ShaderCompiler::ShaderLanguage language) {
         auto shaderStage = stage == ShaderCompiler::VERTEX
                            ? shaderc_vertex_shader
                            : shaderc_fragment_shader;
-        auto shaderLang = sourceLanguage == ShaderCompiler::GLSL
+        auto shaderLang = language == ShaderCompiler::GLSL
+                          ? shaderc_source_language_glsl
+                          : shaderc_source_language_hlsl;
+
+        shaderc::Compiler compiler;
+        shaderc::CompileOptions options;
+
+        options.SetSourceLanguage(shaderLang);
+        options.SetAutoBindUniforms(true);
+        options.SetAutoSampledTextures(true);
+        options.SetAutoMapLocations(true);
+        options.SetOptimizationLevel(shaderc_optimization_level_zero);
+
+        auto compileResult = compiler.CompileGlslToSpv(source,
+                                                       shaderStage,
+                                                       "",
+                                                       entryPoint.c_str(),
+                                                       options);
+
+        if (compileResult.GetCompilationStatus() != shaderc_compilation_status_success) {
+            throw std::runtime_error("Failed to compile glsl " + compileResult.GetErrorMessage());
+        }
+
+        return {compileResult.cbegin(), compileResult.cend()};
+    }
+
+    std::string ShaderCompiler::decompileSPIRV(const std::vector<uint32_t> &source,
+                                               ShaderCompiler::ShaderLanguage targetLanguage) {
+        switch (targetLanguage) {
+            case HLSL: {
+                spirv_cross::CompilerHLSL sCompiler(source);
+
+                spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
+
+                // Set the first uniform buffer name to "Globals" because shaderc
+                // merges all uniform variables declared in the source into a single uniform buffer in the SPIRV.
+                if (!resources.uniform_buffers.empty())
+                    sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
+
+                spirv_cross::CompilerGLSL::Options sOptions;
+                sCompiler.set_common_options(sOptions);
+
+                return sCompiler.compile();
+            }
+            case GLSL: {
+                spirv_cross::CompilerGLSL sCompiler(source);
+
+                spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
+
+                // Set the first uniform buffer name to "Globals" because shaderc
+                // merges all uniform variables declared in the source into a single uniform buffer in the SPIRV.
+                if (!resources.uniform_buffers.empty())
+                    sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
+
+                spirv_cross::CompilerGLSL::Options sOptions;
+                sOptions.version = 320;
+
+                //Dont generate glsl which uses the uniform buffer api.
+                sOptions.emit_uniform_buffer_as_plain_uniforms = true;
+
+                //Either setting separate shader objects or OpenGL ES causes spirv to generate the required
+                //layout specifiers. For portability all shaders will be required to be OpenGL ES supported.
+                sOptions.es = true;
+                sOptions.separate_shader_objects = false;
+
+                sCompiler.set_common_options(sOptions);
+
+                return sCompiler.compile();
+            }
+            default:
+                throw std::runtime_error("");
+        }
+    }
+
+    std::string ShaderCompiler::preprocess(const std::string &source,
+                                           ShaderCompiler::ShaderStage stage,
+                                           ShaderCompiler::ShaderLanguage language,
+                                           const std::function<std::string(const char *)> &include,
+                                           const std::map<std::string, std::string> &macros) {
+        auto shaderStage = stage == ShaderCompiler::VERTEX
+                           ? shaderc_vertex_shader
+                           : shaderc_fragment_shader;
+        auto shaderLang = language == ShaderCompiler::GLSL
                           ? shaderc_source_language_glsl
                           : shaderc_source_language_hlsl;
 
@@ -78,7 +158,7 @@ namespace engine {
         for (auto &p : macros)
             options.AddMacroDefinition(p.first, p.second);
 
-        options.SetIncluder(std::make_unique<IncludeHandler>(includeCallback));
+        options.SetIncluder(std::make_unique<IncludeHandler>(include));
         options.SetSourceLanguage(shaderLang);
         options.SetAutoBindUniforms(true);
         options.SetAutoSampledTextures(true);
@@ -94,100 +174,18 @@ namespace engine {
             throw std::runtime_error("Failed to preprocess glsl: " + preProcessResult.GetErrorMessage());
         }
 
-        std::string processed{preProcessResult.cbegin(), preProcessResult.cend()};
-
-        auto compileResult = compiler.CompileGlslToSpv(processed,
-                                                       shaderStage,
-                                                       "",
-                                                       entryPoint.c_str(),
-                                                       options);
-
-        if (compileResult.GetCompilationStatus() != shaderc_compilation_status_success) {
-            throw std::runtime_error("Failed to compile glsl " + compileResult.GetErrorMessage());
-        }
-
-        return {compileResult.cbegin(), compileResult.cend()};
+        return {preProcessResult.cbegin(), preProcessResult.cend()};
     }
 
-    std::string crossCompile(const std::string &source,
-                             const std::string &entryPoint,
-                             ShaderCompiler::ShaderLanguage sourceLanguage,
-                             ShaderCompiler::ShaderLanguage targetLanguage,
-                             ShaderCompiler::ShaderStage stage,
-                             const std::function<std::string(const char *)> &includeCallback,
-                             const std::map<std::string, std::string> &macros) {
-        auto spirv = compileToSPIRV(source, entryPoint, stage, sourceLanguage, includeCallback, macros);
-
-        if (targetLanguage == ShaderCompiler::GLSL) {
-            spirv_cross::CompilerGLSL sCompiler(spirv);
-
-            spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
-
-            // Set the first uniform buffer name to "Globals" because shaderc
-            // merges all uniform variables declared in the source into a single uniform buffer in the SPIRV.
-            if (!resources.uniform_buffers.empty())
-                sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
-
-            spirv_cross::CompilerGLSL::Options sOptions;
-            sOptions.version = 320;
-
-            //Dont generate glsl which uses the uniform buffer api.
-            sOptions.emit_uniform_buffer_as_plain_uniforms = true;
-
-            //Either setting separate shader objects or OpenGL ES causes spirv to generate the required
-            //layout specifiers. For portability all shaders will be required to be OpenGL ES supported.
-            sOptions.es = true;
-            sOptions.separate_shader_objects = false;
-
-            sCompiler.set_common_options(sOptions);
-
-            return sCompiler.compile();
-        } else if (targetLanguage == ShaderCompiler::HLSL) {
-            spirv_cross::CompilerHLSL sCompiler(spirv);
-
-            spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
-
-            // Set the first uniform buffer name to "Globals" because shaderc
-            // merges all uniform variables declared in the source into a single uniform buffer in the SPIRV.
-            if (!resources.uniform_buffers.empty())
-                sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
-
-            spirv_cross::CompilerGLSL::Options sOptions;
-            sCompiler.set_common_options(sOptions);
-
-            return sCompiler.compile();
-        } else {
-            throw std::runtime_error("");
-        }
-    }
-
-    std::string ShaderCompiler::compileGlslToHlsl(const std::string &source,
-                                                  ShaderCompiler::ShaderStage stage,
-                                                  const std::function<std::string(const char *)> &includeCallback,
-                                                  const std::map<std::string, std::string> &macros) {
-        return crossCompile(source, "", GLSL, HLSL, stage, includeCallback, macros);
-    }
-
-    std::string ShaderCompiler::compileHlslToGlsl(const std::string &source,
-                                                  const std::string &entryPoint,
-                                                  ShaderCompiler::ShaderStage stage,
-                                                  const std::function<std::string(const char *)> &includeCallback,
-                                                  const std::map<std::string, std::string> &macros) {
-        return crossCompile(source, entryPoint, HLSL, GLSL, stage, includeCallback, macros);
-    }
-
-    std::vector<uint32_t> ShaderCompiler::compileGlslToSPIRV(const std::string &source,
-                                                             ShaderCompiler::ShaderStage stage,
-                                                             const std::function<std::string(const char *)> &include,
-                                                             const std::map<std::string, std::string> &macros) {
-        return compileToSPIRV(source, "", stage, GLSL, include, macros);
-    }
-
-    std::vector<uint32_t> ShaderCompiler::compileHlslToSPIRV(const std::string &source,
-                                                             const std::string &entryPoint,
-                                                             ShaderCompiler::ShaderStage stage,
-                                                             const std::function<std::string(const char *)> &include,
-                                                             const std::map<std::string, std::string> &macros) {
-        return compileToSPIRV(source, entryPoint, stage, HLSL, include, macros);
+    std::string ShaderCompiler::crossCompile(const std::string &source,
+                                             const std::string &entryPoint,
+                                             ShaderCompiler::ShaderStage stage,
+                                             ShaderCompiler::ShaderLanguage sourceLanguage,
+                                             ShaderCompiler::ShaderLanguage targetLanguage) {
+        return decompileSPIRV(compileToSPIRV(source,
+                                             entryPoint,
+                                             stage,
+                                             sourceLanguage),
+                              targetLanguage);
     }
 }
