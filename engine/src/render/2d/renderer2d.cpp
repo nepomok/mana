@@ -172,8 +172,13 @@ namespace engine {
     Renderer2D::Renderer2D() = default;
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
-        defaultShader = device.getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {}, includeCallback);
-        defaultTextShader = device.getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
+        defaultShader = device.getAllocator().createShaderProgram(SHADER_VERT,
+                                                                  SHADER_FRAG,
+                                                                  {},
+                                                                  includeCallback);
+        defaultTextShader = device.getAllocator().createShaderProgram(SHADER_VERT,
+                                                                      SHADER_TEXT_FRAG,
+                                                                      {},
                                                                       includeCallback);
     }
 

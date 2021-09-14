@@ -12,10 +12,22 @@ endif ()
 
 file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 
-
 add_library(mana-engine SHARED ${Engine.File.SRC})
 
 target_include_directories(mana-engine PUBLIC ${Engine.Dir.INCLUDE})
 target_include_directories(mana-engine PRIVATE ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
 
-target_link_libraries(mana-engine glfw GL dl ShaderConductor dxcompiler assimp openal sndfile Threads::Threads freetype box2d)
+target_link_libraries(mana-engine
+        glfw
+        GL
+        dl
+        assimp
+        openal
+        sndfile
+        Threads::Threads
+        freetype
+        box2d
+        shaderc_shared
+        spirv-cross-core
+        spirv-cross-glsl
+        spirv-cross-hlsl)

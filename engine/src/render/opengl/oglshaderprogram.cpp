@@ -18,15 +18,16 @@
  */
 
 #include <stdexcept>
-#include <ShaderConductor/ShaderConductor.hpp>
 
 #include "engine/math/rotation.hpp"
 
 #include "oglshaderprogram.hpp"
 #include "oglcheckerror.hpp"
-#include "hlslcrosscompiler.hpp"
+#include "shadercompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
+
+#define PREFIX_GLOBAL "Globals."
 
 namespace engine {
     namespace opengl {
@@ -36,12 +37,17 @@ namespace engine {
                                            const std::map<std::string, std::string> &macros,
                                            const std::function<std::string(const char *)> &includeCallback)
                 : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            HlslCrossCompiler compiler;
-            compiler.setMacros(macros);
-            compiler.setIncludeCallback(includeCallback);
+            std::string vs = ShaderCompiler::compileHlslToGlsl(vertexShader,
+                                                               "main",
+                                                               ShaderCompiler::VERTEX,
+                                                               includeCallback,
+                                                               macros);
 
-            std::string vs = compiler.compileVertexShader(vertexShader, "main");;
-            std::string fs = compiler.compileFragmentShader(fragmentShader, "main");;
+            std::string fs = ShaderCompiler::compileHlslToGlsl(fragmentShader,
+                                                               "main",
+                                                               ShaderCompiler::FRAGMENT,
+                                                               includeCallback,
+                                                               macros);
 
             const char *vertexSource = vs.c_str();
             const char *fragmentSource = fs.c_str();
@@ -104,13 +110,8 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setTexture(const std::string &name, int slot) {
-            // ShaderConductor(SPIRV) merges hlsl texture objects names
-            // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
-            // Therefore the user is required to define and use a separate SampleState structure for every texture object.
-            // This SampleState structure should have the name sampleState_TEXTURENAME.
-            std::string globName = "SPIRV_Cross_Combined" + name + "samplerState_" + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, name.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
@@ -121,7 +122,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setBool(const std::string &name, bool value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -134,7 +135,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setInt(const std::string &name, int value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -147,7 +148,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setFloat(const std::string &name, float value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -160,7 +161,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -173,7 +174,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -186,7 +187,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -199,7 +200,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -212,7 +213,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -225,7 +226,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -238,7 +239,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -251,7 +252,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -264,7 +265,7 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
@@ -277,17 +278,17 @@ namespace engine {
         }
 
         bool OGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             throw std::runtime_error("Not Implemented");
         }
 
         bool OGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             throw std::runtime_error("Not Implemented");
         }
 
         bool OGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
-            std::string globName = "_Globals." + name;
+            std::string globName = PREFIX_GLOBAL + name;
             activate();
             GLuint i = glGetUniformLocation(programID, globName.c_str());
             bool ret = false;
