@@ -128,6 +128,8 @@ namespace engine {
         virtual void setWindowAutoMinimize(bool autoMinimize) = 0;
 
         virtual void setWindowFocusOnShow(bool focusOnShow) = 0;
+
+        virtual void setSwapInterval(int interval) = 0;
     };
 }
 

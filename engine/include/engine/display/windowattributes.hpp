@@ -51,6 +51,8 @@ namespace engine {
         bool sRGBCapable = false;
 
         bool doubleBuffer = true;
+
+        int swapInterval = 0;
     };
 }
 

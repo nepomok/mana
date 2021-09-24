@@ -122,6 +122,8 @@ namespace engine {
 
             void setWindowFocusOnShow(bool focusOnShow) override;
 
+            void setSwapInterval(int interval) override;
+
             void glfwWindowCloseCallback();
 
             void glfwWindowMoveCallback(Vec2i pos);

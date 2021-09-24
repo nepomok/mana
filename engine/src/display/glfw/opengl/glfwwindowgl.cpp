@@ -174,6 +174,8 @@ namespace engine {
                 throw std::runtime_error("Failed to initialize glad");
             }
 
+            glfwSwapInterval(attributes.swapInterval);
+
             renderDevice = new opengl::OGLRenderDevice();
             renderTarget = new GLFWRenderTargetGL(wndH);
 
@@ -451,6 +453,11 @@ namespace engine {
 
         void GLFWWindowGL::setWindowFocusOnShow(bool focusOnShow) {
             glfwSetWindowAttrib(wndH, GLFW_FOCUS_ON_SHOW, focusOnShow);
+        }
+
+        void GLFWWindowGL::setSwapInterval(int interval) {
+            makeCurrent();
+            glfwSwapInterval(interval);
         }
     }
 }
