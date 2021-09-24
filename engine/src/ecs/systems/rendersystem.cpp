@@ -350,6 +350,15 @@ namespace engine {
                 mesh = &bundle.meshes.at(path.asset);
             }
 
+            if (!idBin.empty()) {
+                id = *idBin.begin();
+                idBin.erase(idBin.begin());
+            } else if (idCounter == std::numeric_limits<uint>::max()) {
+                throw std::runtime_error("Cannot allocate mesh, id overflow");
+            } else {
+                id = idCounter++;
+            }
+
             meshes[id] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
             paths[id] = path;
         }
