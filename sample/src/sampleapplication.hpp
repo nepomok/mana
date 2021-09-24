@@ -25,6 +25,9 @@
 #include <filesystem>
 #include <memory>
 
+#include "systems/playerinputsystem.hpp"
+#include "components/playercontrollercomponent.hpp"
+
 using namespace engine;
 
 class SampleApplication : public Application {
@@ -66,6 +69,7 @@ protected:
         delete assemblyStream;
 
         ecs.addSystem(new MonoScriptingSystem(window->getInput(), domain, *manaAssembly, *archive));
+        ecs.addSystem(new PlayerInputSystem(window->getInput()));
         ecs.addSystem(new RenderSystem(window->getRenderTarget(), device, *archive));
 
         auto *sceneStream = archive->open("assets/scene.json");
@@ -75,18 +79,22 @@ protected:
         auto &entityManager = ecs.getEntityManager();
         auto &componentManager = entityManager.getComponentManager();
 
-        cameraEntity = componentManager.getPool<CameraComponent>().begin()->first;
+        cameraEntity = entityManager.getByName("MainCamera");
 
-        auto plane = componentManager.getPool<MeshRenderComponent>().begin();
+        componentManager.create<PlayerControllerComponent>(cameraEntity);
+
+        auto planeEntity = entityManager.getByName("Plane");
+        auto planeTransform = componentManager.lookup<TransformComponent>(planeEntity);
+        auto planeRender = componentManager.lookup<MeshRenderComponent>(planeEntity);
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 auto ent = entityManager.create();
                 auto &transform = componentManager.create<TransformComponent>(ent);
-                transform = componentManager.lookup<TransformComponent>(plane->first);
+                transform = planeTransform;
                 transform.transform.position += Vec3f(x * 20, 0, -(y * 20));
 
                 auto &render = componentManager.create<MeshRenderComponent>(ent);
-                render = plane->second;
+                render = planeRender;
             }
         }
 
