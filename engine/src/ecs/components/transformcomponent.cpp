@@ -20,10 +20,12 @@
 #include "engine/ecs/components/transformcomponent.hpp"
 
 namespace engine {
-    Transform TransformComponent::walkHierarchy(const TransformComponent &component, ComponentManager &manager) {
+    Transform TransformComponent::walkHierarchy(const TransformComponent &component, EntityManager &entityManager) {
         Transform ret = component.transform;
-        if (component.parent.id != Entity::INVALID_ID) {
-            ret += walkHierarchy(manager.lookup<TransformComponent>(component.parent), manager);
+        if (!component.parent.empty()) {
+            auto &c = entityManager.getComponentManager();
+            ret += walkHierarchy(c.lookup<TransformComponent>(entityManager.getByName(component.parent)),
+                                 entityManager);
         }
         return ret;
     }

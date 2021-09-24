@@ -26,7 +26,6 @@
 #include "engine/ecs/componentmanager.hpp"
 
 namespace engine {
-    //TODO: Entity name mapping
     class EntityManager {
     public:
         EntityManager() = default;
@@ -37,6 +36,25 @@ namespace engine {
             idStore = other.idStore;
             idCounter = other.idCounter;
             componentManager = other.componentManager;
+        }
+
+        /**
+         * Optional name mapping.
+         * Set the name of the given entity to the passed value.
+         * The entity can then be accessed by name by calling getByName().
+         *
+         * @param entity
+         * @param name
+         */
+        void setName(const Entity &entity, const std::string &name) {
+            if (entityNames.find(name) != entityNames.end())
+                throw std::runtime_error("Entity with name " + name + " already exists");
+            entityNames[name] = entity;
+            entityNamesReverse[entity] = name;
+        }
+
+        Entity getByName(const std::string &name) {
+            return entityNames.at(name);
         }
 
         Entity create() {
@@ -59,6 +77,8 @@ namespace engine {
             componentManager.destroy(entity);
             idStore.insert(entity.id);
             entities.erase(entity);
+            entityNames.erase(entityNamesReverse.at(entity));
+            entityNamesReverse.erase(entity);
         }
 
         void clear() {
@@ -66,6 +86,8 @@ namespace engine {
             idStore.clear();
             idCounter = 0;
             entities.clear();
+            entityNames.clear();
+            entityNamesReverse.clear();
         }
 
         const std::set<Entity> &getEntities() const {
@@ -84,6 +106,10 @@ namespace engine {
         std::set<int> idStore;
         int idCounter = 0;
         std::set<Entity> entities;
+
+        std::map<std::string, Entity> entityNames;
+        std::map<Entity, std::string> entityNamesReverse;
+
         ComponentManager componentManager;
     };
 }

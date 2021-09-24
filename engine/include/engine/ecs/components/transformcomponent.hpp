@@ -24,17 +24,17 @@
 
 #include <string>
 
-#include "engine/ecs/componentmanager.hpp"
+#include "engine/ecs/entitymanager.hpp"
 
 namespace engine {
     struct Scene;
 
     struct TransformComponent {
-        static Transform walkHierarchy(const TransformComponent &component, ComponentManager &componentManager);
+        static Transform walkHierarchy(const TransformComponent &component, EntityManager &entityManager);
 
         bool enabled = true;
         Transform transform;
-        Entity parent;
+        std::string parent; //The name of the parent transform entity
     };
 }
 

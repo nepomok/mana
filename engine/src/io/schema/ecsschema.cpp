@@ -128,15 +128,14 @@ namespace engine {
     TransformComponent &operator<<(TransformComponent &component, const Message &message) {
         component = TransformComponent();
         component.transform << message["transform"];
-        //TODO: Transform hierarchy serialization
-        //component.parent = message["parent"].get<std::string>();
+        component.parent = message["parent"].get<std::string>();
         return component;
     }
 
     Message &operator<<(Message &message, const TransformComponent &component) {
         message = std::map<std::string, Message>();
         message["transform"] << component.transform;
-        //message["parent"] = component.parent;
+        message["parent"] = component.parent;
         return message;
     }
 
@@ -275,6 +274,8 @@ namespace engine {
         auto entities = message.getMap().at("entities").getMap();
         for (auto &entity : entities) {
             auto ent = entityManager.create();
+
+            entityManager.setName(ent, entity.first);
 
             auto components = entity.second.getMap().at("components").getVector();
             for (auto &component : components) {

@@ -142,7 +142,7 @@ namespace engine {
                 continue;
 
             DeferredCommand command;
-            command.transform = TransformComponent::walkHierarchy(transform, componentManager);
+            command.transform = TransformComponent::walkHierarchy(transform, entityManager);
             command.meshBuffer = &getMesh(render.mesh);
 
             auto &material = getMaterial(render.material);
@@ -228,7 +228,7 @@ namespace engine {
             auto &comp = pair.second;
 
             scene3d.camera = comp.camera;
-            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, componentManager);
+            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, entityManager);
 
             break;
         }
