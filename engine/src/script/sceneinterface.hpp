@@ -22,7 +22,7 @@
 
 namespace engine {
     namespace SceneInterface {
-        class SceneInterfaceListener {
+        /*class SceneInterfaceListener {
         public:
             virtual void createNode(const char *name, const char *json) {}
 
@@ -46,7 +46,7 @@ namespace engine {
         void createComponent(const char *node, const char *json);
 
         void destroyComponent(const char *node, ComponentType type);
-        }
+        }*/
     }
 }
 

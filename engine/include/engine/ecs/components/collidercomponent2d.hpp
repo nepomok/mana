@@ -20,22 +20,12 @@
 #ifndef MANA_COLLIDERCOMPONENT2D_HPP
 #define MANA_COLLIDERCOMPONENT2D_HPP
 
-#include "engine/ecs/component.hpp"
+#include <vector>
 
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    struct ColliderComponent2D : public Component {
-        ColliderComponent2D() : Component(COLLIDER_2D) {}
-
-        Component *clone() override {
-            return new ColliderComponent2D(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(ColliderComponent2D);
-        }
-
+    struct ColliderComponent2D {
         std::vector<Vec2f> shape;
     };
 }

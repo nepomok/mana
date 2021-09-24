@@ -50,7 +50,9 @@ namespace engine {
 
     }
 
-    void RenderSystem::update(float deltaTime, Scene &scene) {
+    void RenderSystem::update(float deltaTime, EntityManager &entityManager) {
+        auto &componentManager = entityManager.getComponentManager();
+
         std::set<std::string> activeBundles;
 
         std::set<AssetPath> activeMeshes;
@@ -58,16 +60,14 @@ namespace engine {
         std::set<std::array<AssetPath, 6>> activeCubeMaps;
 
         //Get active asset bundles
-        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
-            auto &node = *nodePtr;
-            if (!node.enabled)
-                continue;
+        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
+            //TODO: Entity wide active flag
 
-            auto &transform = node.getComponent<TransformComponent>();
+            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             if (!transform.enabled)
                 continue;
 
-            auto &render = node.getComponent<MeshRenderComponent>();
+            auto &render = pair.second;
             if (!render.enabled)
                 continue;
 
@@ -76,8 +76,8 @@ namespace engine {
             activeMeshes.insert(render.mesh);
         }
 
-        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
-            auto &comp = node->getComponent<SkyboxComponent>();
+        for (auto &pair : componentManager.getPool<SkyboxComponent>()) {
+            auto &comp = pair.second;
 
             for (auto &path : comp.paths)
                 activeBundles.insert(path.bundle);
@@ -86,16 +86,12 @@ namespace engine {
         }
 
         //Get referenced asset bundles in material.
-        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
-            auto &node = *nodePtr;
-            if (!node.enabled)
-                continue;
-
-            auto &transform = node.getComponent<TransformComponent>();
+        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
+            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             if (!transform.enabled)
                 continue;
 
-            auto &render = node.getComponent<MeshRenderComponent>();
+            auto &render = pair.second;
             if (!render.enabled)
                 continue;
 
@@ -136,21 +132,17 @@ namespace engine {
         RenderScene scene3d;
 
         //Create render commands
-        for (auto &nodePtr : scene.findNodesWithComponent<MeshRenderComponent>()) {
-            auto &node = *nodePtr;
-            if (!node.enabled)
-                continue;
-
-            auto &transform = node.getComponent<TransformComponent>();
+        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
+            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             if (!transform.enabled)
                 continue;
 
-            auto &render = node.getComponent<MeshRenderComponent>();
+            auto &render = pair.second;
             if (!render.enabled)
                 continue;
 
             DeferredCommand command;
-            command.transform = TransformComponent::walkHierarchy(transform, scene);
+            command.transform = TransformComponent::walkHierarchy(transform, componentManager);
             command.meshBuffer = &getMesh(render.mesh);
 
             auto &material = getMaterial(render.material);
@@ -187,8 +179,8 @@ namespace engine {
         }
 
         //Get Skybox
-        for (auto &node : scene.findNodesWithComponent<SkyboxComponent>()) {
-            auto &comp = node->getComponent<SkyboxComponent>();
+        for (auto &pair : componentManager.getPool<SkyboxComponent>()) {
+            auto &comp = pair.second;
             scene3d.skybox = &getCubemap(comp.paths);
         }
 
@@ -196,61 +188,55 @@ namespace engine {
         setActiveBundles(activeBundles);
 
         //Delete unused texture buffers
-      /*  std::set<AssetPath> unused;
-        for (auto &pair : textures) {
-            if (activeTextures.find(pair.first) == activeTextures.end())
-                unused.insert(pair.first);
-        }
-        for (auto &s : unused) {
-            textures.erase(s); //Deallocate texture buffer
-        }
-        unused.clear();
+        /*  std::set<AssetPath> unused;
+          for (auto &pair : textures) {
+              if (activeTextures.find(pair.first) == activeTextures.end())
+                  unused.insert(pair.first);
+          }
+          for (auto &s : unused) {
+              textures.erase(s); //Deallocate texture buffer
+          }
+          unused.clear();
 
-        //Delete unused mesh buffers
-        for (auto &pair : meshes) {
-            if (activeMeshes.find(pair.first) == activeMeshes.end())
-                unused.insert(pair.first);
-        }
-        for (auto &s : unused) {
-            meshes.erase(s); //Deallocate mesh buffer
-        }
-        unused.clear();
+          //Delete unused mesh buffers
+          for (auto &pair : meshes) {
+              if (activeMeshes.find(pair.first) == activeMeshes.end())
+                  unused.insert(pair.first);
+          }
+          for (auto &s : unused) {
+              meshes.erase(s); //Deallocate mesh buffer
+          }
+          unused.clear();
 
-        //Delete unused cube map texture buffers
-        std::set<std::array<AssetPath, 6>> unusedCubeMaps;
-        for (auto &pair : cubeMaps) {
-            if (activeCubeMaps.find(pair.first) == activeCubeMaps.end())
-                unusedCubeMaps.insert(pair.first);
-        }
-        for (auto &s : unusedCubeMaps) {
-            cubeMaps.erase(s); //Deallocate cube map texture buffer
-        }
-        unusedCubeMaps.clear();*/
+          //Delete unused cube map texture buffers
+          std::set<std::array<AssetPath, 6>> unusedCubeMaps;
+          for (auto &pair : cubeMaps) {
+              if (activeCubeMaps.find(pair.first) == activeCubeMaps.end())
+                  unusedCubeMaps.insert(pair.first);
+          }
+          for (auto &s : unusedCubeMaps) {
+              cubeMaps.erase(s); //Deallocate cube map texture buffer
+          }
+          unusedCubeMaps.clear();*/
 
         //Get Camera
-        for (auto &node : scene.findNodesWithComponent<CameraComponent>()) {
-            if (!node->enabled)
-                continue;
-            auto &comp = node->getComponent<CameraComponent>();
-            if (!comp.enabled)
-                continue;
-            auto &tcomp = node->getComponent<TransformComponent>();
+        for (auto &pair : componentManager.getPool<CameraComponent>()) {
+            auto &tcomp = componentManager.lookup<TransformComponent>(pair.first);
             if (!tcomp.enabled)
                 continue;
 
+            auto &comp = pair.second;
+
             scene3d.camera = comp.camera;
-            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, scene);
+            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, componentManager);
 
             break;
         }
 
         //Get lights
-        for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
-            auto &node = *nodePointer;
-            if (!node.enabled)
-                continue;
+        for (auto &pair : componentManager.getPool<LightComponent>()) {
+            auto &lightComponent = pair.second;
 
-            auto &lightComponent = node.getComponent<LightComponent>();
             if (!lightComponent.enabled)
                 continue;
 

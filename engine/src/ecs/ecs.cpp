@@ -41,9 +41,13 @@ namespace engine {
         system->stop();
     }
 
-    void ECS::update(float deltaTime, Scene &scene) {
+    void ECS::update(float deltaTime) {
         for (auto *system : systems) {
-            system->update(deltaTime, scene);
+            system->update(deltaTime, entityManager);
         }
+    }
+
+    EntityManager &ECS::getEntityManager() {
+        return entityManager;
     }
 }

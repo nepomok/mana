@@ -22,22 +22,10 @@
 
 #include <string>
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/asset/assetpath.hpp"
 
 namespace engine {
-    struct SkyboxComponent : public Component {
-        SkyboxComponent() : Component(SKYBOX) {}
-
-        Component *clone() override {
-            return new SkyboxComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(SkyboxComponent);
-        }
-
+    struct SkyboxComponent {
         //Paths to skybox images, using paths here means immutable skybox images
         //Mutable images would be desirable for animated skybox
         std::array<AssetPath, 6> paths;

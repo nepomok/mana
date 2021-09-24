@@ -20,22 +20,12 @@
 #ifndef MANA_MESHRENDERCOMPONENT_HPP
 #define MANA_MESHRENDERCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/asset/image.hpp"
 #include "engine/asset/assetpath.hpp"
 
 namespace engine {
-    struct MeshRenderComponent : public Component {
-        MeshRenderComponent() : Component(MESH_RENDER) {}
-
-        Component *clone() override {
-            return new MeshRenderComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(MeshRenderComponent);
-        }
+    struct MeshRenderComponent {
+        bool enabled = true;
 
         bool castShadows;
         bool receiveShadows;

@@ -20,7 +20,7 @@
 #ifndef MANA_SYSTEM_HPP
 #define MANA_SYSTEM_HPP
 
-#include "engine/ecs/scene.hpp"
+#include "engine/ecs/entitymanager.hpp"
 
 namespace engine {
     /**
@@ -34,7 +34,7 @@ namespace engine {
 
         virtual void stop() {};
 
-        virtual void update(float deltaTime, Scene &scene) {};
+        virtual void update(float deltaTime, EntityManager &entityManager) {};
     };
 }
 #endif //MANA_SYSTEM_HPP

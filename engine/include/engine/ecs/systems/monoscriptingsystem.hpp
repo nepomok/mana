@@ -42,7 +42,7 @@ namespace engine {
 
         void stop() override;
 
-        void update(float deltaTime, Scene &scene) override;
+        void update(float deltaTime, EntityManager &entityManager) override;
 
     private:
         void onKeyDown(Key key) override;

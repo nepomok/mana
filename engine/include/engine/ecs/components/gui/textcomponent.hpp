@@ -20,10 +20,8 @@
 #ifndef MANA_TEXTCOMPONENT_HPP
 #define MANA_TEXTCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 namespace engine {
-    struct Text : public Component {
+    struct Text {
     };
 }
 

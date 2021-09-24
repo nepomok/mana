@@ -22,7 +22,7 @@
 #include "engine/ecs/components.hpp"
 
 namespace engine {
-    struct RigidBodyData : public Component::UserData {
+   /* struct RigidBodyData {
         World2D *world;
         RigidBody2D *body;
 
@@ -99,5 +99,5 @@ namespace engine {
             transform.transform.position = Vec3f(position.x, position.y, 0);
             transform.transform.rotation = Vec3f(0, 0, rbData.body->getRotation());
         }
-    }
+    }*/
 }

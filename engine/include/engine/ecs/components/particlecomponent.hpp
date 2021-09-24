@@ -20,17 +20,8 @@
 #ifndef MANA_PARTICLECOMPONENT_HPP
 #define MANA_PARTICLECOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 namespace engine {
-    struct ParticleComponent : public Component {
-        Component *clone() override {
-            return new ParticleComponent(*this);
-        }
-
-        const std::type_info& getTypeInfo() override {
-            return typeid(ParticleComponent);
-        }
+    struct ParticleComponent {
     };
 }
 

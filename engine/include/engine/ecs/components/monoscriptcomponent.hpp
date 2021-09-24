@@ -20,22 +20,10 @@
 #ifndef MANA_MONOSCRIPTCOMPONENT_HPP
 #define MANA_MONOSCRIPTCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/script/script.hpp"
 
 namespace engine {
-    struct MonoScriptComponent : public Component {
-        MonoScriptComponent() : Component(SCRIPT_MONO) {}
-
-        Component *clone() override {
-            return new MonoScriptComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(MonoScriptComponent);
-        }
-
+    struct MonoScriptComponent {
         std::string assembly;
         std::string nameSpace;
         std::string className;

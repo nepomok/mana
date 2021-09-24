@@ -81,7 +81,6 @@ namespace engine {
     protected:
         DisplayManager display;
         ECS ecs;
-        Scene scene;
 
         Archive *archive = nullptr;
         Window *window = nullptr;
@@ -92,7 +91,7 @@ namespace engine {
 
         virtual void update(float deltaTime) {
             window->update();
-            ecs.update(deltaTime, scene);
+            ecs.update(deltaTime);
             window->swapBuffers();
         }
     };

@@ -20,21 +20,11 @@
 #ifndef MANA_LIGHTCOMPONENT_HPP
 #define MANA_LIGHTCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/asset/light.hpp"
 
 namespace engine {
-    struct LightComponent : public Component {
-        LightComponent() : Component(LIGHT) {}
-
-        Component *clone() override {
-            return new LightComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(LightComponent);
-        }
+    struct LightComponent {
+        bool enabled = true;
 
         Light light;
     };

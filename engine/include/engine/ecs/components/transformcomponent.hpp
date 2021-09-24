@@ -20,30 +20,21 @@
 #ifndef MANA_TRANSFORMCOMPONENT_HPP
 #define MANA_TRANSFORMCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/math/transform.hpp"
 
 #include <string>
 
+#include "engine/ecs/componentmanager.hpp"
+
 namespace engine {
     struct Scene;
 
-    struct TransformComponent : public Component {
-        TransformComponent() : Component(TRANSFORM) {}
+    struct TransformComponent {
+        static Transform walkHierarchy(const TransformComponent &component, ComponentManager &componentManager);
 
-        static Transform walkHierarchy(const TransformComponent &component, const Scene &scene);
-
-        Component *clone() override {
-            return new TransformComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(TransformComponent);
-        }
-
+        bool enabled = true;
         Transform transform;
-        std::string parent;
+        Entity parent;
     };
 }
 

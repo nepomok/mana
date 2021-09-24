@@ -20,22 +20,10 @@
 #ifndef MANA_COLLIDERCOMPONENT3D_HPP
 #define MANA_COLLIDERCOMPONENT3D_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/math/vector3.hpp"
 
 namespace engine {
-    struct ColliderComponent3D : public Component {
-        ColliderComponent3D() : Component(COLLIDER_3D) {}
-
-        Component *clone() override {
-            return new ColliderComponent3D(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(ColliderComponent3D);
-        }
-
+    struct ColliderComponent3D {
         std::vector<Vec3f> shape;
     };
 }

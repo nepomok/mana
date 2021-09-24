@@ -19,13 +19,11 @@
 
 #include "engine/ecs/components/transformcomponent.hpp"
 
-#include "engine/ecs/scene.hpp"
-
 namespace engine {
-    Transform TransformComponent::walkHierarchy(const TransformComponent &component, const Scene &scene) {
+    Transform TransformComponent::walkHierarchy(const TransformComponent &component, ComponentManager &manager) {
         Transform ret = component.transform;
-        if (!component.parent.empty()) {
-            ret += walkHierarchy(scene.nodes.at(component.parent).getComponent<TransformComponent>(), scene);
+        if (component.parent.id != Entity::INVALID_ID) {
+            ret += walkHierarchy(manager.lookup<TransformComponent>(component.parent), manager);
         }
         return ret;
     }

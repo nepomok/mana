@@ -1,6 +1,6 @@
 {
   "name": "SampleScene",
-  "nodes": {
+  "entities": {
     "MainCamera": {
       "enabled": true,
       "components": [

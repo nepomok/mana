@@ -22,14 +22,10 @@
 
 #include "engine/io/message.hpp"
 
-#include "engine/ecs/component.hpp"
-#include "engine/ecs/scene.hpp"
+#include "engine/ecs/components.hpp"
+#include "engine/ecs/entitymanager.hpp"
 
 namespace engine {
-    ComponentType &operator<<(ComponentType &value, const Message &message);
-
-    Message &operator<<(Message &message, ComponentType type);
-
     CameraType &operator<<(CameraType &value, const Message &message);
 
     Message &operator<<(Message &message, CameraType type);
@@ -42,45 +38,37 @@ namespace engine {
 
     Message &operator<<(Message &message, const AssetPath& path);
 
-    CameraComponent *&operator<<(CameraComponent *&component, const Message &message);
+    CameraComponent &operator<<(CameraComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const CameraComponent *&component);
+    Message &operator<<(Message &message, const CameraComponent &component);
 
-    TransformComponent *&operator<<(TransformComponent *&component, const Message &message);
+    TransformComponent &operator<<(TransformComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const TransformComponent *&component);
+    Message &operator<<(Message &message, const TransformComponent &component);
 
-    MeshRenderComponent *&operator<<(MeshRenderComponent *&component, const Message &message);
+    MeshRenderComponent &operator<<(MeshRenderComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MeshRenderComponent *&component);
+    Message &operator<<(Message &message, const MeshRenderComponent &component);
 
-    SkyboxComponent *&operator<<(SkyboxComponent *&component, const Message &message);
+    SkyboxComponent &operator<<(SkyboxComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const SkyboxComponent *&component);
+    Message &operator<<(Message &message, const SkyboxComponent &component);
 
-    LightComponent *&operator<<(LightComponent *&component, const Message &message);
+    LightComponent &operator<<(LightComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const LightComponent *&component);
+    Message &operator<<(Message &message, const LightComponent &component);
 
-    MonoScriptComponent *&operator<<(MonoScriptComponent *&component, const Message &message);
+    MonoScriptComponent &operator<<(MonoScriptComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MonoScriptComponent *&component);
+    Message &operator<<(Message &message, const MonoScriptComponent &component);
 
-    MonoSyncComponent *&operator<<(MonoSyncComponent *&component, const Message &message);
+    MonoSyncComponent &operator<<(MonoSyncComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MonoSyncComponent *&component);
+    Message &operator<<(Message &message, const MonoSyncComponent &component);
 
-    Component *&operator<<(Component *&, const Message &message);
+    EntityManager& operator<<(EntityManager &manager, const Message &message);
 
-    Message &operator<<(Message &message, const Component *&component);
-
-    Node &operator<<(Node &node, const Message &message);
-
-    Message &operator<<(Message &message, const Node &node);
-
-    Scene &operator<<(Scene &scene, const Message &message);
-
-    Message &operator<<(Message &message, const Scene &scene);
+    Message &operator<<(Message &message, const EntityManager &manager);
 }
 
 #endif //MANA_ECSSCHEMA_HPP

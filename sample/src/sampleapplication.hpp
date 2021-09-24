@@ -69,17 +69,24 @@ protected:
         ecs.addSystem(new RenderSystem(window->getRenderTarget(), device, *archive));
 
         auto *sceneStream = archive->open("assets/scene.json");
-        scene << JsonProtocol().deserialize(*sceneStream);
+        ecs.getEntityManager() << JsonProtocol().deserialize(*sceneStream);
         delete sceneStream;
 
-        cameraNode = &scene.nodes.at("MainCamera");
+        auto &entityManager = ecs.getEntityManager();
+        auto &componentManager = entityManager.getComponentManager();
 
-        auto &plane = scene.nodes.at("Plane");
+        cameraEntity = componentManager.getPool<CameraComponent>().begin()->first;
+
+        auto plane = componentManager.getPool<MeshRenderComponent>().begin();
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
-                std::string name = "Plane_Copy" + std::to_string(x) + "_" + std::to_string(y);
-                scene.nodes[name] = plane;
-                scene.nodes[name].getComponent<TransformComponent>().transform.position += Vec3f(x * 20, 0, y * 20);
+                auto ent = entityManager.create();
+                auto &transform = componentManager.create<TransformComponent>(ent);
+                transform = componentManager.lookup<TransformComponent>(plane->first);
+                transform.transform.position += Vec3f(x * 20, 0, -(y * 20));
+
+                auto &render = componentManager.create<MeshRenderComponent>(ent);
+                render = plane->second;
             }
         }
 
@@ -87,7 +94,7 @@ protected:
     }
 
     void stop() override {
-        scene = {};
+        ecs.getEntityManager().clear();
 
         delete manaAssembly;
         delete jsonAssembly;
@@ -108,7 +115,12 @@ protected:
         wnd.update();
 
         auto wndSize = wnd.getFramebufferSize();
-        cameraNode->getComponent<CameraComponent>().camera.aspectRatio = (float) wndSize.x / (float) wndSize.y;
+
+        auto &entityManager = ecs.getEntityManager();
+        auto &componentManager = entityManager.getComponentManager();
+
+        componentManager.lookup<CameraComponent>(cameraEntity).camera.aspectRatio =
+                (float) wndSize.x / (float) wndSize.y;
 
         if (deltaTime > 0) {
             float fps = 1.0f / deltaTime;
@@ -116,7 +128,7 @@ protected:
             fpsAverage = alpha * fpsAverage + (1.0 - alpha) * fps;
         }
 
-        ecs.update(deltaTime, scene);
+        ecs.update(deltaTime);
 
         ren2d.renderBegin(wnd.getRenderTarget(), false);
         ren2d.draw(Rectf({150, 300}, {100, 100}), *texture);
@@ -140,7 +152,7 @@ private:
     MonoCppAssembly *manaAssembly = nullptr;
     MonoCppAssembly *jsonAssembly = nullptr;
 
-    Node *cameraNode = nullptr;
+    Entity cameraEntity;
     TextureBuffer *texture = nullptr;
     double fpsAverage = 1;
 

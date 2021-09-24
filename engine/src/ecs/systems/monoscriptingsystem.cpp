@@ -30,7 +30,7 @@
 #include "script/sceneinterface.hpp"
 
 namespace engine {
-    struct RuntimeScript : Component::UserData {
+    /*struct RuntimeScript : Component::UserData {
         bool enabled = false;
         std::unique_ptr<Script> script = nullptr; //TODO: OnDisable is not called when the component is destroyed.
     };
@@ -81,7 +81,7 @@ namespace engine {
             scene.nodes.at(node.first).getComponent<TransformComponent>().transform = comp.transform;
             scene.nodes.at(node.first).getComponent<TransformComponent>().parent = comp.parent;
         }
-    }
+    }*/
 
     MonoScriptingSystem::MonoScriptingSystem(Input &input,
                                              MonoCppDomain &domain,
@@ -101,8 +101,8 @@ namespace engine {
         input.unregisterListener(*this);
     }
 
-    void MonoScriptingSystem::update(float deltaTime, Scene &scene) {
-        manaAssembly.setStaticField("Mana", "Time", "deltaTime", &deltaTime);
+    void MonoScriptingSystem::update(float deltaTime, EntityManager &manager) {
+        /*manaAssembly.setStaticField("Mana", "Time", "deltaTime", &deltaTime);
 
         uploadScene(domain, msCorLib, manaAssembly, scene);
 
@@ -158,7 +158,7 @@ namespace engine {
         }
 
         downloadScene(domain, msCorLib, manaAssembly, scene);
-        manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd");
+        manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd");*/
     }
 
     void MonoScriptingSystem::onKeyDown(Key key) {

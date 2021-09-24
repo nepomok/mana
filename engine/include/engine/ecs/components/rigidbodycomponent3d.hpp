@@ -20,22 +20,10 @@
 #ifndef MANA_RIGIDBODYCOMPONENT3D_HPP
 #define MANA_RIGIDBODYCOMPONENT3D_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/physics/3d/rigidbody3d.hpp"
 
 namespace engine {
-    struct RigidBodyComponent3D : public Component {
-        RigidBodyComponent3D() : Component(RIGIDBODY_3D) {}
-
-        Component *clone() override {
-            return new RigidBodyComponent3D(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(RigidBodyComponent3D);
-        }
-
+    struct RigidBodyComponent3D {
         RigidBody3D::RigidBodyType type;
     };
 }

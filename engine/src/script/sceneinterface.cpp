@@ -17,7 +17,6 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/ecs/scene.hpp"
 #include "engine/ecs/components.hpp"
 
 #include "sceneinterface.hpp"
@@ -26,7 +25,7 @@
 
 namespace engine {
     namespace SceneInterface {
-        std::mutex mutex;
+      /*  std::mutex mutex;
         std::set<SceneInterfaceListener *> listeners;
 
         void addListener(SceneInterfaceListener *listener) {
@@ -64,6 +63,6 @@ namespace engine {
             for (auto *listener : listeners)
                 listener->destroyComponent(node, type);
         }
-        }
+        }*/
     }
 }

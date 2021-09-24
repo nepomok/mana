@@ -35,9 +35,12 @@ namespace engine {
 
         void removeSystem(System *system);
 
-        void update(float deltaTime, Scene &scene);
+        void update(float deltaTime);
+
+        EntityManager &getEntityManager();
 
     private:
+        EntityManager entityManager;
         std::set<System *> systems;
     };
 }

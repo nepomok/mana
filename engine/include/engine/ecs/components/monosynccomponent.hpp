@@ -20,21 +20,10 @@
 #ifndef MANA_MONOSYNCCOMPONENT_HPP
 #define MANA_MONOSYNCCOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/script/script.hpp"
 
 namespace engine {
-    struct MonoSyncComponent : public Component {
-        MonoSyncComponent() : Component(SYNC_MONO) {}
-
-        Component *clone() override {
-            return new MonoSyncComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(MonoSyncComponent);
-        }
+    struct MonoSyncComponent {
     };
 }
 

@@ -20,22 +20,10 @@
 #ifndef MANA_CAMERACOMPONENT_HPP
 #define MANA_CAMERACOMPONENT_HPP
 
-#include "engine/ecs/component.hpp"
-
 #include "engine/asset/camera.hpp"
 
 namespace engine {
-    struct CameraComponent : public Component {
-        CameraComponent() : Component(CAMERA) {}
-
-        Component *clone() override {
-            return new CameraComponent(*this);
-        }
-
-        const std::type_info &getTypeInfo() override {
-            return typeid(CameraComponent);
-        }
-
+    struct CameraComponent {
         Camera camera;
     };
 }
