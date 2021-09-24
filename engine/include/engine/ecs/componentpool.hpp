@@ -40,11 +40,9 @@ namespace engine {
     public:
         class Listener {
         public:
-            virtual ~Listener() = default;
+            virtual void onComponentCreate(const Entity &entity, const T &component) = 0;
 
-            virtual void onComponentCreate(const T &component) = 0;
-
-            virtual void onComponentDestroy(const T &component) = 0;
+            virtual void onComponentDestroy(const Entity &entity, const T &component) = 0;
         };
 
         ~ComponentPool() override = default;
@@ -54,7 +52,12 @@ namespace engine {
         }
 
         void destroy(const Entity &entity) override {
-            components.erase(entity);
+            if (components.find(entity) != components.end()) {
+                for (auto &listener : listeners) {
+                    listener->onComponentDestroy(entity, components.at(entity));
+                }
+                components.erase(entity);
+            }
         }
 
         typename std::map<Entity, T>::iterator begin() {
@@ -73,6 +76,9 @@ namespace engine {
                                          + typeid(T).name());
             auto &comp = components[entity];
             comp = T();
+            for (auto &listener : listeners) {
+                listener->onComponentCreate(entity, comp);
+            }
             return comp;
         }
 
