@@ -21,13 +21,11 @@
 #define MANA_SAMPLEAPPLICATION_HPP
 
 #include "engine.hpp"
-#include "runtime.hpp"
 
 #include <filesystem>
 #include <memory>
 
 using namespace engine;
-using namespace engine::runtime;
 
 class SampleApplication : public Application {
 public:

@@ -12,5 +12,4 @@ link_directories(${PROJECT_SOURCE_DIR}/lib/bin)
 
 include(cmake/engine.cmake)
 include(cmake/editor.cmake)
-include(cmake/runtime.cmake)
 include(cmake/sample.cmake)

@@ -12,12 +12,12 @@ endif ()
 
 file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 
-add_library(mana-engine SHARED ${Engine.File.SRC})
+add_library(mana SHARED ${Engine.File.SRC})
 
-target_include_directories(mana-engine PUBLIC ${Engine.Dir.INCLUDE})
-target_include_directories(mana-engine PRIVATE ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
+target_include_directories(mana PUBLIC ${Engine.Dir.INCLUDE})
+target_include_directories(mana PRIVATE ${Engine.Dir.SRC} ${FREETYPE_INCLUDE})
 
-target_link_libraries(mana-engine
+target_link_libraries(mana
         glfw
         GL
         dl
@@ -30,4 +30,5 @@ target_link_libraries(mana-engine
         shaderc_shared
         spirv-cross-core
         spirv-cross-glsl
-        spirv-cross-hlsl)
+        spirv-cross-hlsl
+        mono-2.0)
