@@ -25,7 +25,7 @@ using namespace engine;
 using namespace engine::opengl;
 
 //TODO: If users want to use integer texture formats the shaders would need to sample using isampler2d which does not exist in hlsl and therefore cant be cross compiled.
-//For now all textures are sampled using the normalized float format
+//For now all integer format textures are uploaded as the normalized float format,
 
 OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attributes), handle() {
     GLenum type = OGLTypeConverter::convert(attributes.textureType);
