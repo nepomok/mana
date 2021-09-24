@@ -30,9 +30,9 @@ namespace engine {
     public:
         virtual ~System() = default;
 
-        virtual void start() {};
+        virtual void start(EntityManager &entityManager) {};
 
-        virtual void stop() {};
+        virtual void stop(EntityManager &entityManager) {};
 
         virtual void update(float deltaTime, EntityManager &entityManager) {};
     };

@@ -32,11 +32,13 @@ namespace engine {
 
         ~EntityManager() = default;
 
-        EntityManager(const EntityManager &other) {
-            idStore = other.idStore;
-            idCounter = other.idCounter;
-            componentManager = other.componentManager;
-        }
+        EntityManager(const EntityManager &other) = default;
+
+        EntityManager(EntityManager &&other) noexcept = default;
+
+        EntityManager &operator=(const EntityManager &other) = default;
+
+        EntityManager &operator=(EntityManager &&other) noexcept = default;
 
         /**
          * Optional name mapping.

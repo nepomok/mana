@@ -41,6 +41,13 @@ public:
 protected:
     void start() override {
         archive = new DirectoryArchive(std::filesystem::current_path().c_str());
+        //Move is required because the ECS destructor deletes the system pointers.
+        ecs = std::move(ECS(
+                {
+                        new PlayerInputSystem(window->getInput()),
+                        new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive)
+                }
+        ));
 
         auto &device = window->getRenderDevice();
 
@@ -68,10 +75,6 @@ protected:
         manaAssembly = domain.loadAssembly(*assemblyStream);
         delete assemblyStream;
 
-        ecs.addSystem(new MonoScriptingSystem(window->getInput(), domain, *manaAssembly, *archive));
-        ecs.addSystem(new PlayerInputSystem(window->getInput()));
-        ecs.addSystem(new RenderSystem(window->getRenderTarget(), device, *archive));
-
         auto *sceneStream = archive->open("assets/scene.json");
         ecs.getEntityManager() << JsonProtocol().deserialize(*sceneStream);
         delete sceneStream;
@@ -98,10 +101,13 @@ protected:
             }
         }
 
+        ecs.start();
+
         Application::start();
     }
 
     void stop() override {
+        ecs.stop();
         ecs.getEntityManager().clear();
 
         delete manaAssembly;

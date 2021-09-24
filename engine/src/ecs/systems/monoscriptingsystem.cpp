@@ -93,11 +93,11 @@ namespace engine {
               input(input),
               archive(archive) {}
 
-    void MonoScriptingSystem::start() {
+    void MonoScriptingSystem::start(EntityManager &entityManager) {
         input.registerListener(*this);
     }
 
-    void MonoScriptingSystem::stop() {
+    void MonoScriptingSystem::stop(EntityManager &entityManager) {
         input.unregisterListener(*this);
     }
 

@@ -27,21 +27,25 @@
 namespace engine {
     class ECS {
     public:
-        ECS();
+        explicit ECS(std::vector<System *> systems = {});
 
         ~ECS();
 
-        void addSystem(System *system);
+        ECS(ECS &&other) noexcept;
 
-        void removeSystem(System *system);
+        ECS &operator=(ECS &&other) noexcept;
+
+        void start();
 
         void update(float deltaTime);
+
+        void stop();
 
         EntityManager &getEntityManager();
 
     private:
         EntityManager entityManager;
-        std::set<System *> systems;
+        std::vector<System *> systems;
     };
 }
 

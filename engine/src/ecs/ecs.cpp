@@ -23,7 +23,8 @@
 #include <algorithm>
 
 namespace engine {
-    ECS::ECS() {}
+    ECS::ECS(std::vector<System *> systems)
+            : systems(std::move(systems)) {}
 
     ECS::~ECS() {
         for (auto *system : systems) {
@@ -31,19 +32,25 @@ namespace engine {
         }
     }
 
-    void ECS::addSystem(System *system) {
-        systems.insert(system);
-        system->start();
-    }
+    ECS::ECS(ECS &&other) noexcept = default;
 
-    void ECS::removeSystem(System *system) {
-        systems.erase(system);
-        system->stop();
+    ECS &ECS::operator=(ECS &&other) noexcept = default;
+
+    void ECS::start() {
+        for (auto *system : systems) {
+            system->start(entityManager);
+        }
     }
 
     void ECS::update(float deltaTime) {
         for (auto *system : systems) {
             system->update(deltaTime, entityManager);
+        }
+    }
+
+    void ECS::stop() {
+        for (auto *system : systems) {
+            system->stop(entityManager);
         }
     }
 

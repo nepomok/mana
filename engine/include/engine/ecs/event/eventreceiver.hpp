@@ -17,7 +17,19 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_COMPONENTCREATEEVENT_HPP
-#define MANA_COMPONENTCREATEEVENT_HPP
+#ifndef MANA_EVENTRECEIVER_HPP
+#define MANA_EVENTRECEIVER_HPP
 
-#endif //MANA_COMPONENTCREATEEVENT_HPP
+#include "engine/ecs/event/event.hpp"
+
+namespace engine {
+    class EventReceiver {
+    public:
+        /**
+         * @param event
+         */
+        virtual void onEvent(const Event &event) = 0;
+    };
+}
+
+#endif //MANA_EVENTRECEIVER_HPP

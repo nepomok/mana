@@ -38,6 +38,15 @@ namespace engine {
     template<typename T>
     class ComponentPool : public ComponentPoolBase {
     public:
+        class Listener {
+        public:
+            virtual ~Listener() = default;
+
+            virtual void onComponentCreate(const T &component) = 0;
+
+            virtual void onComponentDestroy(const T &component) = 0;
+        };
+
         ~ComponentPool() override = default;
 
         ComponentPoolBase *clone() override {
@@ -75,7 +84,16 @@ namespace engine {
             return components.find(entity) != components.end();
         }
 
+        void addListener(Listener *listener) {
+            listeners.insert(listener);
+        }
+
+        void removeListener(Listener *listener) {
+            listeners.erase(listener);
+        }
+
     private:
+        std::set<Listener *> listeners;
         std::map<Entity, T> components;
     };
 }

@@ -38,9 +38,9 @@ namespace engine {
 
         ~MonoScriptingSystem() override = default;
 
-        void start() override;
+        void start(EntityManager &entityManager) override;
 
-        void stop() override;
+        void stop(EntityManager &entityManager) override;
 
         void update(float deltaTime, EntityManager &entityManager) override;
 

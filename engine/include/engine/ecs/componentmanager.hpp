@@ -51,6 +51,12 @@ namespace engine {
             }
         }
 
+        ComponentManager(ComponentManager &&other) noexcept = default;
+
+        ComponentManager &operator=(const ComponentManager &other) = default;
+
+        ComponentManager &operator=(ComponentManager &&other)  noexcept = default;
+
         template<typename T>
         ComponentPool<T> &getPool() {
             auto it = pools.find(typeid(T));

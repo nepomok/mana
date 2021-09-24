@@ -20,4 +20,18 @@
 #ifndef MANA_EVENT_HPP
 #define MANA_EVENT_HPP
 
+#include <typeindex>
+
+namespace engine {
+    class Event {
+    public:
+        /**
+         * Return the type index of the concrete type.
+         *
+         * @return
+         */
+        virtual std::type_index getType() = 0;
+    };
+}
+
 #endif //MANA_EVENT_HPP

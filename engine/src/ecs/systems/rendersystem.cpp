@@ -35,6 +35,7 @@ namespace engine {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),
               device(device),
+              idCounter(0),
               ren(device, {new ForwardPass(device),
                            new GeometryPass(device),
                            new PhongShadePass(device),
@@ -42,11 +43,11 @@ namespace engine {
               archive(archive) {
     }
 
-    void RenderSystem::start() {
+    void RenderSystem::start(EntityManager &entityManager) {
 
     }
 
-    void RenderSystem::stop() {
+    void RenderSystem::stop(EntityManager &entityManager) {
 
     }
 
