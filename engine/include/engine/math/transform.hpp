@@ -21,6 +21,7 @@
 #define MANA_TRANSFORM_HPP
 
 #include "engine/math/vector3.hpp"
+#include "engine/math/matrixmath.hpp"
 
 namespace engine {
     struct Transform {
@@ -39,6 +40,11 @@ namespace engine {
             rotation += other.rotation;
             scale += other.scale;
             return *this;
+        }
+
+        Vec3f rotate(Vec3f vec) const {
+            Vec4f ret = MatrixMath::inverse(MatrixMath::rotate(rotation)) * Vec4f(vec.x, vec.y, vec.z, 1);
+            return Vec3f(ret.x, ret.y, ret.z);
         }
     };
 }
