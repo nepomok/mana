@@ -48,6 +48,7 @@ protected:
                         new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive)
                 }
         ));
+        ecs.start();
 
         auto &device = window->getRenderDevice();
 
@@ -100,8 +101,6 @@ protected:
                 render = planeRender;
             }
         }
-
-        ecs.start();
 
         Application::start();
     }
