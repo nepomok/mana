@@ -4,11 +4,11 @@
       "name": "Colormap",
       "type": "material",
       "diffuseTexture": {
-        "bundle": "assets/textures/diffuse.json",
+        "bundle": "assets/textures/containerdiffuse.json",
         "asset": ""
       },
       "specularTexture": {
-        "bundle": "assets/textures/specular.json",
+        "bundle": "assets/textures/containerspecular.json",
         "asset": ""
       }
     }

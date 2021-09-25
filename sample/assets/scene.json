@@ -90,6 +90,47 @@
         }
       ]
     },
+    "Sphere": {
+      "enabled": true,
+      "components": [
+        {
+          "enabled": true,
+          "componentType": "transform",
+          "transform": {
+            "position": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            },
+            "rotation": {
+              "x": 0,
+              "y": 0,
+              "z": 0
+            },
+            "scale": {
+              "x": 10,
+              "y": 10,
+              "z": 10
+            }
+          },
+          "parent": ""
+        },
+        {
+          "enabled": true,
+          "componentType": "mesh_render",
+          "castShadows": true,
+          "receiveShadows": true,
+          "mesh": {
+            "bundle": "assets/meshes/sphere.fbx",
+            "asset": "Sphere"
+          },
+          "material": {
+            "bundle": "assets/materials/spherematerial.json",
+            "asset": ""
+          }
+        }
+      ]
+    },
     "Skybox": {
       "enabled": false,
       "components": [

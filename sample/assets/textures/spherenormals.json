@@ -1,0 +1,11 @@
+{
+  "textures": [
+    {
+      "name": "SphereNormals",
+      "image": {
+        "bundle": "assets/images/SphereNormals.png",
+        "asset": ""
+      }
+    }
+  ]
+}
