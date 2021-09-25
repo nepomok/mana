@@ -37,7 +37,7 @@ namespace engine {
 
     class RenderSystem : public System {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive, bool debugRender = false);
 
         ~RenderSystem() override = default;
 
@@ -56,7 +56,7 @@ namespace engine {
 
         Renderer3D ren;
 
-        Camera camera;
+        bool debugRender;
 
         /**
          * Retrieve or allocate the texture buffer for a given path.

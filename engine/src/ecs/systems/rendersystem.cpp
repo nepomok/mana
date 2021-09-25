@@ -31,8 +31,10 @@
 
 #include "engine/asset/assetimporter.hpp"
 
+#include "render/3d/debug/debugrenderer.hpp"
+
 namespace engine {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive, bool debugRender)
             : screenTarget(scr),
               device(device),
               idCounter(0),
@@ -40,7 +42,8 @@ namespace engine {
                            new GeometryPass(device),
                            new PhongShadePass(device),
                            new CompositePass(device)}),
-              archive(archive) {
+              archive(archive),
+              debugRender(debugRender) {
     }
 
     void RenderSystem::start(EntityManager &entityManager) {
@@ -221,6 +224,8 @@ namespace engine {
           unusedCubeMaps.clear();*/
 
         //Get Camera
+        Camera camera;
+
         for (auto &pair : componentManager.getPool<CameraComponent>()) {
             auto &tcomp = componentManager.lookup<TransformComponent>(pair.first);
             if (!tcomp.enabled)
@@ -230,6 +235,8 @@ namespace engine {
 
             scene3d.camera = comp.camera;
             scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, entityManager);
+
+            camera = scene3d.camera;
 
             break;
         }
@@ -246,6 +253,29 @@ namespace engine {
 
         //Render
         ren.render(screenTarget, scene3d);
+
+        if (debugRender) {
+            //Render debug
+            std::vector<std::pair<Transform, Mesh>> debugData;
+            for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
+                auto &renderComponent = pair.second;
+
+                if (!renderComponent.enabled)
+                    continue;
+
+                auto &transformComponent = componentManager.lookup<TransformComponent>(pair.first);
+
+                debugData.emplace_back(std::pair<Transform, Mesh>(
+                        TransformComponent::walkHierarchy(transformComponent, entityManager),
+                        getBundle(renderComponent.mesh.bundle)
+                                .getMesh(renderComponent.mesh.asset)));
+            }
+
+            DebugRenderer renDbg(&device);
+            renDbg.renderBegin(screenTarget);
+            renDbg.drawNormalVectors(camera, debugData);
+            renDbg.renderFinish();
+        }
     }
 
     Renderer3D &RenderSystem::getRenderer() {

@@ -33,8 +33,7 @@ using namespace engine;
 class SampleApplication : public Application {
 public:
     SampleApplication(int argc, char *argv[])
-            : Application(argc, argv, new DirectoryArchive(std::filesystem::current_path().string())) {
-    }
+            : Application(argc, argv, new DirectoryArchive(std::filesystem::current_path().string())) {}
 
     ~SampleApplication() override = default;
 
