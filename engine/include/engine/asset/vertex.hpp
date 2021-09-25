@@ -46,6 +46,26 @@ namespace engine {
         explicit Vertex(Vec3f position) : Vertex(position, {}, {}, {}, {}) {}
 
         Vertex() = default;
+
+        Vec3f position() const {
+            return {data[0], data[1], data[2]};
+        }
+
+        Vec3f normal() const {
+            return {data[3], data[4], data[5]};
+        }
+
+        Vec2f uv() const {
+            return {data[6], data[7]};
+        }
+
+        Vec3f tangent() const {
+            return {data[8], data[9], data[10]};
+        }
+
+        Vec3f bitangent() const {
+            return {data[11], data[12], data[13]};
+        }
     };
 }
 
