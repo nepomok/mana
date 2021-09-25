@@ -62,22 +62,16 @@ VS_OUTPUT main(const VS_INPUT v)
     ret.fPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_M)).xyz;
     ret.fUv = v.uv;
 
-    // Transform the normal, tangent and bitangent vectors into world space by multiplying with the model matrix.
+    // Transform the normal, tangent and bitangent vectors into world space by multiplying with the model and instance matrix.
 
     // The model matrix is multiplied with the instance matrix so that the model transformation + instance transformation are applied to the normals.
     float4x4 normalMatrix = mul(instanceMatrix, MANA_M);
 
-    // The normal assigned here appears to be correct because the specular on the planes is facing towards the directional light
-    ret.fNorm = mul(v.normal, normalMatrix).xyz;
+    ret.fNorm = normalize(mul(float4(v.normal, 0), normalMatrix).xyz);
 
-    // Therefore these vertex normals should also be correctly transformed into world space.
-
-    // The vertex array buffer normal values are also assigned correctly when allocating the mesh buffer,
-    // which means only the pixel shader can be doing something wrong.
-
-    ret.T = normalize(mul(v.tangent, normalMatrix).xyz);
-    ret.B = normalize(mul(v.bitangent, normalMatrix).xyz);
-    ret.N = normalize(mul(v.normal, normalMatrix).xyz);
+    ret.T = normalize(mul(float4(v.tangent, 0), normalMatrix).xyz);
+    ret.B = normalize(mul(float4(v.bitangent, 0), normalMatrix).xyz);
+    ret.N = normalize(mul(float4(v.normal, 0), normalMatrix).xyz);
 
     return ret;
 }
@@ -137,12 +131,11 @@ PS_OUTPUT main(PS_INPUT v) {
     tangentNormal = (tangentNormal * 2) - 1;
 
     // Transform the tangent space normal into world space by multiplying with the TBN matrix.
-    float3 norm = normalize(mul(tangentNormal, TBN));
+    float3 norm = mul(tangentNormal, TBN);
 
     // Assign the world space normal
-
     // The value assigned here is not the correct normal.
-    ret.normal = float4(norm, 0);
+    ret.normal = float4(norm, 1);
 
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);

@@ -220,7 +220,7 @@ namespace engine {
 
             if (assMesh.mTextureCoords[0] != nullptr) {
                 const auto &t = dynamic_cast<const aiVector3D &>(assMesh.mTextureCoords[0][y]);
-                uv = {t.x, -t.y};
+                uv = {t.x, t.y};
             }
 
             ret.vertices.emplace_back(Vertex(pos, norm, uv, tangent, bitangent));
@@ -263,7 +263,7 @@ namespace engine {
 
         const auto *scenePointer = importer.ReadFileFromMemory(assetBuffer.data(),
                                                                assetBuffer.size(),
-                                                               aiPostProcessSteps::aiProcess_Triangulate | aiProcess_CalcTangentSpace,
+                                                               aiPostProcessSteps::aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs,
                                                                hint.c_str());
         if (scenePointer == nullptr)
             throw std::runtime_error("Failed to read mesh data from memory");
