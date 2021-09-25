@@ -46,6 +46,13 @@ namespace engine {
             Vec4f ret = MatrixMath::inverse(MatrixMath::rotate(rotation)) * Vec4f(vec.x, vec.y, vec.z, 1);
             return Vec3f(ret.x, ret.y, ret.z);
         }
+
+        Mat4f model() const {
+            Mat4f model = MatrixMath::translate(position);
+            model = model * MatrixMath::scale(scale);
+            model = model * MatrixMath::rotate(rotation);
+            return model;
+        }
     };
 }
 
