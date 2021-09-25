@@ -33,6 +33,8 @@ struct VS_INPUT
     float3 position : POSITION0;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float3 tangent: TANGENT;
+    float3 bitangent: BINORMAL;
     float4 instanceRow0 : POSITION1;
     float4 instanceRow1 : POSITION2;
     float4 instanceRow2 : POSITION3;
@@ -45,6 +47,9 @@ struct VS_OUTPUT
     float3  fNorm : NORMAL;
     float2  fUv : TEXCOORD0;
     float4 vPos : SV_Position;
+    float3 N: TEXCOORD1;
+    float3 T: TEXCOORD2;
+    float3 B: TEXCOORD3;
 };
 
 VS_OUTPUT main(const VS_INPUT v)
@@ -55,8 +60,24 @@ VS_OUTPUT main(const VS_INPUT v)
 
     ret.vPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_MVP));
     ret.fPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_M)).xyz;
-    ret.fNorm = mul(float4(v.normal, 1), transpose(mul(MANA_M_INVERT, instanceMatrix))).xyz;
     ret.fUv = v.uv;
+
+    // Transform the normal, tangent and bitangent vectors into world space by multiplying with the model matrix.
+
+    // The model matrix is multiplied with the instance matrix so that the model transformation + instance transformation are applied to the normals.
+    float4x4 normalMatrix = mul(instanceMatrix, MANA_M);
+
+    // The normal assigned here appears to be correct because the specular on the planes is facing towards the directional light
+    ret.fNorm = mul(v.normal, normalMatrix).xyz;
+
+    // Therefore these vertex normals should also be correctly transformed into world space.
+
+    // The vertex array buffer normal values are also assigned correctly when allocating the mesh buffer,
+    // which means only the pixel shader can be doing something wrong.
+
+    ret.T = normalize(mul(v.tangent, normalMatrix).xyz);
+    ret.B = normalize(mul(v.bitangent, normalMatrix).xyz);
+    ret.N = normalize(mul(v.normal, normalMatrix).xyz);
 
     return ret;
 }
@@ -67,6 +88,9 @@ struct PS_INPUT {
     float3 fPos: POSITION;
     float3 fNorm: NORMAL;
     float2 fUv: TEXCOORD0;
+    float3 N: TEXCOORD1;
+    float3 T: TEXCOORD2;
+    float3 B: TEXCOORD3;
 };
 
 struct PS_OUTPUT {
@@ -83,8 +107,8 @@ Texture2D diffuse;
 Texture2D ambient;
 Texture2D specular;
 Texture2D shininess;
-Texture2D normal;
 Texture2D emissive;
+Texture2D normal;
 
 SamplerState samplerState_diffuse
 {};
@@ -94,15 +118,32 @@ SamplerState samplerState_specular
 {};
 SamplerState samplerState_shininess
 {};
-SamplerState samplerState_normal
-{};
 SamplerState samplerState_emissive
+{};
+SamplerState samplerState_normal
 {};
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
     ret.position = float4(v.fPos, 1);
-    ret.normal = normal.Sample(samplerState_normal, v.fUv);
+
+    // Combine the 3 interpolated tangent, bitangent and normals into the TBN matrix
+    float3x3 TBN = float3x3(v.T, v.B, v.N);
+
+    // Sample tangent space normal from texture, texture is assigned correctly before the shader is invoked.
+    float4 tangentNormal = normal.Sample(samplerState_normal, v.fUv);
+
+    // Scale tangent space normal into -1 / 1 range
+    tangentNormal = (tangentNormal * 2) - 1;
+
+    // Transform the tangent space normal into world space by multiplying with the TBN matrix.
+    float3 norm = normalize(mul(tangentNormal, TBN));
+
+    // Assign the world space normal
+
+    // The value assigned here is not the correct normal.
+    ret.normal = float4(norm, 0);
+
     ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
     ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
@@ -167,6 +208,8 @@ struct VS_INPUT
     float3 position : POSITION0;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float3 tangent: TANGENT;
+    float3 bitangent: BINORMAL;
     float4 instanceRow0 : POSITION1;
     float4 instanceRow1 : POSITION2;
     float4 instanceRow2 : POSITION3;
@@ -191,7 +234,7 @@ VS_OUTPUT main(const VS_INPUT v)
     ret.vPos = mul(float4(v.position, 1), t);
     ret.fPos = mul(float4(v.position, 1), t).xyz;
     ret.worldPos = v.position;
-    ret.fNorm = mul(float4(v.normal, 1), transpose(MANA_M_INVERT)).xyz;
+    ret.fNorm = mul(v.normal, MANA_M).xyz;
     ret.fUv = v.uv;
 
     return ret;

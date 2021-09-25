@@ -22,9 +22,9 @@
 
 namespace engine {
     struct Vertex {
-        float data[8];
+        float data[14];
 
-        Vertex(Vec3f position, Vec3f normal, Vec2f uv) : data() {
+        Vertex(Vec3f position, Vec3f normal, Vec2f uv, Vec3f tangent, Vec3f bitangent) : data() {
             data[0] = position.x;
             data[1] = position.y;
             data[2] = position.z;
@@ -33,11 +33,17 @@ namespace engine {
             data[5] = normal.z;
             data[6] = uv.x;
             data[7] = uv.y;
+            data[8] = tangent.x;
+            data[9] = tangent.y;
+            data[10] = tangent.z;
+            data[11] = bitangent.x;
+            data[12] = bitangent.y;
+            data[13] = bitangent.z;
         }
 
-        Vertex(Vec3f position, Vec2f uv) : Vertex(position, {}, uv) {}
+        Vertex(Vec3f position, Vec2f uv) : Vertex(position, {}, uv, {}, {}) {}
 
-        explicit Vertex(Vec3f position) : Vertex(position, {}, {}) {}
+        explicit Vertex(Vec3f position) : Vertex(position, {}, {}, {}, {}) {}
 
         Vertex() = default;
     };

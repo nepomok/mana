@@ -29,6 +29,8 @@ struct VS_INPUT
     float3 position : POSITION0;
     float3 normal : NORMAL;
     float2 uv : TEXCOORD0;
+    float3 tangent: TANGENT;
+    float3 bitangent: BINORMAL;
     float4 instanceRow0 : POSITION1;
     float4 instanceRow1 : POSITION2;
     float4 instanceRow2 : POSITION3;

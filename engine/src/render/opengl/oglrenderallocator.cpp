@@ -81,43 +81,50 @@ namespace engine {
                 glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint) * mesh.indices.size(), mesh.indices.data(),
                              GL_STATIC_DRAW);
 
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+                glEnableVertexAttribArray(6);
+                glEnableVertexAttribArray(7);
+                glEnableVertexAttribArray(8);
+
                 // position attribute
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
-                glEnableVertexAttribArray(0);
                 // normal attribute
                 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
-                glEnableVertexAttribArray(1);
                 // uv attribute
                 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
-                glEnableVertexAttribArray(2);
+                // tangent attribute
+                glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (8 * sizeof(float)));
+                // bitangent attribute
+                glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (11 * sizeof(float)));
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f), &offset, GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
-                glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
-                glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
-                glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5,
+                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
+                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
+                glVertexAttribPointer(7,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (2 * Mat4f::ROW_SIZE));
-                glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6,
+                glVertexAttribPointer(8,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (3 * Mat4f::ROW_SIZE));
 
-                glVertexAttribDivisor(3, 1);
-                glVertexAttribDivisor(4, 1);
                 glVertexAttribDivisor(5, 1);
                 glVertexAttribDivisor(6, 1);
+                glVertexAttribDivisor(7, 1);
+                glVertexAttribDivisor(8, 1);
 
                 glBindVertexArray(0);
 
@@ -138,43 +145,50 @@ namespace engine {
                              mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+                glEnableVertexAttribArray(6);
+                glEnableVertexAttribArray(7);
+                glEnableVertexAttribArray(8);
+
                 // position attribute
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
-                glEnableVertexAttribArray(0);
                 // normal attribute
                 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
-                glEnableVertexAttribArray(1);
                 // uv attribute
                 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
-                glEnableVertexAttribArray(2);
+                // tangent attribute
+                glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (8 * sizeof(float)));
+                // bitangent attribute
+                glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (11 * sizeof(float)));
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f), &offset, GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
-                glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
-                glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
-                glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5,
+                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
+                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
+                glVertexAttribPointer(7,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (2 * Mat4f::ROW_SIZE));
-                glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6,
+                glVertexAttribPointer(8,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (3 * Mat4f::ROW_SIZE));
 
-                glVertexAttribDivisor(3, 1);
-                glVertexAttribDivisor(4, 1);
                 glVertexAttribDivisor(5, 1);
                 glVertexAttribDivisor(6, 1);
+                glVertexAttribDivisor(7, 1);
+                glVertexAttribDivisor(8, 1);
 
                 glBindVertexArray(0);
 
@@ -232,43 +246,50 @@ namespace engine {
                              mesh.indices.data(),
                              GL_STATIC_DRAW);
 
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+                glEnableVertexAttribArray(6);
+                glEnableVertexAttribArray(7);
+                glEnableVertexAttribArray(8);
+
                 // position attribute
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
-                glEnableVertexAttribArray(0);
                 // normal attribute
                 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
-                glEnableVertexAttribArray(1);
                 // uv attribute
                 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
-                glEnableVertexAttribArray(2);
+                // tangent attribute
+                glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (8 * sizeof(float)));
+                // bitangent attribute
+                glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (11 * sizeof(float)));
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f) * offsets.size(), &off[0], GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
-                glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
-                glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
-                glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5,
+                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
+                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
+                glVertexAttribPointer(7,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (2 * Mat4f::ROW_SIZE));
-                glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6,
+                glVertexAttribPointer(8,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (3 * Mat4f::ROW_SIZE));
 
-                glVertexAttribDivisor(3, 1);
-                glVertexAttribDivisor(4, 1);
                 glVertexAttribDivisor(5, 1);
                 glVertexAttribDivisor(6, 1);
+                glVertexAttribDivisor(7, 1);
+                glVertexAttribDivisor(8, 1);
 
                 glBindVertexArray(0);
 
@@ -290,43 +311,50 @@ namespace engine {
                              mesh.vertices.data(),
                              GL_STATIC_DRAW);
 
+                glEnableVertexAttribArray(0);
+                glEnableVertexAttribArray(1);
+                glEnableVertexAttribArray(2);
+                glEnableVertexAttribArray(3);
+                glEnableVertexAttribArray(4);
+                glEnableVertexAttribArray(5);
+                glEnableVertexAttribArray(6);
+                glEnableVertexAttribArray(7);
+                glEnableVertexAttribArray(8);
+
                 // position attribute
                 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) 0);
-                glEnableVertexAttribArray(0);
                 // normal attribute
                 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (3 * sizeof(float)));
-                glEnableVertexAttribArray(1);
                 // uv attribute
                 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (6 * sizeof(float)));
-                glEnableVertexAttribArray(2);
+                // tangent attribute
+                glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (8 * sizeof(float)));
+                // bitangent attribute
+                glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *) (11 * sizeof(float)));
 
                 glBindBuffer(GL_ARRAY_BUFFER, ret->instanceVBO);
                 glBufferData(GL_ARRAY_BUFFER, sizeof(Mat4f) * offsets.size(), &off[0], GL_STATIC_DRAW);
 
                 // instanceMatrix attribute
-                glEnableVertexAttribArray(3);
-                glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
-                glEnableVertexAttribArray(4);
-                glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
-                glEnableVertexAttribArray(5);
-                glVertexAttribPointer(5,
+                glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) 0);
+                glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(Mat4f), (void *) Mat4f::ROW_SIZE);
+                glVertexAttribPointer(7,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (2 * Mat4f::ROW_SIZE));
-                glEnableVertexAttribArray(6);
-                glVertexAttribPointer(6,
+                glVertexAttribPointer(8,
                                       4,
                                       GL_FLOAT,
                                       GL_FALSE,
                                       sizeof(Mat4f),
                                       (void *) (3 * Mat4f::ROW_SIZE));
 
-                glVertexAttribDivisor(3, 1);
-                glVertexAttribDivisor(4, 1);
                 glVertexAttribDivisor(5, 1);
                 glVertexAttribDivisor(6, 1);
+                glVertexAttribDivisor(7, 1);
+                glVertexAttribDivisor(8, 1);
 
                 glBindVertexArray(0);
 

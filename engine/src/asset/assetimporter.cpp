@@ -206,10 +206,16 @@ namespace engine {
             Vec3f pos{p.x, p.y, p.z};
             Vec3f norm{};
             Vec2f uv{};
+            Vec3f tangent{};
+            Vec3f bitangent{};
 
             if (assMesh.mNormals != nullptr) {
                 const auto &n = dynamic_cast<const aiVector3D &>(assMesh.mNormals[y]);
                 norm = {n.x, n.y, n.z};
+                const auto &t = dynamic_cast<const aiVector3D &>(assMesh.mTangents[y]);
+                tangent = {t.x, t.y, t.z};
+                const auto &bt = dynamic_cast<const aiVector3D &>(assMesh.mBitangents[y]);
+                bitangent = {bt.x, bt.y, bt.z};
             }
 
             if (assMesh.mTextureCoords[0] != nullptr) {
@@ -217,7 +223,7 @@ namespace engine {
                 uv = {t.x, -t.y};
             }
 
-            ret.vertices.emplace_back(Vertex(pos, norm, uv));
+            ret.vertices.emplace_back(Vertex(pos, norm, uv, tangent, bitangent));
         }
 
         return ret;
@@ -257,7 +263,7 @@ namespace engine {
 
         const auto *scenePointer = importer.ReadFileFromMemory(assetBuffer.data(),
                                                                assetBuffer.size(),
-                                                               aiPostProcessSteps::aiProcess_Triangulate,
+                                                               aiPostProcessSteps::aiProcess_Triangulate | aiProcess_CalcTangentSpace,
                                                                hint.c_str());
         if (scenePointer == nullptr)
             throw std::runtime_error("Failed to read mesh data from memory");
