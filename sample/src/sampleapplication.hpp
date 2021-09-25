@@ -64,7 +64,7 @@ protected:
         }
 
         texture = device.getAllocator().createTextureBuffer({});
-        texture->upload(AssetImporter::import("assets/images/smiley.png", *archive).getImage());
+        texture->upload(AssetImporter::import("assets/images/smiley_2.png", *archive).getImage());
 
         ren2d = Renderer2D(device);
 
