@@ -487,9 +487,7 @@ namespace engine {
                 c.textures.emplace_back(command.material.normalTexture);
             }
 
-            model = MatrixMath::translate(command.transform.position);
-            model = model * MatrixMath::scale(command.transform.scale);
-            model = model * MatrixMath::rotate(command.transform.rotation);
+            model = command.transform.model();
 
             c.shader->setMat4("MANA_M", model);
             c.shader->setMat4("MANA_V", view);
