@@ -19,7 +19,7 @@
 
 #include "engine/render/3d/passes/compositepass.hpp"
 
-const char *SHADER_VERT = R"###(
+static const char *SHADER_VERT = R"###(
 struct VS_INPUT
 {
     float3 position : POSITION0;
@@ -167,7 +167,7 @@ namespace engine {
 
         command.meshBuffers.emplace_back(&buffer.getScreenQuad());
 
-        command.properties.enableDepthTest = false;
+        command.properties.depthTestMode = DEPTH_TEST_ALWAYS;
         command.properties.enableBlending = true;
 
         auto &ren = device.getRenderer();
