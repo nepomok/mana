@@ -24,6 +24,7 @@
 #include <cassert>
 
 #include "engine/math/vector4.hpp"
+#include "engine/math/vector3.hpp"
 
 namespace engine {
     /**
@@ -114,6 +115,11 @@ namespace engine {
     Vector4<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector4<float> &rhs);
 
     Vector4<double> operator*(const Matrix<double, 4, 4> &lhs, const Vector4<double> &rhs);
+
+    // Multiply matrix by column vector, convenience operators which call the vector 4 version with the w component set to 0
+    Vector3<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector3<float> &rhs);
+
+    Vector3<double> operator*(const Matrix<double, 4, 4> &lhs, const Vector3<double> &rhs);
 
     // Multiply matrix by another matrix
     Matrix<float, 4, 4> operator*(const Matrix<float, 4, 4> &lhs, const Matrix<float, 4, 4> &rhs);

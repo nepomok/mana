@@ -21,6 +21,7 @@
 
 namespace engine {
     Vector4<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector4<float> &rhs) {
+        //TODO Fix matrix multiplication operators
         Vector4<float> ret;
         for (int row = 0; row < lhs.height(); row++) {
             float *out;
@@ -63,6 +64,63 @@ namespace engine {
             }
         }
         return ret;
+    }
+
+    Vector4<double> operator*(const Matrix<double, 4, 4> &lhs, const Vector4<double> &rhs) {
+        Vector4<double> ret;
+        for (int row = 0; row < lhs.height(); row++) {
+            double *out;
+            switch (row) {
+                case 0:
+                    out = &ret.x;
+                    break;
+                case 1:
+                    out = &ret.y;
+                    break;
+                case 2:
+                    out = &ret.z;
+                    break;
+                case 3:
+                    out = &ret.w;
+                    break;
+                default:
+                    assert(false);
+            }
+
+            for (int column = 0; column < lhs.width(); column++) {
+                double in;
+                switch (column) {
+                    case 0:
+                        in = rhs.x;
+                        break;
+                    case 1:
+                        in = rhs.y;
+                        break;
+                    case 2:
+                        in = rhs.z;
+                        break;
+                    case 3:
+                        in = rhs.w;
+                        break;
+                    default:
+                        assert(false);
+                }
+                *out += lhs.get(column, row) * in;
+            }
+        }
+        return ret;
+    }
+
+    Vector3<float> operator*(const Matrix<float, 4, 4> &lhs, const Vector3<float> &rhs) {
+        Vec4f vec4(rhs.x, rhs.y, rhs.z, 0);
+        auto result = lhs * vec4;
+        return {result.x, result.y, result.z};
+    }
+
+    Vector3<double> operator*(const Matrix<double, 4, 4> &lhs, const Vector3<double> &rhs) {
+        Vec4d vec4(rhs.x, rhs.y, rhs.z, 0);
+        auto result = lhs * vec4;
+        return {result.x, result.y, result.z};
     }
 
     Matrix<float, 4, 4> operator*(const Matrix<float, 4, 4> &lhs, const Matrix<float, 4, 4> &rhs) {
