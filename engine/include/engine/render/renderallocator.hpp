@@ -65,6 +65,13 @@ namespace engine {
                                                    const std::map<std::string, std::string> &macros,
                                                    const std::function<std::string(const char *)> &includeCallback)
         = 0;
+
+        virtual ShaderProgram *createShaderProgram(const std::string &vertexShader,
+                                                   const std::string &geometryShader,
+                                                   const std::string &fragmentShader,
+                                                   const std::map<std::string, std::string> &macros,
+                                                   const std::function<std::string(const char *)> &includeCallback)
+        = 0;
     };
 }
 

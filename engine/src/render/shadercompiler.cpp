@@ -63,12 +63,28 @@ namespace engine {
                                                          const std::string &entryPoint,
                                                          ShaderCompiler::ShaderStage stage,
                                                          ShaderCompiler::ShaderLanguage language) {
-        auto shaderStage = stage == ShaderCompiler::VERTEX
-                           ? shaderc_vertex_shader
-                           : shaderc_fragment_shader;
-        auto shaderLang = language == ShaderCompiler::GLSL
-                          ? shaderc_source_language_glsl
-                          : shaderc_source_language_hlsl;
+        shaderc_shader_kind shaderStage;
+        switch (stage) {
+            case VERTEX:
+                shaderStage = shaderc_vertex_shader;
+                break;
+            case GEOMETRY:
+                shaderStage = shaderc_geometry_shader;
+                break;
+            case FRAGMENT:
+                shaderStage = shaderc_fragment_shader;
+                break;
+        }
+
+        shaderc_source_language shaderLang;
+        switch (language) {
+            case HLSL:
+                shaderLang = shaderc_source_language_hlsl;
+                break;
+            case GLSL:
+                shaderLang = shaderc_source_language_glsl;
+                break;
+        }
 
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
@@ -145,12 +161,28 @@ namespace engine {
                                            ShaderCompiler::ShaderLanguage language,
                                            const std::function<std::string(const char *)> &include,
                                            const std::map<std::string, std::string> &macros) {
-        auto shaderStage = stage == ShaderCompiler::VERTEX
-                           ? shaderc_vertex_shader
-                           : shaderc_fragment_shader;
-        auto shaderLang = language == ShaderCompiler::GLSL
-                          ? shaderc_source_language_glsl
-                          : shaderc_source_language_hlsl;
+        shaderc_shader_kind shaderStage;
+        switch (stage) {
+            case VERTEX:
+                shaderStage = shaderc_vertex_shader;
+                break;
+            case GEOMETRY:
+                shaderStage = shaderc_geometry_shader;
+                break;
+            case FRAGMENT:
+                shaderStage = shaderc_fragment_shader;
+                break;
+        }
+
+        shaderc_source_language shaderLang;
+        switch (language) {
+            case HLSL:
+                shaderLang = shaderc_source_language_hlsl;
+                break;
+            case GLSL:
+                shaderLang = shaderc_source_language_glsl;
+                break;
+        }
 
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;

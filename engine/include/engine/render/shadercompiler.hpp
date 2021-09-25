@@ -28,6 +28,7 @@ namespace engine {
     namespace ShaderCompiler {
         enum ShaderStage {
             VERTEX,
+            GEOMETRY,
             FRAGMENT
         };
 

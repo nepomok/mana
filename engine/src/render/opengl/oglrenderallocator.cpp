@@ -371,7 +371,16 @@ namespace engine {
                                                                const std::map<std::string, std::string> &macros,
                                                                const std::function<std::string(
                                                                        const char *)> &includeCallback) {
-            return new OGLShaderProgram(vertexShader, fragmentShader, macros, includeCallback);
+            return new OGLShaderProgram(vertexShader, "", fragmentShader, macros, includeCallback);
+        }
+
+        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::string &vertexShader,
+                                                               const std::string &geometryShader,
+                                                               const std::string &fragmentShader,
+                                                               const std::map<std::string, std::string> &macros,
+                                                               const std::function<std::string(
+                                                                       const char *)> &includeCallback) {
+            return new OGLShaderProgram(vertexShader, geometryShader, fragmentShader, macros, includeCallback);
         }
     }
 }
