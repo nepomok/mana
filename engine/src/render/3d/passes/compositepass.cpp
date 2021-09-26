@@ -76,6 +76,8 @@ Texture2D forward_depth;
 
 Texture2D skybox;
 
+Texture2D debug;
+
 SamplerState samplerState_depth
 {};
 SamplerState samplerState_phong_ambient
@@ -91,6 +93,9 @@ SamplerState samplerState_forward_depth
 {};
 
 SamplerState samplerState_skybox
+{};
+
+SamplerState samplerState_debug
 {};
 
 float LinearizeDepth(float depth)
@@ -114,6 +119,8 @@ PS_OUTPUT main(PS_INPUT v) {
 
     float4 colorSkybox = skybox.Sample(samplerState_skybox, v.fUv);
 
+    float4 debug = debug.Sample(samplerState_debug, v.fUv);
+
     if (deferredDepth == 1
         && forwardDepth == 1)
     {
@@ -129,6 +136,11 @@ PS_OUTPUT main(PS_INPUT v) {
     {
         ret.color = colorForward;
         ret.depth = forwardDepth;
+    }
+
+    if (debug.a > 0)
+    {
+        ret.color = debug;
     }
 
     return ret;
@@ -153,6 +165,7 @@ namespace engine {
         shader->setTexture("forward", 4);
         shader->setTexture("forward_depth", 5);
         shader->setTexture("skybox", 6);
+        shader->setTexture("debug", 7);
 
         RenderCommand command;
         command.shader = shader;
@@ -164,6 +177,7 @@ namespace engine {
         command.textures.emplace_back(&buffer.getBuffer("forward"));
         command.textures.emplace_back(&buffer.getBuffer("forward_depth"));
         command.textures.emplace_back(&buffer.getBuffer("skybox"));
+        command.textures.emplace_back(&buffer.getBuffer("debug"));
 
         command.meshBuffers.emplace_back(&buffer.getScreenQuad());
 

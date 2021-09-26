@@ -56,8 +56,6 @@ namespace engine {
 
         Renderer3D ren;
 
-        bool debugRender;
-
         /**
          * Retrieve or allocate the texture buffer for a given path.
          *
