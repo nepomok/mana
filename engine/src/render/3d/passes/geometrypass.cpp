@@ -131,7 +131,7 @@ PS_OUTPUT main(PS_INPUT v) {
     tangentNormal = (tangentNormal * 2) - 1;
 
     // Transform the tangent space normal into world space by multiplying with the TBN matrix.
-    float3 norm = mul(tangentNormal, TBN);
+    float3 norm = mul(tangentNormal.xyz, TBN);
 
     // Assign the world space normal
     // The value assigned here is not the correct normal.
