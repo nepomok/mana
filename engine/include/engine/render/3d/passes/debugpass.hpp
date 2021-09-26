@@ -25,13 +25,15 @@
 namespace engine {
     class DebugPass : public RenderPass {
     public:
-        explicit DebugPass(RenderDevice &device, bool drawNormals);
+        explicit DebugPass(RenderDevice &device);
 
         ~DebugPass() override;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
         void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+
+        void setDrawNormals(bool drawNormals);
 
     private:
         RenderDevice &device;

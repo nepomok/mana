@@ -30,7 +30,7 @@
 
 using namespace engine;
 
-class SampleApplication : public Application {
+class SampleApplication : public Application, InputListener {
 public:
     SampleApplication(int argc, char *argv[])
             : Application(argc, argv, new DirectoryArchive(std::filesystem::current_path().string())) {}
@@ -39,12 +39,15 @@ public:
 
 protected:
     void start() override {
+        // window->setSwapInterval(1);
+
         archive = new DirectoryArchive(std::filesystem::current_path().c_str());
         //Move is required because the ECS destructor deletes the system pointers.
+        renderSystem = new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive);
         ecs = std::move(ECS(
                 {
                         new PlayerInputSystem(window->getInput()),
-                        new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive)
+                        renderSystem
                 }
         ));
         ecs.start();
@@ -140,6 +143,16 @@ protected:
             fpsAverage = alpha * fpsAverage + (1.0 - alpha) * fps;
         }
 
+        if (wnd.getInput().getKeyDown(KEY_F1)) {
+            f1Pressed = true;
+        } else {
+            if (f1Pressed) {
+                f1Pressed = false;
+                f1Switch = !f1Switch;
+            }
+        }
+        renderSystem->setDebugRender(f1Switch);
+
         ecs.update(deltaTime);
 
         ren2d.renderBegin(wnd.getRenderTarget(), false);
@@ -170,6 +183,11 @@ private:
 
     std::map<char, Character> characters;
     std::map<char, TextureBuffer *> textures;
+
+    RenderSystem *renderSystem;
+
+    bool f1Pressed = false;
+    bool f1Switch = false;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

@@ -35,16 +35,21 @@
 #include "render/3d/debug/debugrenderer.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive, bool debugRender)
+    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),
               device(device),
               idCounter(0),
-              ren(device, {new ForwardPass(device),
-                           new GeometryPass(device),
-                           new PhongShadePass(device),
-                           new DebugPass(device, debugRender),
-                           new CompositePass(device)}),
+              debugPass(new DebugPass(device)),
+              ren(),
               archive(archive) {
+        ren = std::make_unique<Renderer3D>(device, std::vector<RenderPass *>(
+                {
+                        new ForwardPass(device),
+                        new GeometryPass(device),
+                        new PhongShadePass(device),
+                        debugPass,
+                        new CompositePass(device)
+                }));
     }
 
     void RenderSystem::start(EntityManager &entityManager) {
@@ -253,11 +258,15 @@ namespace engine {
         }
 
         //Render
-        ren.render(screenTarget, scene3d);
+        ren->render(screenTarget, scene3d);
+    }
+
+    void RenderSystem::setDebugRender(bool value) {
+        debugPass->setDrawNormals(value);
     }
 
     Renderer3D &RenderSystem::getRenderer() {
-        return ren;
+        return *ren;
     }
 
     TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {

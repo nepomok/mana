@@ -84,7 +84,7 @@
             "asset": "Plane"
           },
           "material": {
-            "bundle": "assets/materials/colormap.json",
+            "bundle": "assets/materials/containermaterial.json",
             "asset": ""
           }
         }

@@ -134,9 +134,9 @@ PS_OUTPUT main(PS_INPUT input) {
 )###";
 
 namespace engine {
-    DebugPass::DebugPass(RenderDevice &device, bool drawNormals)
+    DebugPass::DebugPass(RenderDevice &device)
             : device(device),
-              drawNormals(drawNormals) {
+              drawNormals(false) {
         shader = device.getAllocator().createShaderProgram(SHADER_VERT,
                                                            SHADER_GEOMETRY,
                                                            SHADER_FRAG,
@@ -153,9 +153,6 @@ namespace engine {
     }
 
     void DebugPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
-        if (!drawNormals)
-            return;
-
         gBuffer.attachColor({"debug"});
         gBuffer.attachDepthStencil("depth");
 
@@ -170,20 +167,27 @@ namespace engine {
                                       false,
                                       false));
 
-        for (auto &deferredCommand : scene.deferred) {
-            shader->setMat4("mvp", scene.camera.projection() * scene.camera.view() * deferredCommand.transform.model());
-            shader->setVec4("color", Vec4f(1, 1, 0, 1));
-            shader->setFloat("scale", 0.1f);
+        if (drawNormals) {
+            for (auto &deferredCommand : scene.deferred) {
+                shader->setMat4("mvp",
+                                scene.camera.projection() * scene.camera.view() * deferredCommand.transform.model());
+                shader->setVec4("color", Vec4f(1, 1, 0, 1));
+                shader->setFloat("scale", 0.1f);
 
-            RenderCommand command;
-            command.shader = shader;
-            command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
-            if (deferredCommand.material.normalTexture != nullptr) {}
-            command.properties.depthTestWrite = false;
+                RenderCommand command;
+                command.shader = shader;
+                command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
+                if (deferredCommand.material.normalTexture != nullptr) {}
+                command.properties.depthTestWrite = false;
 
-            ren.addCommand(command);
+                ren.addCommand(command);
+            }
         }
 
         ren.renderFinish();
+    }
+
+    void DebugPass::setDrawNormals(bool value) {
+        drawNormals = value;
     }
 }

@@ -34,10 +34,11 @@
 
 namespace engine {
     class ECS;
+    class DebugPass;
 
     class RenderSystem : public System {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive, bool debugRender = false);
+        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
 
         ~RenderSystem() override = default;
 
@@ -47,6 +48,8 @@ namespace engine {
 
         void update(float deltaTime, EntityManager &entityManager) override;
 
+        void setDebugRender(bool debugRender);
+
         Renderer3D &getRenderer();
 
     private:
@@ -54,7 +57,9 @@ namespace engine {
         RenderDevice &device;
         Archive &archive;
 
-        Renderer3D ren;
+        std::unique_ptr<Renderer3D> ren;
+
+        DebugPass *debugPass;
 
         /**
          * Retrieve or allocate the texture buffer for a given path.
