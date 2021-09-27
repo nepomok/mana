@@ -67,11 +67,11 @@ VS_OUTPUT main(const VS_INPUT v)
     // The model matrix is multiplied with the instance matrix so that the model transformation + instance transformation are applied to the normals.
     float4x4 normalMatrix = mul(instanceMatrix, MANA_M);
 
-    ret.fNorm = normalize(mul(float4(v.normal, 0), normalMatrix).xyz);
+    ret.fNorm = normalize(mul(float4(v.normal, 1), normalMatrix).xyz);
 
-    ret.T = normalize(mul(float4(v.tangent, 0), normalMatrix).xyz);
-    ret.B = normalize(mul(float4(v.bitangent, 0), normalMatrix).xyz);
-    ret.N = normalize(mul(float4(v.normal, 0), normalMatrix).xyz);
+    ret.T = normalize(mul(float4(v.tangent, 1), normalMatrix).xyz);
+    ret.B = normalize(mul(float4(v.bitangent, 1), normalMatrix).xyz);
+    ret.N = normalize(mul(float4(v.normal, 1), normalMatrix).xyz);
 
     return ret;
 }
@@ -125,13 +125,13 @@ PS_OUTPUT main(PS_INPUT v) {
     float3x3 TBN = float3x3(v.T, v.B, v.N);
 
     // Sample tangent space normal from texture, texture is assigned correctly before the shader is invoked.
-    float4 tangentNormal = normal.Sample(samplerState_normal, v.fUv);
+    float3 tangentNormal = normal.Sample(samplerState_normal, v.fUv);
 
     // Scale tangent space normal into -1 / 1 range
-    tangentNormal = (tangentNormal * 2) - 1;
+    tangentNormal = normalize((tangentNormal * 2) - 1);
 
     // Transform the tangent space normal into world space by multiplying with the TBN matrix.
-    float3 norm = mul(tangentNormal.xyz, TBN);
+    float3 norm = mul(tangentNormal, TBN);
 
     // Assign the world space normal
     // The value assigned here is not the correct normal.

@@ -144,23 +144,24 @@ void main(triangle GS_INPUT input[3], inout LineStream<GS_OUTPUT> output)
         if (hasNormalTexture)
         {
             // Draw texture normals at vertex positions, normals for fragments between vertices are not drawn
-            float3 T = vertex.vTang;
-            float3 B = vertex.vBitang;
-            float3 N = vertex.vNorm;
+            float3 T = normalize(vertex.vTang);
+            float3 B = normalize(vertex.vBitang);
+            float3 N = normalize(vertex.vNorm);
 
             float3x3 TBN = float3x3(T, B, N);
 
-            float4 tangentNormal = normal.Sample(samplerState_normal, vertex.vUv);
-            tangentNormal = (tangentNormal * 2) - 1;
+            float3 tangentNormal = normal.Sample(samplerState_normal, vertex.vUv);
+            tangentNormal = normalize((tangentNormal * 2) - 1);
 
             //Transform tangent space normal into local space
-            float3 localNormal = mul(tangentNormal.xyz * scale, TBN);
+            float3 localNormal = mul(tangentNormal * scale, TBN);
 
             //Transform local space normal into clip space
-            float4 clipNormal = mul(float4(localNormal, 0), mvp);
+            float4 clipNormal = mul(float4((float4(localNormal, 1) + vertex.vPos).xyz, 1), mvp);
+            float4 clipPos = mul(vertex.vPos, mvp);
 
             o.color = float4(1, 1, 0, 1);
-            o.pos = mul(vertex.vPos, mvp);
+            o.pos = clipPos;
             output.Append(o);
             o.pos = clipNormal;
             output.Append(o);
@@ -168,28 +169,33 @@ void main(triangle GS_INPUT input[3], inout LineStream<GS_OUTPUT> output)
         }
         else
         {
+            float4 cPos = mul(vertex.vPos, mvp);
+            float4 cNorm = mul(float4((float4(vertex.vNorm * scale, 0) + vertex.vPos).xyz, 1), mvp);
+            float4 cTang = mul(float4((float4(vertex.vTang * scale, 0) + vertex.vPos).xyz, 1), mvp);
+            float4 cBitang = mul(float4((float4(vertex.vBitang * scale, 0) + vertex.vPos).xyz, 1), mvp);
+
             // Draw vertex normal, tangent and bitangent
             //Normal
             o.color = float4(0, 0, 1, 1);
-            o.pos = mul(vertex.vPos, mvp);
+            o.pos = cPos;
             output.Append(o);
-            o.pos = mul(float4(vertex.vNorm, 0) * scale + vertex.vPos, mvp);
+            o.pos = cNorm;
             output.Append(o);
             output.RestartStrip();
 
             //Tangent
             o.color = float4(1, 0, 0, 1);
-            o.pos = mul(vertex.vPos, mvp);
+            o.pos = cPos;
             output.Append(o);
-            o.pos = mul(float4(vertex.vTang, 0) * scale + vertex.vPos, mvp);
+            o.pos = cTang;
             output.Append(o);
             output.RestartStrip();
 
             //Bitangent
             o.color = float4(0, 1, 0, 1);
-            o.pos = mul(vertex.vPos, mvp);
+            o.pos = cPos;
             output.Append(o);
-            o.pos = mul(float4(vertex.vBitang, 0) * scale + vertex.vPos, mvp);
+            o.pos = cBitang;
             output.Append(o);
             output.RestartStrip();
         }
