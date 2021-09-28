@@ -26,8 +26,6 @@
 
 namespace engine {
     struct Material {
-        AssetPath shader;
-
         ColorRGBA diffuse{};
         ColorRGBA ambient{};
         ColorRGBA specular{};
