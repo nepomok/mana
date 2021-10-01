@@ -63,6 +63,7 @@ namespace engine {
         return ret;
     }
 
+    //https://www.cprogramming.com/tutorial/3d/quaternions.html
     Quaternion::Quaternion()
             : w(1), x(0), y(0), z(0) {}
 
