@@ -68,6 +68,10 @@ namespace engine {
 
     template<typename T>
     Message &operator<<(Message &message, const Vector4<T> &grid);
+
+    Quaternion &operator<<(Quaternion &q, const Message &message);
+
+    Message &operator<<(Message &message, const Quaternion &q);
 }
 
 #endif //MANA_MATHSCHEMA_HPP

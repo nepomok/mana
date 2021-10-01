@@ -260,7 +260,7 @@ namespace engine {
         command.meshBuffers.emplace_back(buffer);
         command.textures.emplace_back(&texture);
 
-        Mat4f modelMatrix(1);
+        Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
                 dstRect.position.x + center.x,
                 dstRect.position.y + center.y,
@@ -303,7 +303,7 @@ namespace engine {
         command.shader = defaultShader;
         command.meshBuffers.emplace_back(buffer);
 
-        Mat4f modelMatrix(1);
+        Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
                 rectangle.position.x + center.x,
                 rectangle.position.y + center.y,
@@ -338,7 +338,7 @@ namespace engine {
         command.shader = defaultShader;
         command.meshBuffers.emplace_back(buffer);
 
-        Mat4f modelMatrix(1);
+        Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
@@ -367,7 +367,7 @@ namespace engine {
         command.shader = defaultShader;
         command.meshBuffers.emplace_back(buffer);
 
-        Mat4f modelMatrix(1);
+        Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
         command.shader->setMat4("MODEL_MATRIX", modelMatrix);
@@ -411,7 +411,7 @@ namespace engine {
             command.meshBuffers.emplace_back(buffer);
             command.textures.emplace_back(textures.at(c));
 
-            Mat4f modelMatrix(1);
+            Mat4f modelMatrix = MatrixMath::identity();
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
             modelMatrix = camera.projection() * camera.view() * modelMatrix;
 

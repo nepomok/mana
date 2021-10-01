@@ -49,7 +49,8 @@ public:
             Vec3f relativeMovement = forward * movement.z + left * movement.x + up * movement.y;
 
             transform.transform.position += relativeMovement * pair.second.movementSpeed * deltaTime;
-            transform.transform.rotation += rotation * pair.second.rotationSpeed * deltaTime;
+            transform.transform.rotation = static_cast<Quaternion>(rotation * pair.second.rotationSpeed * deltaTime)
+                                           * transform.transform.rotation;
         }
     }
 

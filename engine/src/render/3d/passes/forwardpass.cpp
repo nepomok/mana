@@ -53,9 +53,7 @@ namespace engine {
                                                                  true, true, true));
 
         for (auto &unit : scene.forward) {
-            model = MatrixMath::translate(unit.transform.position);
-            model = model * MatrixMath::scale(unit.transform.scale);
-            model = model * MatrixMath::rotate(unit.transform.rotation);
+            model = unit.transform.model();
 
             ShaderProgram &shader = *unit.command.shader;
 

@@ -27,7 +27,6 @@
 #include "engine/asset/image.hpp"
 #include "engine/asset/material.hpp"
 #include "engine/asset/texture.hpp"
-#include "engine/asset/shader.hpp"
 
 namespace engine {
     class AssetBundle {

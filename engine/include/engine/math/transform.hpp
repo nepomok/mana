@@ -21,12 +21,13 @@
 #define MANA_TRANSFORM_HPP
 
 #include "engine/math/vector3.hpp"
+#include "engine/math/quaternion.hpp"
 #include "engine/math/matrixmath.hpp"
 
 namespace engine {
     struct Transform {
         Vec3f position;
-        Vec3f rotation;
+        Quaternion rotation;
         Vec3f scale = Vec3f(1);
 
         Transform() = default;
@@ -35,22 +36,26 @@ namespace engine {
                                                                  rotation(rotation),
                                                                  scale(scale) {}
 
+        Transform(Vec3f position, Quaternion rotation, Vec3f scale) : position(position),
+                                                                      rotation(rotation),
+                                                                      scale(scale) {}
+
         Transform &operator+=(const Transform &other) {
             position += other.position;
-            rotation += other.rotation;
+            rotation = other.rotation * rotation;
             scale += other.scale;
             return *this;
         }
 
         Vec3f rotate(Vec3f vec) const {
-            Vec4f ret = MatrixMath::inverse(MatrixMath::rotate(rotation)) * Vec4f(vec.x, vec.y, vec.z, 1);
+            Vec4f ret = MatrixMath::inverse(rotation.matrix()) * Vec4f(vec.x, vec.y, vec.z, 1);
             return Vec3f(ret.x, ret.y, ret.z);
         }
 
         Mat4f model() const {
             Mat4f model = MatrixMath::translate(position);
             model = model * MatrixMath::scale(scale);
-            model = model * MatrixMath::rotate(rotation);
+            model = model * rotation.matrix();
             return model;
         }
     };

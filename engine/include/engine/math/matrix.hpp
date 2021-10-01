@@ -45,13 +45,6 @@ namespace engine {
 
         Matrix() : data() {};
 
-        explicit Matrix(T v) : data() {
-            set(0, 0, v);
-            set(1, 1, v);
-            set(2, 2, v);
-            set(3, 3, v);
-        }
-
         int width() const {
             return W;
         }

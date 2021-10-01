@@ -44,6 +44,15 @@ namespace engine {
         return ret;
     }
 
+    Mat4f MatrixMath::identity() {
+        Mat4f ret;
+        ret.set(0, 0, 1);
+        ret.set(1, 1, 1);
+        ret.set(2, 2, 1);
+        ret.set(3, 3, 1);
+        return ret;
+    }
+
     Mat4f MatrixMath::inverse(const Mat4f &mat) {
         return convert(glm::inverse(convert(mat)));
     }
@@ -77,7 +86,7 @@ namespace engine {
     }
 
     Mat4f MatrixMath::translate(const Vec3f &translationValue) {
-        Mat4f ret(1);
+        Mat4f ret = identity();
         ret.set(3, 0, translationValue.x);
         ret.set(3, 1, translationValue.y);
         ret.set(3, 2, translationValue.z);

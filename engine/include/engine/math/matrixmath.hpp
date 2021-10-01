@@ -27,6 +27,8 @@
 
 namespace engine {
     namespace MatrixMath {
+        Mat4f identity();
+
         Mat4f inverse(const Mat4f &mat);
 
         Mat4f transpose(const Mat4f &mat);

@@ -64,7 +64,8 @@ namespace engine {
 
     Transform &operator<<(Transform &value, const Message &message) {
         value.position << message["position"];
-        value.rotation << message["rotation"];
+        Vec3f euler;
+        value.rotation.setEulerAngles(euler << message["rotation"]);
         value.scale << message["scale"];
         return value;
     }
@@ -72,7 +73,7 @@ namespace engine {
     Message &operator<<(Message &message, const Transform &value) {
         auto map = std::map<std::string, Message>();
         map["position"] << value.position;
-        map["rotation"] << value.rotation;
+        map["rotation"] << value.rotation.getEulerAngles();
         map["scale"] << value.scale;
         message = map;
         return message;
@@ -128,6 +129,24 @@ namespace engine {
         map["y"] = value.y;
         map["z"] = value.z;
         map["w"] = value.w;
+        message = map;
+        return message;
+    }
+
+    Quaternion &operator<<(Quaternion &q, const Message &message) {
+        q.w = message["w"];
+        q.x = message["x"];
+        q.y = message["y"];
+        q.z = message["z"];
+        return q;
+    }
+
+    Message &operator<<(Message &message, const Quaternion &q) {
+        auto map = std::map<std::string, Message>();
+        map["w"] = q.w;
+        map["x"] = q.x;
+        map["y"] = q.y;
+        map["z"] = q.z;
         message = map;
         return message;
     }

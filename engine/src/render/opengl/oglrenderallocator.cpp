@@ -61,7 +61,7 @@ namespace engine {
             ret->indexed = mesh.indexed;
             ret->instanced = false;
 
-            Mat4f offset(1); // Default instancing offset is identity.
+            Mat4f offset = MatrixMath::identity(); // Default instancing offset is identity.
 
             if (mesh.indexed) {
                 ret->elementCount = mesh.indices.size();
@@ -221,7 +221,7 @@ namespace engine {
             for (int i = 0; i < offsets.size(); i++) {
                 off[i] = MatrixMath::translate(offsets.at(i).position)
                          * MatrixMath::scale(offsets.at(i).scale)
-                         * MatrixMath::rotate(offsets.at(i).rotation);
+                         * offsets.at(i).rotation.matrix();
             }
 
             if (mesh.indexed) {
