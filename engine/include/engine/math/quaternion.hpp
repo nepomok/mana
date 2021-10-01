@@ -51,7 +51,7 @@ namespace engine {
          * Return the matrix which applies the rotation of this quaternion.
          * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
          *
-         * The returned matrix completely breaks the projection when rotating in the x or y axis, z axis rotation works.
+         * The returned matrix completely breaks the projection when rotating in the x axis, y axis rotation works.
          *
          * @return
          */
