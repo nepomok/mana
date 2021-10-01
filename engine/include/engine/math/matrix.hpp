@@ -66,7 +66,13 @@ namespace engine {
             data[H * col + row] = v;
         }
 
-        T get(int col, int row) const {
+        const T &get(int col, int row) const {
+            assert(col >= 0 && col < W);
+            assert(row >= 0 && row < H);
+            return data[H * col + row];
+        }
+
+        T &get(int col, int row) {
             assert(col >= 0 && col < W);
             assert(row >= 0 && row < H);
             return data[H * col + row];
