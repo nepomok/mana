@@ -63,6 +63,9 @@ namespace engine {
                                                          const std::string &entryPoint,
                                                          ShaderCompiler::ShaderStage stage,
                                                          ShaderCompiler::ShaderLanguage language) {
+        shaderc::Compiler compiler;
+        shaderc::CompileOptions options;
+
         shaderc_shader_kind shaderStage;
         switch (stage) {
             case VERTEX:
@@ -82,16 +85,21 @@ namespace engine {
                 shaderLang = shaderc_source_language_hlsl;
                 break;
             case GLSL_460:
+                options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
+                shaderLang = shaderc_source_language_glsl;
+                break;
+            case GLSL_460_VK:
+                options.SetTargetEnvironment(shaderc_target_env_vulkan, 0);
+                shaderLang = shaderc_source_language_glsl;
+                break;
             case GLSL_ES_320:
+                options.SetTargetEnvironment(shaderc_target_env_opengl, 0);
                 shaderLang = shaderc_source_language_glsl;
                 break;
         }
 
-        shaderc::Compiler compiler;
-        shaderc::CompileOptions options;
-
         options.SetSourceLanguage(shaderLang);
-        options.SetAutoBindUniforms(true);
+        options.SetAutoBindUniforms(false);
         options.SetAutoSampledTextures(true);
         options.SetAutoMapLocations(true);
         options.SetOptimizationLevel(shaderc_optimization_level_zero);
@@ -127,6 +135,7 @@ namespace engine {
 
                 return sCompiler.compile();
             }
+            case GLSL_460_VK:
             case GLSL_460: {
                 spirv_cross::CompilerGLSL sCompiler(source);
 
@@ -142,6 +151,7 @@ namespace engine {
 
                 //Dont generate glsl which uses the uniform buffer api.
                 sOptions.emit_uniform_buffer_as_plain_uniforms = true;
+                sOptions.separate_shader_objects = true;
 
                 sCompiler.set_common_options(sOptions);
 
@@ -162,6 +172,7 @@ namespace engine {
 
                 //Dont generate glsl which uses the uniform buffer api.
                 sOptions.emit_uniform_buffer_as_plain_uniforms = true;
+                sOptions.separate_shader_objects = true;
 
                 sOptions.es = true;
 
@@ -202,6 +213,7 @@ namespace engine {
                 shaderLang = shaderc_source_language_hlsl;
                 break;
             case GLSL_460:
+            case GLSL_460_VK:
             case GLSL_ES_320:
                 shaderLang = shaderc_source_language_glsl;
                 break;
@@ -215,7 +227,7 @@ namespace engine {
 
         options.SetIncluder(std::make_unique<IncludeHandler>(include));
         options.SetSourceLanguage(shaderLang);
-        options.SetAutoBindUniforms(true);
+        options.SetAutoBindUniforms(false);
         options.SetAutoSampledTextures(true);
         options.SetAutoMapLocations(true);
         options.SetOptimizationLevel(shaderc_optimization_level_zero);

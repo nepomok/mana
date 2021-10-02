@@ -35,10 +35,27 @@ namespace engine {
 
         enum ShaderLanguage {
             HLSL, //HLSL Shader Model 3
-            GLSL_460,
-            GLSL_ES_320
+            GLSL_460, //GLSL 460 with OpenGL semantics
+            GLSL_460_VK, //GLSL 460 with Vulkan semantics
+            GLSL_ES_320 //GLSL 320 ES with OpenGL semantics
         };
 
+        /**
+         * Compile the given source to spirv.
+         *
+         * When compiling HLSL all global variables which are not sampler states or textures are stored in a single
+         * uniform called Globals, which means
+         * when the user wants to set a global variable defined in HLSL "Globals." has to be prepended to the variable name
+         * when calling the setter methods on the ShaderProgram object.
+         *
+         * When compiling GLSL uniforms are preserved.
+         *
+         * @param source
+         * @param entryPoint
+         * @param stage
+         * @param language
+         * @return
+         */
         std::vector<uint32_t> compileToSPIRV(const std::string &source,
                                              const std::string &entryPoint,
                                              ShaderStage stage,

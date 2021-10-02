@@ -279,9 +279,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 1);
-        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
+        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("Globals.USE_TEXTURE", 1);
+        command.shader->setVec4("Globals.COLOR", Vec4f(1, 1, 1, 1));
 
         command.shader->setTexture("diffuse", 0);
 
@@ -322,9 +322,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("Globals.USE_TEXTURE", 0);
+        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -353,9 +353,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("Globals.USE_TEXTURE", 0);
+        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -380,9 +380,9 @@ namespace engine {
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("Globals.USE_TEXTURE", 0);
+        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -425,8 +425,8 @@ namespace engine {
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
             modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+            command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
+            command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
                                                    (float) color.g() / 255,
                                                    (float) color.b() / 255,
                                                    (float) color.a() / 255));
