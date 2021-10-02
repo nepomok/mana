@@ -318,16 +318,16 @@ namespace engine {
         ShaderSource vsSkybox(SHADER_VERT_SKYBOX, "main", VERTEX, HLSL);
         ShaderSource fsSkybox(SHADER_FRAG_SKYBOX, "main", FRAGMENT, HLSL);
 
-        vs.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+        vs.preprocess(Renderer3D::getShaderIncludeCallback(),
                       Renderer3D::getShaderMacros(HLSL));
-        fsVertNorm.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+        fsVertNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
                               Renderer3D::getShaderMacros(HLSL));
-        fsTexNorm.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+        fsTexNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
                              Renderer3D::getShaderMacros(HLSL));
 
-        vsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+        vsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(),
                             Renderer3D::getShaderMacros(HLSL));
-        fsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+        fsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(),
                             Renderer3D::getShaderMacros(HLSL));
 
         auto &allocator = device.getAllocator();

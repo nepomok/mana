@@ -143,8 +143,8 @@ namespace engine {
                                     FRAGMENT,
                                     HLSL);
 
-        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(HLSL), Renderer3D::getShaderMacros(HLSL));
-        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(HLSL), Renderer3D::getShaderMacros(HLSL));
+        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL));
+        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL));
 
         auto &allocator = device.getAllocator();
 

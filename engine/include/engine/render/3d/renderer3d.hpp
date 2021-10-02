@@ -37,7 +37,7 @@ namespace engine {
     public:
         static const std::map<std::string, std::string> &getShaderMacros(ShaderCompiler::ShaderLanguage lang);
 
-        static const std::function<std::string(const char *)> &getShaderIncludeCallback(ShaderCompiler::ShaderLanguage lang);
+        static const std::function<std::string(const char *)> &getShaderIncludeCallback();
 
         Renderer3D() = default;
 

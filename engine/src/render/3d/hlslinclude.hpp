@@ -17,16 +17,14 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_HLSLINJECT_HPP
-#define MANA_HLSLINJECT_HPP
-
-#define SHADER_INCLUDE std::string("#include \"mana.hlsl\"\n")
+#ifndef MANA_HLSLINCLUDE_HPP
+#define MANA_HLSLINCLUDE_HPP
 
 /**
  * The hlsl source packaged with the binary which is injected when SHADER_INCLUDE is found in a user shader,
  * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
  */
-const char *SHADER_MANA = R"###(
+static const char *SHADER_MANA_HLSL = R"###(
 float4x4 MANA_M;
 float4x4 MANA_V;
 float4x4 MANA_P;
@@ -201,4 +199,4 @@ LightComponents mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse,
 }
 )###";
 
-#endif //MANA_HLSLINJECT_HPP
+#endif //MANA_HLSLINCLUDE_HPP
