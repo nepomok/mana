@@ -18,6 +18,8 @@
  */
 
 #include "engine/render/2d/renderer2d.hpp"
+#include "engine/render/shadercompiler.hpp"
+
 #include "engine/math/matrixmath.hpp"
 
 #include "engine/asset/camera.hpp"
@@ -172,14 +174,14 @@ namespace engine {
     Renderer2D::Renderer2D() = default;
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
-        defaultShader = device.getAllocator().createShaderProgram(SHADER_VERT,
-                                                                  SHADER_FRAG,
-                                                                  {},
-                                                                  includeCallback);
-        defaultTextShader = device.getAllocator().createShaderProgram(SHADER_VERT,
-                                                                      SHADER_TEXT_FRAG,
-                                                                      {},
-                                                                      includeCallback);
+        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        vs.preprocess(includeCallback);
+        fs.preprocess(includeCallback);
+        fsText.preprocess(includeCallback);
+        defaultShader = device.getAllocator().createShaderProgram(vs.compile(), fs.compile());
+        defaultTextShader = device.getAllocator().createShaderProgram(vs.compile(), fsText.compile());
     }
 
     Renderer2D::~Renderer2D() {
@@ -188,10 +190,14 @@ namespace engine {
     }
 
     Renderer2D::Renderer2D(const Renderer2D &other) {
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {},
-                                                                               includeCallback);
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
-                                                                                   includeCallback);
+        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        vs.preprocess(includeCallback);
+        fs.preprocess(includeCallback);
+        fsText.preprocess(includeCallback);
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fs.compile());
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fsText.compile());
         renderDevice = other.renderDevice;
     }
 
@@ -199,10 +205,14 @@ namespace engine {
         if (this == &other)
             return *this;
 
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {},
-                                                                               includeCallback);
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(SHADER_VERT, SHADER_TEXT_FRAG, {},
-                                                                                   includeCallback);
+        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        vs.preprocess(includeCallback);
+        fs.preprocess(includeCallback);
+        fsText.preprocess(includeCallback);
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fs.compile());
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fsText.compile());
 
         renderDevice = other.renderDevice;
 

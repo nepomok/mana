@@ -22,6 +22,7 @@
 #include "engine/render/3d/passes/geometrypass.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
+#include "engine/render/shadercompiler.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 
@@ -306,17 +307,33 @@ f 5/1/6 1/3/6 2/12/6
 )###");
 
 namespace engine {
+    using namespace ShaderCompiler;
+
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
+        ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, HLSL);
+        ShaderSource fsVertNorm(SHADER_FRAG_GEOMETRY_VERTEXNORMALS, "main", FRAGMENT, HLSL);
+        ShaderSource fsTexNorm(SHADER_FRAG_GEOMETRY_TEXTURENORMALS, "main", FRAGMENT, HLSL);
+
+        ShaderSource vsSkybox(SHADER_VERT_SKYBOX, "main", VERTEX, HLSL);
+        ShaderSource fsSkybox(SHADER_FRAG_SKYBOX, "main", FRAGMENT, HLSL);
+
+        vs.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+                      Renderer3D::getShaderMacros(HLSL));
+        fsVertNorm.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+                              Renderer3D::getShaderMacros(HLSL));
+        fsTexNorm.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+                             Renderer3D::getShaderMacros(HLSL));
+
+        vsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+                            Renderer3D::getShaderMacros(HLSL));
+        fsSkybox.preprocess(Renderer3D::getShaderIncludeCallback(HLSL),
+                            Renderer3D::getShaderMacros(HLSL));
+
         auto &allocator = device.getAllocator();
-        shaderTextureNormals = allocator.createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                             SHADER_FRAG_GEOMETRY_TEXTURENORMALS,
-                                                             Renderer3D::getShaderMacros(),
-                                                             Renderer3D::getShaderIncludeCallback());
-        shaderVertexNormals = allocator.createShaderProgram(SHADER_VERT_GEOMETRY,
-                                                            SHADER_FRAG_GEOMETRY_VERTEXNORMALS,
-                                                            Renderer3D::getShaderMacros(),
-                                                            Renderer3D::getShaderIncludeCallback());
+        shaderVertexNormals = allocator.createShaderProgram(vs.compile(), fsVertNorm.compile());
+        shaderTextureNormals = allocator.createShaderProgram(vs.compile(), fsTexNorm.compile());
+
         TextureBuffer::Attributes attributes;
         attributes.size = Vec2i(1, 1);
         attributes.format = TextureBuffer::RGBA;
@@ -336,10 +353,7 @@ namespace engine {
         attributes.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
         skyboxDefault = allocator.createTextureBuffer(attributes);
 
-        shaderSkybox = allocator.createShaderProgram(SHADER_VERT_SKYBOX,
-                                                     SHADER_FRAG_SKYBOX,
-                                                     Renderer3D::getShaderMacros(),
-                                                     Renderer3D::getShaderIncludeCallback());
+        shaderSkybox = allocator.createShaderProgram(vsSkybox.compile(), fsSkybox.compile());
 
         std::stringstream skyboxStream((std::string(SKYBOX_OBJ)));
         Mesh skyboxMesh = AssetImporter::import(skyboxStream, ".obj").meshes.at("Cube");

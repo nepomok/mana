@@ -1,7 +1,7 @@
 # Dependencies
 
 ### Engine
-- OpenGL 3.3
+- OpenGL 4.6
 - [GLM](https://github.com/g-truc/glm)
 - [GLFW](https://github.com/glfw/glfw)
 - [AssImp](https://github.com/assimp/assimp)

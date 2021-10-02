@@ -20,6 +20,7 @@
 #include "engine/render/3d/passes/debugpass.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
+#include "engine/render/shadercompiler.hpp"
 
 static const char *SHADER_VERT = R"###(
 struct VS_INPUT
@@ -227,14 +228,15 @@ PS_OUTPUT main(PS_INPUT input) {
 )###";
 
 namespace engine {
+    using namespace ShaderCompiler;
+
     DebugPass::DebugPass(RenderDevice &device)
             : device(device),
               drawNormals(false) {
-        shader = device.getAllocator().createShaderProgram(SHADER_VERT,
-                                                           SHADER_GEOMETRY,
-                                                           SHADER_FRAG,
-                                                           Renderer3D::getShaderMacros(),
-                                                           Renderer3D::getShaderIncludeCallback());
+        ShaderSource vs(SHADER_VERT, "main", VERTEX, HLSL);
+        ShaderSource gs(SHADER_GEOMETRY, "main", GEOMETRY, HLSL);
+        ShaderSource fs(SHADER_FRAG, "main", FRAGMENT, HLSL);
+        shader = device.getAllocator().createShaderProgram(vs.compile(), gs.compile(), fs.compile());
     }
 
     DebugPass::~DebugPass() {

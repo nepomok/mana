@@ -44,12 +44,12 @@ namespace engine {
             }
             display = DisplayManager(displayBackend);
 
-            GraphicsBackend graphicsBackend = GraphicsBackend::OPENGL;
+            GraphicsBackend graphicsBackend = GraphicsBackend::OPENGL_4_6;
             for (int i = 0; i < args.size(); i++) {
                 if (args.at(i) == "--graphics") {
                     auto str = args.at(i + 1);
                     if (str == "opengl") {
-                        graphicsBackend = GraphicsBackend::OPENGL;
+                        graphicsBackend = GraphicsBackend::OPENGL_4_6;
                     } else if (str == "directx") {
                         graphicsBackend = GraphicsBackend::DIRECTX;
                     } else if (str == "vulkan") {

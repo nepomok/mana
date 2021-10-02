@@ -32,15 +32,23 @@ namespace engine {
 
         virtual TextureBuffer *createTextureBuffer(TextureBuffer::Attributes attributes) = 0;
 
-        virtual MeshBuffer *createMeshBuffer(const Mesh &mesh) = 0;
-
-        virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
-
         /**
-         * Create a shader program from the supplied vertex and fragment shader written in hlsl.
+         * Create a mesh buffer instance for the given mesh.
          *
-         * The hardcoded vertex shader input layout is as follows:
+         * The mesh buffer vertex attributes required in vertex shaders which draw the mesh buffer are bound as follows:
          *
+         * GLSL:
+         *  layout (location = 0) in vec3 position;
+         *  layout (location = 1) in vec3 normal;
+         *  layout (location = 2) in vec2 uv;
+         *  layout (location = 3) in vec3 tangent;
+         *  layout (location = 4) in vec3 bitangent;
+         *  layout (location = 5) in vec4 instanceRow0;
+         *  layout (location = 6) in vec4 instanceRow1;
+         *  layout (location = 7) in vec4 instanceRow2;
+         *  layout (location = 8) in vec4 instanceRow3;
+         *
+         * HLSL:
          *  struct VS_INPUT
          *  {
          *      float3 position : POSITION0;
@@ -54,24 +62,29 @@ namespace engine {
          *      float4 instanceRow3 : POSITION4;
          *  };
          *
-         * @param vertexShader
-         * @param fragmentShader
-         * @param macros
-         * @param includeCallback
+         * @param mesh
          * @return
          */
-        virtual ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                                   const std::string &fragmentShader,
-                                                   const std::map<std::string, std::string> &macros,
-                                                   const std::function<std::string(const char *)> &includeCallback)
-        = 0;
+        virtual MeshBuffer *createMeshBuffer(const Mesh &mesh) = 0;
 
-        virtual ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                                   const std::string &geometryShader,
-                                                   const std::string &fragmentShader,
-                                                   const std::map<std::string, std::string> &macros,
-                                                   const std::function<std::string(const char *)> &includeCallback)
-        = 0;
+        virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
+
+        /**
+         * Create a shader program instance for the given spirv shader sources.
+         *
+         * The implementation may decompile the spirv to a different language using the ShaderCompiler interface,
+         * quirks when decompiling spirv using the ShaderCompiler have to be kept in mind.
+         *
+         * @param vertexShader
+         * @param fragmentShader
+         * @return
+         */
+        virtual ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                                   const std::vector<uint32_t> &fragmentShader) = 0;
+
+        virtual ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                                   const std::vector<uint32_t> &geometryShader,
+                                                   const std::vector<uint32_t> &fragmentShader) = 0;
     };
 }
 

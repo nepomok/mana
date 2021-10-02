@@ -35,18 +35,12 @@ namespace engine {
 
             MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) override;
 
-            ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                               const std::string &fragmentShader,
-                                               const std::map<std::string, std::string> &macros,
-                                               const std::function<std::string(
-                                                       const char *)> &includeCallback) override;
+            ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                               const std::vector<uint32_t> &fragmentShader) override;
 
-            ShaderProgram *createShaderProgram(const std::string &vertexShader,
-                                               const std::string &geometryShader,
-                                               const std::string &fragmentShader,
-                                               const std::map<std::string, std::string> &macros,
-                                               const std::function<std::string(
-                                                       const char *)> &includeCallback) override;
+            ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                               const std::vector<uint32_t> &geometryShader,
+                                               const std::vector<uint32_t> &fragmentShader) override;
         };
     }
 }

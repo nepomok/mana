@@ -32,8 +32,6 @@
 
 #include "engine/asset/assetimporter.hpp"
 
-#include "render/3d/debug/debugrenderer.hpp"
-
 namespace engine {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),

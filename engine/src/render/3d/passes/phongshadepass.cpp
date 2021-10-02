@@ -23,6 +23,8 @@
 
 #include "engine/math/rotation.hpp"
 
+#include "engine/render/shadercompiler.hpp"
+
 const char *SHADER_VERT_LIGHTING = R"###(
 struct VS_INPUT
 {
@@ -128,14 +130,25 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace engine {
+    using namespace ShaderCompiler;
+
     PhongShadePass::PhongShadePass(RenderDevice &device)
             : renderDevice(device) {
+        ShaderSource vertexShader(SHADER_VERT_LIGHTING,
+                                  "main",
+                                  VERTEX,
+                                  HLSL);
+        ShaderSource fragmentShader(SHADER_FRAG_LIGHTING,
+                                    "main",
+                                    FRAGMENT,
+                                    HLSL);
+
+        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(HLSL), Renderer3D::getShaderMacros(HLSL));
+        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(HLSL), Renderer3D::getShaderMacros(HLSL));
+
         auto &allocator = device.getAllocator();
 
-        shader = allocator.createShaderProgram(SHADER_VERT_LIGHTING,
-                                               SHADER_FRAG_LIGHTING,
-                                               Renderer3D::getShaderMacros(),
-                                               Renderer3D::getShaderIncludeCallback());
+        shader = allocator.createShaderProgram(vertexShader.compile(), fragmentShader.compile());
     }
 
     void PhongShadePass::prepareBuffer(GeometryBuffer &gBuffer) {

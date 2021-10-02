@@ -366,21 +366,20 @@ namespace engine {
             return ret;
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::string &vertexShader,
-                                                               const std::string &fragmentShader,
-                                                               const std::map<std::string, std::string> &macros,
-                                                               const std::function<std::string(
-                                                                       const char *)> &includeCallback) {
-            return new OGLShaderProgram(vertexShader, "", fragmentShader, macros, includeCallback);
+        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                                               const std::vector<uint32_t> &fragmentShader) {
+            std::string v = ShaderCompiler::decompileSPIRV(vertexShader, ShaderCompiler::GLSL_460);
+            std::string f = ShaderCompiler::decompileSPIRV(fragmentShader, ShaderCompiler::GLSL_460);
+            return new OGLShaderProgram(v, "", f);
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::string &vertexShader,
-                                                               const std::string &geometryShader,
-                                                               const std::string &fragmentShader,
-                                                               const std::map<std::string, std::string> &macros,
-                                                               const std::function<std::string(
-                                                                       const char *)> &includeCallback) {
-            return new OGLShaderProgram(vertexShader, geometryShader, fragmentShader, macros, includeCallback);
+        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::vector<uint32_t> &vertexShader,
+                                                               const std::vector<uint32_t> &geometryShader,
+                                                               const std::vector<uint32_t> &fragmentShader) {
+            std::string v = ShaderCompiler::decompileSPIRV(vertexShader, ShaderCompiler::GLSL_460);
+            std::string g = ShaderCompiler::decompileSPIRV(geometryShader, ShaderCompiler::GLSL_460);
+            std::string f = ShaderCompiler::decompileSPIRV(fragmentShader, ShaderCompiler::GLSL_460);
+            return new OGLShaderProgram(v, g, f);
         }
     }
 }

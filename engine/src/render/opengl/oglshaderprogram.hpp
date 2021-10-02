@@ -37,11 +37,14 @@ namespace engine {
         public:
             OGLShaderProgram();
 
+            /**
+             * @param vertexShader The preprocessed glsl vertex shader
+             * @param geometryShader The preprocessed glsl geometry shader, if empty no geometry shader is used.
+             * @param fragmentShader The preprocessed glsl fragment shader
+             */
             OGLShaderProgram(const std::string &vertexShader,
                              const std::string &geometryShader,
-                             const std::string &fragmentShader,
-                             const std::map<std::string, std::string> &macros,
-                             const std::function<std::string(const char *)> &includeCallback);
+                             const std::string &fragmentShader);
 
             ~OGLShaderProgram() override;
 
@@ -85,9 +88,6 @@ namespace engine {
 
         private:
             GLuint programID;
-
-            std::string vertexShader;
-            std::string fragmentShader;
         };
     }
 }

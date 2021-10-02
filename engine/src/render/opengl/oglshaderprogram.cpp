@@ -32,53 +32,15 @@
 
 namespace engine {
     namespace opengl {
-        OGLShaderProgram::OGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
+        OGLShaderProgram::OGLShaderProgram() : programID(0) {}
 
         OGLShaderProgram::OGLShaderProgram(const std::string &vertexShader,
                                            const std::string &geometryShader,
-                                           const std::string &fragmentShader,
-                                           const std::map<std::string, std::string> &macros,
-                                           const std::function<std::string(const char *)> &includeCallback)
-                : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            std::string vs = ShaderCompiler::preprocess(vertexShader,
-                                                        ShaderCompiler::VERTEX,
-                                                        ShaderCompiler::HLSL,
-                                                        includeCallback,
-                                                        macros);
-            vs = ShaderCompiler::crossCompile(vs,
-                                              "main",
-                                              ShaderCompiler::VERTEX,
-                                              ShaderCompiler::HLSL,
-                                              ShaderCompiler::GLSL);
-
-            std::string gs;
-            if (!geometryShader.empty()) {
-                gs = ShaderCompiler::preprocess(geometryShader,
-                                                ShaderCompiler::GEOMETRY,
-                                                ShaderCompiler::HLSL,
-                                                includeCallback,
-                                                macros);
-                gs = ShaderCompiler::crossCompile(gs,
-                                                  "main",
-                                                  ShaderCompiler::GEOMETRY,
-                                                  ShaderCompiler::HLSL,
-                                                  ShaderCompiler::GLSL);
-            }
-
-            std::string fs = ShaderCompiler::preprocess(fragmentShader,
-                                                        ShaderCompiler::FRAGMENT,
-                                                        ShaderCompiler::HLSL,
-                                                        includeCallback,
-                                                        macros);
-            fs = ShaderCompiler::crossCompile(fs,
-                                              "main",
-                                              ShaderCompiler::FRAGMENT,
-                                              ShaderCompiler::HLSL,
-                                              ShaderCompiler::GLSL);
-
-            const char *vertexSource = vs.c_str();
-            const char *fragmentSource = fs.c_str();
-            const char *geometrySource = gs.c_str();
+                                           const std::string &fragmentShader)
+                : programID(0) {
+            const char *vertexSource = vertexShader.c_str();
+            const char *geometrySource = geometryShader.c_str();
+            const char *fragmentSource = fragmentShader.c_str();
 
             programID = glCreateProgram();
 
@@ -99,6 +61,25 @@ namespace engine {
 
             glAttachShader(programID, vsH);
 
+            unsigned int gsH;
+
+            if (!geometryShader.empty()) {
+                gsH = glCreateShader(GL_GEOMETRY_SHADER);
+                glShaderSource(gsH, 1, &geometrySource, NULL);
+                glCompileShader(gsH);
+                glGetShaderiv(gsH, GL_COMPILE_STATUS, &success);
+                if (!success) {
+                    char infoLog[512];
+                    glGetShaderInfoLog(gsH, 512, NULL, infoLog);
+                    glDeleteShader(vsH);
+                    glDeleteShader(gsH);
+                    std::string error = "Failed to compile fragment shader: ";
+                    error.append(infoLog);
+                    throw std::runtime_error(error);
+                }
+                glAttachShader(programID, gsH);
+            }
+
             unsigned int fsH = glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(fsH, 1, &fragmentSource, NULL);
             glCompileShader(fsH);
@@ -107,29 +88,14 @@ namespace engine {
                 char infoLog[512];
                 glGetShaderInfoLog(fsH, 512, NULL, infoLog);
                 glDeleteShader(vsH);
+                if (!geometryShader.empty())
+                    glDeleteShader(gsH);
                 glDeleteShader(fsH);
                 std::string error = "Failed to compile fragment shader: ";
                 error.append(infoLog);
                 throw std::runtime_error(error);
             }
             glAttachShader(programID, fsH);
-
-            if (!gs.empty()) {
-                unsigned int gsH = glCreateShader(GL_GEOMETRY_SHADER);
-                glShaderSource(gsH, 1, &geometrySource, NULL);
-                glCompileShader(gsH);
-                glGetShaderiv(gsH, GL_COMPILE_STATUS, &success);
-                if (!success) {
-                    char infoLog[512];
-                    glGetShaderInfoLog(fsH, 512, NULL, infoLog);
-                    glDeleteShader(vsH);
-                    glDeleteShader(fsH);
-                    std::string error = "Failed to compile fragment shader: ";
-                    error.append(infoLog);
-                    throw std::runtime_error(error);
-                }
-                glAttachShader(programID, gsH);
-            }
 
             glLinkProgram(programID);
 

@@ -81,7 +81,8 @@ namespace engine {
             case HLSL:
                 shaderLang = shaderc_source_language_hlsl;
                 break;
-            case GLSL:
+            case GLSL_460:
+            case GLSL_ES_320:
                 shaderLang = shaderc_source_language_glsl;
                 break;
         }
@@ -126,7 +127,27 @@ namespace engine {
 
                 return sCompiler.compile();
             }
-            case GLSL: {
+            case GLSL_460: {
+                spirv_cross::CompilerGLSL sCompiler(source);
+
+                spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
+
+                // Set the first uniform buffer name to "Globals" because shaderc
+                // merges all uniform variables declared in the source into a single uniform buffer in the SPIRV.
+                if (!resources.uniform_buffers.empty())
+                    sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
+
+                spirv_cross::CompilerGLSL::Options sOptions;
+                sOptions.version = 460;
+
+                //Dont generate glsl which uses the uniform buffer api.
+                sOptions.emit_uniform_buffer_as_plain_uniforms = true;
+
+                sCompiler.set_common_options(sOptions);
+
+                return sCompiler.compile();
+            }
+            case GLSL_ES_320 : {
                 spirv_cross::CompilerGLSL sCompiler(source);
 
                 spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
@@ -142,10 +163,11 @@ namespace engine {
                 //Dont generate glsl which uses the uniform buffer api.
                 sOptions.emit_uniform_buffer_as_plain_uniforms = true;
 
-                //Either setting separate shader objects or OpenGL ES causes spirv to generate the required
-                //layout specifiers. For portability all shaders will be required to be OpenGL ES supported.
                 sOptions.es = true;
-                sOptions.separate_shader_objects = false;
+
+                //Set medium precision because high precision is optional in OpenGL ES
+                sOptions.fragment.default_float_precision = sOptions.Mediump;
+                sOptions.fragment.default_int_precision = sOptions.Mediump;
 
                 sCompiler.set_common_options(sOptions);
 
@@ -179,7 +201,8 @@ namespace engine {
             case HLSL:
                 shaderLang = shaderc_source_language_hlsl;
                 break;
-            case GLSL:
+            case GLSL_460:
+            case GLSL_ES_320:
                 shaderLang = shaderc_source_language_glsl;
                 break;
         }

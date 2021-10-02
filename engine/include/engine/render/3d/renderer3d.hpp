@@ -30,12 +30,14 @@
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
 
+#include "engine/render/shadercompiler.hpp"
+
 namespace engine {
     class Renderer3D {
     public:
-        static const std::map<std::string, std::string> &getShaderMacros();
+        static const std::map<std::string, std::string> &getShaderMacros(ShaderCompiler::ShaderLanguage lang);
 
-        static const std::function<std::string(const char *)> &getShaderIncludeCallback();
+        static const std::function<std::string(const char *)> &getShaderIncludeCallback(ShaderCompiler::ShaderLanguage lang);
 
         Renderer3D() = default;
 

@@ -23,6 +23,7 @@
 #include <map>
 #include <string>
 #include <functional>
+#include <stdexcept>
 
 namespace engine {
     namespace ShaderCompiler {
@@ -33,8 +34,9 @@ namespace engine {
         };
 
         enum ShaderLanguage {
-            HLSL,
-            GLSL
+            HLSL, //HLSL Shader Model 3
+            GLSL_460,
+            GLSL_ES_320
         };
 
         std::vector<uint32_t> compileToSPIRV(const std::string &source,
@@ -53,8 +55,57 @@ namespace engine {
         std::string crossCompile(const std::string &source,
                                  const std::string &entryPoint,
                                  ShaderStage stage,
-                                 ShaderLanguage sourceLanguage,
+                                 ShaderLanguage language,
                                  ShaderLanguage targetLanguage);
+
+        struct ShaderSource {
+            ShaderSource() = default;
+
+            ShaderSource(std::string src,
+                         std::string entryPoint,
+                         ShaderStage stage,
+                         ShaderLanguage language,
+                         bool preprocessed = false)
+                    : src(std::move(src)),
+                      entryPoint(std::move(entryPoint)),
+                      stage(stage),
+                      language(language),
+                      preprocessed(preprocessed) {}
+
+            void preprocess(const std::function<std::string(const char *)> &include = {},
+                            const std::map<std::string, std::string> &macros = {}) {
+                if (preprocessed)
+                    throw std::runtime_error("Source already preprocessed");
+                src = ShaderCompiler::preprocess(src, stage, language, include, macros);
+                preprocessed = true;
+            }
+
+            std::vector<uint32_t> compile() {
+                if (!preprocessed)
+                    this->preprocess();
+                return compileToSPIRV(src, entryPoint, stage, language);
+            }
+
+            ShaderSource crossCompile(ShaderLanguage targetLanguage) const {
+                std::string prSrc;
+                if (!preprocessed)
+                    prSrc = ShaderCompiler::preprocess(src, stage, language);
+                else
+                    prSrc = src;
+                return ShaderSource(ShaderCompiler::crossCompile(prSrc, entryPoint, stage, language, targetLanguage),
+                                    entryPoint,
+                                    stage,
+                                    targetLanguage,
+                                    true);
+            }
+
+        private:
+            std::string src{};
+            std::string entryPoint{};
+            ShaderStage stage{};
+            ShaderLanguage language{};
+            bool preprocessed{};
+        };
     }
 }
 

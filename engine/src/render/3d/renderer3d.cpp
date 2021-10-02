@@ -38,12 +38,27 @@ namespace engine {
 
     const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};
 
-    const std::map<std::string, std::string> &Renderer3D::getShaderMacros() {
-        return gMacros;
+    const std::map<std::string, std::string> &Renderer3D::getShaderMacros(ShaderCompiler::ShaderLanguage lang) {
+        switch (lang) {
+            case ShaderCompiler::HLSL:
+                return gMacros;
+            case ShaderCompiler::GLSL_460:
+            case ShaderCompiler::GLSL_ES_320:
+            default:
+                throw std::runtime_error("Not implemented");
+        }
     }
 
-    const std::function<std::string(const char *)> &Renderer3D::getShaderIncludeCallback() {
-        return gIncludeFunc;
+    const std::function<std::string(const char *)> &
+    Renderer3D::getShaderIncludeCallback(ShaderCompiler::ShaderLanguage lang) {
+        switch (lang) {
+            case ShaderCompiler::HLSL:
+                return gIncludeFunc;
+            case ShaderCompiler::GLSL_460:
+            case ShaderCompiler::GLSL_ES_320:
+            default:
+                throw std::runtime_error("Not implemented");
+        }
     }
 
     Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes)

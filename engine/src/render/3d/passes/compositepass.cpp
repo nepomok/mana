@@ -19,6 +19,8 @@
 
 #include "engine/render/3d/passes/compositepass.hpp"
 
+#include "engine/render/shadercompiler.hpp"
+
 static const char *SHADER_VERT = R"###(
 struct VS_INPUT
 {
@@ -148,9 +150,13 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 namespace engine {
+    using namespace ShaderCompiler;
+
     CompositePass::CompositePass(RenderDevice &device)
             : device(device) {
-        shader = device.getAllocator().createShaderProgram(SHADER_VERT, SHADER_FRAG, {}, {});
+        ShaderSource vertexShader(SHADER_VERT, "main", VERTEX, HLSL);
+        ShaderSource fragmentShader(SHADER_FRAG, "main", FRAGMENT, HLSL);
+        shader = device.getAllocator().createShaderProgram(vertexShader.compile(), fragmentShader.compile());
     }
 
     CompositePass::~CompositePass() {

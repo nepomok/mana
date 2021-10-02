@@ -45,7 +45,7 @@ namespace engine {
         Window *createWindow(GraphicsBackend api) {
             Window *ret;
             switch (api) {
-                case OPENGL:
+                case OPENGL_4_6:
                     ret = dynamic_cast<Window *>(new GLFWWindowGL("Window GLFW", Vec2i(600, 300),
                                                                   WindowAttributes()));
                     break;
@@ -61,7 +61,7 @@ namespace engine {
                              WindowAttributes attributes) {
             Window *ret;
             switch (api) {
-                case OPENGL:
+                case OPENGL_4_6:
                     ret = dynamic_cast<Window *>(new GLFWWindowGL(title, size, attributes));
                     break;
                 default:
@@ -78,7 +78,7 @@ namespace engine {
                              VideoMode mode) {
             Window *ret;
             switch (api) {
-                case OPENGL:
+                case OPENGL_4_6:
                     ret = dynamic_cast<Window *>(new GLFWWindowGL(title,
                                                                   size,
                                                                   attributes,
