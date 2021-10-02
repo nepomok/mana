@@ -174,14 +174,14 @@ namespace engine {
     Renderer2D::Renderer2D() = default;
 
     Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
-        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
         vs.preprocess(includeCallback);
         fs.preprocess(includeCallback);
         fsText.preprocess(includeCallback);
-        defaultShader = device.getAllocator().createShaderProgram(vs.compile(), fs.compile());
-        defaultTextShader = device.getAllocator().createShaderProgram(vs.compile(), fsText.compile());
+        defaultShader = device.getAllocator().createShaderProgram(vs, fs);
+        defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);
     }
 
     Renderer2D::~Renderer2D() {
@@ -190,14 +190,14 @@ namespace engine {
     }
 
     Renderer2D::Renderer2D(const Renderer2D &other) {
-        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
         vs.preprocess(includeCallback);
         fs.preprocess(includeCallback);
         fsText.preprocess(includeCallback);
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fs.compile());
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fsText.compile());
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs, fs);
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs, fsText);
         renderDevice = other.renderDevice;
     }
 
@@ -205,14 +205,14 @@ namespace engine {
         if (this == &other)
             return *this;
 
-        ShaderCompiler::ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        ShaderCompiler::ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
+        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
         vs.preprocess(includeCallback);
         fs.preprocess(includeCallback);
         fsText.preprocess(includeCallback);
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fs.compile());
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs.compile(), fsText.compile());
+        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs, fs);
+        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs, fsText);
 
         renderDevice = other.renderDevice;
 
@@ -279,9 +279,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("Globals.USE_TEXTURE", 1);
-        command.shader->setVec4("Globals.COLOR", Vec4f(1, 1, 1, 1));
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 1);
+        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
 
         command.shader->setTexture("diffuse", 0);
 
@@ -322,9 +322,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("Globals.USE_TEXTURE", 0);
-        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -353,9 +353,9 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("Globals.USE_TEXTURE", 0);
-        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -380,9 +380,9 @@ namespace engine {
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("Globals.USE_TEXTURE", 0);
-        command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
+        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+        command.shader->setFloat("USE_TEXTURE", 0);
+        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
@@ -425,8 +425,8 @@ namespace engine {
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
             modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-            command.shader->setMat4("Globals.MODEL_MATRIX", modelMatrix);
-            command.shader->setVec4("Globals.COLOR", Vec4f((float) color.r() / 255,
+            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
+            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                    (float) color.g() / 255,
                                                    (float) color.b() / 255,
                                                    (float) color.a() / 255));

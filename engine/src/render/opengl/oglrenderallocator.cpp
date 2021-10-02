@@ -27,6 +27,19 @@
 
 namespace engine {
     namespace opengl {
+        static std::string getGlslSource(const ShaderSource &source) {
+            switch (source.getLanguage()) {
+                case ShaderCompiler::HLSL:
+                    return source.crossCompile(ShaderCompiler::GLSL_460).getSrc();
+                case ShaderCompiler::GLSL_460:
+                case ShaderCompiler::GLSL_460_VK:
+                case ShaderCompiler::GLSL_ES_320:
+                    return source.getSrc();
+                default:
+                    throw std::runtime_error("Invalid language");
+            }
+        }
+
         static GLenum getElementType(Mesh::Primitive primitive) {
             switch (primitive) {
                 case Mesh::POINT:
@@ -366,20 +379,31 @@ namespace engine {
             return ret;
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::vector<uint32_t> &vertexShader,
-                                                               const std::vector<uint32_t> &fragmentShader) {
-            std::string v = ShaderCompiler::decompileSPIRV(vertexShader, ShaderCompiler::GLSL_460);
-            std::string f = ShaderCompiler::decompileSPIRV(fragmentShader, ShaderCompiler::GLSL_460);
-            return new OGLShaderProgram(v, "", f);
+        ShaderProgram *OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                               const ShaderSource &fragmentShader) {
+            auto language = vertexShader.getLanguage();
+            if (fragmentShader.getLanguage() != language)
+                throw std::runtime_error("Mixed language shaders not supported");
+            std::string prefix;
+            if (language == ShaderCompiler::HLSL)
+                prefix = "Globals.";
+            return new OGLShaderProgram(getGlslSource(vertexShader), "", getGlslSource(fragmentShader), prefix);
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const std::vector<uint32_t> &vertexShader,
-                                                               const std::vector<uint32_t> &geometryShader,
-                                                               const std::vector<uint32_t> &fragmentShader) {
-            std::string v = ShaderCompiler::decompileSPIRV(vertexShader, ShaderCompiler::GLSL_460);
-            std::string g = ShaderCompiler::decompileSPIRV(geometryShader, ShaderCompiler::GLSL_460);
-            std::string f = ShaderCompiler::decompileSPIRV(fragmentShader, ShaderCompiler::GLSL_460);
-            return new OGLShaderProgram(v, g, f);
+        ShaderProgram *OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                               const ShaderSource &geometryShader,
+                                                               const ShaderSource &fragmentShader) {
+            auto language = vertexShader.getLanguage();
+            if (geometryShader.getLanguage() != language
+                || fragmentShader.getLanguage() != language)
+                throw std::runtime_error("Mixed language shaders not supported");
+            std::string prefix;
+            if (language == ShaderCompiler::HLSL)
+                prefix = "Globals.";
+            return new OGLShaderProgram(getGlslSource(vertexShader),
+                                        getGlslSource(geometryShader),
+                                        getGlslSource(fragmentShader),
+                                        prefix);
         }
     }
 }

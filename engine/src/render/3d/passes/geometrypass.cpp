@@ -331,8 +331,8 @@ namespace engine {
                             Renderer3D::getShaderMacros(HLSL));
 
         auto &allocator = device.getAllocator();
-        shaderVertexNormals = allocator.createShaderProgram(vs.compile(), fsVertNorm.compile());
-        shaderTextureNormals = allocator.createShaderProgram(vs.compile(), fsTexNorm.compile());
+        shaderVertexNormals = allocator.createShaderProgram(vs, fsVertNorm);
+        shaderTextureNormals = allocator.createShaderProgram(vs, fsTexNorm);
 
         TextureBuffer::Attributes attributes;
         attributes.size = Vec2i(1, 1);
@@ -353,7 +353,7 @@ namespace engine {
         attributes.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
         skyboxDefault = allocator.createTextureBuffer(attributes);
 
-        shaderSkybox = allocator.createShaderProgram(vsSkybox.compile(), fsSkybox.compile());
+        shaderSkybox = allocator.createShaderProgram(vsSkybox, fsSkybox);
 
         std::stringstream skyboxStream((std::string(SKYBOX_OBJ)));
         Mesh skyboxMesh = AssetImporter::import(skyboxStream, ".obj").meshes.at("Cube");
@@ -430,12 +430,12 @@ namespace engine {
 
         skyboxCommand.shader = shaderSkybox;
 
-        skyboxCommand.shader->setMat4("Globals.MANA_M", model);
-        skyboxCommand.shader->setMat4("Globals.MANA_V", view);
-        skyboxCommand.shader->setMat4("Globals.MANA_P", projection);
-        skyboxCommand.shader->setMat4("Globals.MANA_MVP", projection * view * model);
-        skyboxCommand.shader->setMat4("Globals.MANA_M_INVERT", MatrixMath::inverse(model));
-        skyboxCommand.shader->setMat4("Globals.MANA_VIEW_TRANSLATION", cameraTranslation);
+        skyboxCommand.shader->setMat4("MANA_M", model);
+        skyboxCommand.shader->setMat4("MANA_V", view);
+        skyboxCommand.shader->setMat4("MANA_P", projection);
+        skyboxCommand.shader->setMat4("MANA_MVP", projection * view * model);
+        skyboxCommand.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+        skyboxCommand.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
         ren.addCommand(skyboxCommand);
 
@@ -503,12 +503,12 @@ namespace engine {
 
             model = command.transform.model();
 
-            c.shader->setMat4("Globals.MANA_M", model);
-            c.shader->setMat4("Globals.MANA_V", view);
-            c.shader->setMat4("Globals.MANA_P", projection);
-            c.shader->setMat4("Globals.MANA_MVP", projection * view * model);
-            c.shader->setMat4("Globals.MANA_M_INVERT", MatrixMath::inverse(model));
-            c.shader->setMat4("Globals.MANA_VIEW_TRANSLATION", cameraTranslation);
+            c.shader->setMat4("MANA_M", model);
+            c.shader->setMat4("MANA_V", view);
+            c.shader->setMat4("MANA_P", projection);
+            c.shader->setMat4("MANA_MVP", projection * view * model);
+            c.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+            c.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
             ren.addCommand(c);
         }

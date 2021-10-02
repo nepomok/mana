@@ -101,6 +101,7 @@
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/renderer.hpp"
 #include "engine/render/shaderprogram.hpp"
+#include "engine/render/shadersource.hpp"
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/rendercommand.hpp"
 #include "engine/render/renderallocator.hpp"

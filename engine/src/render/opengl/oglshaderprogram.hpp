@@ -38,13 +38,15 @@ namespace engine {
             OGLShaderProgram();
 
             /**
-             * @param vertexShader The preprocessed glsl vertex shader
+             * @param vertexShader The preprocessed glsl vertex shader.
              * @param geometryShader The preprocessed glsl geometry shader, if empty no geometry shader is used.
-             * @param fragmentShader The preprocessed glsl fragment shader
+             * @param fragmentShader The preprocessed glsl fragment shader.
+             * @param prefix The prefix to use for variable names, textures are always set without prefix.
              */
             OGLShaderProgram(const std::string &vertexShader,
                              const std::string &geometryShader,
-                             const std::string &fragmentShader);
+                             const std::string &fragmentShader,
+                             const std::string &prefix = "");
 
             ~OGLShaderProgram() override;
 
@@ -88,6 +90,7 @@ namespace engine {
 
         private:
             GLuint programID;
+            std::string prefix;
         };
     }
 }

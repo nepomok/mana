@@ -156,7 +156,7 @@ namespace engine {
             : device(device) {
         ShaderSource vertexShader(SHADER_VERT, "main", VERTEX, HLSL);
         ShaderSource fragmentShader(SHADER_FRAG, "main", FRAGMENT, HLSL);
-        shader = device.getAllocator().createShaderProgram(vertexShader.compile(), fragmentShader.compile());
+        shader = device.getAllocator().createShaderProgram(vertexShader, fragmentShader);
     }
 
     CompositePass::~CompositePass() {

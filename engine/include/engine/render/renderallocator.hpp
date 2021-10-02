@@ -24,6 +24,7 @@
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/shaderprogram.hpp"
+#include "engine/render/shadersource.hpp"
 
 namespace engine {
     class RenderAllocator {
@@ -70,21 +71,20 @@ namespace engine {
         virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
 
         /**
-         * Create a shader program instance for the given spirv shader sources.
+         * Create a shader program instance for the given shader sources.
          *
-         * The implementation may decompile the spirv to a different language using the ShaderCompiler interface,
-         * quirks when decompiling spirv using the ShaderCompiler have to be kept in mind.
+         * The implementation may cross compile the source to a different language using the ShaderCompiler interface.
          *
          * @param vertexShader
          * @param fragmentShader
          * @return
          */
-        virtual ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
-                                                   const std::vector<uint32_t> &fragmentShader) = 0;
+        virtual ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
+                                                   const ShaderSource &fragmentShader) = 0;
 
-        virtual ShaderProgram *createShaderProgram(const std::vector<uint32_t> &vertexShader,
-                                                   const std::vector<uint32_t> &geometryShader,
-                                                   const std::vector<uint32_t> &fragmentShader) = 0;
+        virtual ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
+                                                   const ShaderSource &geometryShader,
+                                                   const ShaderSource &fragmentShader) = 0;
     };
 }
 

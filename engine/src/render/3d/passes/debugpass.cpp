@@ -195,7 +195,7 @@ namespace engine {
         ShaderSource vs(SHADER_VERT, "main", VERTEX, GLSL_460);
         ShaderSource gs(SHADER_GEOMETRY, "main", GEOMETRY, GLSL_460);
         ShaderSource fs(SHADER_FRAG, "main", FRAGMENT, GLSL_460);
-        shader = device.getAllocator().createShaderProgram(vs.compile(), gs.compile(), fs.compile());
+        shader = device.getAllocator().createShaderProgram(vs, gs, fs);
     }
 
     DebugPass::~DebugPass() {

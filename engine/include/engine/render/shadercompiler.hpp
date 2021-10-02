@@ -43,13 +43,6 @@ namespace engine {
         /**
          * Compile the given source to spirv.
          *
-         * When compiling HLSL all global variables which are not sampler states or textures are stored in a single
-         * uniform called Globals, which means
-         * when the user wants to set a global variable defined in HLSL "Globals." has to be prepended to the variable name
-         * when calling the setter methods on the ShaderProgram object.
-         *
-         * When compiling GLSL uniforms are preserved.
-         *
          * @param source
          * @param entryPoint
          * @param stage
@@ -69,60 +62,25 @@ namespace engine {
                                const std::function<std::string(const char *)> &include = {},
                                const std::map<std::string, std::string> &macros = {});
 
+        /**
+         * Cross compile the source by using spirv as an intermediate.
+         *
+         * When compiling hlsl to glsl globals defined in the hlsl source are stored in a struct which has an instance
+         * with the name "Globals". When using the render allocator to create a shader program the
+         * implementation will append the prefix automatically when needed.
+         *
+         * @param source
+         * @param entryPoint
+         * @param stage
+         * @param language
+         * @param targetLanguage
+         * @return
+         */
         std::string crossCompile(const std::string &source,
                                  const std::string &entryPoint,
                                  ShaderStage stage,
                                  ShaderLanguage language,
                                  ShaderLanguage targetLanguage);
-
-        struct ShaderSource {
-            ShaderSource() = default;
-
-            ShaderSource(std::string src,
-                         std::string entryPoint,
-                         ShaderStage stage,
-                         ShaderLanguage language,
-                         bool preprocessed = false)
-                    : src(std::move(src)),
-                      entryPoint(std::move(entryPoint)),
-                      stage(stage),
-                      language(language),
-                      preprocessed(preprocessed) {}
-
-            void preprocess(const std::function<std::string(const char *)> &include = {},
-                            const std::map<std::string, std::string> &macros = {}) {
-                if (preprocessed)
-                    throw std::runtime_error("Source already preprocessed");
-                src = ShaderCompiler::preprocess(src, stage, language, include, macros);
-                preprocessed = true;
-            }
-
-            std::vector<uint32_t> compile() {
-                if (!preprocessed)
-                    this->preprocess();
-                return compileToSPIRV(src, entryPoint, stage, language);
-            }
-
-            ShaderSource crossCompile(ShaderLanguage targetLanguage) const {
-                std::string prSrc;
-                if (!preprocessed)
-                    prSrc = ShaderCompiler::preprocess(src, stage, language);
-                else
-                    prSrc = src;
-                return ShaderSource(ShaderCompiler::crossCompile(prSrc, entryPoint, stage, language, targetLanguage),
-                                    entryPoint,
-                                    stage,
-                                    targetLanguage,
-                                    true);
-            }
-
-        private:
-            std::string src{};
-            std::string entryPoint{};
-            ShaderStage stage{};
-            ShaderLanguage language{};
-            bool preprocessed{};
-        };
     }
 }
 

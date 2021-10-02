@@ -148,7 +148,7 @@ namespace engine {
 
         auto &allocator = device.getAllocator();
 
-        shader = allocator.createShaderProgram(vertexShader.compile(), fragmentShader.compile());
+        shader = allocator.createShaderProgram(vertexShader, fragmentShader);
     }
 
     void PhongShadePass::prepareBuffer(GeometryBuffer &gBuffer) {
@@ -167,7 +167,7 @@ namespace engine {
             std::string name;
             switch (light.type) {
                 case LIGHT_DIRECTIONAL:
-                    name = "Globals.MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
                     shader->setVec3(name + "direction", light.direction);
                     shader->setVec3(name + "ambient", light.ambient);
                     shader->setVec3(name + "diffuse", light.diffuse);
@@ -175,7 +175,7 @@ namespace engine {
                     dirCount++;
                     break;
                 case LIGHT_POINT:
-                    name = "Globals.MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
                     shader->setVec3(name + "position", light.transform.position);
                     shader->setFloat(name + "constantValue", light.constant);
                     shader->setFloat(name + "linearValue", light.linear);
@@ -186,7 +186,7 @@ namespace engine {
                     pointCount++;
                     break;
                 case LIGHT_SPOT:
-                    name = "Globals.MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
                     shader->setVec3(name + "position", light.transform.position);
                     shader->setVec3(name + "direction", light.direction);
                     shader->setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
@@ -202,11 +202,11 @@ namespace engine {
             }
         }
 
-        shader->setInt("Globals.MANA_LIGHT_COUNT_DIRECTIONAL", dirCount);
-        shader->setInt("Globals.MANA_LIGHT_COUNT_POINT", pointCount);
-        shader->setInt("Globals.MANA_LIGHT_COUNT_SPOT", spotCount);
+        shader->setInt("MANA_LIGHT_COUNT_DIRECTIONAL", dirCount);
+        shader->setInt("MANA_LIGHT_COUNT_POINT", pointCount);
+        shader->setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
 
-        shader->setVec3("Globals.MANA_VIEWPOS", scene.camera.transform.position);
+        shader->setVec3("MANA_VIEWPOS", scene.camera.transform.position);
 
         RenderCommand command;
 
