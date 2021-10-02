@@ -59,6 +59,8 @@ namespace engine {
 
         float magnitude() const;
 
+        void normalize();
+
         static Quaternion normalize(const Quaternion &q);
     };
 }

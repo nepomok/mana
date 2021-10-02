@@ -117,8 +117,17 @@ namespace engine {
         return sqrtf(powf(w, 2) + powf(x, 2) + powf(y, 2) + powf(z, 2));
     }
 
+    void Quaternion::normalize() {
+        float m = magnitude();
+        w /= m;
+        x /= m;
+        y /= m;
+        z /= m;
+    }
+
     Quaternion Quaternion::normalize(const Quaternion &q) {
-        float magnitude = q.magnitude();
-        return Quaternion(q.w / magnitude, q.x / magnitude, q.y / magnitude, q.z / magnitude);
+        Quaternion ret(q);
+        ret.normalize();
+        return ret;
     }
 }
