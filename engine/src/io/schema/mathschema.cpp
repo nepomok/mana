@@ -37,25 +37,21 @@ namespace engine {
     }
 
     //TODO: Implement matrix schema
-    template<typename T, int W, int H>
-    Matrix<T, W, H> &operator<<(Matrix<T, W, H> &matrix, const Message &message) {
+    Mat4f &operator<<(Mat4f &matrix, const Message &message) {
         throw std::runtime_error("Not implemented");
     }
 
-    template<typename T, int W, int H>
-    Message &operator<<(Message &message, const Matrix<T, W, H> &value) {
+    Message &operator<<(Message &message, const Mat4f &value) {
         throw std::runtime_error("Not implemented");
     }
 
-    template<typename T>
-    Rectangle<T> &operator<<(Rectangle<T> &mat, const Message &message) {
+    Rectf &operator<<(Rectf &mat, const Message &message) {
         mat.position << message["position"];
         mat.dimensions << message["dimensions"];
         return mat;
     }
 
-    template<typename T>
-    Message &operator<<(Message &message, const Rectangle<T> &value) {
+    Message &operator<<(Message &message, const Rectf &value) {
         auto map = std::map<std::string, Message>();
         map["position"] << value.position;
         map["dimensions"] << value.dimensions;
@@ -79,15 +75,13 @@ namespace engine {
         return message;
     }
 
-    template<typename T>
-    Vector2<T> &operator<<(Vector2<T> &value, const Message &message) {
+    Vec2f &operator<<(Vec2f &value, const Message &message) {
         value.x = message["x"];
         value.y = message["y"];
         return value;
     }
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector2<T> &value) {
+    Message &operator<<(Message &message, const Vec2f &value) {
         auto map = std::map<std::string, Message>();
         map["x"] = value.x;
         map["y"] = value.y;
@@ -95,16 +89,28 @@ namespace engine {
         return message;
     }
 
-    template<typename T>
-    Vector3<T> &operator<<(Vector3<T> &value, const Message &message) {
+    Vec2i &operator<<(Vec2i &value, const Message &message) {
+        value.x = message["x"];
+        value.y = message["y"];
+        return value;
+    }
+
+    Message &operator<<(Message &message, const Vec2i &value) {
+        auto map = std::map<std::string, Message>();
+        map["x"] = value.x;
+        map["y"] = value.y;
+        message = map;
+        return message;
+    }
+
+    Vec3f &operator<<(Vec3f &value, const Message &message) {
         value.x = message.value<float>("x", message.value<float>("r", 0));
         value.y = message.value<float>("y", message.value<float>("g", 0));
         value.z = message.value<float>("z", message.value<float>("b", 0));
         return value;
     }
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector3<T> &value) {
+    Message &operator<<(Message &message, const Vec3f &value) {
         auto map = std::map<std::string, Message>();
         map["x"] = value.x;
         map["y"] = value.y;
@@ -113,8 +119,7 @@ namespace engine {
         return message;
     }
 
-    template<typename T>
-    Vector4<T> &operator<<(Vector4<T> &value, const Message &message) {
+    Vec4f &operator<<(Vec4f &value, const Message &message) {
         value.x = message.value<float>("x", message.value<float>("r", 0));
         value.y = message.value<float>("y", message.value<float>("g", 0));
         value.z = message.value<float>("z", message.value<float>("b", 0));
@@ -122,8 +127,7 @@ namespace engine {
         return value;
     }
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector4<T> &value) {
+    Message &operator<<(Message &message, const Vec4f &value) {
         auto map = std::map<std::string, Message>();
         map["x"] = value.x;
         map["y"] = value.y;

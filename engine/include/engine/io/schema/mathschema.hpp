@@ -35,39 +35,33 @@ namespace engine {
 
     Message &operator<<(Message &message, const Grid &grid);
 
-    template<typename T, int W, int H>
-    Matrix<T, W, H> &operator<<(Matrix<T, W, H> &matrix, const Message &message);
+    Mat4f &operator<<(Mat4f &matrix, const Message &message);
 
-    template<typename T, int W, int H>
-    Message &operator<<(Message &message, const Matrix<T, W, H> &grid);
+    Message &operator<<(Message &message, const Mat4f &grid);
 
-    template<typename T>
-    Rectangle<T> &operator<<(Rectangle<T> &mat, const Message &message);
+    Rectf &operator<<(Rectf &mat, const Message &message);
 
-    template<typename T>
-    Message &operator<<(Message &message, const Rectangle<T> &grid);
+    Message &operator<<(Message &message, const Rectf &grid);
 
     Transform &operator<<(Transform &grid, const Message &message);
 
     Message &operator<<(Message &message, const Transform &grid);
 
-    template<typename T>
-    Vector2<T> &operator<<(Vector2<T> &grid, const Message &message);
+    Vec2f &operator<<(Vec2f &grid, const Message &message);
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector2<T> &grid);
+    Message &operator<<(Message &message, const Vec2f &grid);
 
-    template<typename T>
-    Vector3<T> &operator<<(Vector3<T> &grid, const Message &message);
+    Vec2i &operator<<(Vec2i &grid, const Message &message);
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector3<T> &grid);
+    Message &operator<<(Message &message, const Vec2i &grid);
 
-    template<typename T>
-    Vector4<T> &operator<<(Vector4<T> &grid, const Message &message);
+    Vec3f &operator<<(Vec3f &grid, const Message &message);
 
-    template<typename T>
-    Message &operator<<(Message &message, const Vector4<T> &grid);
+    Message &operator<<(Message &message, const Vec3f &grid);
+
+    Vec4f &operator<<(Vec4f &grid, const Message &message);
+
+    Message &operator<<(Message &message, const Vec4f &grid);
 
     Quaternion &operator<<(Quaternion &q, const Message &message);
 
