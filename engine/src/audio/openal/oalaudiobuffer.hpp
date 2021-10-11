@@ -20,9 +20,9 @@
 #ifndef MANA_OALAUDIOBUFFER_HPP
 #define MANA_OALAUDIOBUFFER_HPP
 
-#include "engine/audio/audiobuffer.hpp"
+#include "audio/openal/openal.hpp"
 
-typedef unsigned int ALuint;
+#include "engine/audio/audiobuffer.hpp"
 
 namespace engine {
     class OALAudioBuffer : public AudioBuffer {

@@ -23,8 +23,6 @@
 #include <string>
 #include <stdexcept>
 
-#include <AL/al.h>
-
 namespace engine {
     void checkOALError(const std::string &caller = "None");
 }

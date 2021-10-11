@@ -17,7 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "oalcheckerror.hpp"
+#include "audio/openal/oalcheckerror.hpp"
+
+#include "audio/openal/openal.hpp"
 
 namespace engine {
     void checkOALError(const std::string &caller) {

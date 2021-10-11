@@ -17,11 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "oalaudiosource.hpp"
-#include "oalcheckerror.hpp"
-#include "oalaudiobuffer.hpp"
-
-#include <AL/al.h>
+#include "audio/openal/oalaudiosource.hpp"
+#include "audio/openal/oalcheckerror.hpp"
+#include "audio/openal/oalaudiobuffer.hpp"
 
 namespace engine {
     int convertType(AudioSource::SourceType type) {

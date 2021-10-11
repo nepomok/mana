@@ -11,8 +11,9 @@ endif()
 
 find_package (Threads REQUIRED)
 
-include_directories(${PROJECT_SOURCE_DIR}/lib/include)
-link_directories(${PROJECT_SOURCE_DIR}/lib/bin)
+include(cmake/config.cmake)
+include_directories(${USER_INCLUDE})
+link_directories(${USER_LINK})
 
 include(cmake/engine.cmake)
 include(cmake/editor.cmake)

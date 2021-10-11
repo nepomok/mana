@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "oalaudiolistener.hpp"
-#include "oalcheckerror.hpp"
+#include "audio/openal/oalaudiolistener.hpp"
+#include "audio/openal/oalcheckerror.hpp"
 
-#include <AL/al.h>
+#include "audio/openal/openal.hpp"
 
 namespace engine {
     OALAudioListener::OALAudioListener() {}

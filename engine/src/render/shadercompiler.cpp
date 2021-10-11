@@ -106,7 +106,7 @@ namespace engine {
 
         auto compileResult = compiler.CompileGlslToSpv(source,
                                                        shaderStage,
-                                                       "",
+                                                       "test",
                                                        entryPoint.c_str(),
                                                        options);
 

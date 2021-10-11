@@ -17,14 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "oalaudiocontext.hpp"
-#include "oalaudiobuffer.hpp"
-#include "oalaudiosource.hpp"
+#include "audio/openal/oalaudiocontext.hpp"
+#include "audio/openal/oalaudiobuffer.hpp"
+#include "audio/openal/oalaudiosource.hpp"
 
-#include "oalcheckerror.hpp"
-
-#include <AL/al.h>
-#include <AL/alc.h>
+#include "audio/openal/oalcheckerror.hpp"
 
 namespace engine {
     OALAudioContext::OALAudioContext(ALCcontext *context) : context(context), listener() {}

@@ -17,29 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OALAUDIODEVICE_HPP
-#define MANA_OALAUDIODEVICE_HPP
+#ifndef MANA_BOX2D_HPP
+#define MANA_BOX2D_HPP
 
-#include "audio/openal/openal.hpp"
+#if BOX2D_VERSION >= 240 || BOX2D_VERSION == 0
+#include <box2d/box2d.hpp>
+#else
+#include <Box2D/Box2D.h>
+#endif
 
-#include "engine/audio/audiodevice.hpp"
-
-namespace engine {
-    class OALAudioDevice : public AudioDevice {
-    public:
-        static std::vector<std::string> getDeviceNames();
-
-        OALAudioDevice();
-
-        explicit OALAudioDevice(const std::string &name);
-
-        ~OALAudioDevice() override;
-
-        AudioContext *createContext() override;
-
-    private:
-        ALCdevice *device;
-    };
-}
-
-#endif //MANA_OALAUDIODEVICE_HPP
+#endif //MANA_BOX2D_HPP

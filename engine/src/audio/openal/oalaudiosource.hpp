@@ -17,11 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "audio/openal/openal.hpp"
+
 #include "engine/audio/audiosource.hpp"
 
 #include <map>
-
-typedef unsigned int ALuint;
 
 namespace engine {
     class OALAudioSource : public AudioSource {

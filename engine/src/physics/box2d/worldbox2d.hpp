@@ -20,7 +20,7 @@
 #ifndef MANA_WORLDBOX2D_HPP
 #define MANA_WORLDBOX2D_HPP
 
-#include <box2d/box2d.h>
+#include "physics/box2d/box2d.hpp"
 
 #include "engine/physics/2d/world2d.hpp"
 

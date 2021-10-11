@@ -19,11 +19,7 @@
 
 #include <stdexcept>
 
-#include <mono/jit/jit.h>
-#include <mono/metadata/loader.h>
-#include <mono/metadata/assembly.h>
-#include <mono/metadata/debug-helpers.h>
-#include <mono/metadata/object.h>
+#include "script/mono/mono.hpp"
 
 #include "engine/script/mono/monocppassembly.hpp"
 

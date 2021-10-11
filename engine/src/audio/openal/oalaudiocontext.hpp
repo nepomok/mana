@@ -20,11 +20,11 @@
 #ifndef MANA_OALAUDIOCONTEXT_HPP
 #define MANA_OALAUDIOCONTEXT_HPP
 
+#include "audio/openal/openal.hpp"
+
 #include "engine/audio/audiocontext.hpp"
 
-#include "oalaudiolistener.hpp"
-
-typedef struct ALCcontext ALCcontext;
+#include "audio/openal/oalaudiolistener.hpp"
 
 namespace engine {
     class OALAudioContext : public AudioContext {

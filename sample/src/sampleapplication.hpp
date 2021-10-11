@@ -110,6 +110,9 @@ protected:
     void stop() override {
         ecs.stop();
         ecs.getEntityManager().clear();
+        ecs = ECS();//TODO: ECS Systems clear set
+
+        delete archive;
 
         delete manaAssembly;
         delete jsonAssembly;

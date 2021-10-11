@@ -17,16 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
-#include <AL/al.h>
-#include <AL/alc.h>
-
 #include <stdexcept>
 
-#include "oalaudiocontext.hpp"
-#include "oalcheckerror.hpp"
+#include "audio/openal/oalaudiocontext.hpp"
+#include "audio/openal/oalcheckerror.hpp"
 
-#include "oalaudiodevice.hpp"
+#include "audio/openal/oalaudiodevice.hpp"
 
 namespace engine {
     std::vector<std::string> OALAudioDevice::getDeviceNames() {

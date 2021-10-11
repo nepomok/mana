@@ -20,7 +20,7 @@
 #ifndef MANA_JOINTBOX2D_HPP
 #define MANA_JOINTBOX2D_HPP
 
-#include <box2d/box2d.h>
+#include <Box2D/Dynamics/b2Body.h>
 
 #include "engine/physics/2d/joint2d.hpp"
 

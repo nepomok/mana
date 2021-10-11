@@ -17,13 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include <AL/al.h>
-#include <AL/alext.h>
-
 #include <vector>
 
-#include "oalaudiobuffer.hpp"
-#include "oalcheckerror.hpp"
+#include "audio/openal/oalaudiobuffer.hpp"
+#include "audio/openal/oalcheckerror.hpp"
 
 namespace engine {
     int convertFormat(AudioFormat format) {

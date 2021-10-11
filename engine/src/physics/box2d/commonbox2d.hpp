@@ -21,7 +21,7 @@
 #define MANA_COMMONBOX2D_HPP
 
 #include <stdexcept>
-#include <box2d/box2d.h>
+#include "physics/box2d/box2d.hpp"
 
 #include "engine/physics/2d/rigidbody2d.hpp"
 
