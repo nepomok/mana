@@ -61,7 +61,7 @@ protected:
         delete font;
         delete stream;
 
-        for (auto &p : characters) {
+        for (auto &p: characters) {
             textures[p.first] = device.getAllocator().createTextureBuffer({})->upload(p.second.image);
         }
 
@@ -99,8 +99,7 @@ protected:
                 transform = planeTransform;
                 transform.transform.position += Vec3f(x * 20, 0, -(y * 20));
 
-                auto &render = componentManager.create<MeshRenderComponent>(ent);
-                render = planeRender;
+                componentManager.create<MeshRenderComponent>(ent, planeRender);
             }
         }
 
@@ -108,8 +107,8 @@ protected:
     }
 
     void stop() override {
-        ecs.stop();
         ecs.getEntityManager().clear();
+        ecs.stop();
         ecs = ECS();//TODO: ECS Systems clear set
 
         delete archive;
@@ -118,7 +117,7 @@ protected:
         delete jsonAssembly;
         delete texture;
 
-        for (auto &p : textures)
+        for (auto &p: textures)
             delete p.second;
 
         characters.clear();

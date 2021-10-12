@@ -22,6 +22,8 @@
 
 #include <string>
 
+#include <tuple>
+
 namespace engine {
     struct AssetPath {
         std::string bundle;
@@ -30,11 +32,11 @@ namespace engine {
         bool empty() const { return bundle.empty() && asset.empty(); }
 
         bool operator<(const AssetPath &other) const {
-            return bundle < other.bundle && asset < other.asset;
+            return std::tie(bundle, asset) < std::tie(other.bundle, other.asset);
         }
 
         bool operator==(const AssetPath &other) const {
-            return bundle == other.bundle && asset == other.asset;
+            return std::tie(bundle, asset) == std::tie(other.bundle, other.asset);
         }
     };
 }

@@ -34,7 +34,7 @@ namespace engine {
     public:
         static ThreadPool pool;
 
-        explicit ThreadPool(int numberOfThreads = 4) : isShutdown(false) {
+        explicit ThreadPool(unsigned int numberOfThreads = std::thread::hardware_concurrency()) : isShutdown(false) {
             assert(numberOfThreads > 0);
             for (int i = 0; i < numberOfThreads; i++) {
                 threads.emplace_back(std::thread([this]() { pollTasks(); }));

@@ -25,6 +25,9 @@
 
 #include "engine/ecs/system.hpp"
 
+#include "engine/ecs/components/meshrendercomponent.hpp"
+#include "engine/ecs/components/skyboxcomponent.hpp"
+
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
 
@@ -34,9 +37,12 @@
 
 namespace engine {
     class ECS;
+
     class DebugPass;
 
-    class RenderSystem : public System {
+    class RenderSystem : public System,
+                         ComponentPool<MeshRenderComponent>::Listener,
+                         ComponentPool<SkyboxComponent>::Listener {
     public:
         RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
 
@@ -51,6 +57,14 @@ namespace engine {
         void setDebugRender(bool debugRender);
 
         Renderer3D &getRenderer();
+
+        void onComponentCreate(const Entity &entity, const MeshRenderComponent &component) override;
+
+        void onComponentDestroy(const Entity &entity, const MeshRenderComponent &component) override;
+
+        void onComponentCreate(const Entity &entity, const SkyboxComponent &component) override;
+
+        void onComponentDestroy(const Entity &entity, const SkyboxComponent &component) override;
 
     private:
         RenderTarget &screenTarget;
@@ -71,29 +85,41 @@ namespace engine {
 
         TextureBuffer &getCubemap(const std::array<AssetPath, 6> &paths);
 
-        MeshBuffer &getMesh(const AssetPath &path);
+        MeshBuffer &getMeshBuffer(const AssetPath &path);
 
         const Material &getMaterial(const AssetPath &path);
 
-        const AssetBundle&getBundle(const std::string &bundle);
+        void loadMaterial(const AssetPath &path);
+
+        void loadTexture(const AssetPath &path);
+
+        void loadCubeMap(const std::array<AssetPath, 6> &paths);
+
+        void loadMeshBuffer(const AssetPath &path);
+
+        void unloadMaterial(const AssetPath &path);
+
+        void unloadTexture(const AssetPath &path);
+
+        void unloadCubeMap(const std::array<AssetPath, 6> &paths);
+
+        void unloadMeshBuffer(const AssetPath &path);
 
         void loadBundle(const std::string &bundle);
 
-        void setActiveBundles(const std::set<std::string> &bundles);
+        void unloadBundle(const std::string &bundle);
 
-        std::mutex mutex;
-        std::map<std::string, std::shared_ptr<Task>> loadingBundles;
-        std::map<std::string, AssetBundle> bundles;
+        std::map<std::string, ulong> bundlesRef; //The reference count for bundles (bundle -> asset)
+        std::map<std::string, std::shared_ptr<Task>> bundleTasks;
 
-        uint idCounter;
-        std::set<uint> idBin;
+        std::map<std::string, AssetBundle> bundles; //Written to by bundle worker tasks and the main thread.
 
-        std::map<uint, AssetPath> paths;
-        std::map<uint, std::shared_ptr<MeshBuffer>> meshes;
-        std::map<uint, std::shared_ptr<TextureBuffer>> textures;
+        std::map<AssetPath, ulong> assetRef; //The reference count for assets (asset -> buffer)
+        std::map<AssetPath, std::unique_ptr<TextureBuffer>> textures;
+        std::map<AssetPath, std::unique_ptr<MeshBuffer>> meshBuffers;
 
-        std::map<uint, std::array<AssetPath, 6>> cubeMapPaths;
-        std::map<uint, std::shared_ptr<TextureBuffer>> cubeMaps;
+        std::map<std::array<AssetPath, 6>, ulong> cubeMapRef;
+        std::map<std::array<AssetPath, 6>, std::unique_ptr<TextureBuffer>> cubeMaps;
     };
 }
 

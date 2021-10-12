@@ -36,7 +36,6 @@ namespace engine {
     RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
             : screenTarget(scr),
               device(device),
-              idCounter(0),
               debugPass(new DebugPass(device)),
               ren(),
               archive(archive) {
@@ -51,96 +50,22 @@ namespace engine {
     }
 
     void RenderSystem::start(EntityManager &entityManager) {
-
+        entityManager.getComponentManager().getPool<MeshRenderComponent>().addListener(this);
+        entityManager.getComponentManager().getPool<SkyboxComponent>().addListener(this);
     }
 
     void RenderSystem::stop(EntityManager &entityManager) {
-
+        entityManager.getComponentManager().getPool<MeshRenderComponent>().removeListener(this);
+        entityManager.getComponentManager().getPool<SkyboxComponent>().removeListener(this);
     }
 
     void RenderSystem::update(float deltaTime, EntityManager &entityManager) {
         auto &componentManager = entityManager.getComponentManager();
 
-        std::set<std::string> activeBundles;
-
-        std::set<AssetPath> activeMeshes;
-        std::set<AssetPath> activeTextures;
-        std::set<std::array<AssetPath, 6>> activeCubeMaps;
-
-        //Get active asset bundles
-        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
-            //TODO: Entity wide active flag
-
-            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
-            if (!transform.enabled)
-                continue;
-
-            auto &render = pair.second;
-            if (!render.enabled)
-                continue;
-
-            activeBundles.insert(render.mesh.bundle);
-            activeBundles.insert(render.material.bundle);
-            activeMeshes.insert(render.mesh);
-        }
-
-        for (auto &pair : componentManager.getPool<SkyboxComponent>()) {
-            auto &comp = pair.second;
-
-            for (auto &path : comp.paths)
-                activeBundles.insert(path.bundle);
-
-            activeCubeMaps.insert(comp.paths);
-        }
-
-        //Get referenced asset bundles in material.
-        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
-            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
-            if (!transform.enabled)
-                continue;
-
-            auto &render = pair.second;
-            if (!render.enabled)
-                continue;
-
-            auto &material = getBundle(render.material.bundle).getMaterial(render.material.asset);
-
-            if (!material.diffuseTexture.empty()) {
-                activeBundles.insert(material.diffuseTexture.bundle);
-                activeTextures.insert(material.diffuseTexture);
-            }
-            if (!material.ambientTexture.empty()) {
-                activeBundles.insert(material.ambientTexture.bundle);
-                activeTextures.insert(material.ambientTexture);
-            }
-            if (!material.specularTexture.empty()) {
-                activeBundles.insert(material.specularTexture.bundle);
-                activeTextures.insert(material.specularTexture);
-            }
-            if (!material.emissiveTexture.empty()) {
-                activeBundles.insert(material.emissiveTexture.bundle);
-                activeTextures.insert(material.emissiveTexture);
-            }
-            if (!material.shininessTexture.empty()) {
-                activeBundles.insert(material.shininessTexture.bundle);
-                activeTextures.insert(material.shininessTexture);
-            }
-            if (!material.normalTexture.empty()) {
-                activeBundles.insert(material.normalTexture.bundle);
-                activeTextures.insert(material.normalTexture);
-            }
-        }
-
-        // Retrieve image bundles from active textures
-        for (auto &texture : activeTextures) {
-            auto &t = getBundle(texture.bundle).getTexture(texture.asset);
-            activeBundles.insert(t.image.bundle);
-        }
-
         RenderScene scene3d;
 
         //Create render commands
-        for (auto &pair : componentManager.getPool<MeshRenderComponent>()) {
+        for (auto &pair: componentManager.getPool<MeshRenderComponent>()) {
             auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             if (!transform.enabled)
                 continue;
@@ -151,7 +76,7 @@ namespace engine {
 
             DeferredCommand command;
             command.transform = TransformComponent::walkHierarchy(transform, entityManager);
-            command.meshBuffer = &getMesh(render.mesh);
+            command.meshBuffer = &getMeshBuffer(render.mesh);
 
             auto &material = getMaterial(render.material);
 
@@ -187,50 +112,14 @@ namespace engine {
         }
 
         //Get Skybox
-        for (auto &pair : componentManager.getPool<SkyboxComponent>()) {
+        for (auto &pair: componentManager.getPool<SkyboxComponent>()) {
             auto &comp = pair.second;
             scene3d.skybox = &getCubemap(comp.paths);
         }
 
-        //Unload bundles which are not referenced anymore
-        setActiveBundles(activeBundles);
-
-        //Delete unused texture buffers
-        /*  std::set<AssetPath> unused;
-          for (auto &pair : textures) {
-              if (activeTextures.find(pair.first) == activeTextures.end())
-                  unused.insert(pair.first);
-          }
-          for (auto &s : unused) {
-              textures.erase(s); //Deallocate texture buffer
-          }
-          unused.clear();
-
-          //Delete unused mesh buffers
-          for (auto &pair : meshes) {
-              if (activeMeshes.find(pair.first) == activeMeshes.end())
-                  unused.insert(pair.first);
-          }
-          for (auto &s : unused) {
-              meshes.erase(s); //Deallocate mesh buffer
-          }
-          unused.clear();
-
-          //Delete unused cube map texture buffers
-          std::set<std::array<AssetPath, 6>> unusedCubeMaps;
-          for (auto &pair : cubeMaps) {
-              if (activeCubeMaps.find(pair.first) == activeCubeMaps.end())
-                  unusedCubeMaps.insert(pair.first);
-          }
-          for (auto &s : unusedCubeMaps) {
-              cubeMaps.erase(s); //Deallocate cube map texture buffer
-          }
-          unusedCubeMaps.clear();*/
-
         //Get Camera
         Camera camera;
-
-        for (auto &pair : componentManager.getPool<CameraComponent>()) {
+        for (auto &pair: componentManager.getPool<CameraComponent>()) {
             auto &tcomp = componentManager.lookup<TransformComponent>(pair.first);
             if (!tcomp.enabled)
                 continue;
@@ -246,7 +135,7 @@ namespace engine {
         }
 
         //Get lights
-        for (auto &pair : componentManager.getPool<LightComponent>()) {
+        for (auto &pair: componentManager.getPool<LightComponent>()) {
             auto &lightComponent = pair.second;
 
             if (!lightComponent.enabled)
@@ -268,187 +157,181 @@ namespace engine {
     }
 
     TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {
-        bool found = false;
-        uint id;
-        for (auto &p : paths) {
-            if (p.second == path) {
-                id = p.first;
-                found = true;
-                break;
-            }
+        auto it = textures.find(path);
+        if (it != textures.end())
+            return *it->second;
+        else {
+            bundleTasks.at(path.bundle)->wait();
+
+            auto &bundle = bundles.at(path.bundle);
+            auto &tex = bundle.getTexture(path.asset);
+
+            bundleTasks.at(tex.image.bundle)->wait();
+
+            auto &img = bundles.at(tex.image.bundle).getImage(tex.image.asset);
+            textures[path] = std::unique_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer(tex.attributes));
+            textures[path]->upload(img);
+            return *textures[path];
         }
-
-        if (!found) {
-            auto &texture = getBundle(path.bundle).getTexture(path.asset);
-            auto &image = getBundle(texture.image.bundle).getImage(texture.image.asset);
-
-            if (!idBin.empty()) {
-                id = *idBin.begin();
-                idBin.erase(0);
-            } else {
-                if (idCounter == std::numeric_limits<uint>::max())
-                    throw std::runtime_error("Overflow");
-                id = idCounter++;
-            }
-
-            textures[id] = std::shared_ptr<TextureBuffer>(
-                    device.getAllocator().createTextureBuffer(texture.attributes)
-            );
-
-            textures[id]->upload(image);
-
-            paths[id] = path;
-        }
-
-        return *textures.at(id);
     }
 
     TextureBuffer &RenderSystem::getCubemap(const std::array<AssetPath, 6> &paths) {
-        bool found = false;
-        uint id;
-        for (auto &p : cubeMapPaths) {
-            if (p.second == paths) {
-                id = p.first;
-                found = true;
-                break;
+        auto it = cubeMaps.find(paths);
+        if (it != cubeMaps.end())
+            return *it->second;
+        else {
+            auto *tex = device.getAllocator().createTextureBuffer({TextureBuffer::TEXTURE_CUBE_MAP});
+            for (TextureBuffer::CubeMapFace face = TextureBuffer::POSITIVE_X;
+                 face <= TextureBuffer::NEGATIVE_Z;
+                 face = static_cast<TextureBuffer::CubeMapFace>(face + 1)) {
+                auto &path = paths.at(face);
+
+                bundleTasks.at(path.bundle)->wait();
+
+                auto &bundle = bundles.at(path.bundle);
+                auto &img = bundle.getImage(path.asset);
+
+                tex->upload(face, img);
             }
+            cubeMaps[paths] = std::unique_ptr<TextureBuffer>(tex);
+            return *tex;
         }
-
-        if (!found) {
-            TextureBuffer *buffer = device.getAllocator().createTextureBuffer({});
-            for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
-                auto path = paths.at(i);
-                auto &image = getBundle(path.bundle);
-
-                if (path.asset.empty()) {
-                    buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.begin()->second);
-                } else {
-                    buffer->upload(static_cast<TextureBuffer::CubeMapFace>(i), image.images.at(path.asset));
-                }
-            }
-
-            if (!idBin.empty()) {
-                id = *idBin.begin();
-                idBin.erase(0);
-            } else {
-                if (idCounter == std::numeric_limits<uint>::max())
-                    throw std::runtime_error("Overflow");
-                id = idCounter++;
-            }
-            cubeMaps[id] = std::shared_ptr<TextureBuffer>(buffer);
-            cubeMapPaths[id] = paths;
-        }
-
-        return *cubeMaps.find(id)->second;
     }
 
-    MeshBuffer &RenderSystem::getMesh(const AssetPath &path) {
-        bool found = false;
-        uint id;
-        for (auto &p : paths) {
-            if (p.second == path) {
-                id = p.first;
-                found = true;
-                break;
-            }
+    MeshBuffer &RenderSystem::getMeshBuffer(const AssetPath &path) {
+        auto it = meshBuffers.find(path);
+        if (it != meshBuffers.end())
+            return *it->second;
+        else {
+            bundleTasks.at(path.bundle)->wait();
+
+            auto &bundle = bundles.at(path.bundle);
+            auto *mesh = device.getAllocator().createMeshBuffer(bundle.getMesh(path.asset));
+
+            meshBuffers[path] = std::unique_ptr<MeshBuffer>(mesh);
+
+            return *mesh;
         }
-
-        if (!found) {
-            auto bundle = getBundle(path.bundle);
-
-            Mesh *mesh;
-            if (path.asset.empty()) {
-                if (bundle.meshes.empty())
-                    throw std::runtime_error("");
-                mesh = &bundle.meshes.begin()->second;
-            } else {
-                mesh = &bundle.meshes.at(path.asset);
-            }
-
-            if (!idBin.empty()) {
-                id = *idBin.begin();
-                idBin.erase(idBin.begin());
-            } else if (idCounter == std::numeric_limits<uint>::max()) {
-                throw std::runtime_error("Cannot allocate mesh, id overflow");
-            } else {
-                id = idCounter++;
-            }
-
-            meshes[id] = std::shared_ptr<MeshBuffer>(device.getAllocator().createMeshBuffer(*mesh));
-            paths[id] = path;
-        }
-
-        return *meshes[id];
     }
 
     const Material &RenderSystem::getMaterial(const AssetPath &path) {
-        return getBundle(path.bundle).getMaterial(path.asset);
+        bundleTasks.at(path.bundle)->wait();
+        return bundles.at(path.bundle).getMaterial(path.asset);
     }
 
-    const AssetBundle &RenderSystem::getBundle(const std::string &bundle) {
-        mutex.lock();
-        auto it = bundles.find(bundle);
-        if (it != bundles.end()) {
-            auto &ret = it->second;
-            mutex.unlock();
-            return ret;
+    void RenderSystem::loadMaterial(const AssetPath &path) {
+        loadBundle(path.bundle);
+        auto material = getMaterial(path);
+        loadTexture(material.diffuseTexture);
+        loadTexture(material.ambientTexture);
+        loadTexture(material.specularTexture);
+        loadTexture(material.emissiveTexture);
+        loadTexture(material.shininessTexture);
+        loadTexture(material.normalTexture);
+    }
+
+    void RenderSystem::loadTexture(const AssetPath &path) {
+        if (!path.empty()) {
+            loadBundle(path.bundle);
+            bundleTasks.at(path.bundle)->wait();
+            loadBundle(bundles.at(path.bundle)
+                               .getTexture(path.asset).image.bundle);
+            assetRef[path]++;
         }
-        auto itl = loadingBundles.find(bundle);
-        if (itl == loadingBundles.end()) {
-            mutex.unlock();
-            loadBundle(bundle);
-            mutex.lock();
+    }
+
+    void RenderSystem::loadCubeMap(const std::array<AssetPath, 6> &paths) {
+        for (auto &path: paths) {
+            loadBundle(path.bundle);
         }
-        itl = loadingBundles.find(bundle);
-        if (itl != loadingBundles.end()) {
-            auto ptrCopy = itl->second;
-            mutex.unlock();
-            ptrCopy->wait();
-            mutex.lock();
+        cubeMapRef[paths]++;
+    }
+
+    void RenderSystem::loadMeshBuffer(const AssetPath &path) {
+        loadBundle(path.bundle);
+        assetRef[path]++;
+    }
+
+    void RenderSystem::unloadMaterial(const AssetPath &path) {
+        auto material = getMaterial(path);
+        unloadTexture(material.diffuseTexture);
+        unloadTexture(material.ambientTexture);
+        unloadTexture(material.specularTexture);
+        unloadTexture(material.emissiveTexture);
+        unloadTexture(material.shininessTexture);
+        unloadTexture(material.normalTexture);
+        unloadBundle(path.bundle);
+    }
+
+    void RenderSystem::unloadTexture(const AssetPath &path) {
+        if (!path.empty()) {
+            bundleTasks.at(path.bundle)->wait();
+            unloadBundle(bundles.at(path.bundle)
+                                 .getTexture(path.asset).image.bundle);
+            unloadBundle(path.bundle);
+            assetRef.at(path)--;
+            if (assetRef.at(path) == 0) {
+                textures.erase(path);
+            }
         }
-        auto &ret = bundles.at(bundle);
-        mutex.unlock();
-        return ret;
+    }
+
+    void RenderSystem::unloadCubeMap(const std::array<AssetPath, 6> &paths) {
+        for (auto &path: paths) {
+            unloadBundle(path.bundle);
+        }
+        cubeMapRef.at(paths)--;
+        if (cubeMapRef.at(paths) == 0)
+            cubeMaps.erase(paths);
+    }
+
+    void RenderSystem::unloadMeshBuffer(const AssetPath &path) {
+        bundleTasks.at(path.bundle)->wait();
+        unloadBundle(path.bundle);
+        assetRef.at(path)--;
+        if (assetRef.at(path) == 0)
+            meshBuffers.erase(path);
     }
 
     void RenderSystem::loadBundle(const std::string &bundle) {
-        std::lock_guard<std::mutex> guard(mutex);
-
-        if (bundles.find(bundle) != bundles.end()
-            || loadingBundles.find(bundle) != loadingBundles.end())
-            return;
-
-        loadingBundles.insert({bundle, ThreadPool::pool.addTask([this, bundle]() {
-            auto b = AssetImporter::import(bundle, archive);
-            std::lock_guard<std::mutex> guard(mutex);
-            loadingBundles.erase(bundle);
-            bundles[bundle] = b;
-        })});
+        auto &ref = bundlesRef[bundle];
+        ref++;
+        if (bundleTasks.find(bundle) == bundleTasks.end()) {
+            bundleTasks[bundle] = ThreadPool::pool.addTask([this, bundle]() {
+                auto bdl = AssetImporter::import(bundle, archive);
+                bundles[bundle] = bdl;
+            });
+        }
     }
 
-    void RenderSystem::setActiveBundles(const std::set<std::string> &active) {
-        for (auto &a : active)
-            loadBundle(a);
-        mutex.lock();
-        std::set<std::shared_ptr<Task>> tasks;
-        for (auto &bundle : loadingBundles) {
-            if (active.find(bundle.first) == active.end()) {
-                tasks.insert(bundle.second);
-            }
-        }
-        mutex.unlock();
-        for (auto &task : tasks)
+    void RenderSystem::unloadBundle(const std::string &bundle) {
+        auto ref = bundlesRef.at(bundle);
+        auto task = bundleTasks.at(bundle);
+        assert(ref > 0);
+        ref--;
+        if (ref == 0) {
             task->wait();
-        mutex.lock();
-        std::set<std::string> delBundle;
-        for (auto &bundle : bundles) {
-            if (active.find(bundle.first) == active.end()) {
-                delBundle.insert(bundle.first);
-            }
+            bundles.erase(bundle);
+            bundleTasks.erase(bundle);
+            bundlesRef.erase(bundle);
         }
-        for (auto &del : delBundle) {
-            bundles.erase(del);
-        }
-        mutex.unlock();
+    }
+
+    void RenderSystem::onComponentCreate(const Entity &entity, const MeshRenderComponent &component) {
+        loadMeshBuffer(component.mesh);
+        loadMaterial(component.material);
+    }
+
+    void RenderSystem::onComponentDestroy(const Entity &entity, const MeshRenderComponent &component) {
+        unloadMeshBuffer(component.mesh);
+        unloadMaterial(component.material);
+    }
+
+    void RenderSystem::onComponentCreate(const Entity &entity, const SkyboxComponent &component) {
+        loadCubeMap(component.paths);
+    }
+
+    void RenderSystem::onComponentDestroy(const Entity &entity, const SkyboxComponent &component) {
+        unloadCubeMap(component.paths);
     }
 }

@@ -40,13 +40,13 @@ namespace engine {
         ComponentManager() = default;
 
         ~ComponentManager() {
-            for (auto &p : pools) {
+            for (auto &p: pools) {
                 delete p.second;
             }
         }
 
         ComponentManager(const ComponentManager &other) {
-            for (auto &p : other.pools) {
+            for (auto &p: other.pools) {
                 pools[p.first] = p.second->clone();
             }
         }
@@ -55,7 +55,7 @@ namespace engine {
 
         ComponentManager &operator=(const ComponentManager &other) = default;
 
-        ComponentManager &operator=(ComponentManager &&other)  noexcept = default;
+        ComponentManager &operator=(ComponentManager &&other) noexcept = default;
 
         template<typename T>
         ComponentPool<T> &getPool() {
@@ -87,8 +87,8 @@ namespace engine {
         }
 
         template<typename T>
-        T &create(const Entity &entity) {
-            return getPool<T>().create(entity);
+        T &create(const Entity &entity, const T &value = {}) {
+            return getPool<T>().create(entity, value);
         }
 
         template<typename T>
@@ -97,16 +97,15 @@ namespace engine {
         }
 
         void destroy(const Entity &entity) {
-            for (auto &p : pools) {
+            for (auto &p: pools) {
                 p.second->destroy(entity);
             }
         }
 
         void clear() {
-            for (auto &p : pools) {
-                delete p.second;
+            for (auto &p: pools) {
+                p.second->clear();
             }
-            pools.clear();
         }
 
         template<typename T>

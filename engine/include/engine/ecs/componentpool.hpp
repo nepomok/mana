@@ -32,6 +32,8 @@ namespace engine {
 
         virtual ComponentPoolBase *clone() = 0;
 
+        virtual void clear() = 0;
+
         virtual void destroy(const Entity &entity) = 0;
     };
 
@@ -45,15 +47,31 @@ namespace engine {
             virtual void onComponentDestroy(const Entity &entity, const T &component) = 0;
         };
 
+        ComponentPool() = default;
+
+        ComponentPool(const ComponentPool<T> &other) {
+            listeners = other.listeners;
+            components = other.components;
+        }
+
         ~ComponentPool() override = default;
 
         ComponentPoolBase *clone() override {
             return new ComponentPool<T>(*this);
         }
 
+        void clear() override {
+            for (auto &pair: components) {
+                for (auto &l: listeners) {
+                    l->onComponentDestroy(pair.first, pair.second);
+                }
+            }
+            components.clear();
+        }
+
         void destroy(const Entity &entity) override {
             if (components.find(entity) != components.end()) {
-                for (auto &listener : listeners) {
+                for (auto &listener: listeners) {
                     listener->onComponentDestroy(entity, components.at(entity));
                 }
                 components.erase(entity);
@@ -68,15 +86,15 @@ namespace engine {
             return components.end();
         }
 
-        T &create(const Entity &entity) {
+        T &create(const Entity &entity, const T &value = {}) {
             if (components.find(entity) != components.end())
                 throw std::runtime_error("Entity "
                                          + std::to_string(entity.id)
                                          + " already has component of type "
                                          + typeid(T).name());
             auto &comp = components[entity];
-            comp = T();
-            for (auto &listener : listeners) {
+            comp = value;
+            for (auto &listener: listeners) {
                 listener->onComponentCreate(entity, comp);
             }
             return comp;

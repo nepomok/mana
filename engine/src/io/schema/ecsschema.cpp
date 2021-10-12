@@ -281,19 +281,33 @@ namespace engine {
             for (auto &component : components) {
                 auto componentType = component.at("componentType").getString();
                 if (componentType == "transform") {
-                    componentManager.create<TransformComponent>(ent) << component;
+                    TransformComponent comp;
+                    comp << component;
+                    componentManager.create<TransformComponent>(ent, comp);
                 } else if (componentType == "camera") {
-                    componentManager.create<CameraComponent>(ent) << component;
+                    CameraComponent comp;
+                    comp << component;
+                    componentManager.create<CameraComponent>(ent, comp);
                 } else if (componentType == "light") {
-                    componentManager.create<LightComponent>(ent) << component;
+                    LightComponent comp;
+                    comp << component;
+                    componentManager.create<LightComponent>(ent, comp);
                 } else if (componentType == "script_mono") {
-                    componentManager.create<MonoScriptComponent>(ent) << component;
+                    MonoScriptComponent comp;
+                    comp << component;
+                    componentManager.create<MonoScriptComponent>(ent, comp);
                 } else if (componentType == "sync_mono") {
-                    componentManager.create<MonoSyncComponent>(ent) << component;
+                    MonoSyncComponent comp;
+                    comp << component;
+                    componentManager.create<MonoSyncComponent>(ent, comp);
                 } else if (componentType == "mesh_render") {
-                    componentManager.create<MeshRenderComponent>(ent) << component;
+                    MeshRenderComponent comp;
+                    comp << component;
+                    componentManager.create<MeshRenderComponent>(ent, comp) << component;
                 } else if (componentType == "skybox") {
-                    componentManager.create<SkyboxComponent>(ent) << component;
+                    SkyboxComponent comp;
+                    comp << component;
+                    componentManager.create<SkyboxComponent>(ent, comp);
                 } else {
                     throw std::runtime_error("Invalid component type " + componentType);
                 }
