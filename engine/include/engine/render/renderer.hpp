@@ -29,8 +29,8 @@
 
 namespace engine {
     struct RenderOptions {
-        explicit RenderOptions(Vec2i viewportOffset = {},
-                               Vec2i viewportSize = {},
+        explicit RenderOptions(Vec2i viewportOffset,
+                               Vec2i viewportSize,
                                bool multiSample = false,
                                ColorRGBA clearColorValue = {},
                                bool clearColor = true,

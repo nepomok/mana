@@ -75,6 +75,9 @@ namespace engine {
 
         DebugPass *debugPass;
 
+        std::vector<Compositor::Layer> layersDefault;
+        std::vector<Compositor::Layer> layersDebug;
+
         /**
          * Retrieve or allocate the texture buffer for a given path.
          *

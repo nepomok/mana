@@ -26,7 +26,6 @@
 
 #include "engine/render/3d/passes/geometrypass.hpp"
 #include "engine/render/3d/passes/phongshadepass.hpp"
-#include "engine/render/3d/passes/compositepass.hpp"
 #include "engine/render/3d/passes/forwardpass.hpp"
 #include "engine/render/3d/passes/debugpass.hpp"
 
@@ -39,14 +38,26 @@ namespace engine {
               debugPass(new DebugPass(device)),
               ren(),
               archive(archive) {
-        ren = std::make_unique<Renderer3D>(device, std::vector<RenderPass *>(
-                {
-                        new ForwardPass(device),
-                        new GeometryPass(device),
-                        new PhongShadePass(device),
-                        debugPass,
-                        new CompositePass(device)
-                }));
+        layersDefault = {
+                {{"skybox"}, ""},
+                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
+                {{"forward"}, "forward_depth"}
+        };
+        layersDebug = {
+                {{"skybox"}, ""},
+                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
+                {{"forward"}, "forward_depth"},
+                {{"debug"}}
+        };
+        ren = std::make_unique<Renderer3D>(device,
+                                           std::vector<RenderPass *>(
+                                                   {
+                                                           new ForwardPass(device),
+                                                           new GeometryPass(device),
+                                                           new PhongShadePass(device),
+                                                           debugPass
+                                                   }),
+                                           layersDefault);
     }
 
     void RenderSystem::start(EntityManager &entityManager) {
@@ -149,6 +160,10 @@ namespace engine {
     }
 
     void RenderSystem::setDebugRender(bool value) {
+        if (value)
+            ren->getCompositor().getLayers() = layersDebug;
+        else
+            ren->getCompositor().getLayers() = layersDefault;
         debugPass->setDrawNormals(value);
     }
 

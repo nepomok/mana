@@ -56,10 +56,11 @@ namespace engine {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes)
+    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes, std::vector<Compositor::Layer> layers)
             : device(&device),
               passes(std::move(passes)),
-              geometryBuffer(device.getAllocator()) {
+              geometryBuffer(device.getAllocator()),
+              compositor(&device, std::move(layers)){
         for (auto &pass : this->passes) {
             pass->prepareBuffer(geometryBuffer);
         }
@@ -78,12 +79,14 @@ namespace engine {
             pass->render(geometryBuffer, scene);
         }
 
-        for (auto *pass : passes) {
-            pass->presentBuffer(target, geometryBuffer);
-        }
+        compositor.presentLayers(target, geometryBuffer);
     }
 
     GeometryBuffer &Renderer3D::getGeometryBuffer() {
         return geometryBuffer;
+    }
+
+    Compositor &Renderer3D::getCompositor() {
+        return compositor;
     }
 }

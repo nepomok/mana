@@ -29,6 +29,7 @@
 
 #include "engine/render/3d/renderscene.hpp"
 #include "engine/render/3d/renderpass.hpp"
+#include "engine/render/3d/compositor.hpp"
 
 #include "engine/render/shadercompiler.hpp"
 
@@ -41,7 +42,7 @@ namespace engine {
 
         Renderer3D() = default;
 
-        Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes);
+        Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes, std::vector<Compositor::Layer> layers);
 
         ~Renderer3D();
 
@@ -49,10 +50,13 @@ namespace engine {
 
         GeometryBuffer &getGeometryBuffer();
 
+        Compositor &getCompositor();
+
     private:
         RenderDevice *device{};
         std::vector<RenderPass *> passes;
         GeometryBuffer geometryBuffer;
+        Compositor compositor;
     };
 }
 

@@ -46,8 +46,6 @@ namespace engine {
          * @param scene
          */
         virtual void render(GeometryBuffer &gBuffer, RenderScene &scene) {};
-
-        virtual void presentBuffer(RenderTarget &screen, GeometryBuffer &buffer) {};
     };
 }
 
