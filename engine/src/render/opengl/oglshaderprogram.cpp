@@ -70,7 +70,7 @@ namespace engine {
                     glGetShaderInfoLog(gsH, 512, NULL, infoLog);
                     glDeleteShader(vsH);
                     glDeleteShader(gsH);
-                    std::string error = "Failed to compile fragment shader: ";
+                    std::string error = "Failed to compile geometry shader: ";
                     error.append(infoLog);
                     throw std::runtime_error(error);
                 }
