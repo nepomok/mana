@@ -39,15 +39,15 @@ namespace engine {
               ren(),
               archive(archive) {
         layersDefault = {
-                {{"skybox"}, "", DEPTH_TEST_ALWAYS},
+                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
                 {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {{"forward"}, "forward_depth"}
+                {{"forward"},                                          "forward_depth"}
         };
         layersDebug = {
-                {{"skybox"}, "", DEPTH_TEST_ALWAYS},
+                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
                 {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {{"forward"}, "forward_depth"},
-                {{"debug"}, "", DEPTH_TEST_ALWAYS}
+                {{"forward"},                                          "forward_depth"},
+                {{"debug"},                                            "", DEPTH_TEST_ALWAYS}
         };
         ren = std::make_unique<Renderer3D>(device,
                                            std::vector<RenderPass *>(
@@ -183,6 +183,7 @@ namespace engine {
 
             bundleTasks.at(tex.image.bundle)->wait();
 
+            std::lock_guard<std::mutex> guard(mutex);
             auto &img = bundles.at(tex.image.bundle).getImage(tex.image.asset);
             textures[path] = std::unique_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer(tex.attributes));
             textures[path]->upload(img);
@@ -203,6 +204,8 @@ namespace engine {
 
                 bundleTasks.at(path.bundle)->wait();
 
+                std::lock_guard<std::mutex> guard(mutex);
+
                 auto &bundle = bundles.at(path.bundle);
                 auto &img = bundle.getImage(path.asset);
 
@@ -220,6 +223,8 @@ namespace engine {
         else {
             bundleTasks.at(path.bundle)->wait();
 
+            std::lock_guard<std::mutex> guard(mutex);
+
             auto &bundle = bundles.at(path.bundle);
             auto *mesh = device.getAllocator().createMeshBuffer(bundle.getMesh(path.asset));
 
@@ -231,6 +236,7 @@ namespace engine {
 
     const Material &RenderSystem::getMaterial(const AssetPath &path) {
         bundleTasks.at(path.bundle)->wait();
+        std::lock_guard<std::mutex> guard(mutex);
         return bundles.at(path.bundle).getMaterial(path.asset);
     }
 
@@ -249,6 +255,7 @@ namespace engine {
         if (!path.empty()) {
             loadBundle(path.bundle);
             bundleTasks.at(path.bundle)->wait();
+            std::lock_guard<std::mutex> guard(mutex);
             loadBundle(bundles.at(path.bundle)
                                .getTexture(path.asset).image.bundle);
             assetRef[path]++;
@@ -281,8 +288,12 @@ namespace engine {
     void RenderSystem::unloadTexture(const AssetPath &path) {
         if (!path.empty()) {
             bundleTasks.at(path.bundle)->wait();
-            unloadBundle(bundles.at(path.bundle)
-                                 .getTexture(path.asset).image.bundle);
+            std::string tmp;
+            {
+                std::lock_guard<std::mutex> guard(mutex);
+                tmp = bundles.at(path.bundle).getTexture(path.asset).image.bundle;
+            }
+            unloadBundle(tmp);
             unloadBundle(path.bundle);
             assetRef.at(path)--;
             if (assetRef.at(path) == 0) {
@@ -314,6 +325,7 @@ namespace engine {
         if (bundleTasks.find(bundle) == bundleTasks.end()) {
             bundleTasks[bundle] = ThreadPool::pool.addTask([this, bundle]() {
                 auto bdl = AssetImporter::import(bundle, archive);
+                std::lock_guard<std::mutex> guard(mutex);
                 bundles[bundle] = bdl;
             });
         }
@@ -326,6 +338,7 @@ namespace engine {
         ref--;
         if (ref == 0) {
             task->wait();
+            std::lock_guard<std::mutex> guard(mutex);
             bundles.erase(bundle);
             bundleTasks.erase(bundle);
             bundlesRef.erase(bundle);

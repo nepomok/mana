@@ -115,6 +115,7 @@ namespace engine {
         std::map<std::string, ulong> bundlesRef; //The reference count for bundles (bundle -> asset)
         std::map<std::string, std::shared_ptr<Task>> bundleTasks;
 
+        std::mutex mutex;
         std::map<std::string, AssetBundle> bundles; //Written to by bundle worker tasks and the main thread.
 
         std::map<AssetPath, ulong> assetRef; //The reference count for assets (asset -> buffer)
