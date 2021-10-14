@@ -37,7 +37,7 @@ public:
         auto rotation = getRotationInput();
 
         auto &componentManager = entityManager.getComponentManager();
-        for (auto &pair : componentManager.getPool<PlayerControllerComponent>()) {
+        for (auto &pair: componentManager.getPool<PlayerControllerComponent>()) {
             auto &transform = componentManager.lookup<TransformComponent>(pair.first);
 
             // Unit vectors point to the opposite because
@@ -48,8 +48,15 @@ public:
 
             Vec3f relativeMovement = forward * movement.z + left * movement.x + up * movement.y;
 
+            Vec3f worldRot(0, rotation.y, 0);
+            Vec3f localRot(rotation.x, 0, 0);
+
             transform.transform.position += relativeMovement * pair.second.movementSpeed * deltaTime;
-            transform.transform.rotation = static_cast<Quaternion>(rotation * pair.second.rotationSpeed * deltaTime)
+            //Apply the world rotation by converting it to a quaternion and using it as multiplier
+            transform.transform.rotation = transform.transform.rotation
+                                           * Quaternion(worldRot * pair.second.rotationSpeed * deltaTime);
+            //Apply the local rotation by converting it to a quaternion and using the existing rotation as multiplier
+            transform.transform.rotation = Quaternion(localRot * pair.second.rotationSpeed * deltaTime)
                                            * transform.transform.rotation;
         }
     }

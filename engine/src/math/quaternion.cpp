@@ -22,48 +22,34 @@
 #include "engine/math/rotation.hpp"
 #include "engine/math/matrixmath.hpp"
 
+#include<glm/glm.hpp>
+#include<glm/gtc/quaternion.hpp>
+#include<glm/common.hpp>
+
 #include <cmath>
 #include <stdexcept>
 
 namespace engine {
     static Vec3f convertToRadian(const Vec3f &degrees) {
-        return Vec3f(degreesToRadians(degrees.x), degreesToRadians(degrees.y), degreesToRadians(degrees.z));
+        return {degreesToRadians(degrees.x), degreesToRadians(degrees.y), degreesToRadians(degrees.z)};
     }
 
-    //https://math.stackexchange.com/a/2975462
+    static Vec3f convertToDegrees(const Vec3f &radians) {
+        return {radiansToDegrees(radians.x), radiansToDegrees(radians.y), radiansToDegrees(radians.z)};
+    }
+
     static void eulerToQuaternion(Quaternion &q, const Vec3f &eulerDegrees) {
-        Vec3f eulerRadians = convertToRadian(eulerDegrees);
-        q.x = sinf(eulerRadians.z / 2) * cosf(eulerRadians.y / 2) * cosf(eulerRadians.x / 2) -
-              cosf(eulerRadians.z / 2) * sinf(eulerRadians.y / 2) * sinf(eulerRadians.x / 2);
-
-        q.y = cosf(eulerRadians.z / 2) * sinf(eulerRadians.y / 2) * cosf(eulerRadians.x / 2) +
-              sinf(eulerRadians.z / 2) * cosf(eulerRadians.y / 2) * sinf(eulerRadians.x / 2);
-
-        q.z = cosf(eulerRadians.z / 2) * cosf(eulerRadians.y / 2) * sinf(eulerRadians.x / 2) -
-              sinf(eulerRadians.z / 2) * sinf(eulerRadians.y / 2) * cosf(eulerRadians.x / 2);
-
-        q.w = cosf(eulerRadians.z / 2) * cosf(eulerRadians.y / 2) * cosf(eulerRadians.x / 2) +
-              sinf(eulerRadians.z / 2) * sinf(eulerRadians.y / 2) * sinf(eulerRadians.x / 2);
+        Vec3f eulerRadian = convertToRadian(eulerDegrees);
+        glm::quat gQuat(glm::vec3(eulerRadian.x, eulerRadian.y, eulerRadian.z));
+        q = Quaternion(gQuat.w, gQuat.x, gQuat.y, gQuat.z);
     }
 
     static Vec3f quaternionToEuler(const Quaternion &q) {
-        Vec3f ret;
-        float t0 = 2 * (q.w * q.x + q.y * q.z);
-        float t1 = 1 - 2 * (q.x * q.x + q.y * q.y);
-        ret.z = atan2f(t0, t1);
-        float t2 = 2 * (q.w * q.y - q.z * q.x);
-        if (t2 > 1)
-            t2 = 1;
-        else if (t2 < -1)
-            t2 = -1;
-        ret.y = asinf(t2);
-        float t3 = 2 * (q.w * q.z + q.x * q.y);
-        float t4 = 1 - 2 * (q.y * q.y + q.z * q.z);
-        ret.x = atan2f(t3, t4);
-        return ret;
+        glm::quat gQuat(q.w, q.x, q.y, q.z);
+        auto gVec = glm::eulerAngles(gQuat);
+        return convertToDegrees(Vec3f(gVec.x, gVec.y, gVec.z));
     }
 
-    //https://www.cprogramming.com/tutorial/3d/quaternions.html
     Quaternion::Quaternion()
             : w(1), x(0), y(0), z(0) {}
 
@@ -79,16 +65,14 @@ namespace engine {
     }
 
     Quaternion::operator Vec4f() const {
-        return Vec4f(x, y, z, w);
+        return {x, y, z, w};
     }
 
     Quaternion Quaternion::operator*(const Quaternion &other) const {
-        Quaternion ret;
-        ret.w = w * other.w - x * other.x - y * other.y - z * other.z;
-        ret.x = w * other.x + x * other.w + y * other.z - z * other.y;
-        ret.y = w * other.y - x * other.z + y * other.w + z * other.x;
-        ret.z = w * other.z + x * other.y - y * other.x + z * other.w;
-        return ret;
+        glm::quat gQuatLhs(w, x, y, z);
+        glm::quat gQuatRhs(other.w, other.x, other.y, other.z);
+        glm::quat res = gQuatLhs * gQuatRhs;
+        return {res.w, res.x, res.y, res.z};
     }
 
     void Quaternion::setEulerAngles(Vec3f eulerAngles) {
@@ -100,16 +84,14 @@ namespace engine {
     }
 
     Mat4f Quaternion::matrix() const {
-        Mat4f ret = MatrixMath::identity();
-        ret.get(0, 0) = powf(w, 2) + powf(x, 2) - powf(y, 2) - powf(z, 2);
-        ret.get(1, 0) = 2 * x * y - 2 * w * z;
-        ret.get(2, 0) = 2 * x * z + 2 * w * y;
-        ret.get(0, 1) = 2 * x * y + 2 * w * z;
-        ret.get(1, 1) = powf(w, 2) - powf(x, 2) + powf(y, 2) - powf(z, 2);
-        ret.get(2, 1) = 2 * y * z + 2 * w * x;
-        ret.get(0, 2) = 2 * x * z - 2 * w * y;
-        ret.get(1, 2) = 2 * y * z - 2 * w * x;
-        ret.get(2, 2) = powf(w, 2) - powf(x, 2) - powf(y, 2) + powf(z, 2);
+        glm::quat gQuat(w, x, y, z);
+        auto gMat = static_cast<glm::mat4>(gQuat);
+        Mat4f ret;
+        for (int col = 0; col < 4; col++) {
+            for (int row = 0; row < 4; row++) {
+                ret.set(col, row, gMat[col][row]);
+            }
+        }
         return ret;
     }
 
