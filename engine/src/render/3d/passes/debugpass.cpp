@@ -154,8 +154,10 @@ void main()
             //Tangent
             color = vec4(1, 0, 0, 1);
             pos = cPos;
+            gl_Position = pos;
             EmitVertex();
             pos = cTang;
+            gl_Position = pos;
             EmitVertex();
             EndPrimitive();
 
