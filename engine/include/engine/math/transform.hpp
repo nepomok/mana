@@ -53,10 +53,7 @@ namespace engine {
         }
 
         Mat4f model() const {
-            Mat4f model = MatrixMath::translate(position);
-            model = model * MatrixMath::scale(scale);
-            model = model * rotation.matrix();
-            return model;
+            return MatrixMath::translate(position) * rotation.matrix() * MatrixMath::scale(scale);
         }
     };
 }
