@@ -33,12 +33,14 @@ namespace engine {
                                Vec2i viewportSize,
                                bool multiSample = false,
                                ColorRGBA clearColorValue = {},
+                               float clearDepthValue = 1,
                                bool clearColor = true,
                                bool clearDepth = true,
                                bool clearStencil = true)
                 : viewportOffset(viewportOffset), viewportSize(viewportSize),
                   multiSample(multiSample),
                   clearColorValue(clearColorValue),
+                  clearDepthValue(clearDepthValue),
                   clearColor(clearColor),
                   clearDepth(clearDepth),
                   clearStencil(clearStencil) {}
@@ -47,6 +49,7 @@ namespace engine {
         Vec2i viewportSize;
         bool multiSample;
         ColorRGBA clearColorValue;
+        float clearDepthValue;
         bool clearColor;
         bool clearDepth;
         bool clearStencil;

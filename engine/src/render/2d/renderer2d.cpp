@@ -224,6 +224,7 @@ namespace engine {
                                                                       target.getSize(),
                                                                       true,
                                                                       {},
+                                                                      1,
                                                                       clear, clear, clear));
         screenSize = target.getSize();
         setProjection({{}, screenSize.convert<float>()});
@@ -237,6 +238,7 @@ namespace engine {
                                                                       viewportSize,
                                                                       true,
                                                                       {},
+                                                                      1,
                                                                       clear, clear, clear));
         screenSize = viewportSize;
         setProjection({{}, screenSize.convert<float>()});

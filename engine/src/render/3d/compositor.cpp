@@ -22,8 +22,7 @@
 
 static const char *SHADER_VERT = R"###(#version 460 core
 
-#define MAX_LAYERS 5
-#define MAX_COLOR 3
+#define MAX_COLOR 15
 
 struct Layer {
     sampler2D color[MAX_COLOR];
@@ -33,9 +32,7 @@ struct Layer {
 };
 
 struct Globals {
-    Layer layers[MAX_LAYERS];
-    int num_layers;
-    vec3 clearColor;
+    Layer layer;
 };
 
 uniform Globals globals;
@@ -64,8 +61,7 @@ void main()
 
 static const char *SHADER_FRAG = R"###(#version 460 core
 
-#define MAX_LAYERS 5
-#define MAX_COLOR 3
+#define MAX_COLOR 15
 
 struct Layer {
     sampler2D color[MAX_COLOR];
@@ -75,9 +71,7 @@ struct Layer {
 };
 
 struct Globals {
-    Layer layers[MAX_LAYERS];
-    int num_layers;
-    vec3 clearColor;
+    Layer layer;
 };
 
 uniform Globals globals;
@@ -87,38 +81,28 @@ layout(location = 1) in vec2 fUv;
 
 layout(location = 0) out vec4 fragColor;
 
-vec4 blend_additive(vec4 colorA, vec4 colorB)
+vec4 blend(vec4 colorA, vec4 colorB)
 {
     return vec4((colorB.rgb * colorB.a + colorA.rgb * (1.0 - colorB.a)).rgb, 1);
 }
 
 void main()
 {
-    vec4 color = vec4(globals.clearColor.rgb, 1);
+    vec4 color = vec4(0, 0, 0, 0);
     float depth = 1;
 
-    for (int i = 0; i < globals.num_layers; i++)
+    for (int ci = 0; ci < globals.layer.num_color; ci++)
     {
-        vec4 layerColor = vec4(0, 0, 0, 0);
-        for (int ci = 0; ci < globals.layers[i].num_color; ci++)
-        {
-            layerColor += texture(globals.layers[i].color[ci], fUv);
-        }
-        layerColor.a = normalize(layerColor.a);
-
-        if (globals.layers[i].has_depth != 0)
-        {
-            float layerDepth = texture(globals.layers[i].depth, fUv).r;
-            if (layerDepth < depth)
-            {
-                color = blend_additive(color, layerColor);
-                depth = layerDepth;
-            }
-        }
-        else
-        {
-            color = blend_additive(color, layerColor);
-        }
+        color += texture(globals.layer.color[ci], fUv);
+    }
+    color.a = normalize(color.a);
+    if (globals.layer.has_depth != 0)
+    {
+        depth = texture(globals.layer.depth, fUv).r;
+    }
+    else
+    {
+        depth = 1;
     }
 
     fragColor = color;
@@ -158,28 +142,38 @@ namespace engine {
                                    const std::vector<Layer> &pLayers) {
         auto &ren = device->getRenderer();
 
-        ren.renderBegin(screen, RenderOptions({}, screen.getSize()));
+        //Clear screen
+        ren.renderBegin(screen, RenderOptions({}, screen.getSize(), false,
+                                              {clearColor.r(), clearColor.g(), clearColor.b(), 255}));
+        ren.renderFinish();
 
-        shader->setVec3("globals.clearColor", Vec3f(static_cast<float>(clearColor.r()) / 255,
-                                                    static_cast<float>(clearColor.g()) / 255,
-                                                    static_cast<float>(clearColor.b()) / 255));
+        if (layers.empty())
+            return;
 
-        shader->setInt("globals.num_layers", static_cast<int>(pLayers.size()));
+        for (auto &layer: layers) {
+            drawLayer(screen, buffer, layer);
+        }
+    }
+
+    void Compositor::drawLayer(RenderTarget &screen,
+                               GeometryBuffer &buffer,
+                               const Compositor::Layer &layer) {
+        if (layer.color.size() > 14)
+            throw std::runtime_error("Maximum of 15 color textures per layer");
+
+        auto &ren = device->getRenderer();
 
         std::vector<TextureBuffer *> textures;
-        for (int i = 0; i < pLayers.size(); i++) {
-            std::string prefix = "globals.layers[" + std::to_string(i) + "]";
-            auto &layer = pLayers.at(i);
-            shader->setInt(prefix + ".num_color", static_cast<int>(layer.color.size()));
-            for (int ci = 0; ci < layer.color.size(); ci++) {
-                shader->setTexture(prefix + ".color[" + std::to_string(ci) + "]", static_cast<int>(textures.size()));
-                textures.emplace_back(&buffer.getBuffer(layer.color.at(ci)));
-            }
-            shader->setInt(prefix + ".has_depth", !layer.depth.empty());
-            if (!layer.depth.empty()) {
-                shader->setTexture(prefix + ".depth", static_cast<int>(textures.size()));
-                textures.emplace_back(&buffer.getBuffer(layer.depth));
-            }
+        std::string prefix = "globals.layer";
+        shader->setInt(prefix + ".num_color", static_cast<int>(layer.color.size()));
+        for (int ci = 0; ci < layer.color.size(); ci++) {
+            shader->setTexture(prefix + ".color[" + std::to_string(ci) + "]", static_cast<int>(textures.size()));
+            textures.emplace_back(&buffer.getBuffer(layer.color.at(ci)));
+        }
+        shader->setInt(prefix + ".has_depth", !layer.depth.empty());
+        if (!layer.depth.empty()) {
+            shader->setTexture(prefix + ".depth", static_cast<int>(textures.size()));
+            textures.emplace_back(&buffer.getBuffer(layer.depth));
         }
 
         RenderCommand command;
@@ -187,11 +181,13 @@ namespace engine {
         command.meshBuffers.emplace_back(&buffer.getScreenQuad());
         command.textures = textures;
 
-        command.properties.depthTestMode = DEPTH_TEST_ALWAYS;
         command.properties.enableBlending = true;
+        command.properties.depthTestMode = layer.depthTestMode;
+        command.properties.blendSourceMode = layer.colorBlendModeSource;
+        command.properties.blendDestinationMode = layer.colorBlendModeDest;
 
+        ren.renderBegin(screen, RenderOptions({}, screen.getSize(), false, {}, 0, false, false));
         ren.addCommand(command);
-
         ren.renderFinish();
     }
 }

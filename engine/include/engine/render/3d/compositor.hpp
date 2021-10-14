@@ -30,14 +30,19 @@ namespace engine {
      */
     class Compositor {
     public:
-        //TODO: User configurable color blending modes
         struct Layer {
-            //The names of the color textures in the geometry buffer,
-            // the colors are added together and the resulting color is blended with previous layers or clear color for the first layer.
+            // The names of the color textures in the geometry buffer
             std::vector<std::string> color;
 
-            //The optional name of the depth texture in the geometry buffer, a DepthTestMode::DEPTH_TEST_LESS is performed if a texture is specified
+            //The optional name of the depth texture in the geometry buffer
             std::string depth;
+
+            //The depth test mode to use when rendering this layer
+            DepthTestMode depthTestMode = DEPTH_TEST_LESS;
+
+            //The blend modes to use when rendering this layer
+            BlendMode colorBlendModeSource = SRC_ALPHA;
+            BlendMode colorBlendModeDest = ONE_MINUS_SRC_ALPHA;
         };
 
         Compositor() = default;
@@ -55,6 +60,10 @@ namespace engine {
         void presentLayers(RenderTarget &screen, GeometryBuffer &buffer, const std::vector<Layer> &pLayers);
 
     private:
+        void drawLayer(RenderTarget &screen,
+                       GeometryBuffer &buffer,
+                       const Layer &layer);
+
         ColorRGB clearColor{0, 0, 0};
         RenderDevice *device{};
         std::vector<Layer> layers;

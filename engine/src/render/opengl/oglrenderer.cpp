@@ -70,6 +70,8 @@ namespace engine {
                          (float) options.clearColorValue.b() / (float) 255,
                          (float) options.clearColorValue.a() / (float) 255);
 
+            glClearDepth(options.clearDepthValue);
+
             if (options.multiSample)
                 glEnable(GL_MULTISAMPLE);
             else

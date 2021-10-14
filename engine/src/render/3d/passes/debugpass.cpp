@@ -219,6 +219,7 @@ namespace engine {
                                       gBuffer.getSize(),
                                       false,
                                       {},
+                                      1,
                                       true,
                                       false,
                                       false));

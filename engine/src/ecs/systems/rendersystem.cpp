@@ -39,15 +39,15 @@ namespace engine {
               ren(),
               archive(archive) {
         layersDefault = {
-                {{"skybox"}, ""},
+                {{"skybox"}, "", DEPTH_TEST_ALWAYS},
                 {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
                 {{"forward"}, "forward_depth"}
         };
         layersDebug = {
-                {{"skybox"}, ""},
+                {{"skybox"}, "", DEPTH_TEST_ALWAYS},
                 {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
                 {{"forward"}, "forward_depth"},
-                {{"debug"}}
+                {{"debug"}, "", DEPTH_TEST_ALWAYS}
         };
         ren = std::make_unique<Renderer3D>(device,
                                            std::vector<RenderPass *>(

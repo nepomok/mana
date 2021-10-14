@@ -50,9 +50,10 @@ namespace engine {
                                                                  gBuffer.getRenderTarget().getSize(),
                                                                  true,
                                                                  {},
+                                                                 1,
                                                                  true, true, true));
 
-        for (auto &unit : scene.forward) {
+        for (auto &unit: scene.forward) {
             model = unit.transform.model();
 
             ShaderProgram &shader = *unit.command.shader;
@@ -69,7 +70,7 @@ namespace engine {
             int spotCount = 0;
 
             int i = 0;
-            for (auto &light : scene.lights) {
+            for (auto &light: scene.lights) {
                 std::string name;
                 switch (light.type) {
                     case LIGHT_DIRECTIONAL:
