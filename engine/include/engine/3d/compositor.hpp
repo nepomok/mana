@@ -20,7 +20,7 @@
 #ifndef MANA_COMPOSITOR_HPP
 #define MANA_COMPOSITOR_HPP
 
-#include "engine/render/3d/geometrybuffer.hpp"
+#include "engine/3d/geometrybuffer.hpp"
 
 #include "engine/render/rendercommand.hpp"
 

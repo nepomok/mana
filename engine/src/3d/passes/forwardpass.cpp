@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/forwardpass.hpp"
+#include "engine/3d/passes/forwardpass.hpp"
 
 #include "engine/math/rotation.hpp"
 

@@ -20,8 +20,9 @@
 #ifndef MANA_RENDERSCENE_HPP
 #define MANA_RENDERSCENE_HPP
 
-#include "engine/render/3d/deferredcommand.hpp"
-#include "engine/render/3d/forwardcommand.hpp"
+#include "engine/3d/deferredcommand.hpp"
+#include "engine/3d/forwardcommand.hpp"
+
 #include "engine/asset/camera.hpp"
 #include "engine/asset/light.hpp"
 

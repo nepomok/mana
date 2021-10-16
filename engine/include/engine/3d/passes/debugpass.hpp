@@ -20,7 +20,7 @@
 #ifndef MANA_DEBUGPASS_HPP
 #define MANA_DEBUGPASS_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include "engine/3d/renderpass.hpp"
 
 namespace engine {
     class DebugPass : public RenderPass {

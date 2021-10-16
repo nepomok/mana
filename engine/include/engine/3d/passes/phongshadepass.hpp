@@ -17,14 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/outlinepass.hpp"
+#ifndef MANA_PHONGSHADEPASS_HPP
+#define MANA_PHONGSHADEPASS_HPP
+
+#include "engine/3d/renderpass.hpp"
 
 namespace engine {
-    void OutlinePass::prepareBuffer(GeometryBuffer &gBuffer) {
-        RenderPass::prepareBuffer(gBuffer);
-    }
+    class PhongShadePass : public RenderPass {
+    public:
+        explicit PhongShadePass(RenderDevice &device);
 
-    void OutlinePass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
-        RenderPass::render(gBuffer, scene);
-    }
+        ~PhongShadePass() override = default;
+
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+
+    private:
+        RenderDevice &renderDevice;
+
+        ShaderProgram *shader;
+    };
 }
+
+#endif //MANA_PHONGSHADEPASS_HPP

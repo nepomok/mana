@@ -26,12 +26,11 @@
 
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
-
-#include "engine/render/3d/renderscene.hpp"
-#include "engine/render/3d/renderpass.hpp"
-#include "engine/render/3d/compositor.hpp"
-
 #include "engine/render/shadercompiler.hpp"
+
+#include "engine/3d/renderscene.hpp"
+#include "engine/3d/renderpass.hpp"
+#include "engine/3d/compositor.hpp"
 
 namespace engine {
     class Renderer3D {

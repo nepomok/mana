@@ -17,11 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/debugpass.hpp"
+#include "engine/3d/passes/debugpass.hpp"
 
 #include "engine/render/shadercompiler.hpp"
 
-#include "engine/render/3d/renderer3d.hpp"
+#include "engine/3d/renderer3d.hpp"
 
 #include "engine/math/rotation.hpp"
 

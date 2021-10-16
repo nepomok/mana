@@ -20,9 +20,10 @@
 #ifndef MANA_RENDERPASS_HPP
 #define MANA_RENDERPASS_HPP
 
-#include "engine/render/3d/renderpass.hpp"
-#include "engine/render/3d/renderscene.hpp"
-#include "engine/render/3d/geometrybuffer.hpp"
+#include "engine/3d/renderpass.hpp"
+#include "engine/3d/renderscene.hpp"
+#include "engine/3d/geometrybuffer.hpp"
+
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
 

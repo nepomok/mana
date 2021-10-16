@@ -20,11 +20,10 @@
 #ifndef MANA_GEOMETRYBUFFER_HPP
 #define MANA_GEOMETRYBUFFER_HPP
 
-#include "engine/render/renderdevice.hpp"
-
-#include "engine/render/texturebuffer.hpp"
-
 #include <memory>
+
+#include "engine/render/renderdevice.hpp"
+#include "engine/render/texturebuffer.hpp"
 
 namespace engine {
     class GeometryBuffer {

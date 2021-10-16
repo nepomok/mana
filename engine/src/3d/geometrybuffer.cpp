@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/geometrybuffer.hpp"
+#include "engine/3d/geometrybuffer.hpp"
 
 namespace engine {
     GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(&allocator), size(size) {

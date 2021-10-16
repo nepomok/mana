@@ -24,10 +24,10 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/3d/passes/geometrypass.hpp"
-#include "engine/render/3d/passes/phongshadepass.hpp"
-#include "engine/render/3d/passes/forwardpass.hpp"
-#include "engine/render/3d/passes/debugpass.hpp"
+#include "engine/3d/passes/geometrypass.hpp"
+#include "engine/3d/passes/phongshadepass.hpp"
+#include "engine/3d/passes/forwardpass.hpp"
+#include "engine/3d/passes/debugpass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 

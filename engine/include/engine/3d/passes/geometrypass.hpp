@@ -17,17 +17,17 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PHONGSHADEPASS_HPP
-#define MANA_PHONGSHADEPASS_HPP
+#ifndef MANA_GEOMETRYPASS_HPP
+#define MANA_GEOMETRYPASS_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include "engine/3d/renderpass.hpp"
 
 namespace engine {
-    class PhongShadePass : public RenderPass {
+    class GeometryPass : public RenderPass {
     public:
-        explicit PhongShadePass(RenderDevice &device);
+        explicit GeometryPass(RenderDevice &device);
 
-        ~PhongShadePass() override = default;
+        ~GeometryPass() override;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
@@ -36,8 +36,21 @@ namespace engine {
     private:
         RenderDevice &renderDevice;
 
-        ShaderProgram *shader;
+        ShaderProgram *shaderTextureNormals;
+        ShaderProgram *shaderVertexNormals;
+
+        // The default texture buffers with a size of 1x1 pixels into which the color values of the material
+        // are stored if the user did not specify a texture in the material.
+        TextureBuffer *diffuseDefault;
+        TextureBuffer *ambientDefault;
+        TextureBuffer *specularDefault;
+        TextureBuffer *shininessDefault;
+        TextureBuffer *emissiveDefault;
+
+        ShaderProgram *shaderSkybox;
+        MeshBuffer *skyboxCube;
+        TextureBuffer *skyboxDefault;
     };
 }
 
-#endif //MANA_PHONGSHADEPASS_HPP
+#endif //MANA_GEOMETRYPASS_HPP

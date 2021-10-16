@@ -17,14 +17,25 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/passes/shadowpass.hpp"
+#ifndef MANA_FORWARDPASS_HPP
+#define MANA_FORWARDPASS_HPP
+
+#include "engine/3d/renderpass.hpp"
 
 namespace engine {
-    void ShadowPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        RenderPass::prepareBuffer(gBuffer);
-    }
+    class ForwardPass : public RenderPass {
+    public:
+        explicit ForwardPass(RenderDevice &device);
 
-    void ShadowPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
-        RenderPass::render(gBuffer, scene);
-    }
+        ~ForwardPass() override;
+
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+
+    private:
+        RenderDevice &device;
+    };
 }
+
+#endif //MANA_FORWARDPASS_HPP

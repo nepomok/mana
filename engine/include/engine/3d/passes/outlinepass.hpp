@@ -17,15 +17,15 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SHADOWPASS_HPP
-#define MANA_SHADOWPASS_HPP
+#ifndef MANA_OUTLINEPASS_HPP
+#define MANA_OUTLINEPASS_HPP
 
-#include "engine/render/3d/renderpass.hpp"
+#include "engine/3d/renderpass.hpp"
 
 namespace engine {
-    class ShadowPass : public RenderPass {
+    class OutlinePass : public RenderPass {
     public:
-        ~ShadowPass() override = default;
+        ~OutlinePass() override = default;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
@@ -33,4 +33,4 @@ namespace engine {
     };
 }
 
-#endif //MANA_SHADOWPASS_HPP
+#endif //MANA_OUTLINEPASS_HPP

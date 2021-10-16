@@ -17,10 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/3d/renderer3d.hpp"
+#include "engine/3d/renderer3d.hpp"
 
-#include "render/3d/hlslinclude.hpp"
-#include "render/3d/glslinclude.hpp"
+#include "hlslinclude.hpp"
+#include "glslinclude.hpp"
 
 #include <algorithm>
 #include <utility>
