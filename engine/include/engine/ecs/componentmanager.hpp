@@ -87,7 +87,7 @@ namespace engine {
         }
 
         template<typename T>
-        T &create(const Entity &entity, const T &value = {}) {
+        const T &create(const Entity &entity, const T &value = {}) {
             return getPool<T>().create(entity, value);
         }
 
@@ -109,8 +109,13 @@ namespace engine {
         }
 
         template<typename T>
-        T &lookup(const Entity &entity) {
+        const T &lookup(const Entity &entity) {
             return getPool<T>().lookup(entity);
+        }
+
+        template<typename T>
+        bool update(const Entity &entity, const T &value) {
+            return getPool<T>().update(entity, value);
         }
 
         template<typename T>

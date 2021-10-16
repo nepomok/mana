@@ -363,4 +363,24 @@ namespace engine {
     void RenderSystem::onComponentDestroy(const Entity &entity, const SkyboxComponent &component) {
         unloadCubeMap(component.paths);
     }
+
+    void RenderSystem::onComponentUpdate(const Entity &entity,
+                                         const MeshRenderComponent &oldValue,
+                                         const MeshRenderComponent &newValue) {
+        if (oldValue == newValue)
+            return;
+        unloadMeshBuffer(oldValue.mesh);
+        unloadMaterial(oldValue.material);
+        loadMeshBuffer(newValue.mesh);
+        loadMaterial(newValue.material);
+    }
+
+    void RenderSystem::onComponentUpdate(const Entity &entity,
+                                         const SkyboxComponent &oldValue,
+                                         const SkyboxComponent &newValue) {
+        if (oldValue == newValue)
+            return;
+        unloadCubeMap(oldValue.paths);
+        loadCubeMap(newValue.paths);
+    }
 }

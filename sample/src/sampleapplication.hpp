@@ -95,9 +95,12 @@ protected:
         for (int x = 0; x < 10; x++) {
             for (int y = 0; y < 10; y++) {
                 auto ent = entityManager.create();
-                auto &transform = componentManager.create<TransformComponent>(ent);
+                auto transform = componentManager.create<TransformComponent>(ent);
                 transform = planeTransform;
-                transform.transform.position += Vec3f(x * 20, 0, -(y * 20));
+                transform.transform.position += Vec3f(static_cast<float>(x) * 20.0f, 0,
+                                                      -(static_cast<float>(y) * 20.0f));
+
+                componentManager.update(ent, transform);
 
                 componentManager.create<MeshRenderComponent>(ent, planeRender);
             }
@@ -140,8 +143,9 @@ protected:
         auto &entityManager = ecs.getEntityManager();
         auto &componentManager = entityManager.getComponentManager();
 
-        componentManager.lookup<CameraComponent>(cameraEntity).camera.aspectRatio =
-                (float) wndSize.x / (float) wndSize.y;
+        auto cam = componentManager.lookup<CameraComponent>(cameraEntity);
+        cam.camera.aspectRatio = (float) wndSize.x / (float) wndSize.y;
+        componentManager.update<CameraComponent>(cameraEntity, cam);
 
         if (deltaTime > 0) {
             float fps = 1.0f / deltaTime;

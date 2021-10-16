@@ -303,7 +303,9 @@ namespace engine {
                 } else if (componentType == "mesh_render") {
                     MeshRenderComponent comp;
                     comp << component;
-                    componentManager.create<MeshRenderComponent>(ent, comp) << component;
+                    auto c = componentManager.create<MeshRenderComponent>(ent, comp);
+                    c << component;
+                    componentManager.update<MeshRenderComponent>(ent, c);
                 } else if (componentType == "skybox") {
                     SkyboxComponent comp;
                     comp << component;

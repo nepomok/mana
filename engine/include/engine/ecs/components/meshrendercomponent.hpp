@@ -27,10 +27,18 @@ namespace engine {
     struct MeshRenderComponent {
         bool enabled = true;
 
-        bool castShadows;
-        bool receiveShadows;
-        AssetPath mesh;
-        AssetPath material;
+        bool castShadows{};
+        bool receiveShadows{};
+        AssetPath mesh{};
+        AssetPath material{};
+
+        bool operator==(const MeshRenderComponent &other) const {
+            return enabled == other.enabled
+                   && castShadows == other.castShadows
+                   && receiveShadows == other.receiveShadows
+                   && mesh == other.mesh
+                   && material == other.material;
+        }
     };
 }
 

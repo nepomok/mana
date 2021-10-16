@@ -29,6 +29,10 @@ namespace engine {
         //Paths to skybox images, using paths here means immutable skybox images
         //Mutable images would be desirable for animated skybox
         std::array<AssetPath, 6> paths;
+
+        bool operator==(const SkyboxComponent &other) const {
+            return paths == other.paths;
+        }
     };
 }
 #endif //MANA_SKYBOXCOMPONENT_HPP

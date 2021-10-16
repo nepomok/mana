@@ -60,6 +60,7 @@ namespace engine {
 
         Renderer3D &getRenderer();
 
+    private:
         void onComponentCreate(const Entity &entity, const MeshRenderComponent &component) override;
 
         void onComponentDestroy(const Entity &entity, const MeshRenderComponent &component) override;
@@ -68,7 +69,14 @@ namespace engine {
 
         void onComponentDestroy(const Entity &entity, const SkyboxComponent &component) override;
 
-    private:
+        void onComponentUpdate(const Entity &entity,
+                               const MeshRenderComponent &oldValue,
+                               const MeshRenderComponent &newValue) override;
+
+        void onComponentUpdate(const Entity &entity,
+                               const SkyboxComponent &oldValue,
+                               const SkyboxComponent &newValue) override;
+
         RenderTarget &screenTarget;
         RenderDevice &device;
         Archive &archive;

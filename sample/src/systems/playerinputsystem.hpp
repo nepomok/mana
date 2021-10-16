@@ -38,7 +38,7 @@ public:
 
         auto &componentManager = entityManager.getComponentManager();
         for (auto &pair: componentManager.getPool<PlayerControllerComponent>()) {
-            auto &transform = componentManager.lookup<TransformComponent>(pair.first);
+            auto transform = componentManager.lookup<TransformComponent>(pair.first);
 
             // Unit vectors point to the opposite because
             // the camera is facing in the negative z although positive z is "forward" in world space.
@@ -58,6 +58,8 @@ public:
             //Apply the local rotation by converting it to a quaternion and using the existing rotation as multiplier
             transform.transform.rotation = Quaternion(localRot * pair.second.rotationSpeed * deltaTime)
                                            * transform.transform.rotation;
+
+            componentManager.update<TransformComponent>(pair.first, transform);
         }
     }
 

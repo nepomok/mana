@@ -45,6 +45,8 @@ namespace engine {
             virtual void onComponentCreate(const Entity &entity, const T &component) = 0;
 
             virtual void onComponentDestroy(const Entity &entity, const T &component) = 0;
+
+            virtual void onComponentUpdate(const Entity &entity, const T &oldValue, const T &newValue) = 0;
         };
 
         ComponentPool() = default;
@@ -86,7 +88,7 @@ namespace engine {
             return components.end();
         }
 
-        T &create(const Entity &entity, const T &value = {}) {
+        const T &create(const Entity &entity, const T &value = {}) {
             if (components.find(entity) != components.end())
                 throw std::runtime_error("Entity "
                                          + std::to_string(entity.id)
@@ -100,8 +102,33 @@ namespace engine {
             return comp;
         }
 
-        T &lookup(const Entity &entity) {
+        const T &lookup(const Entity &entity) {
             return components.at(entity);
+        }
+
+        /**
+         * Update the component value, components can only be updated by calling this method.
+         *
+         * The pool calls the onComponentUpdate callback on all listeners.
+         *
+         * @param entity
+         * @param value
+         * @return True if the component was not present and was created, otherwise false
+         */
+        bool update(const Entity &entity, const T &value = {}) {
+            auto it = components.find(entity);
+            if (it == components.end()) {
+                create(entity, value);
+                return true;
+            } else {
+                auto &comp = it->second;
+                auto val = comp;
+                comp = value;
+                for (auto &listener: listeners) {
+                    listener->onComponentUpdate(entity, val, comp);
+                }
+                return false;
+            }
         }
 
         bool check(const Entity &entity) {
