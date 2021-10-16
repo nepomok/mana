@@ -22,6 +22,17 @@
 
 #include <string>
 
-void checkQtGLError(const std::string &source) ;
+#include <stdexcept>
+
+#include "openglinclude.hpp"
+
+static void checkGLError(const std::string &source) {
+    GLenum er = glGetError();
+    if (er != GL_NO_ERROR) {
+        std::string error = source + " GLERROR: ";
+        error += std::to_string(er);
+        throw std::runtime_error(error);
+    }
+}
 
 #endif //MANA_QtOGLCHECKERROR_HPP

@@ -17,31 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_PROJECTFILE_HPP
-#define MANA_PROJECTFILE_HPP
+#ifndef MANA_MANA_EDITOR_HPP
+#define MANA_MANA_EDITOR_HPP
 
-#include "engine/io/resourcefile.hpp"
-#include "engine/io/scenefile.hpp"
-
-namespace engine {
-    namespace editor {
-        class ProjectFile : public File {
-        public:
-            ProjectFile();
-
-            const std::string &getProjectName();
-
-            const std::string &getLaunchScene();
-
-            const std::vector<ResourceFile> &getResourceFiles();
-
-            const std::vector<SceneFile> &getSceneFiles();
-
-        private:
-            std::vector<ResourceFile> resourceFiles;
-            std::vector<SceneFile> sceneFiles;
-        };
-    }
-}
-
-#endif //MANA_PROJECTFILE_HPP
+#endif //MANA_MANA_EDITOR_HPP

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_QtOGLRENDERTEXTURE_HPP
-#define MANA_QtOGLRENDERTEXTURE_HPP
+#ifndef MANA_QTOGLTEXTUREBUFFER_HPP
+#define MANA_QTOGLTEXTUREBUFFER_HPP
 
 #include "engine/render/texturebuffer.hpp"
 
@@ -28,33 +28,44 @@
 
 namespace engine {
     namespace opengl {
-        class QtOGLRenderTexture : public TextureBuffer, public QOpenGLFunctions_3_3_Core {
+        class QtOGLTextureBuffer : public TextureBuffer, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint handle;
 
-            explicit QtOGLRenderTexture(Attributes attributes);
+            explicit QtOGLTextureBuffer(Attributes attributes);
 
-            QtOGLRenderTexture(const QtOGLRenderTexture &copy) = delete;
+            QtOGLTextureBuffer(const QtOGLTextureBuffer &copy) = delete;
 
-            QtOGLRenderTexture &operator=(const QtOGLRenderTexture &copy) = delete;
+            QtOGLTextureBuffer &operator=(const QtOGLTextureBuffer &copy) = delete;
 
-            ~QtOGLRenderTexture() override;
+            ~QtOGLTextureBuffer() override;
 
-            void upload(const Image <ColorRGB> &buffer) override;
+            TextureBuffer * upload(const Image <ColorRGB> &buffer) override;
 
-            void upload(const Image <ColorRGBA> &buffer) override;
+            TextureBuffer * upload(const Image <ColorRGBA> &buffer) override;
+
+            TextureBuffer * upload(const Image<float> &buffer) override;
+
+            TextureBuffer * upload(const Image<int> &buffer) override;
+
+            TextureBuffer * upload(const Image<char> &buffer) override;
+
+            TextureBuffer * upload(const Image<unsigned char> &buffer) override;
 
             Image<ColorRGBA> download() override;
 
-            void upload(CubeMapFace face, const Image <ColorRGBA> &buffer) override;
+            TextureBuffer * upload(CubeMapFace face, const Image <ColorRGBA> &buffer) override;
 
             Image<ColorRGBA> download(CubeMapFace face) override;
 
-            void uploadCubeMap(const Image<ColorRGBA> &buffer) override;
+            TextureBuffer * uploadCubeMap(const Image<ColorRGBA> &buffer) override;
 
             Image<ColorRGBA> downloadCubeMap() override;
+
+        private:
+            void setTextureType(TextureType type);
         };
     }
 }
 
-#endif //MANA_QtOGLRENDERTEXTURE_HPP
+#endif //MANA_QTOGLTEXTUREBUFFER_HPP

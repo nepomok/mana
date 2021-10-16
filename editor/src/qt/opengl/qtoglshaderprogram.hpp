@@ -17,10 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_QtOGLSHADERPROGRAM_HPP
-#define MANA_QtOGLSHADERPROGRAM_HPP
+#ifndef MANA_QTOGLSHADERPROGRAM_HPP
+#define MANA_QTOGLSHADERPROGRAM_HPP
 
 #include <string>
+#include <map>
+#include <functional>
 
 #include "engine/render/shaderprogram.hpp"
 #include "engine/math/vector2.hpp"
@@ -33,21 +35,20 @@
 
 namespace engine {
     namespace opengl {
-        /**
-         * The following vertex shader input layout is required:
-         *
-         * layout (location = 0) in vec3 position;
-         * layout (location = 1) in vec3 normal;
-         * layout (location = 2) in vec2 uv;
-         * layout (location = 3) in mat4 instanceMatrix;
-         */
-        class QtOGLShaderProgram : public ShaderProgram, public QOpenGLFunctions_3_3_Core {
+        class QtOGLShaderProgram : public ShaderProgram , public QOpenGLFunctions_3_3_Core {
         public:
             QtOGLShaderProgram();
 
-            QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
-                               const std::map<std::string, std::string> &macros,
-                               const std::function<std::string(const char *)> &includeCallback);
+            /**
+             * @param vertexShader The preprocessed glsl vertex shader.
+             * @param geometryShader The preprocessed glsl geometry shader, if empty no geometry shader is used.
+             * @param fragmentShader The preprocessed glsl fragment shader.
+             * @param prefix The prefix to use for variable names, textures are always set without prefix.
+             */
+            QtOGLShaderProgram(const std::string &vertexShader,
+                               const std::string &geometryShader,
+                               const std::string &fragmentShader,
+                               const std::string &prefix = "");
 
             ~QtOGLShaderProgram() override;
 
@@ -55,7 +56,7 @@ namespace engine {
 
             QtOGLShaderProgram &operator=(const QtOGLShaderProgram &) = delete;
 
-            void activate();
+            void activate(); //Non const because QOpenGLFunctions_3_3_Core::glUseProgram method is not const
 
             bool setTexture(const std::string &name, int slot) override;
 
@@ -91,11 +92,9 @@ namespace engine {
 
         private:
             GLuint programID;
-
-            std::string vertexShader;
-            std::string fragmentShader;
+            std::string prefix;
         };
     }
 }
 
-#endif //MANA_QtOGLSHADERPROGRAM_HPP
+#endif //MANA_QTOGLSHADERPROGRAM_HPP

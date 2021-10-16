@@ -18,35 +18,29 @@
  */
 
 #include <stdexcept>
-#include <ShaderConductor/ShaderConductor.hpp>
 
 #include "engine/math/rotation.hpp"
 
+#include "engine/math/matrixmath.hpp"
+
 #include "qtoglshaderprogram.hpp"
 #include "qtoglcheckerror.hpp"
-#include "render/opengl/hlslcrosscompiler.hpp"
-
-#include "engine/math/matrixmath.hpp"
 
 namespace engine {
     namespace opengl {
-        QtOGLShaderProgram::QtOGLShaderProgram() : programID(0), vertexShader(), fragmentShader() {}
+        QtOGLShaderProgram::QtOGLShaderProgram() : programID(0) {}
 
-        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader, const std::string &fragmentShader,
-                                               const std::map<std::string, std::string> &macros,
-                                               const std::function<std::string(const char *)> &includeCallback)
-                : vertexShader(vertexShader), fragmentShader(fragmentShader) {
-            initializeOpenGLFunctions();
+        QtOGLShaderProgram::QtOGLShaderProgram(const std::string &vertexShader,
+                                           const std::string &geometryShader,
+                                           const std::string &fragmentShader,
+                                           const std::string &prefix)
+                : programID(0), prefix(prefix) {
+            const char *vertexSource = vertexShader.c_str();
+            const char *geometrySource = geometryShader.c_str();
+            const char *fragmentSource = fragmentShader.c_str();
 
-            HlslCrossCompiler compiler;
-            compiler.setMacros(macros);
-            compiler.setIncludeCallback(includeCallback);
+            programID = glCreateProgram();
 
-            std::string vs = compiler.compileVertexShader(vertexShader, "main");;
-            std::string fs = compiler.compileFragmentShader(fragmentShader, "main");;
-
-            const char *vertexSource = vs.c_str();
-            const char *fragmentSource = fs.c_str();
 
             unsigned int vsH = glCreateShader(GL_VERTEX_SHADER);
             glShaderSource(vsH, 1, &vertexSource, NULL);
@@ -62,6 +56,27 @@ namespace engine {
                 throw std::runtime_error(error);
             }
 
+            glAttachShader(programID, vsH);
+
+            unsigned int gsH;
+
+            if (!geometryShader.empty()) {
+                gsH = glCreateShader(GL_GEOMETRY_SHADER);
+                glShaderSource(gsH, 1, &geometrySource, NULL);
+                glCompileShader(gsH);
+                glGetShaderiv(gsH, GL_COMPILE_STATUS, &success);
+                if (!success) {
+                    char infoLog[512];
+                    glGetShaderInfoLog(gsH, 512, NULL, infoLog);
+                    glDeleteShader(vsH);
+                    glDeleteShader(gsH);
+                    std::string error = "Failed to compile geometry shader: ";
+                    error.append(infoLog);
+                    throw std::runtime_error(error);
+                }
+                glAttachShader(programID, gsH);
+            }
+
             unsigned int fsH = glCreateShader(GL_FRAGMENT_SHADER);
             glShaderSource(fsH, 1, &fragmentSource, NULL);
             glCompileShader(fsH);
@@ -70,15 +85,15 @@ namespace engine {
                 char infoLog[512];
                 glGetShaderInfoLog(fsH, 512, NULL, infoLog);
                 glDeleteShader(vsH);
+                if (!geometryShader.empty())
+                    glDeleteShader(gsH);
                 glDeleteShader(fsH);
                 std::string error = "Failed to compile fragment shader: ";
                 error.append(infoLog);
                 throw std::runtime_error(error);
             }
-
-            programID = glCreateProgram();
-            glAttachShader(programID, vsH);
             glAttachShader(programID, fsH);
+
             glLinkProgram(programID);
 
             glDeleteShader(vsH);
@@ -88,12 +103,12 @@ namespace engine {
             if (!success) {
                 char infoLog[512];
                 glGetProgramInfoLog(programID, 512, NULL, infoLog);
-                std::string error = "Failed to compile shader program: ";
+                std::string error = "Failed to link shader program: ";
                 error.append(infoLog);
                 throw std::runtime_error(error);
             }
 
-            checkQtGLError("");
+            checkGLError("");
         }
 
         QtOGLShaderProgram::~QtOGLShaderProgram() {
@@ -102,202 +117,197 @@ namespace engine {
 
         void QtOGLShaderProgram::activate() {
             glUseProgram(programID);
-            checkQtGLError("");
+            checkGLError("");
         }
 
         bool QtOGLShaderProgram::setTexture(const std::string &name, int slot) {
-            // ShaderConductor(SPIRV) merges hlsl texture objects names
-            // in the resulting glsl with the name of the sampler state use when sampling from the texture object.
-            // Therefore the user is required to define and use a separate SampleState structure for every texture object.
-            // This SampleState structure should have the name sampleState_TEXTURENAME.
-            std::string globName = "SPIRV_Cross_Combined" + name + "samplerState_" + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, name.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform1i(i, (int) slot);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setBool(const std::string &name, bool value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform1i(i, (int) value);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setInt(const std::string &name, int value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform1i(i, value);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setFloat(const std::string &name, float value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform1f(i, value);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2b &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform2i(i, value.x, value.y);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2i &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform2i(i, value.x, value.y);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec2(const std::string &name, const Vec2f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform2f(i, value.x, value.y);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3b &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform3i(i, value.x, value.y, value.z);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3i &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform3i(i, value.x, value.y, value.z);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec3(const std::string &name, const Vec3f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform3f(i, value.x, value.y, value.z);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4b &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform4i(i, value.x, value.y, value.z, value.w);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4i &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform4i(i, value.x, value.y, value.z, value.w);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setVec4(const std::string &name, const Vec4f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniform4f(i, value.x, value.y, value.z, value.w);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
 
         bool QtOGLShaderProgram::setMat2(const std::string &name, const Mat2f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             throw std::runtime_error("Not Implemented");
         }
 
         bool QtOGLShaderProgram::setMat3(const std::string &name, const Mat3f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             throw std::runtime_error("Not Implemented");
         }
 
         bool QtOGLShaderProgram::setMat4(const std::string &name, const Mat4f &value) {
-            std::string globName = "_Globals." + name;
+            std::string prefixName = prefix + name;
             activate();
-            GLuint i = glGetUniformLocation(programID, globName.c_str());
+            GLuint i = glGetUniformLocation(programID, prefixName.c_str());
             bool ret = false;
             if (i != -1) {
                 ret = true;
                 glUniformMatrix4fv(i, 1, GL_FALSE, (GLfloat *) &value);
             }
-            checkQtGLError("");
+            checkGLError("");
             return ret;
         }
     }

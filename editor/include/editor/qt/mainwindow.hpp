@@ -27,7 +27,7 @@
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
 #include "engine.hpp"
-#include "mana-editor.hpp"
+#include "editor.hpp"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -50,9 +50,6 @@ private:
     QVBoxLayout *rightLayout;
 
     SceneDisplayWidget *sceneDisplay;
-
-    engine::Resources *resources;
-    engine::Scene scene;
 
     engine::MonoCppDomain domain;
 };

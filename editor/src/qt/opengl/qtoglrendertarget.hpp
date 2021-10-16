@@ -30,15 +30,6 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderTarget : public RenderTarget, public QOpenGLFunctions_3_3_Core {
         public:
-            GLuint FBO;
-            GLuint colorRBO;
-            GLuint depthStencilRBO;
-
-            Vec2i size;
-            int samples;
-
-            bool deleteFramebuffer = true;
-
             QtOGLRenderTarget();
 
             QtOGLRenderTarget(Vec2i size, int samples);
@@ -54,12 +45,20 @@ namespace engine {
                            Vec2i targetOffset,
                            Vec2i sourceRect,
                            Vec2i targetRect,
-                           TextureBuffer::TextureFiltering filter) override;
+                           TextureBuffer::TextureFiltering filter,
+                           int sourceIndex,
+                           int targetIndex) override;
 
-            void blitDepth(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset, Vec2i sourceRect,
+            void blitDepth(RenderTarget &source,
+                           Vec2i sourceOffset,
+                           Vec2i targetOffset,
+                           Vec2i sourceRect,
                            Vec2i targetRect) override;
 
-            void blitStencil(RenderTarget &source, Vec2i sourceOffset, Vec2i targetOffset, Vec2i sourceRect,
+            void blitStencil(RenderTarget &source,
+                             Vec2i sourceOffset,
+                             Vec2i targetOffset,
+                             Vec2i sourceRect,
                              Vec2i targetRect) override;
 
             void setNumberOfColorAttachments(int count) override;
@@ -88,7 +87,14 @@ namespace engine {
 
             void detachDepthStencil() override;
 
-            GLuint getFBO() const;
+            virtual GLuint getFBO() const;
+
+        protected:
+            GLuint FBO;
+            GLuint colorRBO;
+            GLuint depthStencilRBO;
+            Vec2i size;
+            int samples;
         };
     }
 }

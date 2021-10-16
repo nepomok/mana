@@ -20,20 +20,20 @@
 #include <string>
 #include <set>
 
-#include <QOpenGLVertexArrayObject>
-
 #include "engine/math/matrixmath.hpp"
 #include "engine/math/rotation.hpp"
 
 #include "qtoglrenderer.hpp"
 
 #include "qtoglshaderprogram.hpp"
-#include "qtoglrendertexture.hpp"
-#include "qtoglmeshobject.hpp"
+#include "qtogltexturebuffer.hpp"
+#include "qtoglmeshbuffer.hpp"
 #include "qtoglrendertarget.hpp"
 
 #include "qtoglcheckerror.hpp"
 #include "qtogltypeconverter.hpp"
+
+#include "openglinclude.hpp"
 
 namespace engine {
     namespace opengl {
@@ -64,59 +64,44 @@ namespace engine {
             }
         }
 
-        void QtOGLRenderer::setViewport(Vec2i offset, Vec2i size) {
-            this->viewportOffset = offset;
-            this->viewportSize = size;
-        }
+        void QtOGLRenderer::renderBegin(RenderTarget &target, const RenderOptions &options) {
+            glClearColor((float) options.clearColorValue.r() / (float) 255,
+                         (float) options.clearColorValue.g() / (float) 255,
+                         (float) options.clearColorValue.b() / (float) 255,
+                         (float) options.clearColorValue.a() / (float) 255);
 
-        void QtOGLRenderer::setClear(bool cC, bool cD, bool cS) {
-            this->clearColor = cC;
-            this->clearDepth = cD;
-            this->clearStencil = cS;
-        }
+            glClearDepth(options.clearDepthValue);
 
-        void QtOGLRenderer::setClearColor(ColorRGBA c) {
-            this->clearColorValue = c;
-        }
-
-        void QtOGLRenderer::setMultiSample(bool s) {
-            this->multiSample = s;
-        }
-
-        void QtOGLRenderer::renderBegin(RenderTarget &target) {
-            glClearColor((float) clearColorValue.r() / (float) 255,
-                         (float) clearColorValue.g() / (float) 255,
-                         (float) clearColorValue.b() / (float) 255,
-                         (float) clearColorValue.a() / (float) 255);
-
-            if (multiSample)
+            if (options.multiSample)
                 glEnable(GL_MULTISAMPLE);
             else
                 glDisable(GL_MULTISAMPLE);
 
-            auto &fb = dynamic_cast<const QtOGLRenderTarget &>(target);
+            auto &fb = dynamic_cast<QtOGLRenderTarget &>(target);
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
 
-            glViewport(viewportOffset.x, viewportOffset.y, viewportSize.x, viewportSize.y);
+            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x, options.viewportSize.y);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
 
             GLbitfield clearMask = 0;
-            if (clearColor) {
+            if (options.clearColor) {
                 clearMask |= GL_COLOR_BUFFER_BIT;
             }
 
-            if (clearDepth) {
+            if (options.clearDepth) {
                 clearMask |= GL_DEPTH_BUFFER_BIT;
             }
 
-            if (clearStencil) {
+            if (options.clearStencil) {
                 clearMask |= GL_STENCIL_BUFFER_BIT;
             }
 
             glClear(clearMask);
+
+            checkGLError("OGLRenderer::renderBegin");
         }
 
         void QtOGLRenderer::addCommand(RenderCommand &command) {
@@ -126,9 +111,9 @@ namespace engine {
                 if (textureObject == nullptr) {
                     throw std::runtime_error("nullptr texture");
                 }
-                auto &texture = dynamic_cast<const QtOGLRenderTexture &>(*textureObject);
+                auto &texture = dynamic_cast<const QtOGLTextureBuffer &>(*textureObject);
                 glActiveTexture(getTextureSlot(i));
-                glBindTexture(QtOGLTypeConverter::convert(texture.attributes.textureType), texture.handle);
+                glBindTexture(QtOGLTypeConverter::convert(texture.getAttributes().textureType), texture.handle);
             }
 
             //Bind shader program
@@ -192,20 +177,25 @@ namespace engine {
                 if (meshBuffer == nullptr) {
                     throw std::runtime_error("nullptr mesh");
                 }
-                auto &mesh = dynamic_cast<const QtOGLMeshObject &>(*meshBuffer);
-
+                auto &mesh = dynamic_cast<const QtOGLMeshBuffer &>(*meshBuffer);
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {
                     if (mesh.instanced)
-                        glDrawElementsInstanced(GL_TRIANGLES, mesh.elementCount * 3, GL_UNSIGNED_INT, 0,
+                        glDrawElementsInstanced(mesh.elementType,
+                                                mesh.elementCount,
+                                                GL_UNSIGNED_INT,
+                                                0,
                                                 mesh.instanceCount);
                     else
-                        glDrawElements(GL_TRIANGLES, mesh.elementCount * 3, GL_UNSIGNED_INT, 0);
+                        glDrawElements(mesh.elementType,
+                                       mesh.elementCount,
+                                       GL_UNSIGNED_INT,
+                                       0);
                 } else {
                     if (mesh.instanced)
-                        glDrawArraysInstanced(GL_TRIANGLES, 0, mesh.elementCount * 3, mesh.instanceCount);
+                        glDrawArraysInstanced(mesh.elementType, 0, mesh.elementCount, mesh.instanceCount);
                     else
-                        glDrawArrays(GL_TRIANGLES, 0, mesh.elementCount * 3);
+                        glDrawArrays(mesh.elementType, 0, mesh.elementCount);
                 }
                 glBindVertexArray(0);
             }
@@ -221,12 +211,12 @@ namespace engine {
             glStencilMask(0xFF);
             glStencilFunc(GL_ALWAYS, 0, 0xFF);
 
-            checkQtGLError("QtOGLRenderer::addCommand");
+            checkGLError("QtOGLRenderer::addCommand");
         }
 
         void QtOGLRenderer::renderFinish() {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            checkQtGLError("QtOGLRenderer::renderFinish");
+            checkGLError("QtOGLRenderer::renderFinish");
         }
     }
 }

@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_QtOGLRENDERER_HPP
-#define MANA_QtOGLRENDERER_HPP
+#ifndef MANA_QTOGLRENDERER_HPP
+#define MANA_QTOGLRENDERER_HPP
 
 #include "engine/render/renderer.hpp"
 
@@ -28,27 +28,13 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderer : public Renderer, public QOpenGLFunctions_3_3_Core {
         public:
-            void setViewport(Vec2i offset, Vec2i size) override;
-
-            void setClear(bool clearColor, bool clearDepth, bool clearStencil) override;
-
-            void setClearColor(ColorRGBA clearColor) override;
-
-            void setMultiSample(bool multiSample) override;
-
-            void renderBegin(RenderTarget &target) override;
+            void renderBegin(RenderTarget &target, const RenderOptions &options) override;
 
             void addCommand(RenderCommand &command) override;
 
             void renderFinish() override;
-
-        private:
-            Vec2i viewportOffset = {}, viewportSize = {};
-            ColorRGBA clearColorValue = {};
-            bool clearColor = true, clearDepth = true, clearStencil = true;
-            bool multiSample = false;
         };
     }
 }
 
-#endif //MANA_QtOGLRENDERER_HPP
+#endif //MANA_QTOGLRENDERER_HPP

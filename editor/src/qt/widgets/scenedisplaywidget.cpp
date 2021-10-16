@@ -19,38 +19,22 @@
 
 #include "editor/qt/widgets/scenedisplaywidget.hpp"
 
-#include "opengl/qtoglrenderer.hpp"
-#include "opengl/qtoglrenderdevice.hpp"
-#include "opengl/qtoglrendertarget.hpp"
-
 #include <QResizeEvent>
 #include <utility>
 
+#include "qt/opengl/qtoglrenderdevice.hpp"
+
 using namespace engine;
 
-SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : QOpenGLWidget(parent), fps(fps) {
-    makeCurrent();
-
-    frameBuffer.deleteFramebuffer = false;
-
-    frameBuffer.FBO = defaultFramebufferObject();
-    frameBuffer.size = {width(), height()};
-
-    connect(&timer, SIGNAL(timeout()), this, SLOT(onTimerUpdate()));
-
-    timer.start((int) ((1.0f / (float) fps) * 1000));
-
-    doneCurrent();
+SceneDisplayWidget::SceneDisplayWidget(QWidget *parent, int fps) : fps(fps) {
 }
 
 SceneDisplayWidget::~SceneDisplayWidget() = default;
 
 void SceneDisplayWidget::setScene(const engine::Scene &s) {
-    scene = s;
 }
 
 engine::Scene &SceneDisplayWidget::getScene() {
-    return scene;
 }
 
 void SceneDisplayWidget::setViewerType(engine::CameraType cameraType) {
@@ -86,7 +70,6 @@ const std::vector<std::string> &SceneDisplayWidget::getHighlightedNodes() {
 }
 
 engine::RenderDevice &SceneDisplayWidget::getDevice() {
-    return device;
 }
 
 void SceneDisplayWidget::setFps(int f) {
@@ -130,138 +113,7 @@ const engine::Vec3f &SceneDisplayWidget::getViewerInputRotation() {
 }
 
 void SceneDisplayWidget::onTimerUpdate() {
-    float deltaTime = (float) delta.restart() / 1000;
 
-    engine::Mat4f mat = MatrixMath::inverse(MatrixMath::rotate(viewerTransform.rotation));
-    Vec4f tmp = mat * Vec4f(0, 0, 1, 0);
-    Vec3f forward(tmp.x, tmp.y, tmp.z);
-    tmp = mat * Vec4f(1, 0, 0, 0);
-    Vec3f left(tmp.x, tmp.y, tmp.z);
-    tmp = mat * Vec4f(0, 1, 0, 0);
-    Vec3f up(tmp.x, tmp.y, tmp.z);
-
-    viewerTransform.position += forward * movSpeed * deltaTime * inputMovement.z;
-    viewerTransform.position += left * movSpeed * deltaTime * inputMovement.x;
-    viewerTransform.position += up * movSpeed * deltaTime * inputMovement.y;
-
-    viewerTransform.rotation += Vec3f(1, 0, 0) * rotSpeed * deltaTime * inputRotation.x;
-    viewerTransform.rotation += Vec3f(0, 1, 0) * rotSpeed * deltaTime * inputRotation.y;
-    viewerTransform.rotation += Vec3f(0, 0, 1) * rotSpeed * deltaTime * inputRotation.z;
-
-    update();
-}
-
-struct RenderData {
-    RenderData() = default;
-
-    RenderData(std::string name, Node *node) : name(std::move(name)), node(node) {}
-
-    std::string name;
-    Node *node;
-};
-
-void SceneDisplayWidget::paintGL() {
-    device.initializeOpenGLFunctions();
-
-    auto ren3d = engine::Renderer3D(device, {});
-
-    device.getRenderer().setClearColor(engine::ColorRGBA(38, 38, 38, 255));
-    device.getRenderer().setViewport({}, frameBuffer.size);
-
-    RenderScene scene3d;
-
-    for (auto *nodePointer : scene.findNodesWithComponent<LightComponent>()) {
-        auto &node = *nodePointer;
-        if (!node.enabled)
-            continue;
-
-        auto lightComponent = node.getComponent<LightComponent>();
-        if (!lightComponent.enabled)
-            continue;
-
-        scene3d.lights.emplace_back(lightComponent.light);
-    }
-
-    std::map<ForwardRenderComponent *, TransformComponent *> mapping;
-    std::vector<ForwardRenderComponent *> renderComponents;
-    for (auto &nodePointer : scene.findNodesWithComponent<ForwardRenderComponent>()) {
-        auto &node = *nodePointer;
-        if (!node.enabled)
-            continue;
-
-        auto &comp = node.getComponent<ForwardRenderComponent>();
-        if (!comp.enabled)
-            continue;
-
-        auto &tcomp = node.getComponent<TransformComponent>();
-        if (!tcomp.enabled)
-            continue;
-
-        renderComponents.emplace_back(&comp);
-        mapping[&comp] = &tcomp;
-    }
-
-    std::sort(renderComponents.begin(), renderComponents.end(),
-              [](const ForwardRenderComponent *a, const ForwardRenderComponent *b) -> bool {
-                  return a->renderOrder < b->renderOrder;
-              });
-
-    for (auto *comp : renderComponents) {
-        ForwardCommand unit;
-
-        unit.transform = TransformComponent::walkTransformHierarchy(*mapping[comp]);
-
-        unit.command.shader = &comp->shader->get();
-        for (auto &m : comp->textureMapping) {
-            unit.command.shader->setTexture(m.first, m.second);
-        }
-
-        for (auto *t : comp->textureBuffers) {
-            unit.command.textures.emplace_back(&t->get());
-        }
-
-        for (auto *m : comp->meshBuffers) {
-            unit.command.meshBuffers.emplace_back(&m->get());
-        }
-
-        unit.command.properties.enableDepthTest = comp->renderProperties.enableDepthTest;
-        unit.command.properties.depthTestWrite = comp->renderProperties.depthTestWrite;
-        unit.command.properties.depthTestMode = comp->renderProperties.depthTestMode;
-
-        unit.command.properties.enableStencilTest = comp->renderProperties.enableStencilTest;
-        unit.command.properties.stencilTestMask = comp->renderProperties.stencilTestMask;
-        unit.command.properties.stencilMode = comp->renderProperties.stencilMode;
-        unit.command.properties.stencilReference = comp->renderProperties.stencilReference;
-        unit.command.properties.stencilFunctionMask = comp->renderProperties.stencilFunctionMask;
-        unit.command.properties.stencilFail = comp->renderProperties.stencilFail;
-        unit.command.properties.stencilDepthFail = comp->renderProperties.stencilDepthFail;
-        unit.command.properties.stencilPass = comp->renderProperties.stencilPass;
-
-        unit.command.properties.enableFaceCulling = comp->renderProperties.enableFaceCulling;
-        unit.command.properties.faceCullMode = comp->renderProperties.faceCullMode;
-        unit.command.properties.faceCullClockwiseWinding = comp->renderProperties.faceCullClockwiseWinding;
-
-        unit.command.properties.enableBlending = comp->renderProperties.enableBlending;
-        unit.command.properties.blendSourceMode = comp->renderProperties.blendSourceMode;
-        unit.command.properties.blendDestinationMode = comp->renderProperties.blendDestinationMode;
-
-        scene3d.forward.emplace_back(unit);
-    }
-
-    scene3d.camera = Camera(PERSPECTIVE);
-    scene3d.camera.transform = viewerTransform;
-
-    scene3d.camera.aspectRatio = static_cast<float>(width()) / static_cast<float>(height());
-
-    ren3d.render(frameBuffer, scene3d);
-
-    QOpenGLWidget::paintGL();
-}
-
-void SceneDisplayWidget::resizeGL(int w, int h) {
-    frameBuffer.FBO = defaultFramebufferObject();
-    frameBuffer.size = {w, h};
-    QOpenGLWidget::resizeGL(w, h);
 }
 
 void SceneDisplayWidget::keyPressEvent(QKeyEvent *event) {

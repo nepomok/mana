@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_QtOGLMESHOBJECT_HPP
-#define MANA_QtOGLMESHOBJECT_HPP
+#ifndef MANA_QTOGLMESHBUFFER_HPP
+#define MANA_QTOGLMESHBUFFER_HPP
 
 #include "engine/render/meshbuffer.hpp"
 #include "engine/math/matrixmath.hpp"
@@ -31,13 +31,14 @@
 
 namespace engine {
     namespace opengl {
-        class QtOGLMeshObject : public MeshBuffer, public QOpenGLFunctions_3_3_Core {
+        class QtOGLMeshBuffer : public MeshBuffer, public QOpenGLFunctions_3_3_Core {
         public:
             GLuint VAO;
             GLuint VBO;
             GLuint EBO;
 
             size_t elementCount;
+            GLuint elementType;
 
             bool indexed;
 
@@ -45,20 +46,21 @@ namespace engine {
             size_t instanceCount;
             GLuint instanceVBO;
 
-            explicit QtOGLMeshObject() : VAO(0),
+            explicit QtOGLMeshBuffer() : VAO(0),
                                          VBO(0),
                                          EBO(0),
                                          elementCount(0),
+                                         elementType(GL_TRIANGLES),
                                          indexed(false),
                                          instanced(false),
                                          instanceCount(0),
                                          instanceVBO(0) {}
 
-            QtOGLMeshObject(const QtOGLMeshObject &copy) = delete;
+            QtOGLMeshBuffer(const QtOGLMeshBuffer &copy) = delete;
 
-            QtOGLMeshObject &operator=(const QtOGLMeshObject &copy) = delete;
+            QtOGLMeshBuffer &operator=(const QtOGLMeshBuffer &copy) = delete;
 
-            ~QtOGLMeshObject() override {
+            ~QtOGLMeshBuffer() override {
                 glDeleteVertexArrays(1, &VAO);
                 glDeleteBuffers(1, &VBO);
                 if (indexed) {
@@ -70,4 +72,4 @@ namespace engine {
     }
 }
 
-#endif //MANA_QtOGLMESHOBJECT_HPP
+#endif //MANA_QTOGLMESHBUFFER_HPP

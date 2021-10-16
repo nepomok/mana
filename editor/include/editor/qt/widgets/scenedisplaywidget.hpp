@@ -20,19 +20,13 @@
 #ifndef MANA_SCENEDISPLAYWIDGET_HPP
 #define MANA_SCENEDISPLAYWIDGET_HPP
 
-#include <QOpenGLWidget>
 #include <QTimer>
 #include <QElapsedTimer>
+#include <QWidget>
 
 #include "engine.hpp"
 
-#include "opengl/qtoglrenderer.hpp"
-#include "opengl/qtoglrenderdevice.hpp"
-
-#include "opengl/qtoglrendertarget.hpp"
-
-//TODO: Deallocate render resources (The destructors have to be called from paintGl)
-class SceneDisplayWidget : public QOpenGLWidget {
+class SceneDisplayWidget : public QWidget {
 Q_OBJECT
 public:
     explicit SceneDisplayWidget(QWidget *parent = nullptr, int fps = 60);
@@ -82,10 +76,6 @@ public:
     const engine::Vec3f &getViewerInputRotation();
 
 protected:
-    void paintGL() override;
-
-    void resizeGL(int w, int h) override;
-
     void keyPressEvent(QKeyEvent *event) override;
 
     void keyReleaseEvent(QKeyEvent *event) override;
@@ -101,9 +91,7 @@ private:
 
     QElapsedTimer delta;
 
-    engine::opengl::QtOGLRenderDevice device;
-
-    engine::Scene scene;
+    engine::EntityManager scene;
 
     engine::Vec3f inputMovement;
     engine::Vec3f inputRotation;
@@ -116,12 +104,8 @@ private:
     float movSpeed = 5;
     float rotSpeed = 50;
 
-    engine::opengl::QtOGLRenderTarget frameBuffer;
-
     std::vector<std::string> highlightedNodes;
-
     engine::ColorRGB highlightColor = {10, 210, 50};
-
     float highlightScale = 1.01f;
 };
 

@@ -19,9 +19,6 @@
 
 #include "editor/qt/mainwindow.hpp"
 
-#include "engine/io/scenefile.hpp"
-#include "engine/io/resourcefile.hpp"
-
 #include <QVBoxLayout>
 #include <QKeyEvent>
 #include <QMenuBar>
@@ -30,7 +27,6 @@ using namespace engine;
 
 MainWindow::MainWindow() {
     menuBar()->addMenu("File");
-
     rootWidget = new QWidget(this);
 
     setCentralWidget(rootWidget);
@@ -47,14 +43,11 @@ MainWindow::MainWindow() {
 
     rootWidget->setLayout(rootLayout);
 
-    resources = ResourceFile("./assets/resources.json").getResources(sceneDisplay->getDevice(), domain);
-    scene = SceneFile("./assets/scene.json").getScene(*resources);
-
-    sceneDisplay->setScene(scene);
     sceneDisplay->setFocusPolicy(Qt::ClickFocus);
 }
 
-MainWindow::~MainWindow() = default;
+MainWindow::~MainWindow() {
+}
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     QWidget::keyPressEvent(event);
