@@ -106,7 +106,7 @@ namespace engine {
 
         auto compileResult = compiler.CompileGlslToSpv(source,
                                                        shaderStage,
-                                                       "test",
+                                                       "shader",
                                                        entryPoint.c_str(),
                                                        options);
 
@@ -230,11 +230,12 @@ namespace engine {
         options.SetAutoBindUniforms(false);
         options.SetAutoSampledTextures(true);
         options.SetAutoMapLocations(true);
+
         options.SetOptimizationLevel(shaderc_optimization_level_zero);
 
         auto preProcessResult = compiler.PreprocessGlsl(source,
                                                         shaderStage,
-                                                        "",
+                                                        "shader",
                                                         options);
 
         if (preProcessResult.GetCompilationStatus() != shaderc_compilation_status_success) {
