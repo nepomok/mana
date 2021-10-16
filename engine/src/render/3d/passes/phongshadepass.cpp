@@ -162,20 +162,18 @@ namespace engine {
         int pointCount = 0;
         int spotCount = 0;
 
-        int i = 0;
         for (auto &light : scene.lights) {
             std::string name;
             switch (light.type) {
                 case LIGHT_DIRECTIONAL:
-                    name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(dirCount++) + "].";
                     shader->setVec3(name + "direction", light.direction);
                     shader->setVec3(name + "ambient", light.ambient);
                     shader->setVec3(name + "diffuse", light.diffuse);
                     shader->setVec3(name + "specular", light.specular);
-                    dirCount++;
                     break;
                 case LIGHT_POINT:
-                    name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_POINT[" + std::to_string(pointCount++) + "].";
                     shader->setVec3(name + "position", light.transform.position);
                     shader->setFloat(name + "constantValue", light.constant);
                     shader->setFloat(name + "linearValue", light.linear);
@@ -183,10 +181,9 @@ namespace engine {
                     shader->setVec3(name + "ambient", light.ambient);
                     shader->setVec3(name + "diffuse", light.diffuse);
                     shader->setVec3(name + "specular", light.specular);
-                    pointCount++;
                     break;
                 case LIGHT_SPOT:
-                    name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
+                    name = "MANA_LIGHTS_SPOT[" + std::to_string(spotCount++) + "].";
                     shader->setVec3(name + "position", light.transform.position);
                     shader->setVec3(name + "direction", light.direction);
                     shader->setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
@@ -197,7 +194,6 @@ namespace engine {
                     shader->setVec3(name + "ambient", light.ambient);
                     shader->setVec3(name + "diffuse", light.diffuse);
                     shader->setVec3(name + "specular", light.specular);
-                    spotCount++;
                     break;
             }
         }
