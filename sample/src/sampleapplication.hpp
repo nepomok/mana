@@ -103,10 +103,14 @@ protected:
             }
         }
 
+        window->getInput().registerListener(*this);
+
         Application::start();
     }
 
     void stop() override {
+        window->getInput().unregisterListener(*this);
+
         ecs.getEntityManager().clear();
         ecs.stop();
         ecs = ECS();//TODO: ECS Systems clear set
@@ -145,16 +149,6 @@ protected:
             fpsAverage = alpha * fpsAverage + (1.0 - alpha) * fps;
         }
 
-        if (wnd.getInput().getKeyDown(KEY_F1)) {
-            f1Pressed = true;
-        } else {
-            if (f1Pressed) {
-                f1Pressed = false;
-                f1Switch = !f1Switch;
-            }
-        }
-        renderSystem->setDebugRender(f1Switch);
-
         ecs.update(deltaTime);
 
         ren2d.renderBegin(wnd.getRenderTarget(), false);
@@ -173,6 +167,19 @@ protected:
     }
 
 private:
+    void onKeyDown(Key key) override {
+        if (key == KEY_F1) {
+            f1Switch = !f1Switch;
+            renderSystem->setDrawDebugNormals(f1Switch);
+        } else if (key == KEY_F2) {
+            f2Switch = !f2Switch;
+            renderSystem->setDrawDebugLights(f2Switch);
+        }
+    }
+
+    void onKeyUp(Key key) override {}
+
+private:
     Renderer2D ren2d;
 
     MonoCppDomain domain;
@@ -188,8 +195,8 @@ private:
 
     RenderSystem *renderSystem;
 
-    bool f1Pressed = false;
     bool f1Switch = false;
+    bool f2Switch = false;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP
