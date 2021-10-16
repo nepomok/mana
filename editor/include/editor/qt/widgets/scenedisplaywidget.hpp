@@ -24,9 +24,12 @@
 #include <QElapsedTimer>
 #include <QWidget>
 
+#include <QOpenGLWidget>
+#include <QOffscreenSurface>
+
 #include "engine.hpp"
 
-class SceneDisplayWidget : public QWidget {
+class SceneDisplayWidget : public QOpenGLWidget {
 Q_OBJECT
 public:
     explicit SceneDisplayWidget(QWidget *parent = nullptr, int fps = 60);
