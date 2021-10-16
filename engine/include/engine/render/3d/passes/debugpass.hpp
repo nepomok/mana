@@ -35,11 +35,16 @@ namespace engine {
 
         void setDrawNormals(bool drawNormals);
 
+        void setDrawLightCasters(bool drawLights);
+
     private:
         RenderDevice &device;
         ShaderProgram *shader;
+        ShaderProgram *shaderLight;
+        MeshBuffer *meshBuffer;
 
-        bool drawNormals;
+        bool drawNormals = false;
+        bool drawLights = false;
     };
 }
 

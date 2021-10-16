@@ -173,7 +173,7 @@ private:
             renderSystem->setDrawDebugNormals(f1Switch);
         } else if (key == KEY_F2) {
             f2Switch = !f2Switch;
-            renderSystem->setDrawDebugLights(f2Switch);
+            renderSystem->setDrawDebugLightCasters(f2Switch);
         }
     }
 

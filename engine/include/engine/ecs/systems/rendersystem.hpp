@@ -54,7 +54,9 @@ namespace engine {
 
         void update(float deltaTime, EntityManager &entityManager) override;
 
-        void setDebugRender(bool debugRender);
+        void setDrawDebugNormals(bool draw);
+
+        void setDrawDebugLightCasters(bool draw);
 
         Renderer3D &getRenderer();
 
@@ -75,8 +77,7 @@ namespace engine {
 
         DebugPass *debugPass;
 
-        std::vector<Compositor::Layer> layersDefault;
-        std::vector<Compositor::Layer> layersDebug;
+        std::vector<Compositor::Layer> layers;
 
         /**
          * Retrieve or allocate the texture buffer for a given path.

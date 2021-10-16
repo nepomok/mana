@@ -38,12 +38,7 @@ namespace engine {
               debugPass(new DebugPass(device)),
               ren(),
               archive(archive) {
-        layersDefault = {
-                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
-                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {{"forward"},                                          "forward_depth"}
-        };
-        layersDebug = {
+        layers = {
                 {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
                 {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
                 {{"forward"},                                          "forward_depth"},
@@ -57,7 +52,7 @@ namespace engine {
                                                            new PhongShadePass(device),
                                                            debugPass
                                                    }),
-                                           layersDefault);
+                                           layers);
     }
 
     void RenderSystem::start(EntityManager &entityManager) {
@@ -148,9 +143,15 @@ namespace engine {
         //Get lights
         for (auto &pair: componentManager.getPool<LightComponent>()) {
             auto &lightComponent = pair.second;
+            auto &tcomp = componentManager.getPool<TransformComponent>().lookup(pair.first);
 
             if (!lightComponent.enabled)
                 continue;
+
+            if (!tcomp.enabled)
+                continue;
+
+            lightComponent.light.transform = tcomp.transform;
 
             scene3d.lights.emplace_back(lightComponent.light);
         }
@@ -159,12 +160,12 @@ namespace engine {
         ren->render(screenTarget, scene3d);
     }
 
-    void RenderSystem::setDebugRender(bool value) {
-        if (value)
-            ren->getCompositor().getLayers() = layersDebug;
-        else
-            ren->getCompositor().getLayers() = layersDefault;
-        debugPass->setDrawNormals(value);
+    void RenderSystem::setDrawDebugNormals(bool draw) {
+        debugPass->setDrawNormals(draw);
+    }
+
+    void RenderSystem::setDrawDebugLightCasters(bool draw) {
+        debugPass->setDrawLightCasters(draw);
     }
 
     Renderer3D &RenderSystem::getRenderer() {
