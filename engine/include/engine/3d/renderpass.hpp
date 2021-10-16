@@ -21,7 +21,7 @@
 #define MANA_RENDERPASS_HPP
 
 #include "engine/3d/renderpass.hpp"
-#include "engine/3d/renderscene.hpp"
+#include "engine/3d/scene.hpp"
 #include "engine/3d/geometrybuffer.hpp"
 
 #include "engine/render/renderer.hpp"
@@ -46,7 +46,7 @@ namespace engine {
          * @param gBuffer
          * @param scene
          */
-        virtual void render(GeometryBuffer &gBuffer, RenderScene &scene) {};
+        virtual void render(GeometryBuffer &gBuffer, Scene &scene) {};
     };
 }
 

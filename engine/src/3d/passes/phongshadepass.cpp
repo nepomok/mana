@@ -157,7 +157,7 @@ namespace engine {
         gBuffer.addBuffer("phong_specular", TextureBuffer::ColorFormat::RGBA);
     }
 
-    void PhongShadePass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+    void PhongShadePass::render(GeometryBuffer &gBuffer, Scene &scene) {
         int dirCount = 0;
         int pointCount = 0;
         int spotCount = 0;

@@ -68,7 +68,7 @@ namespace engine {
     void RenderSystem::update(float deltaTime, EntityManager &entityManager) {
         auto &componentManager = entityManager.getComponentManager();
 
-        RenderScene scene3d;
+        Scene scene3d;
 
         //Create render commands
         for (auto &pair: componentManager.getPool<MeshRenderComponent>()) {

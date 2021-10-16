@@ -31,7 +31,7 @@ namespace engine {
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
-        void render(GeometryBuffer &gBuffer, RenderScene &scene) override;
+        void render(GeometryBuffer &gBuffer, Scene &scene) override;
 
     private:
         RenderDevice &renderDevice;

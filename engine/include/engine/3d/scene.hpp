@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_RENDERSCENE_HPP
-#define MANA_RENDERSCENE_HPP
+#ifndef MANA_SCENE_HPP
+#define MANA_SCENE_HPP
 
 #include "engine/3d/deferredcommand.hpp"
 #include "engine/3d/forwardcommand.hpp"
@@ -27,7 +27,7 @@
 #include "engine/asset/light.hpp"
 
 namespace engine {
-    struct RenderScene {
+    struct Scene {
         Camera camera;
 
         std::vector<Light> lights;
@@ -44,4 +44,4 @@ namespace engine {
     };
 }
 
-#endif //MANA_RENDERSCENE_HPP
+#endif //MANA_SCENE_HPP

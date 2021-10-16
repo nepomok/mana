@@ -24,7 +24,7 @@ namespace engine {
         RenderPass::prepareBuffer(gBuffer);
     }
 
-    void ShadowPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+    void ShadowPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         RenderPass::render(gBuffer, scene);
     }
 }

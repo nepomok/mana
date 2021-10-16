@@ -434,7 +434,7 @@ namespace engine {
         gBuffer.addBuffer("debug", TextureBuffer::RGBA);
     }
 
-    void DebugPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+    void DebugPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         gBuffer.attachColor({"debug"});
         gBuffer.attachDepthStencil("depth");
 

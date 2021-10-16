@@ -34,7 +34,7 @@ namespace engine {
         gBuffer.addBuffer("forward_depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
     }
 
-    void ForwardPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+    void ForwardPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         gBuffer.attachDepthStencil("forward_depth");
         gBuffer.attachColor({"forward"});
 

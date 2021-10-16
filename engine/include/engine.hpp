@@ -107,7 +107,7 @@
 #include "engine/render/renderallocator.hpp"
 #include "engine/render/renderdevice.hpp"
 #include "engine/2d/renderer2d.hpp"
-#include "engine/3d/renderscene.hpp"
+#include "engine/3d/scene.hpp"
 #include "engine/3d/geometrybuffer.hpp"
 #include "engine/3d/renderpass.hpp"
 #include "engine/3d/forwardcommand.hpp"

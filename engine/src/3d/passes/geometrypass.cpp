@@ -384,7 +384,7 @@ namespace engine {
         gBuffer.addBuffer("skybox", TextureBuffer::ColorFormat::RGBA);
     }
 
-    void GeometryPass::render(GeometryBuffer &gBuffer, RenderScene &scene) {
+    void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = renderDevice.getRenderer();
 
         //Set shader texture attachment points

@@ -28,7 +28,7 @@
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/shadercompiler.hpp"
 
-#include "engine/3d/renderscene.hpp"
+#include "engine/3d/scene.hpp"
 #include "engine/3d/renderpass.hpp"
 #include "engine/3d/compositor.hpp"
 
@@ -45,7 +45,7 @@ namespace engine {
 
         ~Renderer3D();
 
-        void render(RenderTarget &target, RenderScene &scene);
+        void render(RenderTarget &target, Scene &scene);
 
         GeometryBuffer &getGeometryBuffer();
 

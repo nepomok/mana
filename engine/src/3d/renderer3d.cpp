@@ -69,7 +69,7 @@ namespace engine {
     Renderer3D::~Renderer3D() = default;
 
     void Renderer3D::render(RenderTarget &target,
-                            RenderScene &scene) {
+                            Scene &scene) {
         if (device == nullptr)
             throw std::runtime_error("Renderer 3d not initialized");
 
