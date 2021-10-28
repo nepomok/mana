@@ -33,22 +33,21 @@ namespace engine {
         }
     }
 
-    AudioDevice *AudioDevice::createDevice(AudioBackend backend, const std::string &name) {
+    std::unique_ptr<AudioDevice> AudioDevice::createDevice(AudioBackend backend, const std::string &name) {
         switch (backend) {
             case OpenAL:
-                return new OALAudioDevice(name);
+                return std::make_unique<OALAudioDevice>(name);
             default:
                 throw std::runtime_error("Unsupported audio backend");
         }
     }
 
-    AudioDevice *AudioDevice::createDevice(AudioBackend backend) {
+    std::unique_ptr<AudioDevice> AudioDevice::createDevice(AudioBackend backend) {
         switch (backend) {
             case OpenAL:
-                return new OALAudioDevice();
+                return std::make_unique<OALAudioDevice>();
             default:
                 throw std::runtime_error("Unsupported audio backend");
         }
     }
 }
-

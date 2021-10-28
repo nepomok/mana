@@ -20,6 +20,8 @@
 #ifndef MANA_AUDIOSOURCE_HPP
 #define MANA_AUDIOSOURCE_HPP
 
+#include <memory>
+
 #include "engine/audio/audiobuffer.hpp"
 
 #include "engine/math/vector3.hpp"
@@ -114,9 +116,9 @@ namespace engine {
 
         virtual void setBuffer(const AudioBuffer &buffer) = 0;
 
-        virtual void queueBuffers(std::vector<const AudioBuffer *> buffers) = 0;
+        virtual void queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) = 0;
 
-        virtual std::vector<const AudioBuffer *> unqueueBuffers() = 0;
+        virtual std::vector<std::reference_wrapper<const AudioBuffer>> unqueueBuffers() = 0;
     };
 }
 

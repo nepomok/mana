@@ -40,25 +40,25 @@ namespace engine {
 
             ~QtOGLTextureBuffer() override;
 
-            TextureBuffer * upload(const Image <ColorRGB> &buffer) override;
+            void upload(const Image<ColorRGB> &buffer) override;
 
-            TextureBuffer * upload(const Image <ColorRGBA> &buffer) override;
+            void upload(const Image<ColorRGBA> &buffer) override;
 
-            TextureBuffer * upload(const Image<float> &buffer) override;
+            void upload(const Image<float> &buffer) override;
 
-            TextureBuffer * upload(const Image<int> &buffer) override;
+            void upload(const Image<int> &buffer) override;
 
-            TextureBuffer * upload(const Image<char> &buffer) override;
+            void upload(const Image<char> &buffer) override;
 
-            TextureBuffer * upload(const Image<unsigned char> &buffer) override;
+            void upload(const Image<unsigned char> &buffer) override;
 
             Image<ColorRGBA> download() override;
 
-            TextureBuffer * upload(CubeMapFace face, const Image <ColorRGBA> &buffer) override;
+            void upload(CubeMapFace face, const Image<ColorRGBA> &buffer) override;
 
             Image<ColorRGBA> download(CubeMapFace face) override;
 
-            TextureBuffer * uploadCubeMap(const Image<ColorRGBA> &buffer) override;
+            void uploadCubeMap(const Image<ColorRGBA> &buffer) override;
 
             Image<ColorRGBA> downloadCubeMap() override;
 

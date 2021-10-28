@@ -21,6 +21,7 @@
 #define MANA_RENDERCOMMAND_HPP
 
 #include <vector>
+#include <memory>
 
 #include "engine/render/meshbuffer.hpp"
 #include "engine/render/texturebuffer.hpp"
@@ -106,10 +107,14 @@ namespace engine {
     };
 
     struct RenderCommand {
-        ShaderProgram *shader;
+        explicit RenderCommand(ShaderProgram &shader) : shader(shader) {}
 
-        std::vector<TextureBuffer *> textures;
-        std::vector<MeshBuffer *> meshBuffers;
+        RenderCommand(const RenderCommand &other) = default;
+
+        std::reference_wrapper<ShaderProgram> shader;
+
+        std::vector<std::reference_wrapper<TextureBuffer>> textures;
+        std::vector<std::reference_wrapper<MeshBuffer>> meshBuffers;
 
         RenderProperties properties;
     };

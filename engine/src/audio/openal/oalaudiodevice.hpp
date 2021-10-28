@@ -35,7 +35,7 @@ namespace engine {
 
         ~OALAudioDevice() override;
 
-        AudioContext *createContext() override;
+        std::unique_ptr<AudioContext> createContext() override;
 
     private:
         ALCdevice *device;

@@ -56,12 +56,13 @@ namespace engine {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes, std::vector<Compositor::Layer> layers)
-            : device(&device),
+    Renderer3D::Renderer3D(RenderDevice &device, std::vector<std::unique_ptr<RenderPass>> passes,
+                           std::vector<Compositor::Layer> layers)
+            : device(device),
               passes(std::move(passes)),
               geometryBuffer(device.getAllocator()),
-              compositor(&device, std::move(layers)){
-        for (auto &pass : this->passes) {
+              compositor(device, std::move(layers)) {
+        for (auto &pass: this->passes) {
             pass->prepareBuffer(geometryBuffer);
         }
     }
@@ -70,12 +71,9 @@ namespace engine {
 
     void Renderer3D::render(RenderTarget &target,
                             Scene &scene) {
-        if (device == nullptr)
-            throw std::runtime_error("Renderer 3d not initialized");
-
         geometryBuffer.setSize(target.getSize());
 
-        for (auto *pass : passes) {
+        for (auto &pass: passes) {
             pass->render(geometryBuffer, scene);
         }
 

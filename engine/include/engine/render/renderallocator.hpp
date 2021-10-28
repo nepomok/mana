@@ -20,6 +20,8 @@
 #ifndef MANA_RENDERALLOCATOR_HPP
 #define MANA_RENDERALLOCATOR_HPP
 
+#include <memory>
+
 #include "engine/render/rendertarget.hpp"
 #include "engine/render/texturebuffer.hpp"
 #include "engine/render/meshbuffer.hpp"
@@ -29,9 +31,9 @@
 namespace engine {
     class RenderAllocator {
     public:
-        virtual RenderTarget *createRenderTarget(Vec2i size, int samples) = 0;
+        virtual std::unique_ptr<RenderTarget> createRenderTarget(Vec2i size, int samples) = 0;
 
-        virtual TextureBuffer *createTextureBuffer(TextureBuffer::Attributes attributes) = 0;
+        virtual std::unique_ptr<TextureBuffer> createTextureBuffer(TextureBuffer::Attributes attributes) = 0;
 
         /**
          * Create a mesh buffer instance for the given mesh.
@@ -66,9 +68,10 @@ namespace engine {
          * @param mesh
          * @return
          */
-        virtual MeshBuffer *createMeshBuffer(const Mesh &mesh) = 0;
+        virtual std::unique_ptr<MeshBuffer> createMeshBuffer(const Mesh &mesh) = 0;
 
-        virtual MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) = 0;
+        virtual std::unique_ptr<MeshBuffer> createInstancedMeshBuffer(const Mesh &mesh,
+                                                                      const std::vector<Transform> &offsets) = 0;
 
         /**
          * Create a shader program instance for the given shader sources.
@@ -79,12 +82,12 @@ namespace engine {
          * @param fragmentShader
          * @return
          */
-        virtual ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
-                                                   const ShaderSource &fragmentShader) = 0;
+        virtual std::unique_ptr<ShaderProgram> createShaderProgram(const ShaderSource &vertexShader,
+                                                                   const ShaderSource &fragmentShader) = 0;
 
-        virtual ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
-                                                   const ShaderSource &geometryShader,
-                                                   const ShaderSource &fragmentShader) = 0;
+        virtual std::unique_ptr<ShaderProgram> createShaderProgram(const ShaderSource &vertexShader,
+                                                                   const ShaderSource &geometryShader,
+                                                                   const ShaderSource &fragmentShader) = 0;
     };
 }
 

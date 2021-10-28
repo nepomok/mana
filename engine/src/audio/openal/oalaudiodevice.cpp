@@ -64,7 +64,7 @@ namespace engine {
         alcCloseDevice(device);
     }
 
-    AudioContext *OALAudioDevice::createContext() {
-        return new OALAudioContext(alcCreateContext(device, nullptr));
+    std::unique_ptr<AudioContext> OALAudioDevice::createContext() {
+        return std::make_unique<OALAudioContext>(alcCreateContext(device, nullptr));
     }
 }

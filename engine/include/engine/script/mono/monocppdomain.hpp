@@ -20,6 +20,8 @@
 #ifndef MANA_MONOCPPDOMAIN_HPP
 #define MANA_MONOCPPDOMAIN_HPP
 
+#include <memory>
+
 #include "monocppassembly.hpp"
 
 namespace engine {
@@ -39,7 +41,7 @@ namespace engine {
          * @param filePath
          * @return
          */
-        MonoCppAssembly *loadAssembly(const std::string &filePath);
+        std::unique_ptr<MonoCppAssembly> loadAssembly(const std::string &filePath);
 
         /**
          * Load assembly from stream.
@@ -47,7 +49,7 @@ namespace engine {
          * @param source The stream pointing to the assembly data.
          * @return
          */
-        MonoCppAssembly *loadAssembly(std::istream &source);
+        std::unique_ptr<MonoCppAssembly> loadAssembly(std::istream &source);
 
         MonoCppObject stringFromUtf8(const std::string &str, bool pinned = false);
 

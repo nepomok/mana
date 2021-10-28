@@ -204,27 +204,25 @@ namespace engine {
 
         shader->setVec3("MANA_VIEWPOS", scene.camera.transform.position);
 
-        RenderCommand command;
+        shader->setTexture("position", 0);
+        shader->setTexture("normal", 1);
+        shader->setTexture("diffuse", 2);
+        shader->setTexture("ambient", 3);
+        shader->setTexture("specular", 4);
+        shader->setTexture("shininess", 5);
+        shader->setTexture("depth", 6);
 
-        command.meshBuffers.emplace_back(&gBuffer.getScreenQuad());
+        RenderCommand command(*shader);
 
-        command.shader = shader;
+        command.meshBuffers.emplace_back(gBuffer.getScreenQuad());
 
-        command.shader->setTexture("position", 0);
-        command.shader->setTexture("normal", 1);
-        command.shader->setTexture("diffuse", 2);
-        command.shader->setTexture("ambient", 3);
-        command.shader->setTexture("specular", 4);
-        command.shader->setTexture("shininess", 5);
-        command.shader->setTexture("depth", 6);
-
-        command.textures.emplace_back(&gBuffer.getBuffer("position"));
-        command.textures.emplace_back(&gBuffer.getBuffer("normal"));
-        command.textures.emplace_back(&gBuffer.getBuffer("diffuse"));
-        command.textures.emplace_back(&gBuffer.getBuffer("ambient"));
-        command.textures.emplace_back(&gBuffer.getBuffer("specular"));
-        command.textures.emplace_back(&gBuffer.getBuffer("shininess"));
-        command.textures.emplace_back(&gBuffer.getBuffer("depth"));
+        command.textures.emplace_back(gBuffer.getBuffer("position"));
+        command.textures.emplace_back(gBuffer.getBuffer("normal"));
+        command.textures.emplace_back(gBuffer.getBuffer("diffuse"));
+        command.textures.emplace_back(gBuffer.getBuffer("ambient"));
+        command.textures.emplace_back(gBuffer.getBuffer("specular"));
+        command.textures.emplace_back(gBuffer.getBuffer("shininess"));
+        command.textures.emplace_back(gBuffer.getBuffer("depth"));
 
         command.properties.enableDepthTest = false;
         command.properties.enableStencilTest = false;

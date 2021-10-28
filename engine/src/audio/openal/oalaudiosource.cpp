@@ -277,25 +277,25 @@ namespace engine {
         checkOALError();
     }
 
-    void OALAudioSource::queueBuffers(std::vector<const AudioBuffer *> buffers) {
+    void OALAudioSource::queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) {
         ALuint b[buffers.size()];
         for (int i = 0; i < buffers.size(); i++) {
-            auto *ob = dynamic_cast<const OALAudioBuffer *>(buffers[i]);
-            b[i] = ob->handle;
-            bufferMapping[ob->handle] = ob;
+            auto &ob = dynamic_cast<const OALAudioBuffer &>(buffers[i].get());
+            b[i] = ob.handle;
+            bufferMapping.insert(std::pair<ALuint, std::reference_wrapper<const AudioBuffer>>(ob.handle, ob));
         }
         alSourceQueueBuffers(handle, buffers.size(), b);
         checkOALError();
     }
 
-    std::vector<const AudioBuffer *> OALAudioSource::unqueueBuffers() {
+    std::vector<std::reference_wrapper<const AudioBuffer>> OALAudioSource::unqueueBuffers() {
         int available;
         alGetSourcei(handle, AL_BUFFERS_PROCESSED, &available);
         checkOALError();
         ALuint b[available];
         alSourceUnqueueBuffers(handle, available, b);
         checkOALError();
-        std::vector<const AudioBuffer *> ret;
+        std::vector<std::reference_wrapper<const AudioBuffer>> ret;
         for (int i = 0; i < available; i++) {
             ALuint v = b[i];
             ret.emplace_back(bufferMapping.at(v));

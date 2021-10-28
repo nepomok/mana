@@ -20,6 +20,8 @@
 #ifndef MANA_AUDIOCONTEXT_HPP
 #define MANA_AUDIOCONTEXT_HPP
 
+#include <memory>
+
 #include "engine/audio/audiolistener.hpp"
 #include "engine/audio/audiobuffer.hpp"
 #include "engine/audio/audiosource.hpp"
@@ -33,9 +35,9 @@ namespace engine {
 
         virtual AudioListener &getListener() = 0;
 
-        virtual AudioBuffer *createBuffer() = 0;
+        virtual std::unique_ptr<AudioBuffer> createBuffer() = 0;
 
-        virtual AudioSource *createSource() = 0;
+        virtual std::unique_ptr<AudioSource> createSource() = 0;
     };
 }
 

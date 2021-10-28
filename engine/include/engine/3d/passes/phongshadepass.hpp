@@ -36,7 +36,7 @@ namespace engine {
     private:
         RenderDevice &renderDevice;
 
-        ShaderProgram *shader;
+        std::unique_ptr<ShaderProgram> shader;
     };
 }
 

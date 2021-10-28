@@ -51,18 +51,15 @@ namespace engine {
      * the triangle will be drawn on top of the rectangle.
      *
      * Drawing operations support blending between draw objects and previous target contents.
+     *
+     * Resources which are passed by the user (Texture buffers, shaders etc.) shall not be deallocated until
+     * render finish is called.
      */
     class Renderer2D {
     public:
-        Renderer2D();
-
         explicit Renderer2D(RenderDevice &device);
 
         ~Renderer2D();
-
-        Renderer2D(const Renderer2D &other);
-
-        Renderer2D &operator=(const Renderer2D &other);
 
         void renderBegin(RenderTarget &target, bool clear);
 
@@ -113,16 +110,17 @@ namespace engine {
                   const std::string &text,
                   ColorRGBA color,
                   std::map<char, Character> &characters,
-                  std::map<char, TextureBuffer *> &textures);
+                  std::map<char, std::unique_ptr<TextureBuffer>> &textures);
 
         void renderPresent();
 
     private:
-        RenderDevice *renderDevice = nullptr;
-        ShaderProgram *defaultShader = nullptr;
-        ShaderProgram *defaultTextShader = nullptr;
+        RenderDevice &renderDevice;
 
-        std::set<MeshBuffer *> allocatedMeshes;
+        std::unique_ptr<ShaderProgram> defaultShader = nullptr;
+        std::unique_ptr<ShaderProgram> defaultTextShader = nullptr;
+
+        std::set<std::unique_ptr<MeshBuffer>> allocatedMeshes;
 
         Vec2i screenSize;
 

@@ -39,8 +39,8 @@ namespace engine {
         // The depth information from the deferred pass is preserved in the depth buffer.
         std::vector<ForwardCommand> forward;
 
-        TextureBuffer* skybox = nullptr; //The cubemap texture of the skybox if the skyboxColor is drawn.
-        ColorRGBA skyboxColor = ColorRGBA(0,0, 255, 255);
+        TextureBuffer* skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.
+        ColorRGBA skyboxColor;
     };
 }
 

@@ -27,6 +27,7 @@
 #include "engine/display/monitor.hpp"
 
 namespace engine {
+    //TODO: Add monitor gamma configuration interface
     class DisplayManager {
     public:
         DisplayManager();
@@ -35,23 +36,23 @@ namespace engine {
 
         ~DisplayManager();
 
-        Monitor *getPrimaryMonitor() const;
+        std::unique_ptr<Monitor> getPrimaryMonitor() const;
 
-        std::set<Monitor *> getMonitors() const;
+        std::set<std::unique_ptr<Monitor>> getMonitors() const;
 
-        Window *createWindow(GraphicsBackend graphicsBackend) const;
+        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend) const;
 
-        Window *createWindow(GraphicsBackend graphicsBackend,
-                             std::string title,
-                             Vec2i size,
-                             WindowAttributes attributes) const;
+        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend,
+                                             const std::string &title,
+                                             Vec2i size,
+                                             WindowAttributes attributes) const;
 
-        Window *createWindow(GraphicsBackend graphicsBackend,
-                             std::string title,
-                             Vec2i size,
-                             WindowAttributes attributes,
-                             Monitor &monitor,
-                             VideoMode mode) const;
+        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend,
+                                             const std::string &title,
+                                             Vec2i size,
+                                             WindowAttributes attributes,
+                                             Monitor &monitor,
+                                             VideoMode mode) const;
 
         DisplayBackend getApi() const;
 

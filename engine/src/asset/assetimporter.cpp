@@ -82,20 +82,20 @@ namespace engine {
         //Begin sideload of all referenced asset bundles
         auto iterator = j.find("meshes");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 sideLoadBundle(element["bundle"], pool, archive, bundleMutex, bundleTasks, refBundles);
             }
         }
 
         iterator = j.find("images");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 sideLoadBundle(element["bundle"], pool, archive, bundleMutex, bundleTasks, refBundles);
             }
         }
 
         //Wait for sideload to finish
-        for (auto &task : bundleTasks) {
+        for (auto &task: bundleTasks) {
             task.second->wait();
         }
 
@@ -104,7 +104,7 @@ namespace engine {
         //Load data from json and referenced bundles
         iterator = j.find("meshes");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 std::string name = element["name"];
                 std::string bundle = element["bundle"];
                 std::string asset = element["asset"];
@@ -115,7 +115,7 @@ namespace engine {
 
         iterator = j.find("materials");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 std::string name = element["name"];
 
                 auto it = element.find("bundle");
@@ -159,7 +159,7 @@ namespace engine {
 
         iterator = j.find("textures");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 std::string name = element["name"];
 
                 Texture texture;
@@ -175,7 +175,7 @@ namespace engine {
 
         iterator = j.find("images");
         if (iterator != j.end()) {
-            for (auto &element : *iterator) {
+            for (auto &element: *iterator) {
                 std::string name = element["name"];
                 std::string bundle = element["bundle"];
                 std::string asset = element.value("asset", "");
@@ -263,7 +263,8 @@ namespace engine {
 
         const auto *scenePointer = importer.ReadFileFromMemory(assetBuffer.data(),
                                                                assetBuffer.size(),
-                                                               aiPostProcessSteps::aiProcess_Triangulate | aiProcess_CalcTangentSpace | aiProcess_FlipUVs,
+                                                               aiPostProcessSteps::aiProcess_Triangulate |
+                                                               aiProcess_CalcTangentSpace | aiProcess_FlipUVs,
                                                                hint.c_str());
         if (scenePointer == nullptr)
             throw std::runtime_error("Failed to read mesh data from memory");
@@ -493,9 +494,7 @@ namespace engine {
     }
 
     AssetBundle AssetImporter::import(const std::string &path, Archive &archive) {
-        auto *stream = archive.open(path);
-        auto ret = import(*stream, std::filesystem::path(path).extension(), &archive);
-        delete stream;
-        return ret;
+        auto stream = archive.open(path);
+        return import(*stream, std::filesystem::path(path).extension(), &archive);
     }
 }

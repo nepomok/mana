@@ -54,7 +54,8 @@ namespace engine {
 
     opengl::OGLRenderTarget::~OGLRenderTarget() {
         //TODO: Delete the default renderbuffers in case the user attached textures.
-        glDeleteFramebuffers(1, &FBO);
+        if (FBO != 0) //Check if FBO is 0 which is the case for the default framebuffer which is managed by the display manager.
+            glDeleteFramebuffers(1, &FBO);
     }
 
     Vec2i opengl::OGLRenderTarget::getSize() {

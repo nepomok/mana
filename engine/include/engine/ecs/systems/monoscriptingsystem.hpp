@@ -68,7 +68,7 @@ namespace engine {
 
         MonoCppAssembly &getAssembly(const std::string &path);
 
-        std::map<std::string, MonoCppAssembly*> assemblies;
+        std::map<std::string, std::unique_ptr<MonoCppAssembly>> assemblies;
     };
 }
 

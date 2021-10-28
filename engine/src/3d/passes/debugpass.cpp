@@ -425,11 +425,7 @@ namespace engine {
         meshBuffer = device.getAllocator().createMeshBuffer(Mesh(Mesh::TRI, {Vertex(Vec3f(0))}, {0, 0, 0}));
     }
 
-    DebugPass::~DebugPass() {
-        delete shader;
-        delete shaderLight;
-        delete meshBuffer;
-    }
+    DebugPass::~DebugPass() = default;
 
     void DebugPass::prepareBuffer(GeometryBuffer &gBuffer) {
         gBuffer.addBuffer("debug", TextureBuffer::RGBA);
@@ -459,16 +455,15 @@ namespace engine {
                 shader->setMat4("globals.VIEW", scene.camera.view());
                 shader->setMat4("globals.PROJECTION", scene.camera.projection());
 
-                RenderCommand command;
-                command.shader = shader;
+                RenderCommand command(*shader);
                 command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
-                if (deferredCommand.material.normalTexture != nullptr) {}
+
                 command.properties.depthTestWrite = false;
 
                 if (deferredCommand.material.normalTexture != nullptr) {
                     shader->setBool("globals.hasNormalTexture", true);
                     shader->setTexture("normal", 0);
-                    command.textures.emplace_back(deferredCommand.material.normalTexture);
+                    command.textures.emplace_back(*deferredCommand.material.normalTexture);
                 } else {
                     shader->setBool("globals.hasNormalTexture", false);
                 }
@@ -479,33 +474,35 @@ namespace engine {
 
         if (drawLights) {
             for (auto &light: scene.lights) {
-                RenderCommand command;
-                command.shader = shaderLight;
-                command.meshBuffers.emplace_back(meshBuffer);
+                shaderLight->setMat4("globals.MODEL", light.transform.model());
+                shaderLight->setMat4("globals.VIEW", scene.camera.view());
+                shaderLight->setMat4("globals.PROJECTION", scene.camera.projection());
 
-                command.shader->setMat4("globals.MODEL", light.transform.model());
-                command.shader->setMat4("globals.VIEW", scene.camera.view());
-                command.shader->setMat4("globals.PROJECTION", scene.camera.projection());
-
-                std::string prefix;
                 switch (light.type) {
-                    case LIGHT_DIRECTIONAL:
-                        prefix = "globals.dirLight";
-                        command.shader->setVec3(prefix + ".direction", light.direction);
-                        command.shader->setInt("globals.lightType", 0);
+                    case LIGHT_DIRECTIONAL: {
+                        shaderLight->setInt("globals.lightType", 0);
+
+                        std::string prefix = "globals.dirLight";
+                        shaderLight->setVec3(prefix + ".direction", light.direction);
                         break;
-                    case LIGHT_POINT:
-                        prefix = "globals.pointLight";
-                        command.shader->setInt("globals.lightType", 1);
+                    }
+                    case LIGHT_POINT: {
+                        shaderLight->setInt("globals.lightType", 1);
                         break;
-                    case LIGHT_SPOT:
-                        prefix = "globals.spotLight";
-                        command.shader->setVec3(prefix + ".direction", light.direction);
-                        command.shader->setFloat(prefix + ".cutOff", cosf(degreesToRadians(light.cutOff)));
-                        command.shader->setFloat(prefix + ".outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                        command.shader->setInt("globals.lightType", 2);
+                    }
+                    case LIGHT_SPOT: {
+                        shaderLight->setInt("globals.lightType", 2);
+
+                        std::string prefix = "globals.spotLight";
+                        shaderLight->setVec3(prefix + ".direction", light.direction);
+                        shaderLight->setFloat(prefix + ".cutOff", cosf(degreesToRadians(light.cutOff)));
+                        shaderLight->setFloat(prefix + ".outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
                         break;
+                    }
                 }
+
+                RenderCommand command(*shaderLight);
+                command.meshBuffers.emplace_back(*meshBuffer);
 
                 ren.addCommand(command);
             }

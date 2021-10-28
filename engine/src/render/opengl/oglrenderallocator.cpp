@@ -53,21 +53,20 @@ namespace engine {
             }
         }
 
-        RenderTarget *OGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
-            return new OGLRenderTarget(size, samples);
+        std::unique_ptr<RenderTarget> OGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
+            return std::make_unique<OGLRenderTarget>(size, samples);
         }
 
-        TextureBuffer *OGLRenderAllocator::createTextureBuffer(TextureBuffer::Attributes attributes) {
-            return new OGLTextureBuffer(attributes);
+        std::unique_ptr<TextureBuffer> OGLRenderAllocator::createTextureBuffer(TextureBuffer::Attributes attributes) {
+            return std::make_unique<OGLTextureBuffer>(attributes);
         }
 
-        MeshBuffer *OGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
-            auto *ret = new OGLMeshBuffer();
+        std::unique_ptr<MeshBuffer> OGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
+            auto ret = std::make_unique<OGLMeshBuffer>();
 
             try {
                 ret->elementType = getElementType(mesh.primitive);
             } catch (std::exception &e) {
-                delete ret;
                 throw e;
             }
 
@@ -213,14 +212,13 @@ namespace engine {
             return ret;
         }
 
-        MeshBuffer *OGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
-                                                                  const std::vector<Transform> &offsets) {
-            auto *ret = new OGLMeshBuffer();
+        std::unique_ptr<MeshBuffer> OGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
+                                                                                  const std::vector<Transform> &offsets) {
+            auto ret = std::make_unique<OGLMeshBuffer>();
 
             try {
                 ret->elementType = getElementType(mesh.primitive);
             } catch (std::exception &e) {
-                delete ret;
                 throw e;
             }
 
@@ -379,20 +377,21 @@ namespace engine {
             return ret;
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
-                                                               const ShaderSource &fragmentShader) {
+        std::unique_ptr<ShaderProgram> OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                                               const ShaderSource &fragmentShader) {
             auto language = vertexShader.getLanguage();
             if (fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
             if (language == ShaderCompiler::HLSL)
                 prefix = "Globals.";
-            return new OGLShaderProgram(getGlslSource(vertexShader), "", getGlslSource(fragmentShader), prefix);
+            return std::make_unique<OGLShaderProgram>(getGlslSource(vertexShader), "", getGlslSource(fragmentShader),
+                                                      prefix);
         }
 
-        ShaderProgram *OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
-                                                               const ShaderSource &geometryShader,
-                                                               const ShaderSource &fragmentShader) {
+        std::unique_ptr<ShaderProgram> OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                                               const ShaderSource &geometryShader,
+                                                                               const ShaderSource &fragmentShader) {
             auto language = vertexShader.getLanguage();
             if (geometryShader.getLanguage() != language
                 || fragmentShader.getLanguage() != language)
@@ -400,10 +399,10 @@ namespace engine {
             std::string prefix;
             if (language == ShaderCompiler::HLSL)
                 prefix = "Globals.";
-            return new OGLShaderProgram(getGlslSource(vertexShader),
-                                        getGlslSource(geometryShader),
-                                        getGlslSource(fragmentShader),
-                                        prefix);
+            return std::make_unique<OGLShaderProgram>(getGlslSource(vertexShader),
+                                                      getGlslSource(geometryShader),
+                                                      getGlslSource(fragmentShader),
+                                                      prefix);
         }
     }
 }

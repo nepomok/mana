@@ -113,9 +113,9 @@ namespace engine {
 
         virtual void setWindowOpacity(float opacity) = 0;
 
-        virtual Monitor *getMonitor() = 0;
+        virtual std::unique_ptr<Monitor> getMonitor() = 0;
 
-        virtual void setMonitor(Monitor *monitor, Recti rect, int refreshRate) = 0;
+        virtual void setMonitor(Monitor &monitor, Recti rect, int refreshRate) = 0;
 
         virtual void setWindowed() = 0;
 

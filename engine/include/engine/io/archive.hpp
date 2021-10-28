@@ -21,6 +21,7 @@
 #define MANA_ARCHIVE_HPP
 
 #include <iostream>
+#include <memory>
 
 namespace engine {
     /**
@@ -34,7 +35,7 @@ namespace engine {
 
         virtual bool exists(const std::string &name) { return false; };
 
-        virtual std::iostream *open(const std::string &name) { throw std::runtime_error("File not found " + name); };
+        virtual std::unique_ptr<std::iostream> open(const std::string &name) { throw std::runtime_error("File not found " + name); };
     };
 }
 

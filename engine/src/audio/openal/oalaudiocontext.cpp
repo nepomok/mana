@@ -41,18 +41,18 @@ namespace engine {
         return listener;
     }
 
-    AudioBuffer *engine::OALAudioContext::createBuffer() {
+    std::unique_ptr<AudioBuffer> engine::OALAudioContext::createBuffer() {
         ALuint n;
         alGenBuffers(1, &n);
         checkOALError();
-        return new OALAudioBuffer(n);
+        return std::make_unique<OALAudioBuffer>(n);
     }
 
-    AudioSource *engine::OALAudioContext::createSource() {
+    std::unique_ptr<AudioSource> engine::OALAudioContext::createSource() {
         ALuint n;
         alGenSources(1, &n);
         checkOALError();
-        return new OALAudioSource(n);
+        return std::make_unique<OALAudioSource>(n);
     }
 
     const ALCcontext *OALAudioContext::getContext() {

@@ -151,6 +151,7 @@ namespace engine {
             glfwSetFramebufferSizeCallback(wndH, glfwFrameBufferSizeCallback);
         }
 
+        //TODO: GLFW Window implementation synchronization
         GLFWWindowGL::GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes) {
             GLFWCounter::join();
 
@@ -162,8 +163,8 @@ namespace engine {
 
             applyHints(attributes);
 
-            wndH = glfwCreateWindow(size.x, size.y, title.c_str(), NULL, NULL);
-            if (wndH == NULL) {
+            wndH = glfwCreateWindow(size.x, size.y, title.c_str(), nullptr, nullptr);
+            if (wndH == nullptr) {
                 GLFWCounter::leave();
                 throw std::runtime_error("Failed to create GLFW Window");
             }
@@ -176,10 +177,10 @@ namespace engine {
 
             glfwSwapInterval(attributes.swapInterval);
 
-            renderDevice = new opengl::OGLRenderDevice();
-            renderTarget = new GLFWRenderTargetGL(wndH);
+            renderDevice = std::make_unique<opengl::OGLRenderDevice>();
+            renderTarget = std::make_unique<GLFWRenderTargetGL>();
 
-            input = new GLFWInput(*wndH);
+            input = std::make_unique<GLFWInput>(*wndH);
 
             _windowMapping[wndH] = this;
 
@@ -189,7 +190,8 @@ namespace engine {
         GLFWWindowGL::GLFWWindowGL(const std::string &title,
                                    Vec2i size,
                                    WindowAttributes attributes,
-                                   GLFWMonitor &monitor) {
+                                   GLFWMonitor &monitor,
+                                   VideoMode videoMode) {
             GLFWCounter::join();
 
             glfwDefaultWindowHints();
@@ -200,8 +202,14 @@ namespace engine {
 
             applyHints(attributes);
 
-            wndH = glfwCreateWindow(size.x, size.y, title.c_str(), monitor.monH, NULL);
-            if (wndH == NULL) {
+            //Setup monitor video mode hints
+            glfwWindowHint(GLFW_RED_BITS, videoMode.redBits);
+            glfwWindowHint(GLFW_GREEN_BITS, videoMode.greenBits);
+            glfwWindowHint(GLFW_BLUE_BITS, videoMode.blueBits);
+            glfwWindowHint(GLFW_REFRESH_RATE, videoMode.refreshRate);
+
+            wndH = glfwCreateWindow(size.x, size.y, title.c_str(), monitor.monH, nullptr);
+            if (wndH == nullptr) {
                 GLFWCounter::leave();
                 throw std::runtime_error("Failed to create GLFW Window");
             }
@@ -212,10 +220,11 @@ namespace engine {
                 throw std::runtime_error("Failed to initialize glad");
             }
 
-            renderDevice = new opengl::OGLRenderDevice();
-            renderTarget = new GLFWRenderTargetGL(wndH);
 
-            input = new GLFWInput(*wndH);
+            renderDevice = std::make_unique<opengl::OGLRenderDevice>();
+            renderTarget = std::make_unique<GLFWRenderTargetGL>();
+
+            input = std::make_unique<GLFWInput>(*wndH);
 
             _windowMapping[wndH] = this;
 
@@ -224,63 +233,61 @@ namespace engine {
 
         GLFWWindowGL::~GLFWWindowGL() {
             _windowMapping.erase(wndH);
-            delete renderTarget;
-            delete renderDevice;
-            delete input;
+            glfwDestroyWindow(wndH);
             GLFWCounter::leave();
         }
 
         void GLFWWindowGL::glfwWindowCloseCallback() {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowClose();
             }
         }
 
         void GLFWWindowGL::glfwWindowMoveCallback(Vec2i pos) {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowMove(pos);
             }
         }
 
         void GLFWWindowGL::glfwWindowSizeCallback(int width, int height) {
             renderTarget->size = {width, height};
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowResize(Vec2i(width, height));
             }
         }
 
         void GLFWWindowGL::glfwWindowRefreshCallback() {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowRefresh();
             }
         }
 
         void GLFWWindowGL::glfwWindowFocusCallback(bool focused) {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowFocus(focused);
             }
         }
 
         void GLFWWindowGL::glfwWindowMinimizeCallback() {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowMinimize();
             }
         }
 
         void GLFWWindowGL::glfwWindowMaximizeCallback() {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowMaximize();
             }
         }
 
         void GLFWWindowGL::glfwWindowContentScaleCallback(Vec2f scale) {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onWindowContentScale(scale);
             }
         }
 
         void GLFWWindowGL::glfwFrameBufferSizeCallback(Vec2i size) {
-            for (auto listener : listeners) {
+            for (auto listener: listeners) {
                 listener->onFramebufferResize(size);
             }
         }
@@ -414,14 +421,12 @@ namespace engine {
             glfwSetWindowOpacity(wndH, opacity);
         }
 
-        Monitor *GLFWWindowGL::getMonitor() {
-            auto *ret = new GLFWMonitor();
-            ret->monH = glfwGetWindowMonitor(wndH);
-            return ret;
+        std::unique_ptr<Monitor> GLFWWindowGL::getMonitor() {
+            return std::make_unique<GLFWMonitor>(glfwGetWindowMonitor(wndH));
         }
 
-        void GLFWWindowGL::setMonitor(Monitor *monitor, Recti rect, int refreshRate) {
-            auto &mon = dynamic_cast<GLFWMonitor &>(*monitor);
+        void GLFWWindowGL::setMonitor(Monitor &monitor, Recti rect, int refreshRate) {
+            auto &mon = dynamic_cast<GLFWMonitor &>(monitor);
             glfwSetWindowMonitor(wndH,
                                  mon.monH,
                                  rect.position.x,
@@ -432,7 +437,7 @@ namespace engine {
         }
 
         void GLFWWindowGL::setWindowed() {
-            glfwSetWindowMonitor(wndH, NULL, 0, 0, 0, 0, 0);
+            glfwSetWindowMonitor(wndH, nullptr, 0, 0, 0, 0, 0);
         }
 
         void GLFWWindowGL::setWindowDecorated(bool decorated) {

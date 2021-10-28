@@ -56,15 +56,15 @@ namespace engine {
         return msCorLib;
     }
 
-    MonoCppAssembly *MonoCppDomain::loadAssembly(const std::string &filePath) {
+    std::unique_ptr<MonoCppAssembly> MonoCppDomain::loadAssembly(const std::string &filePath) {
         auto *ap = mono_domain_assembly_open(static_cast<MonoDomain *>(domainPointer), filePath.c_str());
         if (ap == nullptr)
             throw std::runtime_error("Failed to load assembly " + filePath);
-        return new MonoCppAssembly(domainPointer, ap, mono_assembly_get_image(ap));
+        return std::make_unique<MonoCppAssembly>(domainPointer, ap, mono_assembly_get_image(ap));
     }
 
-    MonoCppAssembly *MonoCppDomain::loadAssembly(std::istream &source) {
-        auto *ret = new MonoCppAssembly();
+    std::unique_ptr<MonoCppAssembly> MonoCppDomain::loadAssembly(std::istream &source) {
+        auto ret = std::make_unique<MonoCppAssembly>();
         ret->imageBytes = std::string((std::istreambuf_iterator<char>(source)),
                                       std::istreambuf_iterator<char>());
         MonoImageOpenStatus status;

@@ -44,16 +44,19 @@ namespace engine {
                 {{"forward"},                                          "forward_depth"},
                 {{"debug"},                                            "", DEPTH_TEST_ALWAYS}
         };
+
+        std::vector<std::unique_ptr<RenderPass>> passes;
+        passes.emplace_back(std::make_unique<ForwardPass>(device));
+        passes.emplace_back(std::make_unique<GeometryPass>(device));
+        passes.emplace_back(std::make_unique<PhongShadePass>(device));
+        passes.emplace_back(std::unique_ptr<DebugPass>(debugPass));
+
         ren = std::make_unique<Renderer3D>(device,
-                                           std::vector<RenderPass *>(
-                                                   {
-                                                           new ForwardPass(device),
-                                                           new GeometryPass(device),
-                                                           new PhongShadePass(device),
-                                                           debugPass
-                                                   }),
+                                           std::move(passes),
                                            layers);
     }
+
+    RenderSystem::~RenderSystem() = default;
 
     void RenderSystem::start(EntityManager &entityManager) {
         entityManager.getComponentManager().getPool<MeshRenderComponent>().addListener(this);
@@ -79,10 +82,6 @@ namespace engine {
             auto &render = pair.second;
             if (!render.enabled)
                 continue;
-
-            DeferredCommand command;
-            command.transform = TransformComponent::walkHierarchy(transform, entityManager);
-            command.meshBuffer = &getMeshBuffer(render.mesh);
 
             auto &material = getMaterial(render.material);
 
@@ -112,9 +111,9 @@ namespace engine {
                 renderMaterial.normalTexture = &getTexture(material.normalTexture);
             }
 
-            command.material = renderMaterial;
-
-            scene3d.deferred.emplace_back(command);
+            scene3d.deferred.emplace_back(DeferredCommand(TransformComponent::walkHierarchy(transform, entityManager),
+                                                          renderMaterial,
+                                                          getMeshBuffer(render.mesh)));
         }
 
         //Get Skybox
@@ -197,7 +196,7 @@ namespace engine {
         if (it != cubeMaps.end())
             return *it->second;
         else {
-            auto *tex = device.getAllocator().createTextureBuffer({TextureBuffer::TEXTURE_CUBE_MAP});
+            auto tex = device.getAllocator().createTextureBuffer({TextureBuffer::TEXTURE_CUBE_MAP});
             for (TextureBuffer::CubeMapFace face = TextureBuffer::POSITIVE_X;
                  face <= TextureBuffer::NEGATIVE_Z;
                  face = static_cast<TextureBuffer::CubeMapFace>(face + 1)) {
@@ -212,8 +211,8 @@ namespace engine {
 
                 tex->upload(face, img);
             }
-            cubeMaps[paths] = std::unique_ptr<TextureBuffer>(tex);
-            return *tex;
+            cubeMaps[paths] = std::move(tex);
+            return *cubeMaps[paths];
         }
     }
 
@@ -227,11 +226,11 @@ namespace engine {
             std::lock_guard<std::mutex> guard(mutex);
 
             auto &bundle = bundles.at(path.bundle);
-            auto *mesh = device.getAllocator().createMeshBuffer(bundle.getMesh(path.asset));
+            auto mesh = device.getAllocator().createMeshBuffer(bundle.getMesh(path.asset));
 
-            meshBuffers[path] = std::unique_ptr<MeshBuffer>(mesh);
+            meshBuffers[path] = std::move(mesh);
 
-            return *mesh;
+            return *meshBuffers[path];
         }
     }
 

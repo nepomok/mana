@@ -104,15 +104,15 @@ namespace engine {
 
         void setBuffer(const AudioBuffer &buffer) override;
 
-        void queueBuffers(std::vector<const AudioBuffer *> buffers) override;
+        void queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) override;
 
-        std::vector<const AudioBuffer *> unqueueBuffers() override;
+        std::vector<std::reference_wrapper<const AudioBuffer>> unqueueBuffers() override;
 
         ALuint getHandle();
 
     private:
         ALuint handle;
 
-        std::map<ALuint, const AudioBuffer *> bufferMapping; //Mapping for returning unqueued buffers.
+        std::map<ALuint, std::reference_wrapper<const AudioBuffer>> bufferMapping; //Mapping for returning unqueued buffers.
     };
 }

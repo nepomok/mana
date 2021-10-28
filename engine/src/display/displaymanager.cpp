@@ -30,7 +30,7 @@ namespace engine {
 
     DisplayManager::~DisplayManager() = default;
 
-    Monitor *DisplayManager::getPrimaryMonitor() const {
+    std::unique_ptr<Monitor> DisplayManager::getPrimaryMonitor() const {
         switch (displayApi) {
             case GLFW:
                 return glfw::getPrimaryMonitor();
@@ -39,7 +39,7 @@ namespace engine {
         }
     }
 
-    std::set<Monitor *> DisplayManager::getMonitors() const {
+    std::set<std::unique_ptr<Monitor>> DisplayManager::getMonitors() const {
         switch (displayApi) {
             case GLFW:
                 return glfw::getMonitors();
@@ -48,7 +48,7 @@ namespace engine {
         }
     }
 
-    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend) const {
+    std::unique_ptr<Window> DisplayManager::createWindow(GraphicsBackend graphicsBackend) const {
         switch (displayApi) {
             case GLFW:
                 return glfw::createWindow(graphicsBackend);
@@ -57,26 +57,27 @@ namespace engine {
         }
     }
 
-    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend,
-                                         std::string title,
-                                         Vec2i size,
-                                         WindowAttributes attributes) const {
+    std::unique_ptr<Window> DisplayManager::createWindow(GraphicsBackend graphicsBackend,
+                                                         const std::string &title,
+                                                         Vec2i size,
+                                                         WindowAttributes attributes) const {
         switch (displayApi) {
             case GLFW:
-                return glfw::createWindow(graphicsBackend, std::move(title), size, attributes);
+                return glfw::createWindow(graphicsBackend, title, size, attributes);
             default:
                 throw std::runtime_error("Unsupported display api");
         }
     }
 
-    Window *DisplayManager::createWindow(GraphicsBackend graphicsBackend,
-                                         std::string title,
-                                         Vec2i size,
-                                         WindowAttributes attributes, Monitor &monitor,
-                                         VideoMode mode) const {
+    std::unique_ptr<Window> DisplayManager::createWindow(GraphicsBackend graphicsBackend,
+                                                         const std::string &title,
+                                                         Vec2i size,
+                                                         WindowAttributes attributes,
+                                                         Monitor &monitor,
+                                                         VideoMode mode) const {
         switch (displayApi) {
             case GLFW:
-                return glfw::createWindow(graphicsBackend, std::move(title), size, attributes, monitor, mode);
+                return glfw::createWindow(graphicsBackend, title, size, attributes, monitor, mode);
             default:
                 throw std::runtime_error("Unsupported display api");
         }

@@ -111,18 +111,11 @@ void main()
 )###";
 
 namespace engine {
-    Compositor::Compositor(RenderDevice *device)
-            : device(device) {
-        ShaderSource shaderVert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::GLSL_460);
-        ShaderSource shaderFrag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::GLSL_460);
-        shader = std::unique_ptr<ShaderProgram>(device->getAllocator().createShaderProgram(shaderVert, shaderFrag));
-    }
-
-    Compositor::Compositor(RenderDevice *device, std::vector<Layer> layers)
+    Compositor::Compositor(RenderDevice &device, std::vector<Layer> layers)
             : device(device), layers(std::move(layers)) {
         ShaderSource shaderVert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::GLSL_460);
         ShaderSource shaderFrag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::GLSL_460);
-        shader = std::unique_ptr<ShaderProgram>(device->getAllocator().createShaderProgram(shaderVert, shaderFrag));
+        shader = std::unique_ptr<ShaderProgram>(device.getAllocator().createShaderProgram(shaderVert, shaderFrag));
     }
 
     std::vector<Compositor::Layer> &Compositor::getLayers() {
@@ -140,7 +133,7 @@ namespace engine {
     void Compositor::presentLayers(RenderTarget &screen,
                                    GeometryBuffer &buffer,
                                    const std::vector<Layer> &pLayers) {
-        auto &ren = device->getRenderer();
+        auto &ren = device.getRenderer();
 
         //Clear screen
         ren.renderBegin(screen, RenderOptions({}, screen.getSize(), false,
@@ -161,24 +154,24 @@ namespace engine {
         if (layer.color.size() > 14)
             throw std::runtime_error("Maximum of 15 color textures per layer");
 
-        auto &ren = device->getRenderer();
+        auto &ren = device.getRenderer();
 
-        std::vector<TextureBuffer *> textures;
+        std::vector<std::reference_wrapper<TextureBuffer>> textures;
+
         std::string prefix = "globals.layer";
         shader->setInt(prefix + ".num_color", static_cast<int>(layer.color.size()));
         for (int ci = 0; ci < layer.color.size(); ci++) {
             shader->setTexture(prefix + ".color[" + std::to_string(ci) + "]", static_cast<int>(textures.size()));
-            textures.emplace_back(&buffer.getBuffer(layer.color.at(ci)));
+            textures.emplace_back(buffer.getBuffer(layer.color.at(ci)));
         }
         shader->setInt(prefix + ".has_depth", !layer.depth.empty());
         if (!layer.depth.empty()) {
             shader->setTexture(prefix + ".depth", static_cast<int>(textures.size()));
-            textures.emplace_back(&buffer.getBuffer(layer.depth));
+            textures.emplace_back(buffer.getBuffer(layer.depth));
         }
 
-        RenderCommand command;
-        command.shader = shader.get();
-        command.meshBuffers.emplace_back(&buffer.getScreenQuad());
+        RenderCommand command(*shader);
+        command.meshBuffers.emplace_back(buffer.getScreenQuad());
         command.textures = textures;
 
         command.properties.enableBlending = true;

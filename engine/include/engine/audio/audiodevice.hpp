@@ -21,6 +21,7 @@
 #define MANA_AUDIODEVICE_HPP
 
 #include <string>
+#include <memory>
 
 #include "engine/audio/audiocontext.hpp"
 #include "engine/audio/audiobackend.hpp"
@@ -30,13 +31,13 @@ namespace engine {
     public:
         static std::vector<std::string> getDeviceNames(AudioBackend backend);
 
-        static AudioDevice *createDevice(AudioBackend backend, const std::string &name);
+        static std::unique_ptr<AudioDevice> createDevice(AudioBackend backend, const std::string &name);
 
-        static AudioDevice *createDevice(AudioBackend backend);
+        static std::unique_ptr<AudioDevice> createDevice(AudioBackend backend);
 
         virtual ~AudioDevice() = default;
 
-        virtual AudioContext *createContext() = 0;
+        virtual std::unique_ptr<AudioContext> createContext() = 0;
     };
 }
 

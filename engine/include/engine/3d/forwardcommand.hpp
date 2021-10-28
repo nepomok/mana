@@ -28,8 +28,6 @@
 
 namespace engine {
     struct ForwardCommand {
-        ForwardCommand() : transform(), command() {}
-
         ForwardCommand(Transform t, RenderCommand command) : transform(t),
                                                              command(std::move(command)) {}
 

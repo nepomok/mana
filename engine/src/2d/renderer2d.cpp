@@ -171,9 +171,8 @@ namespace engine {
         });
     }
 
-    Renderer2D::Renderer2D() = default;
-
-    Renderer2D::Renderer2D(RenderDevice &device) : renderDevice(&device) {
+    Renderer2D::Renderer2D(RenderDevice &device)
+            : renderDevice(device) {
         ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
         ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
         ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
@@ -184,48 +183,15 @@ namespace engine {
         defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);
     }
 
-    Renderer2D::~Renderer2D() {
-        delete defaultTextShader;
-        delete defaultShader;
-    }
-
-    Renderer2D::Renderer2D(const Renderer2D &other) {
-        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        vs.preprocess(includeCallback);
-        fs.preprocess(includeCallback);
-        fsText.preprocess(includeCallback);
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs, fs);
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs, fsText);
-        renderDevice = other.renderDevice;
-    }
-
-    Renderer2D &Renderer2D::operator=(const Renderer2D &other) {
-        if (this == &other)
-            return *this;
-
-        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
-        vs.preprocess(includeCallback);
-        fs.preprocess(includeCallback);
-        fsText.preprocess(includeCallback);
-        defaultShader = other.renderDevice->getAllocator().createShaderProgram(vs, fs);
-        defaultTextShader = other.renderDevice->getAllocator().createShaderProgram(vs, fsText);
-
-        renderDevice = other.renderDevice;
-
-        return *this;
-    }
+    Renderer2D::~Renderer2D() = default;
 
     void Renderer2D::renderBegin(RenderTarget &target, bool clear) {
-        renderDevice->getRenderer().renderBegin(target, RenderOptions({},
-                                                                      target.getSize(),
-                                                                      true,
-                                                                      {},
-                                                                      1,
-                                                                      clear, clear, clear));
+        renderDevice.getRenderer().renderBegin(target, RenderOptions({},
+                                                                     target.getSize(),
+                                                                     true,
+                                                                     {},
+                                                                     1,
+                                                                     clear, clear, clear));
         screenSize = target.getSize();
         setProjection({{}, screenSize.convert<float>()});
     }
@@ -234,12 +200,12 @@ namespace engine {
                                  bool clear,
                                  Vec2i viewportOffset,
                                  Vec2i viewportSize) {
-        renderDevice->getRenderer().renderBegin(target, RenderOptions(viewportOffset,
-                                                                      viewportSize,
-                                                                      true,
-                                                                      {},
-                                                                      1,
-                                                                      clear, clear, clear));
+        renderDevice.getRenderer().renderBegin(target, RenderOptions(viewportOffset,
+                                                                     viewportSize,
+                                                                     true,
+                                                                     {},
+                                                                     1,
+                                                                     clear, clear, clear));
         screenSize = viewportSize;
         setProjection({{}, screenSize.convert<float>()});
     }
@@ -262,15 +228,7 @@ namespace engine {
                           float rotation) {
         Mesh mesh = getPlane(dstRect.dimensions, center, srcRect);
 
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = &shader;
-        command.meshBuffers.emplace_back(buffer);
-        command.textures.emplace_back(&texture);
+        MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
 
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
@@ -281,13 +239,19 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 1);
-        command.shader->setVec4("COLOR", Vec4f(1, 1, 1, 1));
+        shader.setMat4("MODEL_MATRIX", modelMatrix);
+        shader.setFloat("USE_TEXTURE", 1);
+        shader.setVec4("COLOR", Vec4f(1, 1, 1, 1));
 
-        command.shader->setTexture("diffuse", 0);
+        shader.setTexture("diffuse", 0);
 
-        renderDevice->getRenderer().addCommand(command);
+        RenderCommand command(shader);
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.meshBuffers.emplace_back(buffer);
+        command.textures.emplace_back(texture);
+
+        renderDevice.getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Rectf srcRect, Rectf dstRect, TextureBuffer &texture, Vec2f center, float rotation) {
@@ -306,14 +270,7 @@ namespace engine {
         else
             mesh = getSquare(rectangle.dimensions, center);
 
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
+        MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
 
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(
@@ -324,14 +281,19 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
+        defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
+        defaultShader->setFloat("USE_TEXTURE", 0);
+        defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                              (float) color.g() / 255,
+                                              (float) color.b() / 255,
+                                              (float) color.a() / 255));
 
-        renderDevice->getRenderer().addCommand(command);
+        RenderCommand command(*defaultShader);
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.meshBuffers.emplace_back(buffer);
+
+        renderDevice.getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2f start,
@@ -341,28 +303,26 @@ namespace engine {
                           float rotation) {
         Mesh mesh = getLine(start, end, center);
 
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
+        MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
 
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
+        defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
+        defaultShader->setFloat("USE_TEXTURE", 0);
+        defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+                                              (float) color.g() / 255,
+                                              (float) color.b() / 255,
+                                              (float) color.a() / 255));
 
-        renderDevice->getRenderer().addCommand(command);
+        RenderCommand command(*defaultShader);
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.meshBuffers.emplace_back(buffer);
+
+        renderDevice.getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2f point, ColorRGBA color) {
@@ -370,37 +330,35 @@ namespace engine {
                 Vertex(Vec3f(point.x, point.y, 0))
         });
 
-        auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-        allocatedMeshes.insert(buffer);
-
-        RenderCommand command;
-        command.properties.enableDepthTest = false;
-        command.properties.enableBlending = true;
-        command.shader = defaultShader;
-        command.meshBuffers.emplace_back(buffer);
+        MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
 
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-        command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-        command.shader->setFloat("USE_TEXTURE", 0);
-        command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+        defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
+        defaultShader->setFloat("USE_TEXTURE", 0);
+        defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                (float) color.g() / 255,
                                                (float) color.b() / 255,
                                                (float) color.a() / 255));
 
-        renderDevice->getRenderer().addCommand(command);
+        RenderCommand command(*defaultShader);
+        command.properties.enableDepthTest = false;
+        command.properties.enableBlending = true;
+        command.meshBuffers.emplace_back(buffer);
+
+        renderDevice.getRenderer().addCommand(command);
     }
 
     void Renderer2D::draw(Vec2f position,
                           const std::string &text,
                           ColorRGBA color,
                           std::map<char, Character> &characters,
-                          std::map<char, TextureBuffer *> &textures) {
+                          std::map<char, std::unique_ptr<TextureBuffer>> &textures) {
         float x = position.x;
         float y = position.y;
 
-        for (auto &c : text) {
+        for (auto &c: text) {
             auto &character = characters.at(c);
 
             float xpos = (x + static_cast<float>(character.bearing.x));
@@ -413,36 +371,32 @@ namespace engine {
 
             Mesh mesh = getPlane(Vec2f(w, h), Vec2f(), Rectf(Vec2f(), Vec2f(w, h)));
 
-            auto buffer = renderDevice->getAllocator().createMeshBuffer(mesh);
-            allocatedMeshes.insert(buffer);
-
-            RenderCommand command;
-            command.properties.enableDepthTest = false;
-            command.properties.enableBlending = true;
-            command.shader = defaultTextShader;
-            command.meshBuffers.emplace_back(buffer);
-            command.textures.emplace_back(textures.at(c));
+            MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
 
             Mat4f modelMatrix = MatrixMath::identity();
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
             modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
-            command.shader->setMat4("MODEL_MATRIX", modelMatrix);
-            command.shader->setVec4("COLOR", Vec4f((float) color.r() / 255,
+            defaultTextShader->setMat4("MODEL_MATRIX", modelMatrix);
+            defaultTextShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                    (float) color.g() / 255,
                                                    (float) color.b() / 255,
                                                    (float) color.a() / 255));
 
-            command.shader->setTexture("diffuse", 0);
+            defaultTextShader->setTexture("diffuse", 0);
 
-            renderDevice->getRenderer().addCommand(command);
+            RenderCommand command(*defaultTextShader);
+            command.properties.enableDepthTest = false;
+            command.properties.enableBlending = true;
+            command.meshBuffers.emplace_back(buffer);
+            command.textures.emplace_back(*textures.at(c));
+
+            renderDevice.getRenderer().addCommand(command);
         }
     }
 
     void Renderer2D::renderPresent() {
-        renderDevice->getRenderer().renderFinish();
-        for (auto *mesh : allocatedMeshes)
-            delete mesh;
+        renderDevice.getRenderer().renderFinish();
         allocatedMeshes.clear();
     }
 }

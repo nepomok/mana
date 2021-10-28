@@ -28,6 +28,8 @@ namespace engine {
     namespace glfw {
         class GLFWMonitor : public Monitor {
         public:
+            explicit GLFWMonitor(GLFWmonitor *monitor) : monH(monitor) {}
+
             ~GLFWMonitor() override = default;
 
             Vec2i getVirtualPosition() override {
@@ -55,7 +57,7 @@ namespace engine {
             }
 
             std::string getName() override {
-                return std::string(glfwGetMonitorName(monH));
+                return {glfwGetMonitorName(monH)};
             }
 
             VideoMode getVideoMode() override {

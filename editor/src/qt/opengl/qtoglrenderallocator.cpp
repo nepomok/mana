@@ -53,21 +53,20 @@ namespace engine {
             }
         }
 
-        RenderTarget *QtOGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
-            return new QtOGLRenderTarget(size, samples);
+        std::unique_ptr<RenderTarget> QtOGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
+            return std::make_unique<QtOGLRenderTarget>(size, samples);
         }
 
-        TextureBuffer *QtOGLRenderAllocator::createTextureBuffer(TextureBuffer::Attributes attributes) {
-            return new QtOGLTextureBuffer(attributes);
+        std::unique_ptr<TextureBuffer> QtOGLRenderAllocator::createTextureBuffer(TextureBuffer::Attributes attributes) {
+            return std::make_unique<QtOGLTextureBuffer>(attributes);
         }
 
-        MeshBuffer *QtOGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
-            auto *ret = new QtOGLMeshBuffer();
+        std::unique_ptr<MeshBuffer> QtOGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
+            auto ret = std::make_unique<QtOGLMeshBuffer>();
 
             try {
                 ret->elementType = getElementType(mesh.primitive);
             } catch (std::exception &e) {
-                delete ret;
                 throw e;
             }
 
@@ -213,14 +212,13 @@ namespace engine {
             return ret;
         }
 
-        MeshBuffer *QtOGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
-                                                                  const std::vector<Transform> &offsets) {
-            auto *ret = new QtOGLMeshBuffer();
+        std::unique_ptr<MeshBuffer> QtOGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
+                                                                                    const std::vector<Transform> &offsets) {
+            auto ret = std::make_unique<QtOGLMeshBuffer>();
 
             try {
                 ret->elementType = getElementType(mesh.primitive);
             } catch (std::exception &e) {
-                delete ret;
                 throw e;
             }
 
@@ -379,20 +377,21 @@ namespace engine {
             return ret;
         }
 
-        ShaderProgram *QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
-                                                               const ShaderSource &fragmentShader) {
+        std::unique_ptr<ShaderProgram> QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                                                 const ShaderSource &fragmentShader) {
             auto language = vertexShader.getLanguage();
             if (fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
             if (language == ShaderCompiler::HLSL)
                 prefix = "Globals.";
-            return new QtOGLShaderProgram(getGlslSource(vertexShader), "", getGlslSource(fragmentShader), prefix);
+            return std::make_unique<QtOGLShaderProgram>(getGlslSource(vertexShader), "", getGlslSource(fragmentShader),
+                                                        prefix);
         }
 
-        ShaderProgram *QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
-                                                               const ShaderSource &geometryShader,
-                                                               const ShaderSource &fragmentShader) {
+        std::unique_ptr<ShaderProgram> QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
+                                                                                 const ShaderSource &geometryShader,
+                                                                                 const ShaderSource &fragmentShader) {
             auto language = vertexShader.getLanguage();
             if (geometryShader.getLanguage() != language
                 || fragmentShader.getLanguage() != language)
@@ -400,10 +399,10 @@ namespace engine {
             std::string prefix;
             if (language == ShaderCompiler::HLSL)
                 prefix = "Globals.";
-            return new QtOGLShaderProgram(getGlslSource(vertexShader),
-                                        getGlslSource(geometryShader),
-                                        getGlslSource(fragmentShader),
-                                        prefix);
+            return std::make_unique<QtOGLShaderProgram>(getGlslSource(vertexShader),
+                                                        getGlslSource(geometryShader),
+                                                        getGlslSource(fragmentShader),
+                                                        prefix);
         }
     }
 }

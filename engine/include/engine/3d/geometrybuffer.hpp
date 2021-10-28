@@ -28,8 +28,6 @@
 namespace engine {
     class GeometryBuffer {
     public:
-        GeometryBuffer() = default;
-
         explicit GeometryBuffer(RenderAllocator &allocator, Vec2i size = {640, 320});
 
         ~GeometryBuffer();
@@ -73,10 +71,11 @@ namespace engine {
         MeshBuffer &getScreenQuad();
 
     private:
-        RenderAllocator *renderAllocator{};
-        RenderTarget *renderTarget{};
+        RenderAllocator &renderAllocator;
 
-        Vec2i size;
+        std::unique_ptr<RenderTarget> renderTarget;
+
+        Vec2i size; //The current size of the render target of the geometry buffer
 
         std::map<std::string, TextureBuffer::ColorFormat> formats;
         std::map<std::string, std::unique_ptr<TextureBuffer>> buffers;
@@ -84,7 +83,7 @@ namespace engine {
         std::vector<std::string> currentColor;
         std::string currentDepthStencil;
 
-        MeshBuffer *screenQuad{};
+        std::unique_ptr<MeshBuffer> screenQuad; //A quad mesh which covers the viewport in normalized screen coordinates
     };
 }
 

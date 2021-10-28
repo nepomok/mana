@@ -360,17 +360,7 @@ namespace engine {
         skyboxCube = allocator.createMeshBuffer(skyboxMesh);
     }
 
-    GeometryPass::~GeometryPass() {
-        delete shaderTextureNormals;
-        delete shaderVertexNormals;
-        delete diffuseDefault;
-        delete ambientDefault;
-        delete specularDefault;
-        delete emissiveDefault;
-        delete shininessDefault;
-        delete shaderSkybox;
-        delete skyboxCube;
-    }
+    GeometryPass::~GeometryPass() = default;
 
     void GeometryPass::prepareBuffer(GeometryBuffer &gBuffer) {
         gBuffer.addBuffer("depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
@@ -412,30 +402,28 @@ namespace engine {
         gBuffer.attachColor({"skybox"});
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
-        RenderCommand skyboxCommand;
-        skyboxCommand.meshBuffers.emplace_back(skyboxCube);
+        shaderSkybox->setMat4("MANA_M", model);
+        shaderSkybox->setMat4("MANA_V", view);
+        shaderSkybox->setMat4("MANA_P", projection);
+        shaderSkybox->setMat4("MANA_MVP", projection * view * model);
+        shaderSkybox->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+        shaderSkybox->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+
+        RenderCommand skyboxCommand(*shaderSkybox);
+        skyboxCommand.meshBuffers.emplace_back(*skyboxCube);
 
         if (scene.skybox == nullptr) {
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
                 skyboxDefault->upload(static_cast<TextureBuffer::CubeMapFace>(i),
                                       Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
             }
-            skyboxCommand.textures.emplace_back(skyboxDefault);
+            skyboxCommand.textures.emplace_back(*skyboxDefault);
         } else {
-            skyboxCommand.textures.emplace_back(scene.skybox);
+            skyboxCommand.textures.emplace_back(*scene.skybox);
         }
 
         skyboxCommand.properties.enableDepthTest = false;
         skyboxCommand.properties.enableFaceCulling = false;
-
-        skyboxCommand.shader = shaderSkybox;
-
-        skyboxCommand.shader->setMat4("MANA_M", model);
-        skyboxCommand.shader->setMat4("MANA_V", view);
-        skyboxCommand.shader->setMat4("MANA_P", projection);
-        skyboxCommand.shader->setMat4("MANA_MVP", projection * view * model);
-        skyboxCommand.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-        skyboxCommand.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
         ren.addCommand(skyboxCommand);
 
@@ -457,59 +445,60 @@ namespace engine {
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
-        for (auto &command : scene.deferred) {
-            assert(command.meshBuffer != nullptr);
-
-            RenderCommand c;
-            c.meshBuffers.emplace_back(command.meshBuffer);
+        for (auto &command: scene.deferred) {
+            std::vector<std::reference_wrapper<TextureBuffer>> textures;
 
             if (command.material.diffuseTexture == nullptr) {
                 diffuseDefault->upload({1, 1, {command.material.diffuse}});
-                c.textures.emplace_back(diffuseDefault);
+                textures.emplace_back(*diffuseDefault);
             } else {
-                c.textures.emplace_back(command.material.diffuseTexture);
+                textures.emplace_back(*command.material.diffuseTexture);
             }
             if (command.material.ambientTexture == nullptr) {
                 ambientDefault->upload({1, 1, {command.material.ambient}});
-                c.textures.emplace_back(ambientDefault);
+                textures.emplace_back(*ambientDefault);
             } else {
-                c.textures.emplace_back(command.material.ambientTexture);
+                textures.emplace_back(*command.material.ambientTexture);
             }
             if (command.material.specularTexture == nullptr) {
                 specularDefault->upload({1, 1, {command.material.specular}});
-                c.textures.emplace_back(specularDefault);
+                textures.emplace_back(*specularDefault);
             } else {
-                c.textures.emplace_back(command.material.specularTexture);
+                textures.emplace_back(*command.material.specularTexture);
             }
             if (command.material.shininessTexture == nullptr) {
                 shininessDefault->upload(Image<float>(1, 1, {command.material.shininess}));
-                c.textures.emplace_back(shininessDefault);
+                textures.emplace_back(*shininessDefault);
             } else {
-                c.textures.emplace_back(command.material.shininessTexture);
+                textures.emplace_back(*command.material.shininessTexture);
             }
             if (command.material.emissiveTexture == nullptr) {
                 emissiveDefault->upload({1, 1, {command.material.emissive}});
-                c.textures.emplace_back(emissiveDefault);
+                textures.emplace_back(*emissiveDefault);
             } else {
-                c.textures.emplace_back(command.material.emissiveTexture);
+                textures.emplace_back(*command.material.emissiveTexture);
             }
 
+            ShaderProgram *shader;
             if (command.material.normalTexture == nullptr) {
-                c.shader = shaderVertexNormals;
+                shader = shaderVertexNormals.get();
             } else {
-                c.shader = shaderTextureNormals;
-                c.textures.emplace_back(command.material.normalTexture);
+                shader = shaderTextureNormals.get();
+                textures.emplace_back(*command.material.normalTexture);
             }
 
             model = command.transform.model();
 
-            c.shader->setMat4("MANA_M", model);
-            c.shader->setMat4("MANA_V", view);
-            c.shader->setMat4("MANA_P", projection);
-            c.shader->setMat4("MANA_MVP", projection * view * model);
-            c.shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-            c.shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+            shader->setMat4("MANA_M", model);
+            shader->setMat4("MANA_V", view);
+            shader->setMat4("MANA_P", projection);
+            shader->setMat4("MANA_MVP", projection * view * model);
+            shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
+            shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
+            RenderCommand c(*shader);
+            c.meshBuffers.emplace_back(command.meshBuffer);
+            c.textures = textures;
             ren.addCommand(c);
         }
 

@@ -43,10 +43,9 @@ namespace engine {
             return std::filesystem::exists(name);
         }
 
-        std::iostream *open(const std::string &path) override {
-            auto ret = new std::fstream(directory + "/" + path);
+        std::unique_ptr<std::iostream> open(const std::string &path) override {
+            auto ret = std::make_unique<std::fstream>(directory + "/" + path);
             if (!*ret) {
-                delete ret;
                 throw std::runtime_error("Failed to open file " + path);
             }
             return ret;

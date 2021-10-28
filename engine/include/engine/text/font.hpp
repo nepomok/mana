@@ -21,6 +21,7 @@
 #define MANA_FONT_HPP
 
 #include <istream>
+#include <memory>
 
 #include "engine/math/vector2.hpp"
 
@@ -38,7 +39,7 @@ namespace engine {
          * @param stream The stream pointing to the font data.
          * @return
          */
-        static Font *createFont(std::istream &stream);
+        static std::unique_ptr<Font> createFont(std::istream &stream);
 
         virtual ~Font() = default;
 

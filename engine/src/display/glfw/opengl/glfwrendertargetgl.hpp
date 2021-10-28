@@ -29,10 +29,7 @@ namespace engine {
     namespace glfw {
         class GLFWRenderTargetGL : public opengl::OGLRenderTarget {
         public:
-            GLFWwindow *wndH;
             Vec2i size;
-
-            explicit GLFWRenderTargetGL(GLFWwindow *wndH) : wndH(wndH) {}
 
             Vec2i getSize() override {
                 return size;

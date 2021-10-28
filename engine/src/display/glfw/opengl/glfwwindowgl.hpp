@@ -44,7 +44,8 @@ namespace engine {
             GLFWWindowGL(const std::string &title,
                          Vec2i size,
                          WindowAttributes attributes,
-                         GLFWMonitor &monitor);
+                         GLFWMonitor &monitor,
+                         VideoMode videoMode);
 
             ~GLFWWindowGL() override;
 
@@ -106,9 +107,9 @@ namespace engine {
 
             void setWindowOpacity(float opacity) override;
 
-            Monitor *getMonitor() override;
+            std::unique_ptr<Monitor> getMonitor() override;
 
-            void setMonitor(Monitor *monitor, Recti rect, int refreshRate) override;
+            void setMonitor(Monitor &monitor, Recti rect, int refreshRate) override;
 
             void setWindowed() override;
 
@@ -145,10 +146,10 @@ namespace engine {
         private:
             GLFWwindow *wndH;
 
-            GLFWInput *input;
+            std::unique_ptr<GLFWInput> input;
 
-            opengl::OGLRenderDevice *renderDevice;
-            GLFWRenderTargetGL *renderTarget;
+            std::unique_ptr<opengl::OGLRenderDevice> renderDevice;
+            std::unique_ptr<GLFWRenderTargetGL> renderTarget;
 
             std::set<WindowListener *> listeners;
         };

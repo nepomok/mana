@@ -28,16 +28,14 @@
 
 namespace engine {
     struct DeferredCommand {
-        DeferredCommand() : transform(), meshBuffer() {}
-
-        DeferredCommand(Transform t, RenderMaterial material, MeshBuffer *meshBuffer) : transform(t),
+        DeferredCommand(Transform t, RenderMaterial material, MeshBuffer &meshBuffer) : transform(t),
                                                                                         material(material),
                                                                                         meshBuffer(meshBuffer) {}
 
-        Transform transform; // The transform affects the View matrices provided to shaders via mana.hlsl
+        Transform transform;
 
         RenderMaterial material;
-        MeshBuffer *meshBuffer;
+        std::reference_wrapper<MeshBuffer> meshBuffer;
 
         bool outline = false;
         ColorRGBA outlineColor;

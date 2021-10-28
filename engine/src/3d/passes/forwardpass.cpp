@@ -23,11 +23,9 @@
 
 namespace engine {
     ForwardPass::ForwardPass(RenderDevice &device)
-            : device(device) {
+            : device(device) {}
 
-    }
-
-    ForwardPass::~ForwardPass() {}
+    ForwardPass::~ForwardPass() = default;
 
     void ForwardPass::prepareBuffer(GeometryBuffer &gBuffer) {
         gBuffer.addBuffer("forward", TextureBuffer::ColorFormat::RGBA);
@@ -56,7 +54,7 @@ namespace engine {
         for (auto &unit: scene.forward) {
             model = unit.transform.model();
 
-            ShaderProgram &shader = *unit.command.shader;
+            ShaderProgram &shader = unit.command.shader;
 
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);

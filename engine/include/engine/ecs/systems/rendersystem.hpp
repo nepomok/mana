@@ -46,7 +46,7 @@ namespace engine {
     public:
         RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
 
-        ~RenderSystem() override = default;
+        ~RenderSystem() override;
 
         void start(EntityManager &entityManager) override;
 
@@ -83,7 +83,7 @@ namespace engine {
 
         std::unique_ptr<Renderer3D> ren;
 
-        DebugPass *debugPass;
+        DebugPass *debugPass; //TODO: Design a better way of accessing passes in the renderer3d
 
         std::vector<Compositor::Layer> layers;
 

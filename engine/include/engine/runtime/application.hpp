@@ -27,8 +27,8 @@
 namespace engine {
     class Application {
     public:
-        explicit Application(int argc, char *argv[], Archive *archive)
-                : archive(archive), display() {
+        explicit Application(int argc, char *argv[], std::unique_ptr<Archive> archive)
+                : archive(std::move(archive)), display() {
             std::vector<std::string> args;
             for (int i = 0; i < argc; i++)
                 args.emplace_back(argv[i]);
@@ -60,9 +60,7 @@ namespace engine {
             window = display.createWindow(graphicsBackend);
         }
 
-        virtual ~Application() {
-            delete window;
-        }
+        virtual ~Application() = default;
 
         virtual int loop() {
             start();
@@ -82,8 +80,8 @@ namespace engine {
         DisplayManager display;
         ECS ecs;
 
-        Archive *archive = nullptr;
-        Window *window = nullptr;
+        std::unique_ptr<Archive> archive = nullptr;
+        std::unique_ptr<Window> window = nullptr;
 
         virtual void start() {}
 

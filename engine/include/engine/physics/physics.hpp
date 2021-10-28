@@ -23,6 +23,7 @@
 #include "engine/physics/2d/world2d.hpp"
 #include "engine/physics/3d/world3d.hpp"
 
+//TODO: Redesign physics engine abstraction
 namespace engine {
     namespace Physics {
         enum PhysicsBackend {

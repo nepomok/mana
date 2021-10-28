@@ -39,9 +39,9 @@ namespace engine {
 
         static const std::function<std::string(const char *)> &getShaderIncludeCallback();
 
-        Renderer3D() = default;
-
-        Renderer3D(RenderDevice &device, std::vector<RenderPass *> passes, std::vector<Compositor::Layer> layers);
+        Renderer3D(RenderDevice &device,
+                   std::vector<std::unique_ptr<RenderPass>> passes,
+                   std::vector<Compositor::Layer> layers);
 
         ~Renderer3D();
 
@@ -52,8 +52,8 @@ namespace engine {
         Compositor &getCompositor();
 
     private:
-        RenderDevice *device{};
-        std::vector<RenderPass *> passes;
+        RenderDevice &device;
+        std::vector<std::unique_ptr<RenderPass>> passes;
         GeometryBuffer geometryBuffer;
         Compositor compositor;
     };

@@ -28,20 +28,21 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderAllocator : public RenderAllocator, public QOpenGLFunctions_3_3_Core {
         public:
-            RenderTarget *createRenderTarget(Vec2i size, int samples) override;
+            std::unique_ptr<RenderTarget> createRenderTarget(Vec2i size, int samples) override;
 
-            TextureBuffer *createTextureBuffer(TextureBuffer::Attributes attributes) override;
+            std::unique_ptr<TextureBuffer> createTextureBuffer(TextureBuffer::Attributes attributes) override;
 
-            MeshBuffer *createMeshBuffer(const Mesh &mesh) override;
+            std::unique_ptr<MeshBuffer> createMeshBuffer(const Mesh &mesh) override;
 
-            MeshBuffer *createInstancedMeshBuffer(const Mesh &mesh, const std::vector<Transform> &offsets) override;
+            std::unique_ptr<MeshBuffer> createInstancedMeshBuffer(const Mesh &mesh,
+                                                                  const std::vector<Transform> &offsets) override;
 
-            ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
-                                               const ShaderSource &fragmentShader) override;
+            std::unique_ptr<ShaderProgram> createShaderProgram(const ShaderSource &vertexShader,
+                                                               const ShaderSource &fragmentShader) override;
 
-            ShaderProgram *createShaderProgram(const ShaderSource &vertexShader,
-                                               const ShaderSource &geometryShader,
-                                               const ShaderSource &fragmentShader) override;
+            std::unique_ptr<ShaderProgram> createShaderProgram(const ShaderSource &vertexShader,
+                                                               const ShaderSource &geometryShader,
+                                                               const ShaderSource &fragmentShader) override;
         };
     }
 }

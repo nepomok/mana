@@ -37,9 +37,9 @@ namespace engine {
 
         AudioListener &getListener() override;
 
-        AudioBuffer *createBuffer() override;
+        std::unique_ptr<AudioBuffer> createBuffer() override;
 
-        AudioSource *createSource() override;
+        std::unique_ptr<AudioSource> createSource() override;
 
         const ALCcontext *getContext();
 

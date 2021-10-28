@@ -22,7 +22,7 @@
 #include "text/freetype/ftfont.hpp"
 
 namespace engine {
-    Font *Font::createFont(std::istream &stream) {
-        return new FTFont(stream);
+    std::unique_ptr<Font> Font::createFont(std::istream &stream) {
+        return std::make_unique<FTFont>(stream);
     }
 }

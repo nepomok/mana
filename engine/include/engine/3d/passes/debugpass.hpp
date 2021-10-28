@@ -39,9 +39,10 @@ namespace engine {
 
     private:
         RenderDevice &device;
-        ShaderProgram *shader;
-        ShaderProgram *shaderLight;
-        MeshBuffer *meshBuffer;
+
+        std::unique_ptr<ShaderProgram> shader;
+        std::unique_ptr<ShaderProgram> shaderLight;
+        std::unique_ptr<MeshBuffer> meshBuffer;
 
         bool drawNormals = false;
         bool drawLights = false;

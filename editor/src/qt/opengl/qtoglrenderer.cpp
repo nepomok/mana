@@ -107,21 +107,13 @@ namespace engine {
         void QtOGLRenderer::addCommand(RenderCommand &command) {
             //Bind textures
             for (int i = 0; i < command.textures.size(); i++) {
-                auto *textureObject = command.textures.at(i);
-                if (textureObject == nullptr) {
-                    throw std::runtime_error("nullptr texture");
-                }
-                auto &texture = dynamic_cast<const QtOGLTextureBuffer &>(*textureObject);
+                auto &texture = dynamic_cast<const QtOGLTextureBuffer &>(command.textures.at(i).get());
                 glActiveTexture(getTextureSlot(i));
                 glBindTexture(QtOGLTypeConverter::convert(texture.getAttributes().textureType), texture.handle);
             }
 
             //Bind shader program
-            ShaderProgram *sp = command.shader;
-            if (sp == nullptr) {
-                throw std::runtime_error("nullptr shaderprogram");
-            }
-            auto &shader = dynamic_cast<QtOGLShaderProgram &>(*sp);
+            auto &shader = dynamic_cast<QtOGLShaderProgram &>(command.shader.get());
             shader.activate();
 
             glDepthFunc(QtOGLTypeConverter::convert(command.properties.depthTestMode));
@@ -173,11 +165,8 @@ namespace engine {
             }
 
             //Bind VAOs and draw.
-            for (auto *meshBuffer : command.meshBuffers) {
-                if (meshBuffer == nullptr) {
-                    throw std::runtime_error("nullptr mesh");
-                }
-                auto &mesh = dynamic_cast<const QtOGLMeshBuffer &>(*meshBuffer);
+            for (auto meshBuffer : command.meshBuffers) {
+                auto &mesh = dynamic_cast<const QtOGLMeshBuffer &>(meshBuffer.get());
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {
                     if (mesh.instanced)

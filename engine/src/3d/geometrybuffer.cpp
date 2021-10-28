@@ -20,7 +20,7 @@
 #include "engine/3d/geometrybuffer.hpp"
 
 namespace engine {
-    GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(&allocator), size(size) {
+    GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(allocator), size(size) {
         renderTarget = allocator.createRenderTarget(size, 0);
 
         const Mesh quadMesh(Mesh::TRI,
@@ -38,8 +38,6 @@ namespace engine {
 
     GeometryBuffer::~GeometryBuffer() {
         renderTarget->detachDepthStencil();
-        delete renderTarget;
-        delete screenQuad;
     }
 
     void GeometryBuffer::setSize(const Vec2i &s) {
@@ -57,17 +55,15 @@ namespace engine {
             TextureBuffer::Attributes attr;
             attr.size = size;
             attr.format = formats.at(buf.first);
-            buf.second = std::unique_ptr<TextureBuffer>(renderAllocator->createTextureBuffer(attr));
+            buf.second = renderAllocator.createTextureBuffer(attr);
         }
 
-        delete renderTarget;
-
-        renderTarget = renderAllocator->createRenderTarget(size, 0);
+        renderTarget = renderAllocator.createRenderTarget(size, 0);
 
         if (!currentDepthStencil.empty())
             renderTarget->attachDepthStencil(*buffers.at(currentDepthStencil));
 
-        renderTarget->setNumberOfColorAttachments(currentColor.size());
+        renderTarget->setNumberOfColorAttachments(static_cast<int>(currentColor.size()));
         for (int i = 0; i < currentColor.size(); i++) {
             renderTarget->attachColor(i, *buffers.at(currentColor.at(i)));
         }
@@ -93,7 +89,7 @@ namespace engine {
         TextureBuffer::Attributes attr;
         attr.size = size;
         attr.format = format;
-        buffers[name] = std::unique_ptr<TextureBuffer>(renderAllocator->createTextureBuffer(attr));
+        buffers[name] = renderAllocator.createTextureBuffer(attr);
         formats[name] = format;
     }
 
@@ -104,7 +100,7 @@ namespace engine {
     void GeometryBuffer::attachColor(const std::vector<std::string> &attachments) {
         for (int i = 0; i < currentColor.size(); i++)
             renderTarget->detachColor(i);
-        renderTarget->setNumberOfColorAttachments(attachments.size());
+        renderTarget->setNumberOfColorAttachments(static_cast<int>(attachments.size()));
         for (int i = 0; i < attachments.size(); i++)
             renderTarget->attachColor(i, *buffers.at(attachments.at(i)));
         currentColor = attachments;

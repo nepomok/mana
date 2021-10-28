@@ -33,17 +33,17 @@ using namespace engine;
 class SampleApplication : public Application, InputListener {
 public:
     SampleApplication(int argc, char *argv[])
-            : Application(argc, argv, new DirectoryArchive(std::filesystem::current_path().string())) {}
+            : Application(argc, argv, std::make_unique<DirectoryArchive>(std::filesystem::current_path().string())) {}
 
     ~SampleApplication() override = default;
 
 protected:
     void start() override {
-        // window->setSwapInterval(1);
+        window->setSwapInterval(1);
 
-        archive = new DirectoryArchive(std::filesystem::current_path().c_str());
-        //Move is required because the ECS destructor deletes the system pointers.
         renderSystem = new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive);
+
+        //Move is required because the ECS destructor deletes the system pointers.
         ecs = std::move(ECS(
                 {
                         new PlayerInputSystem(window->getInput()),
@@ -54,33 +54,29 @@ protected:
 
         auto &device = window->getRenderDevice();
 
-        auto *stream = archive->open("assets/fonts/roboto/Roboto-Regular.ttf");
-        Font *font = Font::createFont(*stream);
+        auto stream = archive->open("assets/fonts/roboto/Roboto-Regular.ttf");
+        auto font = Font::createFont(*stream);
         font->setPixelSize({0, 30});
-        characters = std::move(font->renderAscii());
-        delete font;
-        delete stream;
+        characters = font->renderAscii();
 
         for (auto &p: characters) {
-            textures[p.first] = device.getAllocator().createTextureBuffer({})->upload(p.second.image);
+            textures[p.first] = device.getAllocator().createTextureBuffer({});
+            textures[p.first]->upload(p.second.image);
         }
 
         texture = device.getAllocator().createTextureBuffer({});
         texture->upload(AssetImporter::import("assets/images/smiley_2.png", *archive).getImage());
 
-        ren2d = Renderer2D(device);
+        ren2d = std::make_unique<Renderer2D>(device);
 
-        auto *assemblyStream = archive->open("Newtonsoft.Json.dll");
-        jsonAssembly = domain.loadAssembly(*assemblyStream);
-        delete assemblyStream;
+        stream = archive->open("Newtonsoft.Json.dll");
+        jsonAssembly = domain.loadAssembly(*stream);
 
-        assemblyStream = archive->open("mana.dll");
-        manaAssembly = domain.loadAssembly(*assemblyStream);
-        delete assemblyStream;
+        stream = archive->open("mana.dll");
+        manaAssembly = domain.loadAssembly(*stream);
 
-        auto *sceneStream = archive->open("assets/scene.json");
-        ecs.getEntityManager() << JsonProtocol().deserialize(*sceneStream);
-        delete sceneStream;
+        stream = archive->open("assets/scene.json");
+        ecs.getEntityManager() << JsonProtocol().deserialize(*stream);
 
         auto &entityManager = ecs.getEntityManager();
         auto &componentManager = entityManager.getComponentManager();
@@ -118,15 +114,6 @@ protected:
         ecs.stop();
         ecs = ECS();//TODO: ECS Systems clear set
 
-        delete archive;
-
-        delete manaAssembly;
-        delete jsonAssembly;
-        delete texture;
-
-        for (auto &p: textures)
-            delete p.second;
-
         characters.clear();
         textures.clear();
 
@@ -155,17 +142,17 @@ protected:
 
         ecs.update(deltaTime);
 
-        ren2d.renderBegin(wnd.getRenderTarget(), false);
-        ren2d.draw(Rectf({150, 300}, {100, 100}), *texture);
+        ren2d->renderBegin(wnd.getRenderTarget(), false);
+        ren2d->draw(Rectf({150, 300}, {100, 100}), *texture);
 
         auto str = std::to_string(fpsAverage);
-        ren2d.draw(Vec2f(10, 10 + Character::getMetrics(str, characters).position.y),
+        ren2d->draw(Vec2f(10, 10 + Character::getMetrics(str, characters).position.y),
                    str,
                    {255, 255, 255, 255},
                    characters,
                    textures);
 
-        ren2d.renderPresent();
+        ren2d->renderPresent();
 
         window->swapBuffers();
     }
@@ -184,18 +171,18 @@ private:
     void onKeyUp(Key key) override {}
 
 private:
-    Renderer2D ren2d;
+    std::unique_ptr<Renderer2D> ren2d;
 
     MonoCppDomain domain;
-    MonoCppAssembly *manaAssembly = nullptr;
-    MonoCppAssembly *jsonAssembly = nullptr;
+    std::unique_ptr<MonoCppAssembly> manaAssembly = nullptr;
+    std::unique_ptr<MonoCppAssembly> jsonAssembly = nullptr;
 
     Entity cameraEntity;
-    TextureBuffer *texture = nullptr;
+    std::unique_ptr<TextureBuffer> texture = nullptr;
     double fpsAverage = 1;
 
     std::map<char, Character> characters;
-    std::map<char, TextureBuffer *> textures;
+    std::map<char, std::unique_ptr<TextureBuffer>> textures;
 
     RenderSystem *renderSystem;
 

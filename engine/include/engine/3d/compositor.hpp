@@ -31,6 +31,19 @@ namespace engine {
     class Compositor {
     public:
         struct Layer {
+            Layer(std::vector<std::string> color,
+                  std::string depth,
+                  DepthTestMode depthTestMode = DEPTH_TEST_LESS,
+                  BlendMode colorBlendModeSource = SRC_ALPHA,
+                  BlendMode colorBlendModeDest = ONE_MINUS_SRC_ALPHA)
+                    : color(std::move(color)),
+                      depth(std::move(depth)),
+                      depthTestMode(depthTestMode),
+                      colorBlendModeSource(colorBlendModeSource),
+                      colorBlendModeDest(colorBlendModeDest) {}
+
+            Layer(const Layer &other) = default;
+
             // The names of the color textures in the geometry buffer
             std::vector<std::string> color;
 
@@ -45,13 +58,11 @@ namespace engine {
             BlendMode colorBlendModeDest = ONE_MINUS_SRC_ALPHA;
         };
 
-        Compositor() = default;
-
-        explicit Compositor(RenderDevice *device);
-
-        Compositor(RenderDevice *device, std::vector<Layer> layers);
+        Compositor(RenderDevice &device, std::vector<Layer> layers);
 
         std::vector<Layer> &getLayers();
+
+        void setLayers(std::vector<Layer> &layers);
 
         void setClearColor(ColorRGB color);
 
@@ -65,7 +76,7 @@ namespace engine {
                        const Layer &layer);
 
         ColorRGB clearColor{0, 0, 0};
-        RenderDevice *device{};
+        RenderDevice &device;
         std::vector<Layer> layers;
         std::unique_ptr<ShaderProgram> shader;
     };

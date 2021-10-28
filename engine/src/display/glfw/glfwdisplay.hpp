@@ -22,72 +22,56 @@
 
 namespace engine {
     namespace glfw {
-        Monitor *getPrimaryMonitor() {
-            auto *mon = new GLFWMonitor();
-            mon->monH = glfwGetPrimaryMonitor();
-            return dynamic_cast<Monitor *>(mon);
+        std::unique_ptr<Monitor> getPrimaryMonitor() {
+            return std::make_unique<GLFWMonitor>(glfwGetPrimaryMonitor());
         }
 
-        std::set<Monitor *> getMonitors() {
-            std::set<Monitor *> ret;
+        std::set<std::unique_ptr<Monitor>> getMonitors() {
+            std::set<std::unique_ptr<Monitor>> ret;
 
             int count;
             GLFWmonitor **monitors = glfwGetMonitors(&count);
             for (int i = 0; i < count; i++) {
-                auto *mon = new GLFWMonitor();
-                mon->monH = monitors[i];
-                ret.insert(dynamic_cast<Monitor *>(mon));
+                ret.insert(std::make_unique<GLFWMonitor>(monitors[i]));
             }
 
             return ret;
         }
 
-        Window *createWindow(GraphicsBackend api) {
-            Window *ret;
+        std::unique_ptr<Window> createWindow(GraphicsBackend api) {
             switch (api) {
                 case OPENGL_4_6:
-                    ret = dynamic_cast<Window *>(new GLFWWindowGL("Window GLFW", Vec2i(600, 300),
-                                                                  WindowAttributes()));
-                    break;
+                    return std::make_unique<GLFWWindowGL>("Window GLFW", Vec2i(600, 300), WindowAttributes());
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }
-            return ret;
         }
 
-        Window *createWindow(GraphicsBackend api,
-                             std::string title,
-                             Vec2i size,
-                             WindowAttributes attributes) {
-            Window *ret;
+        std::unique_ptr<Window> createWindow(GraphicsBackend api,
+                                             const std::string &title,
+                                             Vec2i size,
+                                             WindowAttributes attributes) {
             switch (api) {
                 case OPENGL_4_6:
-                    ret = dynamic_cast<Window *>(new GLFWWindowGL(title, size, attributes));
-                    break;
+                    return std::make_unique<GLFWWindowGL>(title, size, attributes);
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }
-            return ret;
         }
 
-        Window *createWindow(GraphicsBackend api,
-                             std::string title,
-                             Vec2i size,
-                             WindowAttributes attributes,
-                             Monitor &monitor,
-                             VideoMode mode) {
-            Window *ret;
+        std::unique_ptr<Window> createWindow(GraphicsBackend api,
+                                             const std::string &title,
+                                             Vec2i size,
+                                             WindowAttributes attributes,
+                                             Monitor &monitor,
+                                             VideoMode mode) {
             switch (api) {
                 case OPENGL_4_6:
-                    ret = dynamic_cast<Window *>(new GLFWWindowGL(title,
-                                                                  size,
-                                                                  attributes,
-                                                                  dynamic_cast<GLFWMonitor &>(monitor)));
-                    break;
+                    return std::make_unique<GLFWWindowGL>(title, size, attributes, dynamic_cast<GLFWMonitor &>(monitor),
+                                                          mode);
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }
-            return ret;
         }
     }
 }
