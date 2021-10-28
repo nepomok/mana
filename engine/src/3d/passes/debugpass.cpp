@@ -25,6 +25,7 @@
 
 #include "engine/math/rotation.hpp"
 
+//TODO: Fix tangent space to local space texture normal transformation
 static const char *SHADER_VERT = R"###(#version 460 core
 
 layout (location = 0) in vec3 position;

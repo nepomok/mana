@@ -26,6 +26,7 @@
 
 #include "engine/text/character.hpp"
 
+//TODO: Design text metrics / formatting abstraction
 namespace engine {
     class Font {
     public:

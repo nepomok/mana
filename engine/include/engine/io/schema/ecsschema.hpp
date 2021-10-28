@@ -26,6 +26,7 @@
 #include "engine/ecs/entitymanager.hpp"
 
 namespace engine {
+    //TODO: Design better schema generation method
     CameraType &operator<<(CameraType &value, const Message &message);
 
     Message &operator<<(Message &message, CameraType type);
