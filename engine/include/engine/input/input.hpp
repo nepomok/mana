@@ -20,26 +20,40 @@
 #ifndef MANA_INPUT_HPP
 #define MANA_INPUT_HPP
 
-#include "engine/input/key.hpp"
-#include "engine/input/mouse.hpp"
 #include "engine/input/inputlistener.hpp"
+
+#include "engine/asset/image.hpp"
 
 namespace engine {
     class Input {
     public:
         virtual ~Input() = default;
 
-        virtual bool getKeyDown(Key key) = 0;
+        virtual void addListener(InputListener &listener) = 0;
 
-        virtual Mouse getMouse() = 0;
-
-        virtual void registerListener(InputListener &listener) = 0;
-
-        virtual void unregisterListener(InputListener &listener) = 0;
+        virtual void removeListener(InputListener &listener) = 0;
 
         virtual void setClipboardText(std::string text) = 0;
 
         virtual std::string getClipboardText() = 0;
+
+        virtual void setMouseCursorImage(const Image<ColorRGBA> &image) = 0;
+
+        virtual void clearMouseCursorImage() = 0;
+
+        virtual bool getKey(keyboard::Key key) = 0;
+
+        virtual bool getMouseButton(mouse::Button button) = 0;
+
+        virtual Vec2d getMousePosition() = 0;
+
+        virtual std::set<int> getGamepads() = 0;
+
+        virtual std::string getGamepadName(int id) = 0;
+
+        virtual float getGamepadAxis(int id, gamepad::Axis axis) = 0;
+
+        virtual bool getGamepadButton(int id, gamepad::Button button) = 0;
     };
 }
 

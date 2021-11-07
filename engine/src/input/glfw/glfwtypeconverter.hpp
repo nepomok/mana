@@ -21,18 +21,361 @@
 #define MANA_GLFWTYPECONVERTER_HPP
 
 #include <stdexcept>
+
 #include <GLFW/glfw3.h>
 
-#include "engine/input/key.hpp"
+#include "engine/input/device/gamepad.hpp"
+#include "engine/input/device/keyboard.hpp"
+#include "engine/input/device/mouse.hpp"
+
+using namespace engine::gamepad;
+using namespace engine::keyboard;
+using namespace engine::mouse;
 
 namespace engine {
     class GLFWTypeConverter {
     public:
-        static int convertKey(Key key) {
-            throw std::runtime_error("Not Implemented");
+        static int convertMouseKey(mouse::Button key) {
+            switch (key) {
+                case LEFT:
+                    return GLFW_MOUSE_BUTTON_LEFT;
+                case MIDDLE:
+                    return GLFW_MOUSE_BUTTON_MIDDLE;
+                case RIGHT:
+                    return GLFW_MOUSE_BUTTON_RIGHT;
+                case OPTIONAL_1:
+                    return GLFW_MOUSE_BUTTON_1;
+                case OPTIONAL_2:
+                    return GLFW_MOUSE_BUTTON_2;
+                case OPTIONAL_3:
+                    return GLFW_MOUSE_BUTTON_3;
+                case OPTIONAL_4:
+                    return GLFW_MOUSE_BUTTON_4;
+                case OPTIONAL_5:
+                    return GLFW_MOUSE_BUTTON_5;
+                default:
+                    throw std::runtime_error("Cannot convert key code " + std::to_string(key));
+            }
         }
 
-        static Key convertKey(int key) {
+        static mouse::Button convertMouseKey(int key) {
+            switch (key) {
+                case GLFW_MOUSE_BUTTON_LEFT:
+                    return LEFT;
+                case GLFW_MOUSE_BUTTON_MIDDLE:
+                    return MIDDLE;
+                case GLFW_MOUSE_BUTTON_RIGHT:
+                    return RIGHT;
+                case GLFW_MOUSE_BUTTON_4:
+                    return OPTIONAL_1;
+                case GLFW_MOUSE_BUTTON_5:
+                    return OPTIONAL_2;
+                case GLFW_MOUSE_BUTTON_6:
+                    return OPTIONAL_3;
+                case GLFW_MOUSE_BUTTON_7:
+                    return OPTIONAL_4;
+                case GLFW_MOUSE_BUTTON_8:
+                    return OPTIONAL_5;
+                default:
+                    return mouse::BUTTON_UNDEFINED;
+            }
+        }
+
+        static int convertGamepadButton(gamepad::Button key) {
+            switch (key) {
+                case A:
+                    return GLFW_GAMEPAD_BUTTON_A;
+                case B:
+                    return GLFW_GAMEPAD_BUTTON_B;
+                case X:
+                    return GLFW_GAMEPAD_BUTTON_X;
+                case Y:
+                    return GLFW_GAMEPAD_BUTTON_Y;
+                case BUMPER_LEFT:
+                    return GLFW_GAMEPAD_BUTTON_LEFT_BUMPER;
+                case BUMPER_RIGHT:
+                    return GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER;
+                case BACK:
+                    return GLFW_GAMEPAD_BUTTON_BACK;
+                case START:
+                    return GLFW_GAMEPAD_BUTTON_START;
+                case GUIDE:
+                    return GLFW_GAMEPAD_BUTTON_GUIDE;
+                case LEFT_STICK:
+                    return GLFW_GAMEPAD_BUTTON_LEFT_THUMB;
+                case RIGHT_STICK:
+                    return GLFW_GAMEPAD_BUTTON_RIGHT_THUMB;
+                case DPAD_UP:
+                    return GLFW_GAMEPAD_BUTTON_DPAD_UP;
+                case DPAD_RIGHT:
+                    return GLFW_GAMEPAD_BUTTON_DPAD_RIGHT;
+                case DPADP_LEFT:
+                    return GLFW_GAMEPAD_BUTTON_DPAD_LEFT;
+                default:
+                    throw std::runtime_error("Cannot convert gamepad key code " + std::to_string(key));
+            }
+        }
+
+        static gamepad::Button convertGamepadKey(int key) {
+            switch (key) {
+                case GLFW_GAMEPAD_BUTTON_A:
+                    return A;
+                case GLFW_GAMEPAD_BUTTON_B:
+                    return B;
+                case GLFW_GAMEPAD_BUTTON_X:
+                    return X;
+                case GLFW_GAMEPAD_BUTTON_Y:
+                    return Y;
+                case GLFW_GAMEPAD_BUTTON_LEFT_BUMPER:
+                    return BUMPER_LEFT;
+                case GLFW_GAMEPAD_BUTTON_RIGHT_BUMPER:
+                    return BUMPER_RIGHT;
+                case GLFW_GAMEPAD_BUTTON_BACK:
+                    return BACK;
+                case GLFW_GAMEPAD_BUTTON_START:
+                    return START;
+                case GLFW_GAMEPAD_BUTTON_GUIDE:
+                    return GUIDE;
+                case GLFW_GAMEPAD_BUTTON_LEFT_THUMB:
+                    return LEFT_STICK;
+                case GLFW_GAMEPAD_BUTTON_RIGHT_THUMB:
+                    return RIGHT_STICK;
+                case GLFW_GAMEPAD_BUTTON_DPAD_UP:
+                    return DPAD_UP;
+                case GLFW_GAMEPAD_BUTTON_DPAD_RIGHT:
+                    return DPAD_RIGHT;
+                case GLFW_GAMEPAD_BUTTON_DPAD_LEFT:
+                    return DPADP_LEFT;
+                default:
+                    return gamepad::BUTTON_UNDEFINED;
+            }
+        }
+
+        static int convertGamepadAxis(gamepad::Axis axis) {
+            switch (axis) {
+                case LEFT_X:
+                    return GLFW_GAMEPAD_AXIS_LEFT_X;
+                case LEFT_Y:
+                    return GLFW_GAMEPAD_AXIS_LEFT_Y;
+                case RIGHT_X:
+                    return GLFW_GAMEPAD_AXIS_RIGHT_X;
+                case RIGHT_Y:
+                    return GLFW_GAMEPAD_AXIS_RIGHT_Y;
+                case TRIGGER_LEFT:
+                    return GLFW_GAMEPAD_AXIS_LEFT_TRIGGER;
+                case TRIGGER_RIGHT:
+                    return GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER;
+                default:
+                    throw std::runtime_error("Cannot convert axis code " + std::to_string(axis));
+            }
+        }
+
+        static gamepad::Axis convertGamepadAxis(int axis) {
+            switch (axis) {
+                case GLFW_GAMEPAD_AXIS_LEFT_X:
+                    return LEFT_X;
+                case GLFW_GAMEPAD_AXIS_LEFT_Y:
+                    return LEFT_Y;
+                case GLFW_GAMEPAD_AXIS_RIGHT_X:
+                    return RIGHT_X;
+                case GLFW_GAMEPAD_AXIS_RIGHT_Y:
+                    return RIGHT_Y;
+                case GLFW_GAMEPAD_AXIS_LEFT_TRIGGER:
+                    return TRIGGER_LEFT;
+                case GLFW_GAMEPAD_AXIS_RIGHT_TRIGGER:
+                    return TRIGGER_RIGHT;
+                default:
+                    return AXIS_UNDEFINED;
+            }
+        }
+
+        static int convertKey(keyboard::Key key) {
+            switch (key) {
+                case keyboard::KEY_RETURN:
+                    return GLFW_KEY_ENTER;
+                case keyboard::KEY_ESCAPE:
+                    return GLFW_KEY_ESCAPE;
+                case keyboard::KEY_BACKSPACE:
+                    return GLFW_KEY_BACKSPACE;
+                case keyboard::KEY_TAB:
+                    return GLFW_KEY_TAB;
+                case keyboard::KEY_SPACE:
+                    return GLFW_KEY_SPACE;
+                case keyboard::KEY_0:
+                    return GLFW_KEY_0;
+                case keyboard::KEY_1:
+                    return GLFW_KEY_1;
+                case keyboard::KEY_2:
+                    return GLFW_KEY_2;
+                case keyboard::KEY_3:
+                    return GLFW_KEY_3;
+                case keyboard::KEY_4:
+                    return GLFW_KEY_4;
+                case keyboard::KEY_5:
+                    return GLFW_KEY_5;
+                case keyboard::KEY_6:
+                    return GLFW_KEY_6;
+                case keyboard::KEY_7:
+                    return GLFW_KEY_7;
+                case keyboard::KEY_8:
+                    return GLFW_KEY_8;
+                case keyboard::KEY_9:
+                    return GLFW_KEY_9;
+                case keyboard::KEY_A:
+                    return GLFW_KEY_A;
+                case keyboard::KEY_B:
+                    return GLFW_KEY_B;
+                case keyboard::KEY_C:
+                    return GLFW_KEY_C;
+                case keyboard::KEY_D:
+                    return GLFW_KEY_D;
+                case keyboard::KEY_E:
+                    return GLFW_KEY_E;
+                case keyboard::KEY_F:
+                    return GLFW_KEY_F;
+                case keyboard::KEY_G:
+                    return GLFW_KEY_G;
+                case keyboard::KEY_H:
+                    return GLFW_KEY_H;
+                case keyboard::KEY_I:
+                    return GLFW_KEY_I;
+                case keyboard::KEY_J:
+                    return GLFW_KEY_J;
+                case keyboard::KEY_K:
+                    return GLFW_KEY_K;
+                case keyboard::KEY_L:
+                    return GLFW_KEY_L;
+                case keyboard::KEY_M:
+                    return GLFW_KEY_M;
+                case keyboard::KEY_N:
+                    return GLFW_KEY_N;
+                case keyboard::KEY_O:
+                    return GLFW_KEY_O;
+                case keyboard::KEY_P:
+                    return GLFW_KEY_P;
+                case keyboard::KEY_Q:
+                    return GLFW_KEY_Q;
+                case keyboard::KEY_R:
+                    return GLFW_KEY_R;
+                case keyboard::KEY_S:
+                    return GLFW_KEY_S;
+                case keyboard::KEY_T:
+                    return GLFW_KEY_T;
+                case keyboard::KEY_U:
+                    return GLFW_KEY_U;
+                case keyboard::KEY_V:
+                    return GLFW_KEY_V;
+                case keyboard::KEY_W:
+                    return GLFW_KEY_W;
+                case keyboard::KEY_X:
+                    return GLFW_KEY_X;
+                case keyboard::KEY_Y:
+                    return GLFW_KEY_Y;
+                case keyboard::KEY_Z:
+                    return GLFW_KEY_Z;
+                case keyboard::KEY_CAPSLOCK:
+                    return GLFW_KEY_CAPS_LOCK;
+                case keyboard::KEY_F1:
+                    return GLFW_KEY_F1;
+                case keyboard::KEY_F2:
+                    return GLFW_KEY_F2;
+                case keyboard::KEY_F3:
+                    return GLFW_KEY_F3;
+                case keyboard::KEY_F4:
+                    return GLFW_KEY_F4;
+                case keyboard::KEY_F5:
+                    return GLFW_KEY_F5;
+                case keyboard::KEY_F6:
+                    return GLFW_KEY_F6;
+                case keyboard::KEY_F7:
+                    return GLFW_KEY_F7;
+                case keyboard::KEY_F8:
+                    return GLFW_KEY_F8;
+                case keyboard::KEY_F9:
+                    return GLFW_KEY_F9;
+                case keyboard::KEY_F10:
+                    return GLFW_KEY_F10;
+                case keyboard::KEY_F11:
+                    return GLFW_KEY_F11;
+                case keyboard::KEY_F12:
+                    return GLFW_KEY_F12;
+                case keyboard::KEY_PRINTSCREEN:
+                    return GLFW_KEY_PRINT_SCREEN;
+                case keyboard::KEY_SCROLLLOCK:
+                    return GLFW_KEY_SCROLL_LOCK;
+                case keyboard::KEY_PAUSE:
+                    return GLFW_KEY_PAUSE;
+                case keyboard::KEY_INSERT:
+                    return GLFW_KEY_INSERT;
+                case keyboard::KEY_HOME:
+                    return GLFW_KEY_HOME;
+                case keyboard::KEY_PAGEUP:
+                    return GLFW_KEY_PAGE_UP;
+                case keyboard::KEY_PAGEDOWN:
+                    return GLFW_KEY_PAGE_DOWN;
+                case keyboard::KEY_DELETE:
+                    return GLFW_KEY_DELETE;
+                case keyboard::KEY_END:
+                    return GLFW_KEY_END;
+                case keyboard::KEY_UP:
+                    return GLFW_KEY_UP;
+                case keyboard::KEY_DOWN:
+                    return GLFW_KEY_DOWN;
+                case keyboard::KEY_LEFT:
+                    return GLFW_KEY_LEFT;
+                case keyboard::KEY_RIGHT:
+                    return GLFW_KEY_RIGHT;
+                case keyboard::KEY_KP_DIVIDE:
+                    return GLFW_KEY_KP_DIVIDE;
+                case keyboard::KEY_KP_MULTIPLY:
+                    return GLFW_KEY_KP_MULTIPLY;
+                case keyboard::KEY_KP_MINUS:
+                    return GLFW_KEY_KP_SUBTRACT;
+                case keyboard::KEY_KP_PLUS:
+                    return GLFW_KEY_KP_ADD;
+                case keyboard::KEY_KP_ENTER:
+                    return GLFW_KEY_KP_ENTER;
+                case keyboard::KEY_KP_0:
+                    return GLFW_KEY_KP_0;
+                case keyboard::KEY_KP_1:
+                    return GLFW_KEY_KP_1;
+                case keyboard::KEY_KP_2:
+                    return GLFW_KEY_KP_2;
+                case keyboard::KEY_KP_3:
+                    return GLFW_KEY_KP_3;
+                case keyboard::KEY_KP_4:
+                    return GLFW_KEY_KP_4;
+                case keyboard::KEY_KP_5:
+                    return GLFW_KEY_KP_5;
+                case keyboard::KEY_KP_6:
+                    return GLFW_KEY_KP_6;
+                case keyboard::KEY_KP_7:
+                    return GLFW_KEY_KP_7;
+                case keyboard::KEY_KP_8:
+                    return GLFW_KEY_KP_8;
+                case keyboard::KEY_KP_9:
+                    return GLFW_KEY_KP_9;
+                case keyboard::KEY_KP_PERIOD:
+                    return GLFW_KEY_KP_DECIMAL;
+                case keyboard::KEY_LCTRL:
+                    return GLFW_KEY_LEFT_CONTROL;
+                case keyboard::KEY_LSHIFT:
+                    return GLFW_KEY_LEFT_SHIFT;
+                case keyboard::KEY_LALT:
+                    return GLFW_KEY_LEFT_ALT;
+                case keyboard::KEY_RCTRL:
+                    return GLFW_KEY_RIGHT_CONTROL;
+                case keyboard::KEY_RSHIFT:
+                    return GLFW_KEY_RIGHT_SHIFT;
+                case keyboard::KEY_RALT:
+                    return GLFW_KEY_RIGHT_ALT;
+                case keyboard::KEY_UNDEFINED:
+                default:
+                    throw std::runtime_error("Cannot convert key code " + std::to_string(key));
+            }
+        }
+
+        static keyboard::Key convertKey(int key) {
             switch (key) {
                 case GLFW_KEY_ENTER:
                     return KEY_RETURN;
@@ -44,7 +387,6 @@ namespace engine {
                     return KEY_TAB;
                 case GLFW_KEY_SPACE:
                     return KEY_SPACE;
-
                 case GLFW_KEY_0:
                     return KEY_0;
                 case GLFW_KEY_1:
@@ -219,8 +561,10 @@ namespace engine {
                     return KEY_RSHIFT;
                 case GLFW_KEY_RIGHT_ALT:
                     return KEY_RALT;
+
+                default:
+                    return KEY_UNDEFINED;
             }
-            return KEY_UNKNOWN;
         }
     };
 }

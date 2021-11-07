@@ -19,15 +19,18 @@
 
 #include <map>
 #include <stdexcept>
+#include <mutex>
 
 #include "glfwinput.hpp"
 
 #include "glfwtypeconverter.hpp"
 
 namespace engine {
+    std::mutex windowMappingMutex;
     std::map<GLFWwindow *, GLFWInput *> windowMapping;
 
     void glfwKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods) {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
         if (windowMapping.find(window) != windowMapping.end()) {
             windowMapping[window]->glfwKeyCallback(key, scancode, action, mods);
         } else {
@@ -36,6 +39,7 @@ namespace engine {
     }
 
     void glfwCursorCallback(GLFWwindow *window, double xpos, double ypos) {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
         if (windowMapping.find(window) != windowMapping.end()) {
             windowMapping[window]->glfwCursorCallback(xpos, ypos);
         } else {
@@ -44,6 +48,7 @@ namespace engine {
     }
 
     void glfwMouseKeyCallback(GLFWwindow *window, int button, int action, int mods) {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
         if (windowMapping.find(window) != windowMapping.end()) {
             windowMapping[window]->glfwMouseKeyCallback(button, action, mods);
         } else {
@@ -51,22 +56,32 @@ namespace engine {
         }
     }
 
+    void glfwJoystickCallback(int jid, int event) {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
+        for (auto &pair: windowMapping) {
+            pair.second->glfwJoystickCallback(jid, event);
+        }
+    }
+
     GLFWInput::GLFWInput(GLFWwindow &wndH) : wndH(wndH) {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
         windowMapping[&wndH] = this;
+
         glfwSetKeyCallback(&wndH, engine::glfwKeyCallback);
         glfwSetCursorPosCallback(&wndH, engine::glfwCursorCallback);
         glfwSetMouseButtonCallback(&wndH, engine::glfwMouseKeyCallback);
+        glfwSetJoystickCallback(engine::glfwJoystickCallback);
     }
 
     GLFWInput::~GLFWInput() {
+        std::lock_guard<std::mutex> guard(windowMappingMutex);
         windowMapping.erase(&wndH);
     }
 
     void GLFWInput::glfwKeyCallback(int key, int scancode, int action, int mods) {
-        Key k = GLFWTypeConverter::convertKey(key);
+        keyboard::Key k = GLFWTypeConverter::convertKey(key);
         bool kd = action != GLFW_RELEASE;
-        keys[k] = kd;
-        for (auto listener : listeners) {
+        for (auto listener: listeners) {
             if (kd)
                 listener->onKeyDown(k);
             else
@@ -75,9 +90,7 @@ namespace engine {
     }
 
     void GLFWInput::glfwCursorCallback(double xpos, double ypos) {
-        mouse.position.x = xpos;
-        mouse.position.y = ypos;
-        for (auto listener : listeners) {
+        for (auto listener: listeners) {
             listener->onMouseMove(xpos, ypos);
         }
     }
@@ -85,49 +98,105 @@ namespace engine {
     void GLFWInput::glfwMouseKeyCallback(int button, int action, int mods) {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
-                mouse.leftButtonDown = action == GLFW_PRESS;
-                for (auto listener : listeners) {
-                    listener->onMouseKeyDown(MouseKey::MOUSE_LEFT);
+                for (auto listener: listeners) {
+                    listener->onMouseKeyDown(mouse::LEFT);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
-                mouse.middleButtonDown = action == GLFW_PRESS;
-                for (auto listener : listeners) {
-                    listener->onMouseKeyDown(MouseKey::MOUSE_MIDDLE);
+                for (auto listener: listeners) {
+                    listener->onMouseKeyDown(mouse::MIDDLE);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
-                mouse.rightButtonDown = action == GLFW_PRESS;
-                for (auto listener : listeners) {
-                    listener->onMouseKeyDown(MouseKey::MOUSE_RIGHT);
+                for (auto listener: listeners) {
+                    listener->onMouseKeyDown(mouse::RIGHT);
                 }
                 break;
         }
     }
 
-    bool GLFWInput::getKeyDown(Key key) {
-        return keys[key];
+    void GLFWInput::glfwJoystickCallback(int jid, int event) {
+        if (glfwJoystickIsGamepad(jid)) {
+            switch (event) {
+                case GLFW_CONNECTED:
+                    gamepads.insert(jid);
+                    for (auto listener: listeners)
+                        listener->onGamepadConnected(jid);
+                    break;
+                case GLFW_DISCONNECTED:
+                    gamepads.erase(jid);
+                    for (auto listener: listeners)
+                        listener->onGamepadDisconnected(jid);
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
-    Mouse GLFWInput::getMouse() {
-        return mouse;
-    }
-
-    void GLFWInput::registerListener(InputListener &listener) {
+    void GLFWInput::addListener(InputListener &listener) {
         if (listeners.find(&listener) != listeners.end())
             throw std::runtime_error("Input listener already registered");
         listeners.insert(&listener);
     }
 
-    void GLFWInput::unregisterListener(InputListener &listener) {
+    void GLFWInput::removeListener(InputListener &listener) {
         listeners.erase(&listener);
     }
 
+    //TODO: Implement clipboard support
     void GLFWInput::setClipboardText(std::string text) {
         throw std::runtime_error("Not Implemented");
     }
 
     std::string GLFWInput::getClipboardText() {
         throw std::runtime_error("Not Implemented");
+    }
+
+    bool GLFWInput::getKey(keyboard::Key key) {
+        return glfwGetKey(&wndH, GLFWTypeConverter::convertKey(key)) == GLFW_PRESS;
+    }
+
+    bool GLFWInput::getMouseButton(mouse::Button key) {
+        return glfwGetMouseButton(&wndH, GLFWTypeConverter::convertMouseKey(key)) == GLFW_PRESS;
+    }
+
+    Vec2d GLFWInput::getMousePosition() {
+        Vec2d ret;
+        glfwGetCursorPos(&wndH, &ret.x, &ret.y);
+        return ret;
+    }
+
+    std::set<int> GLFWInput::getGamepads() {
+        return gamepads;
+    }
+
+    std::string GLFWInput::getGamepadName(int id) {
+        return glfwGetGamepadName(id);
+    }
+
+    float GLFWInput::getGamepadAxis(int id, gamepad::Axis axis) {
+        GLFWgamepadstate state;
+        if (!glfwGetGamepadState(id, &state)) {
+            throw std::runtime_error("Failed to get axis for gamepad " + std::to_string(id));
+        }
+        return state.axes[GLFWTypeConverter::convertGamepadAxis(axis)];
+    }
+
+    bool GLFWInput::getGamepadButton(int id, gamepad::Button button) {
+        GLFWgamepadstate state;
+        if (!glfwGetGamepadState(id, &state)) {
+            throw std::runtime_error("Failed to get button for gamepad " + std::to_string(id));
+        }
+        return state.buttons[GLFWTypeConverter::convertGamepadButton(button)];
+    }
+
+    //TODO: Implement cursor image change
+    void GLFWInput::setMouseCursorImage(const Image<ColorRGBA> &image) {
+        throw std::runtime_error("Not implemented");
+    }
+
+    void GLFWInput::clearMouseCursorImage() {
+        throw std::runtime_error("Not implemented");
     }
 }

@@ -68,30 +68,30 @@ private:
 
     Vec3f getMovementInput() {
         Vec3f ret;
-        if (input.getKeyDown(KEY_W))
+        if (input.getKey(keyboard::KEY_W))
             ret.z = 1;
-        else if (input.getKeyDown(KEY_S))
+        else if (input.getKey(keyboard::KEY_S))
             ret.z = -1;
-        if (input.getKeyDown(KEY_A))
+        if (input.getKey(keyboard::KEY_A))
             ret.x = 1;
-        else if (input.getKeyDown(KEY_D))
+        else if (input.getKey(keyboard::KEY_D))
             ret.x = -1;
-        if (input.getKeyDown(KEY_E))
+        if (input.getKey(keyboard::KEY_E))
             ret.y = 1;
-        else if (input.getKeyDown(KEY_Q))
+        else if (input.getKey(keyboard::KEY_Q))
             ret.y = -1;
         return ret;
     }
 
     Vec3f getRotationInput() {
         Vec3f ret;
-        if (input.getKeyDown(KEY_UP))
+        if (input.getKey(keyboard::KEY_UP))
             ret.x = 1;
-        else if (input.getKeyDown(KEY_DOWN))
+        else if (input.getKey(keyboard::KEY_DOWN))
             ret.x = -1;
-        if (input.getKeyDown(KEY_LEFT))
+        if (input.getKey(keyboard::KEY_LEFT))
             ret.y = -1;
-        else if (input.getKeyDown(KEY_RIGHT))
+        else if (input.getKey(keyboard::KEY_RIGHT))
             ret.y = 1;
         return ret;
     }

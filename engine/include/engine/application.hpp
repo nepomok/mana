@@ -20,6 +20,8 @@
 #ifndef MANA_APPLICATION_HPP
 #define MANA_APPLICATION_HPP
 
+#include <chrono>
+
 #include "engine/display/displaymanager.hpp"
 #include "engine/ecs/ecs.hpp"
 #include "engine/io/archive.hpp"

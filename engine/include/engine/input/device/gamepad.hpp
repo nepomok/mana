@@ -17,26 +17,43 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_MOUSE_HPP
-#define MANA_MOUSE_HPP
+#ifndef MANA_GAMEPAD_HPP
+#define MANA_GAMEPAD_HPP
+
+#include <map>
 
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    struct Mouse {
-        Vec2d position;
-        bool leftButtonDown;
-        bool middleButtonDown;
-        bool rightButtonDown;
+    namespace gamepad {
+        enum Axis {
+            LEFT_X,
+            LEFT_Y,
+            RIGHT_X,
+            RIGHT_Y,
+            TRIGGER_LEFT,
+            TRIGGER_RIGHT,
+            AXIS_UNDEFINED
+        };
 
-        Mouse(Vec2d position, bool leftBtn, bool midBtn, bool rightBtn)
-                : position(position), leftButtonDown(leftBtn), middleButtonDown(midBtn), rightButtonDown(rightBtn) {
-        }
-
-        Mouse()
-                : position(0), leftButtonDown(false), middleButtonDown(false), rightButtonDown(false) {
-        }
-    };
+        enum Button {
+            A,
+            B,
+            X,
+            Y,
+            BUMPER_LEFT,
+            BUMPER_RIGHT,
+            BACK,
+            START,
+            GUIDE,
+            LEFT_STICK,
+            RIGHT_STICK,
+            DPAD_UP,
+            DPAD_RIGHT,
+            DPADP_LEFT,
+            BUTTON_UNDEFINED
+        };
+    }
 }
 
-#endif //MANA_MOUSE_HPP
+#endif //MANA_GAMEPAD_HPP

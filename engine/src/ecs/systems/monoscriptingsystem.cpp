@@ -94,11 +94,11 @@ namespace engine {
               archive(archive) {}
 
     void MonoScriptingSystem::start(EntityManager &entityManager) {
-        input.registerListener(*this);
+        input.addListener(*this);
     }
 
     void MonoScriptingSystem::stop(EntityManager &entityManager) {
-        input.unregisterListener(*this);
+        input.removeListener(*this);
     }
 
     void MonoScriptingSystem::update(float deltaTime, EntityManager &manager) {
@@ -161,7 +161,7 @@ namespace engine {
         manaAssembly.invokeStaticMethod("Mana", "Input", "OnFrameEnd");*/
     }
 
-    void MonoScriptingSystem::onKeyDown(Key key) {
+ /*  void MonoScriptingSystem::onKeyDown(Key key) {
         MonoCppArguments args;
         int v = key;
         args.add(v);
@@ -215,5 +215,5 @@ namespace engine {
             assemblies[path] = domain.loadAssembly(*stream);
         }
         return *assemblies[path];
-    }
+    }*/
 }

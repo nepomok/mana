@@ -22,27 +22,43 @@
 
 #include <string>
 
-#include "engine/input/key.hpp"
-#include "engine/input/mousekey.hpp"
+#include "engine/input/device/gamepad.hpp"
+#include "engine/input/device/keyboard.hpp"
+#include "engine/input/device/mouse.hpp"
 
 namespace engine {
     class InputListener {
     public:
-        virtual void onKeyDown(Key key) {};
+        virtual void onKeyDown(keyboard::Key key) {};
 
-        virtual void onKeyUp(Key key) {};
+        virtual void onKeyUp(keyboard::Key key) {};
 
+        /**
+         * @param xPos The mouse x position in pixels relative to the window.
+         * @param yPos The mouse y position in pixels relative to the window.
+         */
         virtual void onMouseMove(double xPos, double yPos) {};
 
+        /**
+         * @param amount The scroll delta
+         */
         virtual void onMouseWheelScroll(double amount) {};
 
-        virtual void onMouseKeyDown(MouseKey key) {};
+        virtual void onMouseKeyDown(mouse::Button key) {};
 
-        virtual void onMouseKeyUp(MouseKey key) {};
+        virtual void onMouseKeyUp(mouse::Button key) {};
 
         virtual void onTextInput(const std::string &text) {};
 
-        //Todo: Gamepad support
+        virtual void onGamepadConnected(int id) {};
+
+        virtual void onGamepadDisconnected(int id) {};
+
+        virtual void onGamepadAxis(int id, gamepad::Axis axis, double amount) {};
+
+        virtual void onGamepadButtonDown(int id, gamepad::Button button) {};
+
+        virtual void onGamepadButtonUp(int id, gamepad::Button button) {};
     };
 }
 

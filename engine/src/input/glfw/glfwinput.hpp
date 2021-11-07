@@ -24,6 +24,7 @@
 #include <map>
 
 #include <GLFW/glfw3.h>
+#include <engine/asset/image.hpp>
 
 #include "engine/input/input.hpp"
 
@@ -40,25 +41,39 @@ namespace engine {
 
         void glfwMouseKeyCallback(int button, int action, int mods);
 
-        bool getKeyDown(Key key) override;
+        void glfwJoystickCallback(int jid, int event);
 
-        Mouse getMouse() override;
+        void addListener(InputListener &listener) override;
 
-        void registerListener(InputListener &listener) override;
-
-        void unregisterListener(InputListener &listener) override;
+        void removeListener(InputListener &listener) override;
 
         void setClipboardText(std::string text) override;
 
         std::string getClipboardText() override;
 
+        void setMouseCursorImage(const Image <ColorRGBA> &image) override;
+
+        void clearMouseCursorImage() override;
+
+        bool getKey(keyboard::Key key) override;
+
+        bool getMouseButton(mouse::Button key) override;
+
+        Vec2d getMousePosition() override;
+
+        std::set<int> getGamepads() override;
+
+        std::string getGamepadName(int id) override;
+
+        float getGamepadAxis(int id, gamepad::Axis axis) override;
+
+        bool getGamepadButton(int id, gamepad::Button key) override;
+
     private:
         GLFWwindow &wndH;
 
         std::set<InputListener *> listeners;
-
-        Mouse mouse;
-        std::map<Key, bool> keys;
+        std::set<int> gamepads;
     };
 }
 

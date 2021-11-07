@@ -45,21 +45,6 @@ namespace engine {
         void update(float deltaTime, EntityManager &entityManager) override;
 
     private:
-        void onKeyDown(Key key) override;
-
-        void onKeyUp(Key key) override;
-
-        void onMouseMove(double xPos, double yPos) override;
-
-        void onMouseWheelScroll(double amount) override;
-
-        void onMouseKeyDown(MouseKey key) override;
-
-        void onMouseKeyUp(MouseKey key) override;
-
-        void onTextInput(const std::string &text) override;
-
-    private:
         Input &input;
         Archive &archive;
         MonoCppDomain &domain;

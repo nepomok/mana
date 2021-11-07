@@ -102,13 +102,13 @@ protected:
             }
         }
 
-        window->getInput().registerListener(*this);
+        window->getInput().addListener(*this);
 
         Application::start();
     }
 
     void stop() override {
-        window->getInput().unregisterListener(*this);
+        window->getInput().removeListener(*this);
 
         ecs.getEntityManager().clear();
         ecs.stop();
@@ -147,10 +147,10 @@ protected:
 
         auto str = std::to_string(fpsAverage);
         ren2d->draw(Vec2f(10, 10 + Character::getMetrics(str, characters).position.y),
-                   str,
-                   {255, 255, 255, 255},
-                   characters,
-                   textures);
+                    str,
+                    {255, 255, 255, 255},
+                    characters,
+                    textures);
 
         ren2d->renderPresent();
 
@@ -158,17 +158,17 @@ protected:
     }
 
 private:
-    void onKeyDown(Key key) override {
-        if (key == KEY_F1) {
-            f1Switch = !f1Switch;
-            renderSystem->setDrawDebugNormals(f1Switch);
-        } else if (key == KEY_F2) {
-            f2Switch = !f2Switch;
-            renderSystem->setDrawDebugLightCasters(f2Switch);
+    void onKeyDown(keyboard::Key key) override {
+        if (key == keyboard::KEY_F1) {
+            f1Toggle = !f1Toggle;
+            renderSystem->setDrawDebugNormals(f1Toggle);
+        } else if (key == keyboard::KEY_F2) {
+            f2Toggle = !f2Toggle;
+            renderSystem->setDrawDebugLightCasters(f2Toggle);
         }
     }
 
-    void onKeyUp(Key key) override {}
+    void onKeyUp(keyboard::Key key) override {}
 
 private:
     std::unique_ptr<Renderer2D> ren2d;
@@ -186,8 +186,8 @@ private:
 
     RenderSystem *renderSystem;
 
-    bool f1Switch = false;
-    bool f2Switch = false;
+    bool f1Toggle = false;
+    bool f2Toggle = false;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP
