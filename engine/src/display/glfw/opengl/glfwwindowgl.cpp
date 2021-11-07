@@ -18,33 +18,36 @@
  */
 
 #include <stdexcept>
+#include <mutex>
 
 #include "glfwwindowgl.hpp"
 
-class GLFWCounter {
-public:
-    static void join() {
+namespace GLFWCounter {
+    std::mutex counterMutex;
+    int counter = 0;
+
+    void join() {
+        std::lock_guard<std::mutex> guard(counterMutex);
         if (counter == 0)
             glfwInit();
         counter++;
     }
 
-    static void leave() {
+    void leave() {
+        std::lock_guard<std::mutex> guard(counterMutex);
         counter--;
         if (counter == 0)
             glfwTerminate();
     }
-
-    static int counter;
-};
-
-int GLFWCounter::counter = 0;
+}
 
 namespace engine {
     namespace glfw {
+        std::mutex windowMappingMutex;
         std::map<GLFWwindow *, GLFWWindowGL *> _windowMapping;
 
         void glfwWindowCloseCallback(GLFWwindow *window) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowCloseCallback();
             } else {
@@ -53,6 +56,7 @@ namespace engine {
         }
 
         void glfwWindowPositionCallback(GLFWwindow *window, int posx, int posy) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowMoveCallback(Vec2i(posx, posy));
             } else {
@@ -61,6 +65,7 @@ namespace engine {
         }
 
         void glfwWindowSizeCallback(GLFWwindow *window, int width, int height) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowSizeCallback(width, height);
             } else {
@@ -69,6 +74,7 @@ namespace engine {
         }
 
         void glfwWindowRefreshCallback(GLFWwindow *window) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowRefreshCallback();
             } else {
@@ -77,6 +83,7 @@ namespace engine {
         }
 
         void glfwWindowFocusCallback(GLFWwindow *window, int focus) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowFocusCallback(focus == GLFW_TRUE);
             } else {
@@ -85,6 +92,7 @@ namespace engine {
         }
 
         void glfwWindowMinimizeCallback(GLFWwindow *window, int minimized) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowMinimizeCallback();
             } else {
@@ -93,6 +101,7 @@ namespace engine {
         }
 
         void glfwWindowMaximizeCallback(GLFWwindow *window, int maximized) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowMaximizeCallback();
             } else {
@@ -101,6 +110,7 @@ namespace engine {
         }
 
         void glfwWindowContentScaleCallback(GLFWwindow *window, float scaleX, float scaleY) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwWindowContentScaleCallback(Vec2f(scaleX, scaleY));
             } else {
@@ -109,6 +119,7 @@ namespace engine {
         }
 
         void glfwFrameBufferSizeCallback(GLFWwindow *window, int sizeX, int sizeY) {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             if (_windowMapping.find(window) != _windowMapping.end()) {
                 _windowMapping[window]->glfwFrameBufferSizeCallback(Vec2i(sizeX, sizeY));
             } else {
@@ -182,8 +193,8 @@ namespace engine {
 
             input = std::make_unique<GLFWInput>(*wndH);
 
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             _windowMapping[wndH] = this;
-
             setCallbacks(wndH);
         }
 
@@ -226,12 +237,13 @@ namespace engine {
 
             input = std::make_unique<GLFWInput>(*wndH);
 
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             _windowMapping[wndH] = this;
-
             setCallbacks(wndH);
         }
 
         GLFWWindowGL::~GLFWWindowGL() {
+            std::lock_guard<std::mutex> guard(windowMappingMutex);
             _windowMapping.erase(wndH);
             glfwDestroyWindow(wndH);
             GLFWCounter::leave();
