@@ -24,7 +24,7 @@
 
 #include "engine/math/transform.hpp"
 #include "engine/render/meshbuffer.hpp"
-#include "engine/3d/rendermaterial.hpp"
+#include "rendermaterial.hpp"
 
 namespace engine {
     struct DeferredCommand {

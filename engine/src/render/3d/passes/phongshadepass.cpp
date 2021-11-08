@@ -17,9 +17,9 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/3d/passes/phongshadepass.hpp"
+#include "engine/render/3d/passes/phongshadepass.hpp"
 
-#include "engine/3d/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 
 #include "engine/math/rotation.hpp"
 

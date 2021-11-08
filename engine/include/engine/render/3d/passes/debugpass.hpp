@@ -17,20 +17,36 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_OUTLINEPASS_HPP
-#define MANA_OUTLINEPASS_HPP
+#ifndef MANA_DEBUGPASS_HPP
+#define MANA_DEBUGPASS_HPP
 
-#include "engine/3d/renderpass.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    class OutlinePass : public RenderPass {
+    class DebugPass : public RenderPass {
     public:
-        ~OutlinePass() override = default;
+        explicit DebugPass(RenderDevice &device);
+
+        ~DebugPass() override;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
         void render(GeometryBuffer &gBuffer, Scene &scene) override;
+
+        void setDrawNormals(bool drawNormals);
+
+        void setDrawLightCasters(bool drawLights);
+
+    private:
+        RenderDevice &device;
+
+        std::unique_ptr<ShaderProgram> shader;
+        std::unique_ptr<ShaderProgram> shaderLight;
+        std::unique_ptr<MeshBuffer> meshBuffer;
+
+        bool drawNormals = false;
+        bool drawLights = false;
     };
 }
 
-#endif //MANA_OUTLINEPASS_HPP
+#endif //MANA_DEBUGPASS_HPP

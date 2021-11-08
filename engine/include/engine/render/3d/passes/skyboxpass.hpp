@@ -17,27 +17,32 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SCENE_HPP
-#define MANA_SCENE_HPP
+#ifndef MANA_SKYBOXPASS_HPP
+#define MANA_SKYBOXPASS_HPP
 
-#include "engine/3d/deferredcommand.hpp"
-#include "engine/3d/forwardcommand.hpp"
-
-#include "engine/asset/camera.hpp"
-#include "engine/asset/light.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    struct Scene {
-        Camera camera;
+    class SkyboxPass : public RenderPass {
+    public:
+        explicit SkyboxPass(RenderDevice &device);
 
-        std::vector<Light> lights;
+        ~SkyboxPass() override = default;
 
-        std::vector<DeferredCommand> deferred;
-        std::vector<ForwardCommand> forward;
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
 
-        TextureBuffer *skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.
-        ColorRGBA skyboxColor;
+        void render(GeometryBuffer &gBuffer, Scene &scene) override;
+
+    private:
+        RenderDevice &device;
+
+        std::unique_ptr<ShaderProgram> shader;
+        std::unique_ptr<MeshBuffer> meshBuffer;
+        std::unique_ptr<TextureBuffer> defaultTexture;
+
+        TextureBuffer *texture = nullptr;
+        ColorRGBA color;
     };
 }
 
-#endif //MANA_SCENE_HPP
+#endif //MANA_SKYBOXPASS_HPP

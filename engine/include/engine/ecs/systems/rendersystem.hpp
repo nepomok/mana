@@ -28,7 +28,7 @@
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
 
-#include "engine/3d/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/rendertarget.hpp"
 
 #include "engine/io/archive.hpp"

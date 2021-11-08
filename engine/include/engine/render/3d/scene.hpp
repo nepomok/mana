@@ -17,25 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDPASS_HPP
-#define MANA_FORWARDPASS_HPP
+#ifndef MANA_SCENE_HPP
+#define MANA_SCENE_HPP
 
-#include "engine/3d/renderpass.hpp"
+#include "deferredcommand.hpp"
+#include "forwardcommand.hpp"
+
+#include "engine/asset/camera.hpp"
+#include "engine/asset/light.hpp"
 
 namespace engine {
-    class ForwardPass : public RenderPass {
-    public:
-        explicit ForwardPass(RenderDevice &device);
+    struct Scene {
+        Camera camera;
 
-        ~ForwardPass() override;
+        std::vector<Light> lights;
 
-        void prepareBuffer(GeometryBuffer &gBuffer) override;
+        std::vector<DeferredCommand> deferred;
+        std::vector<ForwardCommand> forward;
 
-        void render(GeometryBuffer &gBuffer, Scene &scene) override;
-
-    private:
-        RenderDevice &device;
+        TextureBuffer *skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.
+        ColorRGBA skyboxColor;
     };
 }
 
-#endif //MANA_FORWARDPASS_HPP
+#endif //MANA_SCENE_HPP

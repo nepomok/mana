@@ -17,14 +17,27 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/3d/passes/shadowpass.hpp"
+#ifndef MANA_PHONGSHADEPASS_HPP
+#define MANA_PHONGSHADEPASS_HPP
+
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    void ShadowPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        RenderPass::prepareBuffer(gBuffer);
-    }
+    class PhongShadePass : public RenderPass {
+    public:
+        explicit PhongShadePass(RenderDevice &device);
 
-    void ShadowPass::render(GeometryBuffer &gBuffer, Scene &scene) {
-        RenderPass::render(gBuffer, scene);
-    }
+        ~PhongShadePass() override = default;
+
+        void prepareBuffer(GeometryBuffer &gBuffer) override;
+
+        void render(GeometryBuffer &gBuffer, Scene &scene) override;
+
+    private:
+        RenderDevice &renderDevice;
+
+        std::unique_ptr<ShaderProgram> shader;
+    };
 }
+
+#endif //MANA_PHONGSHADEPASS_HPP

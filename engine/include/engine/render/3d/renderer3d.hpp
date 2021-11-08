@@ -28,9 +28,9 @@
 #include "engine/render/renderdevice.hpp"
 #include "engine/render/shadercompiler.hpp"
 
-#include "engine/3d/scene.hpp"
-#include "engine/3d/renderpass.hpp"
-#include "engine/3d/compositor.hpp"
+#include "scene.hpp"
+#include "renderpass.hpp"
+#include "compositor.hpp"
 
 namespace engine {
     class Renderer3D {

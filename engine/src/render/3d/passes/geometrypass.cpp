@@ -19,9 +19,9 @@
 
 #include <sstream>
 
-#include "engine/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/geometrypass.hpp"
 
-#include "engine/3d/renderer3d.hpp"
+#include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/shadercompiler.hpp"
 
 #include "engine/asset/assetimporter.hpp"

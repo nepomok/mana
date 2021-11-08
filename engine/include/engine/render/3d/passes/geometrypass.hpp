@@ -17,32 +17,36 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_SKYBOXPASS_HPP
-#define MANA_SKYBOXPASS_HPP
+#ifndef MANA_GEOMETRYPASS_HPP
+#define MANA_GEOMETRYPASS_HPP
 
-#include "engine/3d/renderpass.hpp"
+#include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    class SkyboxPass : public RenderPass {
+    class GeometryPass : public RenderPass {
     public:
-        explicit SkyboxPass(RenderDevice &device);
+        explicit GeometryPass(RenderDevice &device);
 
-        ~SkyboxPass() override = default;
+        ~GeometryPass() override;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
         void render(GeometryBuffer &gBuffer, Scene &scene) override;
 
     private:
-        RenderDevice &device;
+        RenderDevice &renderDevice;
 
-        std::unique_ptr<ShaderProgram> shader;
-        std::unique_ptr<MeshBuffer> meshBuffer;
-        std::unique_ptr<TextureBuffer> defaultTexture;
+        std::unique_ptr<ShaderProgram> shaderTextureNormals;
+        std::unique_ptr<ShaderProgram> shaderVertexNormals;
 
-        TextureBuffer *texture = nullptr;
-        ColorRGBA color;
+        // The default texture buffers with a size of 1x1 pixels into which the color values of the material
+        // are stored if the user did not specify a texture in the material.
+        std::unique_ptr<TextureBuffer> diffuseDefault;
+        std::unique_ptr<TextureBuffer> ambientDefault;
+        std::unique_ptr<TextureBuffer> specularDefault;
+        std::unique_ptr<TextureBuffer> shininessDefault;
+        std::unique_ptr<TextureBuffer> emissiveDefault;
     };
 }
 
-#endif //MANA_SKYBOXPASS_HPP
+#endif //MANA_GEOMETRYPASS_HPP

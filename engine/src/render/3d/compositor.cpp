@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/3d/compositor.hpp"
+#include "engine/render/3d/compositor.hpp"
 
 
 static const char *SHADER_VERT = R"###(#version 460 core
