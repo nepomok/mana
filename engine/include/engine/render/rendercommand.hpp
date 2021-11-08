@@ -111,6 +111,10 @@ namespace engine {
 
         RenderCommand(const RenderCommand &other) = default;
 
+        RenderCommand(RenderCommand &&other) = default;
+
+        RenderCommand &operator=(RenderCommand &&other) = default;
+
         std::reference_wrapper<ShaderProgram> shader;
 
         std::vector<std::reference_wrapper<TextureBuffer>> textures;

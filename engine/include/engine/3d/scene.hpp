@@ -32,11 +32,7 @@ namespace engine {
 
         std::vector<Light> lights;
 
-        std::vector<DeferredCommand> deferred; //The commands to draw in the deferred pipeline
-
-        // The commands to draw in the forward pipeline,
-        // the forward pipeline is executed after the deferred pipeline.
-        // The depth information from the deferred pass is preserved in the depth buffer.
+        std::vector<DeferredCommand> deferred;
         std::vector<ForwardCommand> forward;
 
         TextureBuffer* skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.

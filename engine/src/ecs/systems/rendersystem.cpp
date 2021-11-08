@@ -28,6 +28,7 @@
 #include "engine/3d/passes/phongshadepass.hpp"
 #include "engine/3d/passes/forwardpass.hpp"
 #include "engine/3d/passes/debugpass.hpp"
+#include "engine/3d/passes/skyboxpass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 
@@ -49,6 +50,7 @@ namespace engine {
         passes.emplace_back(std::make_unique<ForwardPass>(device));
         passes.emplace_back(std::make_unique<GeometryPass>(device));
         passes.emplace_back(std::make_unique<PhongShadePass>(device));
+        passes.emplace_back(std::make_unique<SkyboxPass>(device));
         passes.emplace_back(std::unique_ptr<DebugPass>(debugPass));
 
         ren = std::make_unique<Renderer3D>(device,

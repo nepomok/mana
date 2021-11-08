@@ -19,7 +19,6 @@
 
 #ifndef MANA_HPP
 #define MANA_HPP
-
 #include "engine/application.hpp"
 #include "engine/script/script.hpp"
 #include "engine/script/mono/monocppvalue.hpp"
@@ -70,6 +69,7 @@
 #include "engine/3d/scene.hpp"
 #include "engine/3d/passes/forwardpass.hpp"
 #include "engine/3d/passes/phongshadepass.hpp"
+#include "engine/3d/passes/skyboxpass.hpp"
 #include "engine/3d/passes/geometrypass.hpp"
 #include "engine/3d/passes/outlinepass.hpp"
 #include "engine/3d/passes/shadowpass.hpp"
