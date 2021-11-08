@@ -19,6 +19,7 @@
 
 #ifndef MANA_HPP
 #define MANA_HPP
+
 #include "engine/application.hpp"
 #include "engine/script/script.hpp"
 #include "engine/script/mono/monocppvalue.hpp"

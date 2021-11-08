@@ -43,7 +43,7 @@ namespace engine {
 
         ~ThreadPool() {
             shutdown();
-            for (auto &thread : threads) {
+            for (auto &thread: threads) {
                 thread.join();
             }
         }

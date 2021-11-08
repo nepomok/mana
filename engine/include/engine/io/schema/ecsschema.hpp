@@ -37,7 +37,7 @@ namespace engine {
 
     AssetPath &operator<<(AssetPath &value, const Message &message);
 
-    Message &operator<<(Message &message, const AssetPath& path);
+    Message &operator<<(Message &message, const AssetPath &path);
 
     CameraComponent &operator<<(CameraComponent &component, const Message &message);
 
@@ -67,7 +67,7 @@ namespace engine {
 
     Message &operator<<(Message &message, const MonoSyncComponent &component);
 
-    EntityManager& operator<<(EntityManager &manager, const Message &message);
+    EntityManager &operator<<(EntityManager &manager, const Message &message);
 
     Message &operator<<(Message &message, const EntityManager &manager);
 }

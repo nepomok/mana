@@ -42,15 +42,17 @@ namespace engine {
             }
         }
 
-        const Mesh &getMesh(const std::string &name= {}) const { return get<Mesh>(name, meshes); }
+        const Mesh &getMesh(const std::string &name = {}) const { return get<Mesh>(name, meshes); }
 
-        const Material &getMaterial(const std::string &name= {}) const { return get<Material>(name, materials); }
+        const Material &getMaterial(const std::string &name = {}) const { return get<Material>(name, materials); }
 
-        const Image<ColorRGBA> &getImage(const std::string &name = {}) const { return get<Image<ColorRGBA>>(name, images); }
+        const Image<ColorRGBA> &getImage(const std::string &name = {}) const {
+            return get<Image<ColorRGBA>>(name, images);
+        }
 
-        const Texture &getTexture(const std::string &name= {}) const { return get<Texture>(name, textures); }
+        const Texture &getTexture(const std::string &name = {}) const { return get<Texture>(name, textures); }
 
-        const Audio &getAudio(const std::string &name= {}) const { return get<Audio>(name, audio); }
+        const Audio &getAudio(const std::string &name = {}) const { return get<Audio>(name, audio); }
 
         std::map<std::string, Mesh> meshes;
         std::map<std::string, Material> materials;

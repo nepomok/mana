@@ -154,9 +154,9 @@ namespace engine {
 
         const Attributes &getAttributes() const { return attributes; }
 
-        virtual void upload(const Image<ColorRGB> &buffer) = 0;
+        virtual void upload(const Image <ColorRGB> &buffer) = 0;
 
-        virtual void upload(const Image<ColorRGBA> &buffer) = 0;
+        virtual void upload(const Image <ColorRGBA> &buffer) = 0;
 
         virtual void upload(const Image<float> &buffer) = 0;
 
@@ -166,15 +166,15 @@ namespace engine {
 
         virtual void upload(const Image<unsigned char> &buffer) = 0;
 
-        virtual Image<ColorRGBA> download() = 0;
+        virtual Image <ColorRGBA> download() = 0;
 
-        virtual void upload(CubeMapFace face, const Image<ColorRGBA> &buffer) = 0;
+        virtual void upload(CubeMapFace face, const Image <ColorRGBA> &buffer) = 0;
 
-        virtual Image<ColorRGBA> download(CubeMapFace face) = 0;
+        virtual Image <ColorRGBA> download(CubeMapFace face) = 0;
 
-        virtual void uploadCubeMap(const Image<ColorRGBA> &buffer) = 0;
+        virtual void uploadCubeMap(const Image <ColorRGBA> &buffer) = 0;
 
-        virtual Image<ColorRGBA> downloadCubeMap() = 0;
+        virtual Image <ColorRGBA> downloadCubeMap() = 0;
 
     protected:
         Attributes attributes;

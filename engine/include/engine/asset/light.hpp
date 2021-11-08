@@ -31,7 +31,7 @@ namespace engine {
 
     struct Light {
         Light() : type() {}
-        
+
         explicit Light(LightType type) : type(type) {}
 
         LightType type;

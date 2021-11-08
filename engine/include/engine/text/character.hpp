@@ -29,13 +29,13 @@ namespace engine {
     public:
         static Recti getMetrics(const std::string &str, const std::map<char, Character> &chars);
 
-        Image<ColorRGBA> image; //The rasterized character as an image
+        Image <ColorRGBA> image; //The rasterized character as an image
         Vec2i bearing;          //The bearing of the character in pixels
         int advance{};          //The advance of the character in pixels
 
         Character() = default;
 
-        Character(Image<ColorRGBA> image, Vec2i bearing, int advance)
+        Character(Image <ColorRGBA> image, Vec2i bearing, int advance)
                 : image(std::move(image)), bearing(bearing), advance(advance) {}
 
         ~Character() = default;

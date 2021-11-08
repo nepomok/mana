@@ -34,9 +34,9 @@ namespace engine {
                      bool preprocessed = false);
 
         void preprocess(const std::function<std::string(const char *)> &include = {},
-                        const std::map <std::string, std::string> &macros = {});
+                        const std::map<std::string, std::string> &macros = {});
 
-        std::vector <uint32_t> compile();
+        std::vector<uint32_t> compile();
 
         ShaderSource crossCompile(ShaderCompiler::ShaderLanguage targetLanguage) const;
 

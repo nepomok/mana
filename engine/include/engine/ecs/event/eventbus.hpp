@@ -38,20 +38,20 @@ namespace engine {
         template<typename T>
         void invoke(const T &event) {
             auto id = std::type_index(typeid(T));
-            for (auto *callback : receivers[id]) {
+            for (auto *callback: receivers[id]) {
                 callback->onEvent(dynamic_cast<const Event &>(*event));
             }
         }
 
         void subscribe(EventReceiver *receiver,
                        const std::set<std::type_index> &eventTypes) {
-            for (auto &type : eventTypes) {
+            for (auto &type: eventTypes) {
                 receivers[type].insert(receiver);
             }
         }
 
         void unsubscribe(EventReceiver *receiver) {
-            for (auto &pair : receivers) {
+            for (auto &pair: receivers) {
                 pair.second.erase(receiver);
             }
         }

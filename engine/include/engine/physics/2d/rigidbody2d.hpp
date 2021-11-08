@@ -54,11 +54,11 @@ namespace engine {
 
         virtual float getAngularVelocity() = 0;
 
-        virtual Collider2D* createCollider() = 0;
+        virtual Collider2D *createCollider() = 0;
 
-        virtual void destroyCollider(Collider2D* collider) = 0;
+        virtual void destroyCollider(Collider2D *collider) = 0;
 
-        virtual std::set<Collider2D*> getColliders() = 0;
+        virtual std::set<Collider2D *> getColliders() = 0;
 
     protected:
         virtual ~RigidBody2D() = default;

@@ -35,7 +35,7 @@ namespace engine {
         std::vector<DeferredCommand> deferred;
         std::vector<ForwardCommand> forward;
 
-        TextureBuffer* skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.
+        TextureBuffer *skybox = nullptr; //Optional skybox cubemap texture. If nullptr the skyboxColor is used.
         ColorRGBA skyboxColor;
     };
 }
