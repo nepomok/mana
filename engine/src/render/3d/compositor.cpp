@@ -19,7 +19,6 @@
 
 #include "engine/render/3d/compositor.hpp"
 
-
 static const char *SHADER_VERT = R"###(#version 460 core
 
 #define MAX_COLOR 15
