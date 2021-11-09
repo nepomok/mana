@@ -33,7 +33,9 @@ using namespace engine;
 class SampleApplication : public Application, InputListener {
 public:
     SampleApplication(int argc, char *argv[])
-            : Application(argc, argv, std::make_unique<DirectoryArchive>(std::filesystem::current_path().string())) {}
+            : Application(argc,
+                          argv,
+                          std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {}
 
     ~SampleApplication() override = default;
 
@@ -54,7 +56,7 @@ protected:
 
         auto &device = window->getRenderDevice();
 
-        auto stream = archive->open("assets/fonts/roboto/Roboto-Regular.ttf");
+        auto stream = archive->open("/fonts/roboto/Roboto-Regular.ttf");
         auto font = Font::createFont(*stream);
         font->setPixelSize({0, 30});
         characters = font->renderAscii();
@@ -65,17 +67,11 @@ protected:
         }
 
         texture = device.getAllocator().createTextureBuffer({});
-        texture->upload(AssetImporter::import("assets/images/smiley_2.png", *archive).getImage());
+        texture->upload(AssetImporter::import("/images/smiley_2.png", *archive).getImage());
 
         ren2d = std::make_unique<Renderer2D>(device);
 
-        stream = archive->open("Newtonsoft.Json.dll");
-        jsonAssembly = domain.loadAssembly(*stream);
-
-        stream = archive->open("mana.dll");
-        manaAssembly = domain.loadAssembly(*stream);
-
-        stream = archive->open("assets/scene.json");
+        stream = archive->open("/scene.json");
         ecs.getEntityManager() << JsonProtocol().deserialize(*stream);
 
         auto &entityManager = ecs.getEntityManager();
@@ -173,10 +169,6 @@ private:
 private:
     std::unique_ptr<Renderer2D> ren2d;
 
-    MonoCppDomain domain;
-    std::unique_ptr<MonoCppAssembly> manaAssembly = nullptr;
-    std::unique_ptr<MonoCppAssembly> jsonAssembly = nullptr;
-
     Entity cameraEntity;
     std::unique_ptr<TextureBuffer> texture = nullptr;
     double fpsAverage = 1;
@@ -184,7 +176,7 @@ private:
     std::map<char, Character> characters;
     std::map<char, std::unique_ptr<TextureBuffer>> textures;
 
-    RenderSystem *renderSystem;
+    RenderSystem *renderSystem{};
 
     bool f1Toggle = false;
     bool f2Toggle = false;

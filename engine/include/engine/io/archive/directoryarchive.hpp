@@ -28,6 +28,7 @@
 namespace engine {
     /**
      * A directory representing an archive.
+     * Only files relative to the specified directory can be accessed by full or relative path,
      */
     class DirectoryArchive : public Archive {
     public:
@@ -40,13 +41,28 @@ namespace engine {
         ~DirectoryArchive() override = default;
 
         bool exists(const std::string &name) override {
-            return std::filesystem::exists(name);
+            auto ret = std::filesystem::exists(name);
+            if (ret) {
+                return ret;
+            } else {
+                return std::filesystem::exists(directory + name);
+            }
         }
 
         std::unique_ptr<std::iostream> open(const std::string &path) override {
-            auto ret = std::make_unique<std::fstream>(directory + "/" + path);
+            std::string targetPath;
+
+            //Allow full paths which reference files relative to the directory
+            if (path.find(directory) == 0 && std::filesystem::exists(path)) {
+                targetPath = path;
+            } else {
+                //Allow relative paths without leading slash
+                targetPath = directory + (path.find('/') == 0 ? "" : "/") + path;
+            }
+
+            auto ret = std::make_unique<std::fstream>(targetPath);
             if (!*ret) {
-                throw std::runtime_error("Failed to open file " + path);
+                throw std::runtime_error("Failed to open file " + targetPath);
             }
             return ret;
         }

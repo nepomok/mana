@@ -26,8 +26,8 @@
 
 namespace engine {
     struct AssetPath {
-        std::string bundle;
-        std::string asset;
+        std::string bundle; //The path to the bundle
+        std::string asset; //The name of the asset in the bundle
 
         bool empty() const { return bundle.empty() && asset.empty(); }
 

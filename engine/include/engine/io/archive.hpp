@@ -26,18 +26,14 @@
 namespace engine {
     /**
      * Archive interface, implementations may be directories or custom archive format.
-     *
-     * The runtime will define a packaged format which is interfaced with via this interface.
      */
     class Archive {
     public:
         virtual ~Archive() = default;
 
-        virtual bool exists(const std::string &name) { return false; };
+        virtual bool exists(const std::string &name) = 0;
 
-        virtual std::unique_ptr<std::iostream> open(const std::string &name) {
-            throw std::runtime_error("File not found " + name);
-        };
+        virtual std::unique_ptr<std::iostream> open(const std::string &name) = 0;
     };
 }
 

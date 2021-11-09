@@ -3,7 +3,7 @@
     {
       "name": "ColorMapTexture",
       "image": {
-        "bundle": "assets/images/container2.png",
+        "bundle": "/images/container2.png",
         "asset": ""
       }
     }

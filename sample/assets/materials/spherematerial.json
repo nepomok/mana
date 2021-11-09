@@ -17,7 +17,7 @@
         "a": 255
       },
       "normalTexture": {
-        "bundle": "assets/textures/spherenormals.json",
+        "bundle": "/textures/spherenormals.json",
         "asset": ""
       }
     }

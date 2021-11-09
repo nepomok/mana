@@ -3,7 +3,7 @@
     {
       "name": "SphereNormals",
       "image": {
-        "bundle": "assets/images/SphereNormals.png",
+        "bundle": "/images/SphereNormals.png",
         "asset": ""
       }
     }

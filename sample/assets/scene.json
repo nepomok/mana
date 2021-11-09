@@ -38,7 +38,7 @@
         {
           "enabled": true,
           "componentType": "script_mono",
-          "assembly": "assets/scripts/script.dll",
+          "assembly": "/scripts/script.dll",
           "nameSpace": "",
           "className": "InputController",
           "queue": 0
@@ -80,11 +80,11 @@
           "castShadows": true,
           "receiveShadows": true,
           "mesh": {
-            "bundle": "assets/meshes/plane.obj",
+            "bundle": "/meshes/plane.obj",
             "asset": "Plane"
           },
           "material": {
-            "bundle": "assets/materials/containermaterial.json",
+            "bundle": "/materials/containermaterial.json",
             "asset": ""
           }
         }
@@ -121,11 +121,11 @@
           "castShadows": true,
           "receiveShadows": true,
           "mesh": {
-            "bundle": "assets/meshes/sphere.fbx",
+            "bundle": "/meshes/sphere.fbx",
             "asset": "Sphere"
           },
           "material": {
-            "bundle": "assets/materials/spherematerial.json",
+            "bundle": "/materials/spherematerial.json",
             "asset": ""
           }
         }
@@ -161,27 +161,27 @@
           "componentType": "skybox",
           "paths": [
             {
-              "bundle": "assets/images/deepbluespace-skybox/0.png",
+              "bundle": "/images/deepbluespace-skybox/0.png",
               "asset": ""
             },
             {
-              "bundle": "assets/images/deepbluespace-skybox/1.png",
+              "bundle": "/images/deepbluespace-skybox/1.png",
               "asset": ""
             },
             {
-              "bundle": "assets/images/deepbluespace-skybox/2.png",
+              "bundle": "/images/deepbluespace-skybox/2.png",
               "asset": ""
             },
             {
-              "bundle": "assets/images/deepbluespace-skybox/3.png",
+              "bundle": "/images/deepbluespace-skybox/3.png",
               "asset": ""
             },
             {
-              "bundle": "assets/images/deepbluespace-skybox/4.png",
+              "bundle": "/images/deepbluespace-skybox/4.png",
               "asset": ""
             },
             {
-              "bundle": "assets/images/deepbluespace-skybox/5.png",
+              "bundle": "/images/deepbluespace-skybox/5.png",
               "asset": ""
             }
           ]

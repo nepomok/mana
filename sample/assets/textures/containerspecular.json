@@ -3,7 +3,7 @@
     {
       "name": "ColorMapSpecular",
       "image": {
-        "bundle": "assets/images/container2_specular.png",
+        "bundle": "/images/container2_specular.png",
         "asset": ""
       }
     }

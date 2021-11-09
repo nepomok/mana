@@ -23,41 +23,37 @@
 #include <functional>
 #include <set>
 #include <typeindex>
+#include <mutex>
 
-#include "engine/ecs/event/event.hpp"
-#include "engine/ecs/event/eventreceiver.hpp"
+#include "engine/event/eventreceiver.hpp"
 
 namespace engine {
-    /**
-     * Any type which inherits from the Event class can be used as event type.
-     *
-     * Member methods should only be invoked from a single thread
-     */
     class EventBus {
     public:
         template<typename T>
         void invoke(const T &event) {
+            std::lock_guard<std::mutex> guard(mutex);
             auto id = std::type_index(typeid(T));
-            for (auto *callback: receivers[id]) {
-                callback->onEvent(dynamic_cast<const Event &>(*event));
+            for (auto *receiver: receivers[id]) {
+                dynamic_cast<EventReceiver<T> &>(*receiver).onEvent(event);
             }
         }
 
-        void subscribe(EventReceiver *receiver,
-                       const std::set<std::type_index> &eventTypes) {
-            for (auto &type: eventTypes) {
-                receivers[type].insert(receiver);
-            }
+        template<typename T>
+        void subscribe(EventReceiver<T> *receiver) {
+            std::lock_guard<std::mutex> guard(mutex);
+            receivers[typeid(T)].insert(receiver);
         }
 
-        void unsubscribe(EventReceiver *receiver) {
-            for (auto &pair: receivers) {
-                pair.second.erase(receiver);
-            }
+        template<typename T>
+        void unsubscribe(EventReceiver<T> *receiver) {
+            std::lock_guard<std::mutex> guard(mutex);
+            receivers[typeid(T)].erase(receiver);
         }
 
     private:
-        std::map<std::type_index, std::set<EventReceiver *>> receivers;
+        std::mutex mutex;
+        std::map<std::type_index, std::set<EventReceiverBase *>> receivers;
     };
 }
 
