@@ -105,7 +105,8 @@ namespace engine {
                     auto &t = dynamic_cast<opengl::OGLRenderTarget &>(target);
                     glBindFramebuffer(GL_FRAMEBUFFER, t.getFBO());
                     glViewport(0, 0, target.getSize().x, target.getSize().y);
-                    glClear(0);
+                    glClearColor(0, 0, 0, 0);
+                    glClear(GL_COLOR_BUFFER_BIT);
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                     glBindFramebuffer(GL_FRAMEBUFFER, 0);
                     checkGLError("ImGuiCompat");
