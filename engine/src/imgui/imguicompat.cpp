@@ -19,6 +19,8 @@
 
 #include "engine/imgui/imguicompat.hpp"
 
+#include <limits>
+
 #include "engine/display/window.hpp"
 
 #include "imgui.h"
@@ -27,12 +29,34 @@
 
 #include "display/glfw/opengl/glfwwindowgl.hpp"
 
+static uint imGuiRefCounter = 0;
+
+static void joinImGui() {
+    if (imGuiRefCounter == std::numeric_limits<uint>::max()) {
+        throw std::runtime_error("Counter overflow");
+    }
+    if (imGuiRefCounter++ == 0)
+        ImGui::CreateContext();
+}
+
+static void leaveImGui() {
+    if (imGuiRefCounter == 0)
+        throw std::runtime_error("Counter underflow");
+    if (--imGuiRefCounter == 0)
+        ImGui::DestroyContext();
+}
+
 namespace engine {
     namespace ImGuiCompat {
-        void Init(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend) {
-            switch (graphicsBackend) {
-                case OPENGL_4_6:
+        void Init(Window &window) {
+            joinImGui();
+            switch (window.getDisplayBackend()) {
+                case GLFW:
                     ImGui_ImplGlfw_InitForOpenGL(dynamic_cast<glfw::GLFWWindowGL &>(window).wndH, true);
+                    break;
+            }
+            switch (window.getGraphicsBackend()) {
+                case OPENGL_4_6:
                     ImGui_ImplOpenGL3_Init("#version 460");
                     break;
                 case DIRECTX_11:
@@ -41,36 +65,43 @@ namespace engine {
             }
         }
 
-        void Shutdown(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend) {
-            switch (graphicsBackend) {
+        void Shutdown(Window &window) {
+            switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6:
                     ImGui_ImplOpenGL3_Shutdown();
+                    break;
+                case DIRECTX_11:
+                case VULKAN:
+                    throw std::runtime_error("Not supported");
+            }
+            switch (window.getDisplayBackend()) {
+                case GLFW:
                     ImGui_ImplGlfw_Shutdown();
                     break;
-                case DIRECTX_11:
-                case VULKAN:
-                    throw std::runtime_error("Not supported");
             }
+            leaveImGui();
         }
 
-        void NewFrame(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend) {
-            switch (graphicsBackend) {
+        void NewFrame(Window &window) {
+            switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6:
                     ImGui_ImplOpenGL3_NewFrame();
-                    ImGui_ImplGlfw_NewFrame();
                     break;
                 case DIRECTX_11:
                 case VULKAN:
                     throw std::runtime_error("Not supported");
             }
+            switch (window.getDisplayBackend()) {
+                case GLFW:
+                    ImGui_ImplGlfw_NewFrame();
+                    break;
+            }
         }
 
-        void DrawData(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend, RenderTarget &target) {
-            switch (graphicsBackend) {
+        void DrawData(Window &window) {
+            switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6:
-                    int display_w, display_h;
                     glViewport(0, 0, window.getFramebufferSize().x, window.getFramebufferSize().y);
-                    glClear(0);
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                     break;
                 case DIRECTX_11:

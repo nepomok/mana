@@ -8,7 +8,7 @@ file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 add_library(mana SHARED ${Engine.File.SRC} ${IMGUI.SRC})
 
 target_include_directories(mana PUBLIC ${Engine.Dir.INCLUDE})
-target_include_directories(mana PRIVATE ${Engine.Dir.SRC})
+target_include_directories(mana PUBLIC ${Engine.Dir.SRC})
 
 target_link_libraries(mana
         glfw

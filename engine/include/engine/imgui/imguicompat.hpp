@@ -30,31 +30,32 @@
 namespace engine {
     namespace ImGuiCompat {
         /**
-         * Calls the Impl*Init* methods the user still has to call ImGui::CreateContext beforehand.
+         * Calls the Impl*Init* methods and ImGui::CreateContext if it is the first call.
          * @param window
          */
-        void Init(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend);
+        void Init(Window &window);
 
         /**
-         * Calls the Impl*Shutdown methods, the user still has to call ImGui::DestroyContext afterwards.
+         * Calls the Impl*Shutdown methods and ImGui::DestroyContext if it is the last call.
          * @param window
          */
-        void Shutdown(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend);
+        void Shutdown(Window &window);
 
         /**
          * Calls Impl*NewFrame methods, the user still has to call ImGui::NewFrame afterwards.
          * @param window
          */
-        void NewFrame(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend);
+        void NewFrame(Window &window);
 
         /**
          * Calls Impl*RenderDrawData and renders the imgui data into the target.
          * The user still has to call ImGui::Render beforehand.
          *
+         * Users can attach a texture buffer to the window render target to access the result.
+         *
          * @param window
-         * @param target
          */
-        void DrawData(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend, RenderTarget &target);
+        void DrawData(Window &window);
     }
 }
 #endif //MANA_IMGUICOMPAT_HPP

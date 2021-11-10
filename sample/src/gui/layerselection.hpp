@@ -30,14 +30,12 @@ class LayerSelection {
 public:
     LayerSelection(Window &window, DisplayBackend displayBackend, GraphicsBackend graphicsBackend)
             : window(window), displayBackend(displayBackend), graphicsBackend(graphicsBackend) {
-        ImGui::CreateContext();
-        ImGuiCompat::Init(window, displayBackend, graphicsBackend);
+        ImGuiCompat::Init(window);
     }
 
     ~LayerSelection() {
         // Cleanup
-        ImGuiCompat::Shutdown(window, displayBackend, graphicsBackend);
-        ImGui::DestroyContext();
+        ImGuiCompat::Shutdown(window);
     }
 
     void render(RenderTarget &target) const {
@@ -75,7 +73,7 @@ public:
         ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
         // Start the Dear ImGui frame
-        ImGuiCompat::NewFrame(window, displayBackend, graphicsBackend);
+        ImGuiCompat::NewFrame(window);
 
         ImGui::NewFrame();
 
@@ -124,7 +122,7 @@ public:
 
         // Rendering
         ImGui::Render();
-        ImGuiCompat::DrawData(window, displayBackend, graphicsBackend, target);
+        ImGuiCompat::DrawData(window);
     }
 
     std::vector<Compositor::Layer> getLayers() {

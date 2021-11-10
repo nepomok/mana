@@ -56,6 +56,10 @@ namespace engine {
 
         virtual Input &getInput() = 0;
 
+        virtual DisplayBackend getDisplayBackend() = 0;
+
+        virtual GraphicsBackend getGraphicsBackend() = 0;
+
         /**
          * When using multiple windows or multiple threads call this method before using
          * any rendering related api including RenderObject destructors.

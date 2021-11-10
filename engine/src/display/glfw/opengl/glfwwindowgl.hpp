@@ -55,6 +55,10 @@ namespace engine {
 
             Input &getInput() override;
 
+            DisplayBackend getDisplayBackend() override;
+
+            GraphicsBackend getGraphicsBackend() override;
+
             void makeCurrent() override;
 
             void swapBuffers() override;
