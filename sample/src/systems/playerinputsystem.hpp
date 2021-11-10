@@ -63,8 +63,22 @@ public:
         }
     }
 
+    void setStickDeadZone(float value) {
+        deadzone = value;
+    }
+
 private:
     Input &input;
+
+    float deadzone = 0.1f;
+
+    float applyDeadzone(float value) const {
+        if (value < deadzone && value > -deadzone) {
+            return 0;
+        } else {
+            return value;
+        }
+    }
 
     Vec3f getMovementInput() {
         Vec3f ret;
@@ -80,7 +94,16 @@ private:
             ret.y = 1;
         else if (input.getKey(keyboard::KEY_Q))
             ret.y = -1;
-        return ret;
+        for (auto &pad: input.getGamepads()) {
+            ret.x += applyDeadzone(input.getGamepadAxis(pad, gamepad::LEFT_X) * -1);
+            ret.z += applyDeadzone(input.getGamepadAxis(pad, gamepad::LEFT_Y) * -1);
+            if (input.getGamepadButton(pad, gamepad::BUMPER_LEFT)) {
+                ret.y = -1;
+            } else if (input.getGamepadButton(pad, gamepad::BUMPER_RIGHT)) {
+                ret.y = 1;
+            }
+        }
+        return normalize(ret);
     }
 
     Vec3f getRotationInput() {
@@ -93,7 +116,11 @@ private:
             ret.y = -1;
         else if (input.getKey(keyboard::KEY_RIGHT))
             ret.y = 1;
-        return ret;
+        for (auto &pad: input.getGamepads()) {
+            ret.x += applyDeadzone(input.getGamepadAxis(pad, gamepad::RIGHT_Y) * -1);
+            ret.y += applyDeadzone(input.getGamepadAxis(pad, gamepad::RIGHT_X));
+        }
+        return normalize(ret);
     }
 };
 

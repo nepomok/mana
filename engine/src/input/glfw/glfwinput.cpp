@@ -70,6 +70,16 @@ namespace engine {
         glfwSetKeyCallback(&wndH, engine::glfwKeyCallback);
         glfwSetCursorPosCallback(&wndH, engine::glfwCursorCallback);
         glfwSetMouseButtonCallback(&wndH, engine::glfwMouseKeyCallback);
+
+        //GLFW Does not appear to send connected events for joysticks which are already connected when the application starts.
+        for (int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_16; i++) {
+            if (glfwJoystickIsGamepad(i)) {
+                gamepads.insert(i);
+                for (auto listener: listeners)
+                    listener->onGamepadConnected(i);
+            }
+        }
+
         glfwSetJoystickCallback(engine::glfwJoystickCallback);
     }
 

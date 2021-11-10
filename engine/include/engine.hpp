@@ -76,6 +76,7 @@
 #include "engine/math/quaternion.hpp"
 #include "engine/math/vector3.hpp"
 #include "engine/math/rotation.hpp"
+#include "engine/math/normalize.hpp"
 #include "engine/math/grid.hpp"
 #include "engine/math/matrixmath.hpp"
 #include "engine/math/transform.hpp"
