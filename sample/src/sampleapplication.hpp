@@ -28,6 +28,8 @@
 #include "systems/playerinputsystem.hpp"
 #include "components/playercontrollercomponent.hpp"
 
+#include "gui/layerselection.hpp"
+
 using namespace engine;
 
 class SampleApplication : public Application, InputListener {
@@ -100,6 +102,8 @@ protected:
 
         window->getInput().addListener(*this);
 
+        layerSelection = std::make_unique<LayerSelection>(*window, displayBackend, graphicsBackend);
+
         Application::start();
     }
 
@@ -112,6 +116,8 @@ protected:
 
         characters.clear();
         textures.clear();
+
+        layerSelection = {};
 
         Application::stop();
     }
@@ -150,6 +156,8 @@ protected:
 
         ren2d->renderPresent();
 
+        layerSelection->render(wnd.getRenderTarget());
+
         window->swapBuffers();
     }
 
@@ -180,6 +188,8 @@ private:
 
     bool f1Toggle = false;
     bool f2Toggle = false;
+
+    std::unique_ptr<LayerSelection> layerSelection;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

@@ -23,7 +23,7 @@
 namespace engine {
     enum GraphicsBackend {
         OPENGL_4_6, // Requires OpenGL 4.6 implementation
-        DIRECTX,
+        DIRECTX_11,
         VULKAN
     };
 }

@@ -20,6 +20,8 @@
 #ifndef MANA_INPUT_HPP
 #define MANA_INPUT_HPP
 
+#include <set>
+
 #include "engine/input/inputlistener.hpp"
 
 #include "engine/asset/image.hpp"

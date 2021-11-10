@@ -99,7 +99,7 @@ LightComponents mana_calculate_light_directional(float3 fPos, float3 fNorm, floa
         float3 diffuse =  MANA_LIGHTS_DIRECTIONAL[i].diffuse * float3((diff * diffuseColor).xyz);
 
         float3 viewDir = normalize(MANA_VIEWPOS - fPos);
-        float3 reflectDir = reflect(-lightDir, norm);
+        float3 reflectDir = normalize(reflect(-lightDir, norm));
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
         float3 specular = MANA_LIGHTS_DIRECTIONAL[i].specular * float3((spec * specularColor).xyz);
 

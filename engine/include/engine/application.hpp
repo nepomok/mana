@@ -35,7 +35,7 @@ namespace engine {
             for (int i = 0; i < argc; i++)
                 args.emplace_back(argv[i]);
 
-            DisplayBackend displayBackend = DisplayBackend::GLFW;
+            displayBackend = DisplayBackend::GLFW;
             for (int i = 0; i < args.size(); i++) {
                 if (args.at(i) == "--display") {
                     auto str = args.at(i + 1);
@@ -46,14 +46,14 @@ namespace engine {
             }
             display = DisplayManager(displayBackend);
 
-            GraphicsBackend graphicsBackend = GraphicsBackend::OPENGL_4_6;
+            graphicsBackend = GraphicsBackend::OPENGL_4_6;
             for (int i = 0; i < args.size(); i++) {
                 if (args.at(i) == "--graphics") {
                     auto str = args.at(i + 1);
                     if (str == "opengl") {
                         graphicsBackend = GraphicsBackend::OPENGL_4_6;
                     } else if (str == "directx") {
-                        graphicsBackend = GraphicsBackend::DIRECTX;
+                        graphicsBackend = GraphicsBackend::DIRECTX_11;
                     } else if (str == "vulkan") {
                         graphicsBackend = GraphicsBackend::VULKAN;
                     }
@@ -81,6 +81,9 @@ namespace engine {
     protected:
         DisplayManager display;
         ECS ecs;
+
+        DisplayBackend displayBackend;
+        GraphicsBackend graphicsBackend;
 
         std::unique_ptr<Archive> archive = nullptr;
         std::unique_ptr<Window> window = nullptr;

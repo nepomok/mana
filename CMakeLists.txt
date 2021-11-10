@@ -15,6 +15,8 @@ include(cmake/config.cmake)
 include_directories(${USER_INCLUDE})
 link_directories(${USER_LINK})
 
+include(cmake/imgui.cmake)
+
 include(cmake/engine.cmake)
 include(cmake/editor.cmake)
 include(cmake/sample.cmake)

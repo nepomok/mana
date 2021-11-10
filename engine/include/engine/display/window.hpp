@@ -28,6 +28,8 @@
 #include "engine/display/monitor.hpp"
 #include "engine/display/windowattributes.hpp"
 
+#include "engine/display/displaybackend.hpp"
+
 #include "engine/input/input.hpp"
 #include "engine/math/vector2.hpp"
 

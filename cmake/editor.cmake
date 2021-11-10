@@ -13,7 +13,7 @@ qt5_wrap_cpp(Editor.File.Qt.WRAP_CPP ${Editor.File.Qt.GUI_HDR})
 if (WIN32)
     add_executable(editor-qt WIN32 ${Editor.File.Qt.SRC} ${Editor.File.Qt.WRAP_CPP})
 else ()
-    add_executable(editor-qt ${Editor.File.Qt.SRC} ${Editor.File.Qt.WRAP_CPP})
+    add_executable(editor-qt ${Editor.File.Qt.SRC} ${Editor.File.Qt.WRAP_CPP} ../sample/src/gui/layerselection.hpp ../engine/include/engine/imgui/imguicompat.hpp ../engine/src/imgui/imguicompat.cpp)
 endif ()
 
 target_include_directories(editor-qt PUBLIC ${Engine.Dir.INCLUDE} ${Editor.Dir.INCLUDE} ${Editor.Dir.SRC} ${CMAKE_CURRENT_BINARY_DIR})

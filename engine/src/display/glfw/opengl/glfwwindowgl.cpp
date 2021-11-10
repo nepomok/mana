@@ -163,7 +163,7 @@ namespace engine {
         }
 
         //TODO: GLFW Window implementation synchronization
-        GLFWWindowGL::GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes) {
+        GLFWWindowGL::GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes){
             GLFWCounter::join();
 
             glfwDefaultWindowHints();
@@ -202,7 +202,7 @@ namespace engine {
                                    Vec2i size,
                                    WindowAttributes attributes,
                                    GLFWMonitor &monitor,
-                                   VideoMode videoMode) {
+                                   VideoMode videoMode){
             GLFWCounter::join();
 
             glfwDefaultWindowHints();

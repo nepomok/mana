@@ -143,9 +143,8 @@ namespace engine {
 
             void glfwFrameBufferSizeCallback(Vec2i size);
 
-        private:
             GLFWwindow *wndH;
-
+        private:
             std::unique_ptr<GLFWInput> input;
 
             std::unique_ptr<opengl::OGLRenderDevice> renderDevice;
