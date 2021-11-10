@@ -29,33 +29,23 @@
 #include "engine/render/3d/passes/forwardpass.hpp"
 #include "engine/render/3d/passes/debugpass.hpp"
 #include "engine/render/3d/passes/skyboxpass.hpp"
+#include "engine/render/3d/passes/imguipass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(RenderTarget &scr, RenderDevice &device, Archive &archive)
-            : screenTarget(scr),
-              device(device),
-              debugPass(new DebugPass(device)),
+    RenderSystem::RenderSystem(Window &window, Archive &archive)
+            : screenTarget(window.getRenderTarget()),
+              device(window.getRenderDevice()),
               ren(),
               archive(archive) {
-        layers = {
-                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
-                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {{"forward"},                                          "forward_depth"},
-                {{"debug"},                                            "", DEPTH_TEST_ALWAYS}
-        };
-
-        std::vector<std::unique_ptr<RenderPass>> passes;
-        passes.emplace_back(std::make_unique<ForwardPass>(device));
-        passes.emplace_back(std::make_unique<GeometryPass>(device));
-        passes.emplace_back(std::make_unique<PhongShadePass>(device));
-        passes.emplace_back(std::make_unique<SkyboxPass>(device));
-        passes.emplace_back(std::unique_ptr<DebugPass>(debugPass));
-
-        ren = std::make_unique<Renderer3D>(device,
-                                           std::move(passes),
-                                           layers);
+        ren = std::make_unique<Renderer3D>(device);
+        ren->addRenderPass(std::move(std::make_unique<ForwardPass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<GeometryPass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<PhongShadePass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<SkyboxPass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<DebugPass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<ImGuiPass>(window)));
     }
 
     RenderSystem::~RenderSystem() = default;
@@ -159,14 +149,6 @@ namespace engine {
 
         //Render
         ren->render(screenTarget, scene3d);
-    }
-
-    void RenderSystem::setDrawDebugNormals(bool draw) {
-        debugPass->setDrawNormals(draw);
-    }
-
-    void RenderSystem::setDrawDebugLightCasters(bool draw) {
-        debugPass->setDrawLightCasters(draw);
     }
 
     Renderer3D &RenderSystem::getRenderer() {

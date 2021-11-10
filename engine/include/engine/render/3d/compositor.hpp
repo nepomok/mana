@@ -62,7 +62,7 @@ namespace engine {
 
         std::vector<Layer> &getLayers();
 
-        void setLayers(std::vector<Layer> &layers);
+        void setLayers(const std::vector<Layer> &layers);
 
         void setClearColor(ColorRGB color);
 

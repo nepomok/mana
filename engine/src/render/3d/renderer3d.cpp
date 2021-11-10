@@ -56,15 +56,10 @@ namespace engine {
         return gIncludeFunc;
     }
 
-    Renderer3D::Renderer3D(RenderDevice &device, std::vector<std::unique_ptr<RenderPass>> passes,
-                           std::vector<Compositor::Layer> layers)
-            : device(device),
-              passes(std::move(passes)),
+    Renderer3D::Renderer3D(RenderDevice &device)
+            : passes(),
               geometryBuffer(device.getAllocator()),
-              compositor(device, std::move(layers)) {
-        for (auto &pass: this->passes) {
-            pass->prepareBuffer(geometryBuffer);
-        }
+              compositor(device, {}) {
     }
 
     Renderer3D::~Renderer3D() = default;
@@ -73,8 +68,8 @@ namespace engine {
                             Scene &scene) {
         geometryBuffer.setSize(target.getSize());
 
-        for (auto &pass: passes) {
-            pass->render(geometryBuffer, scene);
+        for (auto &pass: passOrder) {
+            passes.at(pass)->render(geometryBuffer, scene);
         }
 
         compositor.presentLayers(target, geometryBuffer);
@@ -86,5 +81,10 @@ namespace engine {
 
     Compositor &Renderer3D::getCompositor() {
         return compositor;
+    }
+
+    void Renderer3D::clearRenderPasses() {
+        passes.clear();
+        passOrder.clear();
     }
 }

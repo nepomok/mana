@@ -45,7 +45,7 @@ protected:
     void start() override {
         window->setSwapInterval(1);
 
-        renderSystem = new RenderSystem(window->getRenderTarget(), window->getRenderDevice(), *archive);
+        renderSystem = new RenderSystem(*window, *archive);
 
         //Move is required because the ECS destructor deletes the system pointers.
         ecs = std::move(ECS(
@@ -56,24 +56,21 @@ protected:
         ));
         ecs.start();
 
+        std::vector<Compositor::Layer> layers = {
+                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
+                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
+                {{"forward"},                                          "forward_depth"},
+                {{"debug"},                                            "", DEPTH_TEST_ALWAYS},
+                {{"imgui"},                                            "", DEPTH_TEST_ALWAYS}
+        };
+
+        renderSystem->getRenderer().getCompositor().setLayers(layers);
+
+        renderSystem->getRenderer().getRenderPass<ImGuiPass>().setImGuiCommands({layerSelection});
+
         auto &device = window->getRenderDevice();
 
-        auto stream = archive->open("/fonts/roboto/Roboto-Regular.ttf");
-        auto font = Font::createFont(*stream);
-        font->setPixelSize({0, 30});
-        characters = font->renderAscii();
-
-        for (auto &p: characters) {
-            textures[p.first] = device.getAllocator().createTextureBuffer({});
-            textures[p.first]->upload(p.second.image);
-        }
-
-        texture = device.getAllocator().createTextureBuffer({});
-        texture->upload(AssetImporter::import("/images/smiley_2.png", *archive).getImage());
-
-        ren2d = std::make_unique<Renderer2D>(device);
-
-        stream = archive->open("/scene.json");
+        auto stream = archive->open("/scene.json");
         ecs.getEntityManager() << JsonProtocol().deserialize(*stream);
 
         auto &entityManager = ecs.getEntityManager();
@@ -102,8 +99,6 @@ protected:
 
         window->getInput().addListener(*this);
 
-        layerSelection = std::make_unique<LayerSelection>(*window, displayBackend, graphicsBackend);
-
         Application::start();
     }
 
@@ -113,9 +108,6 @@ protected:
         ecs.getEntityManager().clear();
         ecs.stop();
         ecs = ECS();//TODO: ECS Systems clear set
-
-        characters.clear();
-        textures.clear();
 
         layerSelection = {};
 
@@ -144,20 +136,6 @@ protected:
 
         ecs.update(deltaTime);
 
-        ren2d->renderBegin(wnd.getRenderTarget(), false);
-        ren2d->draw(Rectf({150, 300}, {100, 100}), *texture);
-
-        auto str = std::to_string(fpsAverage);
-        ren2d->draw(Vec2f(10, 10 + Character::getMetrics(str, characters).position.y),
-                    str,
-                    {255, 255, 255, 255},
-                    characters,
-                    textures);
-
-        ren2d->renderPresent();
-
-        layerSelection->render(wnd.getRenderTarget());
-
         window->swapBuffers();
     }
 
@@ -165,31 +143,25 @@ private:
     void onKeyDown(keyboard::Key key) override {
         if (key == keyboard::KEY_F1) {
             f1Toggle = !f1Toggle;
-            renderSystem->setDrawDebugNormals(f1Toggle);
+            renderSystem->getRenderPass<DebugPass>().setDrawNormals(f1Toggle);
         } else if (key == keyboard::KEY_F2) {
             f2Toggle = !f2Toggle;
-            renderSystem->setDrawDebugLightCasters(f2Toggle);
+            renderSystem->getRenderPass<DebugPass>().setDrawLightCasters(f2Toggle);
         }
     }
 
     void onKeyUp(keyboard::Key key) override {}
 
 private:
-    std::unique_ptr<Renderer2D> ren2d;
-
     Entity cameraEntity;
-    std::unique_ptr<TextureBuffer> texture = nullptr;
     double fpsAverage = 1;
-
-    std::map<char, Character> characters;
-    std::map<char, std::unique_ptr<TextureBuffer>> textures;
 
     RenderSystem *renderSystem{};
 
     bool f1Toggle = false;
     bool f2Toggle = false;
 
-    std::unique_ptr<LayerSelection> layerSelection;
+    LayerSelection layerSelection;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

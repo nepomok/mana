@@ -29,7 +29,7 @@
 #include "engine/ecs/components/skyboxcomponent.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
-#include "engine/render/rendertarget.hpp"
+#include "engine/display/window.hpp"
 
 #include "engine/io/archive.hpp"
 
@@ -44,7 +44,7 @@ namespace engine {
                          ComponentPool<MeshRenderComponent>::Listener,
                          ComponentPool<SkyboxComponent>::Listener {
     public:
-        RenderSystem(RenderTarget &screenTarget, RenderDevice &device, Archive &archive);
+        RenderSystem(Window &window, Archive &archive);
 
         ~RenderSystem() override;
 
@@ -54,11 +54,12 @@ namespace engine {
 
         void update(float deltaTime, EntityManager &entityManager) override;
 
-        void setDrawDebugNormals(bool draw);
-
-        void setDrawDebugLightCasters(bool draw);
-
         Renderer3D &getRenderer();
+
+        template<typename T>
+        T &getRenderPass() {
+            return ren->getRenderPass<T>();
+        }
 
     private:
         void onComponentCreate(const Entity &entity, const MeshRenderComponent &component) override;
@@ -82,10 +83,6 @@ namespace engine {
         Archive &archive;
 
         std::unique_ptr<Renderer3D> ren;
-
-        DebugPass *debugPass; //TODO: Design a better way of accessing passes in the renderer3d
-
-        std::vector<Compositor::Layer> layers;
 
         /**
          * Retrieve or allocate the texture buffer for a given path.

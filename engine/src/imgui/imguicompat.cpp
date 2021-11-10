@@ -28,6 +28,7 @@
 #include "backends/imgui_impl_opengl3.h"
 
 #include "display/glfw/opengl/glfwwindowgl.hpp"
+#include "render/opengl/oglrendertarget.hpp"
 
 static uint imGuiRefCounter = 0;
 
@@ -98,12 +99,18 @@ namespace engine {
             }
         }
 
-        void DrawData(Window &window) {
+        void DrawData(Window &window, RenderTarget &target) {
             switch (window.getGraphicsBackend()) {
-                case OPENGL_4_6:
-                    glViewport(0, 0, window.getFramebufferSize().x, window.getFramebufferSize().y);
+                case OPENGL_4_6: {
+                    auto &t = dynamic_cast<opengl::OGLRenderTarget &>(target);
+                    glBindFramebuffer(GL_FRAMEBUFFER, t.getFBO());
+                    glViewport(0, 0, target.getSize().x, target.getSize().y);
+                    glClear(0);
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+                    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+                    checkGLError("ImGuiCompat");
                     break;
+                }
                 case DIRECTX_11:
                 case VULKAN:
                     throw std::runtime_error("Not supported");

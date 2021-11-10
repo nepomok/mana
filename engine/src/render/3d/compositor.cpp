@@ -182,4 +182,8 @@ namespace engine {
         ren.addCommand(command);
         ren.renderFinish();
     }
+
+    void Compositor::setLayers(const std::vector<Layer> &l) {
+        layers = l;
+    }
 }

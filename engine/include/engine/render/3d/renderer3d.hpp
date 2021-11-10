@@ -22,7 +22,7 @@
 
 #include <utility>
 #include <map>
-#include <functional>
+#include <typeindex>
 
 #include "engine/render/renderer.hpp"
 #include "engine/render/renderdevice.hpp"
@@ -39,9 +39,7 @@ namespace engine {
 
         static const std::function<std::string(const char *)> &getShaderIncludeCallback();
 
-        Renderer3D(RenderDevice &device,
-                   std::vector<std::unique_ptr<RenderPass>> passes,
-                   std::vector<Compositor::Layer> layers);
+        explicit Renderer3D(RenderDevice &device);
 
         ~Renderer3D();
 
@@ -51,9 +49,26 @@ namespace engine {
 
         Compositor &getCompositor();
 
+        template<typename T>
+        T &getRenderPass() {
+            return dynamic_cast<T &>(*passes.at(typeid(T)).get());
+        }
+
+        template<typename T>
+        void addRenderPass(std::unique_ptr<T> ptr) {
+            auto& pass = dynamic_cast<RenderPass &>(*ptr);
+            pass.prepareBuffer(geometryBuffer);
+
+            passOrder.emplace_back(typeid(T));
+            passes[typeid(T)] = std::move(ptr);
+        }
+
+        void clearRenderPasses();
+
     private:
-        RenderDevice &device;
-        std::vector<std::unique_ptr<RenderPass>> passes;
+        std::vector<std::type_index> passOrder;
+        std::map<std::type_index, std::unique_ptr<RenderPass>> passes;
+
         GeometryBuffer geometryBuffer;
         Compositor compositor;
     };

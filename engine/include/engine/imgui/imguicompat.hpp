@@ -54,8 +54,9 @@ namespace engine {
          * Users can attach a texture buffer to the window render target to access the result.
          *
          * @param window
+         * @param target
          */
-        void DrawData(Window &window);
+        void DrawData(Window &window, RenderTarget &target);
     }
 }
 #endif //MANA_IMGUICOMPAT_HPP
