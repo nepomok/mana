@@ -28,7 +28,7 @@
 #include "systems/playerinputsystem.hpp"
 #include "components/playercontrollercomponent.hpp"
 
-#include "gui/layerselection.hpp"
+#include "gui/debugwindow.hpp"
 
 using namespace engine;
 
@@ -57,16 +57,20 @@ protected:
         ecs.start();
 
         std::vector<Compositor::Layer> layers = {
-                {{"skybox"},                                           "", DEPTH_TEST_ALWAYS},
-                {{"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {{"forward"},                                          "forward_depth"},
-                {{"debug"},                                            "", DEPTH_TEST_ALWAYS},
-                {{"imgui"},                                            "", DEPTH_TEST_ALWAYS}
+                {"Skybox",       {"skybox"},                                           "", DEPTH_TEST_ALWAYS},
+                {"PhongShading", {"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
+                {"Forward",      {"forward"},                                          "forward_depth"},
+                {"Normal Vectors",        {"debug_normals"},                                            "", DEPTH_TEST_ALWAYS},
+                {"Wireframe",        {"debug_wireframe"},                                            "", DEPTH_TEST_ALWAYS},
+                {"Lights",        {"debug_lights"},                                            "", DEPTH_TEST_ALWAYS},
+                {"ImGui",        {"imgui"},                                            "", DEPTH_TEST_ALWAYS},
         };
 
         renderSystem->getRenderer().getCompositor().setLayers(layers);
 
-        renderSystem->getRenderer().getRenderPass<ImGuiPass>().setImGuiCommands({layerSelection});
+        debugWindow.setLayers(layers);
+
+        renderSystem->getRenderer().getRenderPass<ImGuiPass>().setWidgets({debugWindow});
 
         auto &device = window->getRenderDevice();
 
@@ -109,7 +113,7 @@ protected:
         ecs.stop();
         ecs = ECS();//TODO: ECS Systems clear set
 
-        layerSelection = {};
+        debugWindow = {};
 
         Application::stop();
     }
@@ -134,6 +138,8 @@ protected:
             fpsAverage = alpha * fpsAverage + (1.0 - alpha) * fps;
         }
 
+        renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
+
         ecs.update(deltaTime);
 
         window->swapBuffers();
@@ -142,11 +148,7 @@ protected:
 private:
     void onKeyDown(keyboard::Key key) override {
         if (key == keyboard::KEY_F1) {
-            f1Toggle = !f1Toggle;
-            renderSystem->getRenderPass<DebugPass>().setDrawNormals(f1Toggle);
-        } else if (key == keyboard::KEY_F2) {
-            f2Toggle = !f2Toggle;
-            renderSystem->getRenderPass<DebugPass>().setDrawLightCasters(f2Toggle);
+            debugWindow.resetSelection();
         }
     }
 
@@ -158,10 +160,7 @@ private:
 
     RenderSystem *renderSystem{};
 
-    bool f1Toggle = false;
-    bool f2Toggle = false;
-
-    LayerSelection layerSelection;
+    DebugWindow debugWindow;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

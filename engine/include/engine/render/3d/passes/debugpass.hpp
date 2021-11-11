@@ -33,19 +33,13 @@ namespace engine {
 
         void render(GeometryBuffer &gBuffer, Scene &scene) override;
 
-        void setDrawNormals(bool drawNormals);
-
-        void setDrawLightCasters(bool drawLights);
-
     private:
         RenderDevice &device;
 
-        std::unique_ptr<ShaderProgram> shader;
+        std::unique_ptr<ShaderProgram> shaderWireframe;
+        std::unique_ptr<ShaderProgram> shaderNormals;
         std::unique_ptr<ShaderProgram> shaderLight;
         std::unique_ptr<MeshBuffer> meshBuffer;
-
-        bool drawNormals = false;
-        bool drawLights = false;
     };
 }
 

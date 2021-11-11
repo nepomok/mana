@@ -30,15 +30,15 @@ namespace engine {
     class ImGuiPass : public RenderPass {
     public:
         /**
-         * A command can call all imgui functions except setup, rendering and cleanup functions,
+         * A widget can call all imgui functions except setup, rendering and cleanup functions,
          * which are handled by the pass.
          */
-        class Command {
+        class Widget {
         public:
-            virtual void run() = 0;
+            virtual void draw(Scene &scene) = 0;
         };
 
-        explicit ImGuiPass(Window &window, std::vector<std::reference_wrapper<Command>> commands = {});
+        explicit ImGuiPass(Window &window, std::vector<std::reference_wrapper<Widget>> commands = {});
 
         ~ImGuiPass() override;
 
@@ -46,11 +46,11 @@ namespace engine {
 
         void render(GeometryBuffer &gBuffer, Scene &scene) override;
 
-        void setImGuiCommands(const std::vector<std::reference_wrapper<Command>> &commands);
+        void setWidgets(const std::vector<std::reference_wrapper<Widget>> &widgets);
 
     private:
         Window &window;
-        std::vector<std::reference_wrapper<Command>> commands;
+        std::vector<std::reference_wrapper<Widget>> widgets;
     };
 }
 

@@ -9961,7 +9961,7 @@ class binary_reader
 
     @note We can not reserve @a len bytes for the result, because @a len
           may be too large. Usually, @ref unexpect_eof() detects the end of
-          the input before we run out of string memory.
+          the input before we draw out of string memory.
     */
     template<typename NumberType>
     bool get_string(const input_format_t format,
@@ -9994,7 +9994,7 @@ class binary_reader
 
     @note We can not reserve @a len bytes for the result, because @a len
           may be too large. Usually, @ref unexpect_eof() detects the end of
-          the input before we run out of memory.
+          the input before we draw out of memory.
     */
     template<typename NumberType>
     bool get_binary(const input_format_t format,

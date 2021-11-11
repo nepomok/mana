@@ -31,18 +31,24 @@ namespace engine {
     class Compositor {
     public:
         struct Layer {
-            Layer(std::vector<std::string> color,
+            Layer() = default;
+
+            Layer(std::string name,
+                  std::vector<std::string> color,
                   std::string depth,
                   DepthTestMode depthTestMode = DEPTH_TEST_LESS,
                   BlendMode colorBlendModeSource = SRC_ALPHA,
                   BlendMode colorBlendModeDest = ONE_MINUS_SRC_ALPHA)
-                    : color(std::move(color)),
+                    : name(std::move(name)),
+                      color(std::move(color)),
                       depth(std::move(depth)),
                       depthTestMode(depthTestMode),
                       colorBlendModeSource(colorBlendModeSource),
                       colorBlendModeDest(colorBlendModeDest) {}
 
             Layer(const Layer &other) = default;
+
+            std::string name;
 
             // The names of the color textures in the geometry buffer
             std::vector<std::string> color;

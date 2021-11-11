@@ -24,8 +24,8 @@
 #include "imgui.h"
 
 namespace engine {
-    ImGuiPass::ImGuiPass(Window &window, std::vector<std::reference_wrapper<Command>> commands)
-            : window(window), commands(std::move(commands)) {
+    ImGuiPass::ImGuiPass(Window &window, std::vector<std::reference_wrapper<Widget>> commands)
+            : window(window), widgets(std::move(commands)) {
         ImGuiCompat::Init(window);
     }
 
@@ -41,8 +41,8 @@ namespace engine {
         ImGuiCompat::NewFrame(window);
         ImGui::NewFrame();
 
-        for (auto &command: commands) {
-            command.get().run();
+        for (auto &command: widgets) {
+            command.get().draw(scene);
         }
 
         gBuffer.attachColor({"imgui"});
@@ -50,7 +50,7 @@ namespace engine {
         ImGuiCompat::DrawData(window, gBuffer.getRenderTarget());
     }
 
-    void ImGuiPass::setImGuiCommands(const std::vector<std::reference_wrapper<Command>> &value) {
-        commands = value;
+    void ImGuiPass::setWidgets(const std::vector<std::reference_wrapper<Widget>> &w) {
+        widgets = w;
     }
 }

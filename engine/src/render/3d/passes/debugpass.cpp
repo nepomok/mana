@@ -379,6 +379,106 @@ void main()
 }
 )###";
 
+static const char *SHADER_VERT_WIREFRAME = R"###(#version 460 core
+
+layout (location = 0) in vec3 position;
+layout (location = 1) in vec3 normal;
+layout (location = 2) in vec2 uv;
+layout (location = 3) in vec3 tangent;
+layout (location = 4) in vec3 bitangent;
+layout (location = 5) in vec4 instanceRow0;
+layout (location = 6) in vec4 instanceRow1;
+layout (location = 7) in vec4 instanceRow2;
+layout (location = 8) in vec4 instanceRow3;
+
+out Vertex {
+    vec4 vPos;
+    vec3 vNorm;
+    vec3 vTan;
+    vec3 vBitan;
+    vec2 vUv;
+} vs_out;
+
+struct Globals {
+    mat4 MODEL;
+    mat4 VIEW;
+    mat4 PROJECTION;
+    float scale;
+    int hasNormalTexture;
+    int lightType;
+};
+
+uniform Globals globals;
+
+void main()
+{
+    vs_out.vPos = vec4(position, 1);
+    vs_out.vNorm = normal;
+    vs_out.vTan = tangent;
+    vs_out.vBitan = bitangent;
+    vs_out.vUv = uv;
+    gl_Position = vs_out.vPos;
+}
+)###";
+
+static const char *SHADER_GEOMETRY_WIREFRAME = R"###(#version 460 core
+
+layout(triangles) in;
+layout(line_strip, max_vertices = 6) out;
+
+in Vertex {
+    vec4 vPos;
+    vec3 vNorm;
+    vec3 vTan;
+    vec3 vBitan;
+    vec2 vUv;
+} gs_in[];
+
+layout(location = 0) out vec4 pos;
+layout(location = 1) out vec4 color;
+
+struct Globals {
+    mat4 MODEL;
+    mat4 VIEW;
+    mat4 PROJECTION;
+    float scale;
+    int hasNormalTexture;
+    int lightType;
+};
+
+uniform Globals globals;
+
+void drawLine(vec4 start, vec4 end)
+{
+    pos = start;
+    gl_Position = pos;
+    EmitVertex();
+    pos = end;
+    gl_Position = pos;
+    EmitVertex();
+    EndPrimitive();
+}
+
+void main()
+{
+    mat4 mvp = globals.PROJECTION * globals.VIEW * globals.MODEL;
+
+    color = vec4(1, 1, 1, 1);
+
+    for(int i = 0; i < 3; i++)
+    {
+        int next = i + 1;
+        if (next >= 3)
+            next = 0;
+
+        vec4 clipPos0 = mvp * gs_in[i].vPos;
+        vec4 clipPos1 = mvp * gs_in[next].vPos;
+
+        drawLine(clipPos0, clipPos1);
+    }
+}
+)###";
+
 static const char *SHADER_FRAG = R"###(#version 460 core
 
 layout(location = 0) in vec4 pos;
@@ -396,8 +496,7 @@ namespace engine {
     using namespace ShaderCompiler;
 
     DebugPass::DebugPass(RenderDevice &device)
-            : device(device),
-              drawNormals(false) {
+            : device(device) {
         ShaderSource vs(SHADER_VERT, "main", VERTEX, GLSL_460);
         ShaderSource gs(SHADER_GEOMETRY, "main", GEOMETRY, GLSL_460);
         ShaderSource fs(SHADER_FRAG, "main", FRAGMENT, GLSL_460);
@@ -405,8 +504,14 @@ namespace engine {
         ShaderSource vsl(SHADER_VERT_LIGHT, "main", VERTEX, GLSL_460);
         ShaderSource gsl(SHADER_GEOMETRY_LIGHT, "main", GEOMETRY, GLSL_460);
 
+        ShaderSource vsw(SHADER_VERT_WIREFRAME, "main", VERTEX, GLSL_460);
+        ShaderSource gsw(SHADER_GEOMETRY_WIREFRAME, "main", GEOMETRY, GLSL_460);
+
         vsl.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(GLSL_460));
         gsl.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(GLSL_460));
+
+        vsw.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(GLSL_460));
+        gsw.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(GLSL_460));
 
         // Compile preprocessed glsl into spirv and back into glsl to get rid of unnecessary incompatible preprocessor statements added by shaderc when including in glsl.
         vsl = ShaderSource(ShaderCompiler::decompileSPIRV(vsl.compile(), ShaderLanguage::GLSL_460),
@@ -419,7 +524,18 @@ namespace engine {
                            GEOMETRY,
                            GLSL_460);
 
-        shader = device.getAllocator().createShaderProgram(vs, gs, fs);
+        vsw = ShaderSource(ShaderCompiler::decompileSPIRV(vsw.compile(), ShaderLanguage::GLSL_460),
+                           "main",
+                           VERTEX,
+                           GLSL_460);
+
+        gsw = ShaderSource(ShaderCompiler::decompileSPIRV(gsw.compile(), ShaderLanguage::GLSL_460),
+                           "main",
+                           GEOMETRY,
+                           GLSL_460);
+
+        shaderWireframe = device.getAllocator().createShaderProgram(vsw, gsw, fs);
+        shaderNormals = device.getAllocator().createShaderProgram(vs, gs, fs);
         shaderLight = device.getAllocator().createShaderProgram(vsl, gsl, fs);
 
         meshBuffer = device.getAllocator().createMeshBuffer(Mesh(Mesh::TRI, {Vertex(Vec3f(0))}, {0, 0, 0}));
@@ -428,14 +544,16 @@ namespace engine {
     DebugPass::~DebugPass() = default;
 
     void DebugPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("debug", TextureBuffer::RGBA);
+        gBuffer.addBuffer("debug_wireframe", TextureBuffer::RGBA);
+        gBuffer.addBuffer("debug_normals", TextureBuffer::RGBA);
+        gBuffer.addBuffer("debug_lights", TextureBuffer::RGBA);
     }
 
     void DebugPass::render(GeometryBuffer &gBuffer, Scene &scene) {
-        gBuffer.attachColor({"debug"});
-        gBuffer.attachDepthStencil("depth");
-
         auto &ren = device.getRenderer();
+
+        gBuffer.attachColor({"debug_normals"});
+        gBuffer.attachDepthStencil("depth");
 
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
@@ -447,76 +565,106 @@ namespace engine {
                                       false,
                                       false));
 
-        if (drawNormals) {
-            for (auto &deferredCommand: scene.deferred) {
-                if (!shader->setFloat("globals.scale", 0.1f))
-                    throw std::runtime_error("");
-                shader->setMat4("globals.MODEL", deferredCommand.transform.model());
-                shader->setMat4("globals.VIEW", scene.camera.view());
-                shader->setMat4("globals.PROJECTION", scene.camera.projection());
+        for (auto &deferredCommand: scene.deferred) {
+            if (!shaderNormals->setFloat("globals.scale", 0.1f))
+                throw std::runtime_error("");
+            shaderNormals->setMat4("globals.MODEL", deferredCommand.transform.model());
+            shaderNormals->setMat4("globals.VIEW", scene.camera.view());
+            shaderNormals->setMat4("globals.PROJECTION", scene.camera.projection());
 
-                RenderCommand command(*shader);
-                command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
+            RenderCommand command(*shaderNormals);
+            command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
 
-                command.properties.depthTestWrite = false;
+            command.properties.depthTestWrite = false;
 
-                if (deferredCommand.material.normalTexture != nullptr) {
-                    shader->setBool("globals.hasNormalTexture", true);
-                    shader->setTexture("normal", 0);
-                    command.textures.emplace_back(*deferredCommand.material.normalTexture);
-                } else {
-                    shader->setBool("globals.hasNormalTexture", false);
-                }
-
-                ren.addCommand(command);
+            if (deferredCommand.material.normalTexture != nullptr) {
+                shaderNormals->setBool("globals.hasNormalTexture", true);
+                shaderNormals->setTexture("normal", 0);
+                command.textures.emplace_back(*deferredCommand.material.normalTexture);
+            } else {
+                shaderNormals->setBool("globals.hasNormalTexture", false);
             }
+
+            ren.addCommand(command);
         }
 
-        if (drawLights) {
-            for (auto &light: scene.lights) {
-                shaderLight->setMat4("globals.MODEL", light.transform.model());
-                shaderLight->setMat4("globals.VIEW", scene.camera.view());
-                shaderLight->setMat4("globals.PROJECTION", scene.camera.projection());
+        ren.renderFinish();
 
-                switch (light.type) {
-                    case LIGHT_DIRECTIONAL: {
-                        shaderLight->setInt("globals.lightType", 0);
+        gBuffer.attachColor({"debug_wireframe"});
+        gBuffer.detachDepthStencil();
 
-                        std::string prefix = "globals.dirLight";
-                        shaderLight->setVec3(prefix + ".direction", light.direction);
-                        break;
-                    }
-                    case LIGHT_POINT: {
-                        shaderLight->setInt("globals.lightType", 1);
-                        break;
-                    }
-                    case LIGHT_SPOT: {
-                        shaderLight->setInt("globals.lightType", 2);
+        ren.renderBegin(gBuffer.getRenderTarget(),
+                        RenderOptions({},
+                                      gBuffer.getSize(),
+                                      false,
+                                      {},
+                                      1,
+                                      true,
+                                      false,
+                                      false));
 
-                        std::string prefix = "globals.spotLight";
-                        shaderLight->setVec3(prefix + ".direction", light.direction);
-                        shaderLight->setFloat(prefix + ".cutOff", cosf(degreesToRadians(light.cutOff)));
-                        shaderLight->setFloat(prefix + ".outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
-                        break;
-                    }
+        for (auto &deferredCommand: scene.deferred) {
+            shaderWireframe->setMat4("globals.MODEL", deferredCommand.transform.model());
+            shaderWireframe->setMat4("globals.VIEW", scene.camera.view());
+            shaderWireframe->setMat4("globals.PROJECTION", scene.camera.projection());
+
+            RenderCommand command = RenderCommand(*shaderWireframe);
+            command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
+
+            command.properties.enableDepthTest = false;
+
+            ren.addCommand(command);
+        }
+
+        ren.renderFinish();
+
+        gBuffer.attachColor({"debug_lights"});
+        gBuffer.attachDepthStencil("depth");
+
+        ren.renderBegin(gBuffer.getRenderTarget(),
+                        RenderOptions({},
+                                      gBuffer.getSize(),
+                                      false,
+                                      {},
+                                      1,
+                                      true,
+                                      false,
+                                      false));
+
+        for (auto &light: scene.lights) {
+            shaderLight->setMat4("globals.MODEL", light.transform.model());
+            shaderLight->setMat4("globals.VIEW", scene.camera.view());
+            shaderLight->setMat4("globals.PROJECTION", scene.camera.projection());
+
+            switch (light.type) {
+                case LIGHT_DIRECTIONAL: {
+                    shaderLight->setInt("globals.lightType", 0);
+
+                    std::string prefix = "globals.dirLight";
+                    shaderLight->setVec3(prefix + ".direction", light.direction);
+                    break;
                 }
+                case LIGHT_POINT: {
+                    shaderLight->setInt("globals.lightType", 1);
+                    break;
+                }
+                case LIGHT_SPOT: {
+                    shaderLight->setInt("globals.lightType", 2);
 
-                RenderCommand command(*shaderLight);
-                command.meshBuffers.emplace_back(*meshBuffer);
-
-                ren.addCommand(command);
+                    std::string prefix = "globals.spotLight";
+                    shaderLight->setVec3(prefix + ".direction", light.direction);
+                    shaderLight->setFloat(prefix + ".cutOff", cosf(degreesToRadians(light.cutOff)));
+                    shaderLight->setFloat(prefix + ".outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
+                    break;
+                }
             }
+
+            RenderCommand command(*shaderLight);
+            command.meshBuffers.emplace_back(*meshBuffer);
+
+            ren.addCommand(command);
         }
 
         ren.renderFinish();
     }
-
-    void DebugPass::setDrawNormals(bool value) {
-        drawNormals = value;
-    }
-
-    void DebugPass::setDrawLightCasters(bool value) {
-        drawLights = value;
-    }
-
 }
