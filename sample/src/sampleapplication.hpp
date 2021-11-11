@@ -88,6 +88,7 @@ protected:
         debugWindow.setLayerActive("Specular", false);
         debugWindow.setLayerActive("Shininess", false);
 
+        debugWindow.setLayerActive("ImGui", false);
         debugWindow.setLayerPinned("ImGui", true);
 
         renderSystem->getRenderer().getRenderPass<ImGuiPass>().setWidgets({debugWindow});
@@ -167,6 +168,9 @@ protected:
 
 private:
     void onKeyDown(keyboard::Key key) override {
+        if (key == keyboard::KEY_F1) {
+            debugWindow.setLayerActive("ImGui", !debugWindow.getLayerActive("ImGui"));
+        }
     }
 
     void onKeyUp(keyboard::Key key) override {}

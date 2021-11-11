@@ -201,10 +201,14 @@ public:
         std::vector<Compositor::Layer> pin;
         std::map<int, std::vector<Compositor::Layer>> tmp;
         for (auto &item: items)
-            if (item.pinned)
-                pin.emplace_back(item.layer);
-            else if (item.active)
-                tmp[item.order].emplace_back(item.layer);
+            if (item.active) {
+                if (item.pinned) {
+                    pin.emplace_back(item.layer);
+                } else {
+                    tmp[item.order].emplace_back(item.layer);
+                }
+            }
+
         std::vector<Compositor::Layer> ret;
         for (auto &pair: tmp)
             for (auto &layer: pair.second)
@@ -239,11 +243,27 @@ public:
         }
     }
 
+    bool getLayerActive(const std::string &name) {
+        for (auto &item: items) {
+            if (item.layer.name == name) {
+                return item.active;
+            }
+        }
+    }
+
     void setLayerPinned(const std::string &name, bool pin) {
         for (auto &item: items) {
             if (item.layer.name == name) {
                 item.pinned = pin;
                 break;
+            }
+        }
+    }
+
+    bool getLayerPinned(const std::string &name) {
+        for (auto &item: items) {
+            if (item.layer.name == name) {
+                return item.pinned;
             }
         }
     }
