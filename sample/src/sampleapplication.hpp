@@ -57,18 +57,38 @@ protected:
         ecs.start();
 
         std::vector<Compositor::Layer> layers = {
-                {"Skybox",       {"skybox"},                                           "", DEPTH_TEST_ALWAYS},
-                {"PhongShading", {"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {"Forward",      {"forward"},                                          "forward_depth"},
-                {"Normal Vectors",        {"debug_normals"},                                            "", DEPTH_TEST_ALWAYS},
-                {"Wireframe",        {"debug_wireframe"},                                            "", DEPTH_TEST_ALWAYS},
-                {"Lights",        {"debug_lights"},                                            "", DEPTH_TEST_ALWAYS},
-                {"ImGui",        {"imgui"},                                            "", DEPTH_TEST_ALWAYS},
+                {"Skybox",         {"skybox"},                                           "", DEPTH_TEST_ALWAYS},
+                {"PhongShading",   {"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
+                {"Forward",        {"forward"},                                          "forward_depth"},
+                {"Normal Vectors", {"debug_normals"},                                    "", DEPTH_TEST_ALWAYS},
+                {"Wireframe",      {"debug_wireframe"},                                  "", DEPTH_TEST_ALWAYS},
+                {"Lights",         {"debug_lights"},                                     "", DEPTH_TEST_ALWAYS},
+                {"Depth",          {"depth"},                                            "", DEPTH_TEST_ALWAYS},
+                {"Position",       {"position"},                                         "", DEPTH_TEST_ALWAYS},
+                {"Normal",         {"normal"},                                           "", DEPTH_TEST_ALWAYS},
+                {"Diffuse",        {"diffuse"},                                          "", DEPTH_TEST_ALWAYS},
+                {"Ambient",        {"ambient"},                                          "", DEPTH_TEST_ALWAYS},
+                {"Specular",       {"specular"},                                         "", DEPTH_TEST_ALWAYS},
+                {"Shininess",      {"shininess"},                                        "", DEPTH_TEST_ALWAYS},
+                {"ImGui",          {"imgui"},                                            "", DEPTH_TEST_ALWAYS},
         };
 
         renderSystem->getRenderer().getCompositor().setLayers(layers);
 
         debugWindow.setLayers(layers);
+
+        debugWindow.setLayerActive("Normal Vectors", false);
+        debugWindow.setLayerActive("Wireframe", false);
+        debugWindow.setLayerActive("Lights", false);
+        debugWindow.setLayerActive("Depth", false);
+        debugWindow.setLayerActive("Position", false);
+        debugWindow.setLayerActive("Normal", false);
+        debugWindow.setLayerActive("Diffuse", false);
+        debugWindow.setLayerActive("Ambient", false);
+        debugWindow.setLayerActive("Specular", false);
+        debugWindow.setLayerActive("Shininess", false);
+
+        debugWindow.setLayerPinned("ImGui", true);
 
         renderSystem->getRenderer().getRenderPass<ImGuiPass>().setWidgets({debugWindow});
 
@@ -147,9 +167,6 @@ protected:
 
 private:
     void onKeyDown(keyboard::Key key) override {
-        if (key == keyboard::KEY_F1) {
-            debugWindow.resetSelection();
-        }
     }
 
     void onKeyUp(keyboard::Key key) override {}

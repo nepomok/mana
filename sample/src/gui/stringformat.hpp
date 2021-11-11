@@ -52,6 +52,8 @@ std::string formatBlendMode(engine::BlendMode mode) {
             return "CONSTANT_ALPHA";
         case engine::ONE_MINUS_CONSTANT_ALPHA:
             return "ONE_MINUS_CONSTANT_ALPHA";
+        default:
+            return "ERROR";
     }
 }
 
@@ -73,6 +75,8 @@ std::string formatDepthTestMode(engine::DepthTestMode mode) {
             return "DEPTH_TEST_NOTEQUAL";
         case engine::DEPTH_TEST_GEQUAL:
             return "DEPTH_TEST_GEQUAL";
+        default:
+            return "ERROR";
     }
 }
 

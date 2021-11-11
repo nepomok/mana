@@ -38,6 +38,7 @@ public:
 
         int order = 0;
         bool active = true;
+        bool pinned = false;
         Compositor::Layer layer;
     };
 
@@ -53,31 +54,33 @@ public:
     void drawLayerNodeButtons(LayerTreeItem &item) {
         if (!item.active) {
             ImGui::SameLine();
-            if (ImGui::SmallButton(("Enable###0_" + std::to_string(item.order)).c_str())) {
+            if (ImGui::SmallButton(
+                    ("Enable###0_" + std::to_string(item.order)).c_str())) {
                 item.active = true;
             }
-        } else {
+        } else if (!item.pinned) {
             ImGui::SameLine();
-            if (ImGui::SmallButton(("Disable###1_" + std::to_string(item.order)).c_str())) {
+            if (ImGui::SmallButton(
+                    ("Disable###1_" + std::to_string(item.order)).c_str())) {
                 item.active = false;
             }
 
             ImGui::SameLine();
-            if (ImGui::SmallButton(("Up###2_" + std::to_string(item.order)).c_str())) {
+            if (ImGui::SmallButton(
+                    ("Up###2_" + std::to_string(item.order)).c_str())) {
                 auto nIndex = item.order;
 
                 bool foundDeactivated = false;
-                //Increment nIndex until it doesnt point to a deactivated item
+                //Decrement nIndex until it doesnt point to a deactivated item
                 while (true) {
                     if (--nIndex < 0)
-                        nIndex = 0;
+                        nIndex = static_cast<int>(items.size() - 1);
                     if (nIndex == item.order) {
                         break;
-                    } else if (item.active) {
+                    } else if (items.at(nIndex).active && !items.at(nIndex).pinned) {
                         foundDeactivated = true;
                         break;
                     }
-                    nIndex++;
                 }
 
                 if (foundDeactivated)
@@ -85,7 +88,8 @@ public:
             }
 
             ImGui::SameLine();
-            if (ImGui::SmallButton(("Down###3_" + std::to_string(item.order)).c_str())) {
+            if (ImGui::SmallButton(
+                    ("Down###3_" + std::to_string(item.order)).c_str())) {
                 auto nIndex = item.order;
 
                 bool foundDeactivated = false;
@@ -95,11 +99,10 @@ public:
                         nIndex = 0;
                     if (nIndex == item.order) {
                         break;
-                    } else if (item.active) {
+                    } else if (items.at(nIndex).active && !items.at(nIndex).pinned) {
                         foundDeactivated = true;
                         break;
                     }
-                    nIndex++;
                 }
 
                 if (foundDeactivated)
@@ -142,9 +145,12 @@ public:
         if (ImGui::TreeNode("Render Layers")) {
             std::map<int, std::vector<std::reference_wrapper<LayerTreeItem>>> activeItems;
             std::vector<std::reference_wrapper<LayerTreeItem>> inactiveItems;
+            std::vector<std::reference_wrapper<LayerTreeItem>> pinnedItems;
 
             for (auto &item: items) {
-                if (item.active)
+                if (item.pinned)
+                    pinnedItems.emplace_back(item);
+                else if (item.active)
                     activeItems[item.order].emplace_back(item);
                 else
                     inactiveItems.emplace_back(item);
@@ -155,6 +161,9 @@ public:
                 for (auto &pair: activeItems) {
                     for (auto &item: pair.second)
                         drawLayerNode(nodeIndex++, item);
+                }
+                for (auto &item: pinnedItems) {
+                    drawLayerNode(nodeIndex++, item);
                 }
                 ImGui::TreePop();
             }
@@ -173,14 +182,19 @@ public:
     }
 
     std::vector<Compositor::Layer> getSelectedLayers() {
+        std::vector<Compositor::Layer> pin;
         std::map<int, std::vector<Compositor::Layer>> tmp;
         for (auto &item: items)
-            if (item.active)
+            if (item.pinned)
+                pin.emplace_back(item.layer);
+            else if (item.active)
                 tmp[item.order].emplace_back(item.layer);
         std::vector<Compositor::Layer> ret;
         for (auto &pair: tmp)
             for (auto &layer: pair.second)
                 ret.emplace_back(layer);
+        for (auto &layer: pin)
+            ret.emplace_back(layer);
         return ret;
     }
 
@@ -197,6 +211,24 @@ public:
         int i = 0;
         for (auto &layer: l) {
             items.emplace_back(LayerTreeItem(i++, static_cast<Compositor::Layer>(layer)));
+        }
+    }
+
+    void setLayerActive(const std::string &name, bool active) {
+        for (auto &item: items) {
+            if (item.layer.name == name) {
+                item.active = active;
+                break;
+            }
+        }
+    }
+
+    void setLayerPinned(const std::string &name, bool pin) {
+        for (auto &item: items) {
+            if (item.layer.name == name) {
+                item.pinned = pin;
+                break;
+            }
         }
     }
 

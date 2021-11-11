@@ -55,6 +55,8 @@ namespace engine {
                 case GLFW:
                     ImGui_ImplGlfw_InitForOpenGL(dynamic_cast<glfw::GLFWWindowGL &>(window).wndH, true);
                     break;
+                default:
+                    throw std::runtime_error("Not supported");
             }
             switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6:
@@ -62,6 +64,7 @@ namespace engine {
                     break;
                 case DIRECTX_11:
                 case VULKAN:
+                default:
                     throw std::runtime_error("Not supported");
             }
         }
@@ -73,12 +76,15 @@ namespace engine {
                     break;
                 case DIRECTX_11:
                 case VULKAN:
+                default:
                     throw std::runtime_error("Not supported");
             }
             switch (window.getDisplayBackend()) {
                 case GLFW:
                     ImGui_ImplGlfw_Shutdown();
                     break;
+                default:
+                    throw std::runtime_error("Not supported");
             }
             leaveImGui();
         }
@@ -90,12 +96,15 @@ namespace engine {
                     break;
                 case DIRECTX_11:
                 case VULKAN:
+                default:
                     throw std::runtime_error("Not supported");
             }
             switch (window.getDisplayBackend()) {
                 case GLFW:
                     ImGui_ImplGlfw_NewFrame();
                     break;
+                default:
+                    throw std::runtime_error("Not supported");
             }
         }
 
@@ -114,6 +123,7 @@ namespace engine {
                 }
                 case DIRECTX_11:
                 case VULKAN:
+                default:
                     throw std::runtime_error("Not supported");
             }
         }
