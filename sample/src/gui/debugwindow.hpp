@@ -142,42 +142,58 @@ public:
 
         ImGui::Begin("Debug Window");
 
-        if (ImGui::TreeNode("Render Layers")) {
-            std::map<int, std::vector<std::reference_wrapper<LayerTreeItem>>> activeItems;
-            std::vector<std::reference_wrapper<LayerTreeItem>> inactiveItems;
-            std::vector<std::reference_wrapper<LayerTreeItem>> pinnedItems;
+        ImGui::BeginTabBar("TabBar");
 
-            for (auto &item: items) {
-                if (item.pinned)
-                    pinnedItems.emplace_back(item);
-                else if (item.active)
-                    activeItems[item.order].emplace_back(item);
-                else
-                    inactiveItems.emplace_back(item);
-            }
+        if (ImGui::BeginTabItem("Rendering")) {
+            if (ImGui::TreeNode("Render Layers")) {
+                std::map<int, std::vector<std::reference_wrapper<LayerTreeItem>>> activeItems;
+                std::vector<std::reference_wrapper<LayerTreeItem>> inactiveItems;
+                std::vector<std::reference_wrapper<LayerTreeItem>> pinnedItems;
 
-            if (ImGui::TreeNode("Active")) {
-                int nodeIndex = 0;
-                for (auto &pair: activeItems) {
-                    for (auto &item: pair.second)
+                for (auto &item: items) {
+                    if (item.pinned)
+                        pinnedItems.emplace_back(item);
+                    else if (item.active)
+                        activeItems[item.order].emplace_back(item);
+                    else
+                        inactiveItems.emplace_back(item);
+                }
+
+                if (ImGui::TreeNode("Active")) {
+                    int nodeIndex = 0;
+                    for (auto &pair: activeItems) {
+                        for (auto &item: pair.second)
+                            drawLayerNode(nodeIndex++, item);
+                    }
+                    for (auto &item: pinnedItems) {
                         drawLayerNode(nodeIndex++, item);
+                    }
+                    ImGui::TreePop();
                 }
-                for (auto &item: pinnedItems) {
-                    drawLayerNode(nodeIndex++, item);
+                if (ImGui::TreeNode("Inactive")) {
+                    int nodeIndex = 0;
+                    for (auto &item: inactiveItems)
+                        drawLayerNode(nodeIndex++, item);
+                    ImGui::TreePop();
                 }
-                ImGui::TreePop();
-            }
-            if (ImGui::TreeNode("Inactive")) {
-                int nodeIndex = 0;
-                for (auto &item: inactiveItems)
-                    drawLayerNode(nodeIndex++, item);
+
                 ImGui::TreePop();
             }
 
-            ImGui::TreePop();
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
+                        ImGui::GetIO().Framerate);
+            ImGui::EndTabItem();
         }
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
-                    ImGui::GetIO().Framerate);
+
+        if (ImGui::BeginTabItem("Camera")) {
+            ImGui::InputFloat3("Position", (float *) (&scene.camera.transform.position), "%.3f");
+            auto euler = scene.camera.transform.rotation.getEulerAngles();
+            ImGui::InputFloat3("Rotation", (float *) (&euler), "%.3f");
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+
         ImGui::End();
     }
 
