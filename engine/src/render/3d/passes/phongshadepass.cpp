@@ -73,47 +73,41 @@ struct PS_OUTPUT {
     float4 phong_ambient: SV_TARGET0;
     float4 phong_diffuse: SV_TARGET1;
     float4 phong_specular: SV_TARGET2;
+    float4 phong_combined: SV_TARGET3;
 };
 
-Texture2D position;
-Texture2D normal;
-Texture2D diffuse;
-Texture2D ambient;
-Texture2D specular;
-Texture2D shininess;
-Texture2D depth;
+Texture2DMS<float4> position;
+Texture2DMS<float4> normal;
+Texture2DMS<float4> diffuse;
+Texture2DMS<float4> ambient;
+Texture2DMS<float4> specular;
+Texture2DMS<float4> shininess;
+Texture2DMS<float4> depth;
 
-SamplerState samplerState_position
-{};
-
-SamplerState samplerState_normal
-{};
-
-SamplerState samplerState_diffuse
-{};
-
-SamplerState samplerState_ambient
-{};
-
-SamplerState samplerState_specular
-{};
-
-SamplerState samplerState_shininess
-{};
-
-SamplerState samplerState_depth
-{};
+float4 msaaAverage(Texture2DMS<float4> tex, float2 uv)
+{
+    uint2 size;
+    int samples;
+    tex.GetDimensions(size.x, size.y, samples);
+    float4 ret;
+    for (int i = 0; i < samples; i++)
+    {
+        int2 coord = uv * size;
+        ret += tex.Load(coord, i);
+    }
+    return ret / samples;
+}
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
 
-    float3 fragPos = position.Sample(samplerState_position, v.fUv).xyz;
-    float3 fragNorm = normal.Sample(samplerState_normal, v.fUv).xyz;
-    float4 fragDiffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
-    float4 fragSpecular = specular.Sample(samplerState_specular, v.fUv);
-    float fragShininess = shininess.Sample(samplerState_shininess, v.fUv).r;
+    float3 fragPos = msaaAverage(position, v.fUv).xyz;
+    float3 fragNorm = msaaAverage(normal, v.fUv).xyz;
+    float4 fragDiffuse = msaaAverage(diffuse, v.fUv);
+    float4 fragSpecular = msaaAverage(specular, v.fUv);
+    float fragShininess = msaaAverage(shininess, v.fUv).r;
 
-    float fragDepth = depth.Sample(samplerState_depth, v.fUv).r;
+    float fragDepth = msaaAverage(depth, v.fUv).r;
 
     LightComponents comp = mana_calculate_light(fragPos,
                                                 fragNorm,
@@ -121,9 +115,24 @@ PS_OUTPUT main(PS_INPUT v) {
                                                 fragSpecular,
                                                 fragShininess);
 
-    ret.phong_ambient = float4(comp.ambient, 1);
-    ret.phong_diffuse = float4(comp.diffuse, 1);
-    ret.phong_specular = float4(comp.specular, 1);
+    float4 clearColor = float4(0, 0, 0, 0);
+    if (fragDepth < 1)
+    {
+        ret.phong_ambient = float4(comp.ambient, 1);
+        ret.phong_diffuse = float4(comp.diffuse, 1);
+        ret.phong_specular = float4(comp.specular, 1);
+
+        ret.phong_combined = ret.phong_ambient + ret.phong_diffuse + ret.phong_specular;
+        ret.phong_combined.a = fragDiffuse.a;
+    }
+    else
+    {
+        ret.phong_ambient = clearColor;
+        ret.phong_diffuse = clearColor;
+        ret.phong_specular = clearColor;
+
+        ret.phong_combined = clearColor;
+    }
 
     return ret;
 }
@@ -137,14 +146,14 @@ namespace engine {
         ShaderSource vertexShader(SHADER_VERT_LIGHTING,
                                   "main",
                                   VERTEX,
-                                  HLSL);
+                                  HLSL_SHADER_MODEL_4);
         ShaderSource fragmentShader(SHADER_FRAG_LIGHTING,
                                     "main",
                                     FRAGMENT,
-                                    HLSL);
+                                    HLSL_SHADER_MODEL_4);
 
-        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL));
-        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL));
+        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
+        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 
@@ -155,6 +164,7 @@ namespace engine {
         gBuffer.addBuffer("phong_ambient", TextureBuffer::ColorFormat::RGBA);
         gBuffer.addBuffer("phong_diffuse", TextureBuffer::ColorFormat::RGBA);
         gBuffer.addBuffer("phong_specular", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer("phong_combined", TextureBuffer::ColorFormat::RGBA);
     }
 
     void PhongShadePass::render(GeometryBuffer &gBuffer, Scene &scene) {
@@ -162,7 +172,7 @@ namespace engine {
         int pointCount = 0;
         int spotCount = 0;
 
-        for (auto &light : scene.lights) {
+        for (auto &light: scene.lights) {
             std::string name;
             switch (light.type) {
                 case LIGHT_DIRECTIONAL:
@@ -227,13 +237,14 @@ namespace engine {
         command.properties.enableDepthTest = false;
         command.properties.enableStencilTest = false;
         command.properties.enableFaceCulling = false;
-        command.properties.enableBlending = false;
+        command.properties.enableBlending = true;
 
         auto &ren = renderDevice.getRenderer();
 
-        gBuffer.attachColor({"phong_ambient", "phong_diffuse", "phong_specular"});
+        gBuffer.attachColor({"phong_ambient", "phong_diffuse", "phong_specular", "phong_combined"});
+        gBuffer.detachDepthStencil();
 
-        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getSize()));
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getSize(), true, {255, 0, 0, 0}));
         ren.addCommand(command);
         ren.renderFinish();
     }

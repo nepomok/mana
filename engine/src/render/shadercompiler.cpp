@@ -81,7 +81,7 @@ namespace engine {
 
         shaderc_source_language shaderLang;
         switch (language) {
-            case HLSL:
+            case HLSL_SHADER_MODEL_4:
                 shaderLang = shaderc_source_language_hlsl;
                 break;
             case GLSL_460:
@@ -111,7 +111,7 @@ namespace engine {
                                                        options);
 
         if (compileResult.GetCompilationStatus() != shaderc_compilation_status_success) {
-            throw std::runtime_error("Failed to compile glsl " + compileResult.GetErrorMessage());
+            throw std::runtime_error("Failed to compile to spirv " + compileResult.GetErrorMessage());
         }
 
         return {compileResult.cbegin(), compileResult.cend()};
@@ -120,7 +120,7 @@ namespace engine {
     std::string ShaderCompiler::decompileSPIRV(const std::vector<uint32_t> &source,
                                                ShaderCompiler::ShaderLanguage targetLanguage) {
         switch (targetLanguage) {
-            case HLSL: {
+            case HLSL_SHADER_MODEL_4: {
                 spirv_cross::CompilerHLSL sCompiler(source);
 
                 spirv_cross::ShaderResources resources = sCompiler.get_shader_resources();
@@ -131,7 +131,14 @@ namespace engine {
                     sCompiler.set_name(resources.uniform_buffers[0].id, "Globals");
 
                 spirv_cross::CompilerGLSL::Options sOptions;
+                spirv_cross::CompilerHLSL::Options hlslOptions;
+
+                hlslOptions.shader_model = 40;
+
+                sCompiler.set_hlsl_options(hlslOptions);
                 sCompiler.set_common_options(sOptions);
+
+                sCompiler.build_combined_image_samplers();
 
                 return sCompiler.compile();
             }
@@ -154,6 +161,9 @@ namespace engine {
                 sOptions.separate_shader_objects = true;
 
                 sCompiler.set_common_options(sOptions);
+
+                sCompiler.build_dummy_sampler_for_combined_images();
+                sCompiler.build_combined_image_samplers();
 
                 return sCompiler.compile();
             }
@@ -209,7 +219,7 @@ namespace engine {
 
         shaderc_source_language shaderLang;
         switch (language) {
-            case HLSL:
+            case HLSL_SHADER_MODEL_4:
                 shaderLang = shaderc_source_language_hlsl;
                 break;
             case GLSL_460:
@@ -222,7 +232,7 @@ namespace engine {
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
 
-        for (auto &p : macros)
+        for (auto &p: macros)
             options.AddMacroDefinition(p.first, p.second);
 
         options.SetIncluder(std::make_unique<IncludeHandler>(include));

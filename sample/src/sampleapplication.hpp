@@ -57,26 +57,32 @@ protected:
         ecs.start();
 
         std::vector<Compositor::Layer> layers = {
-                {"Skybox",         {"skybox"},                                           "", DEPTH_TEST_ALWAYS},
-                {"PhongShading",   {"phong_ambient", "phong_diffuse", "phong_specular"}, "depth"},
-                {"Forward",        {"forward"},                                          "forward_depth"},
-                {"Normal Vectors", {"debug_normals"},                                    "", DEPTH_TEST_ALWAYS},
-                {"Wireframe",      {"debug_wireframe"},                                  "", DEPTH_TEST_ALWAYS},
-                {"Lights",         {"debug_lights"},                                     "", DEPTH_TEST_ALWAYS},
-                {"Depth",          {"depth"},                                            "", DEPTH_TEST_ALWAYS},
-                {"Position",       {"position"},                                         "", DEPTH_TEST_ALWAYS},
-                {"Normal",         {"normal"},                                           "", DEPTH_TEST_ALWAYS},
-                {"Diffuse",        {"diffuse"},                                          "", DEPTH_TEST_ALWAYS},
-                {"Ambient",        {"ambient"},                                          "", DEPTH_TEST_ALWAYS},
-                {"Specular",       {"specular"},                                         "", DEPTH_TEST_ALWAYS},
-                {"Shininess",      {"shininess"},                                        "", DEPTH_TEST_ALWAYS},
-                {"ImGui",          {"imgui"},                                            "", DEPTH_TEST_ALWAYS},
+                {"Skybox",         "skybox",          "", DEPTH_TEST_ALWAYS},
+                {"PhongShading",   "phong_combined",  "depth", DEPTH_TEST_ALWAYS},
+                {"Forward",        "forward",         "forward_depth"},
+                {"Phong Ambient",  "phong_ambient",   "", DEPTH_TEST_ALWAYS},
+                {"Phong Diffuse",  "phong_diffuse",   "", DEPTH_TEST_ALWAYS},
+                {"Phong Specular", "phong_specular",  "", DEPTH_TEST_ALWAYS},
+                {"Normal Vectors", "debug_normals",   "", DEPTH_TEST_ALWAYS},
+                {"Wireframe",      "debug_wireframe", "", DEPTH_TEST_ALWAYS},
+                {"Lights",         "debug_lights",    "", DEPTH_TEST_ALWAYS},
+                {"Depth",          "depth",           "", DEPTH_TEST_ALWAYS},
+                {"Position",       "position",        "", DEPTH_TEST_ALWAYS},
+                {"Normal",         "normal",          "", DEPTH_TEST_ALWAYS},
+                {"Diffuse",        "diffuse",         "", DEPTH_TEST_ALWAYS},
+                {"Ambient",        "ambient",         "", DEPTH_TEST_ALWAYS},
+                {"Specular",       "specular",        "", DEPTH_TEST_ALWAYS},
+                {"Shininess",      "shininess",       "", DEPTH_TEST_ALWAYS},
+                {"ImGui",          "imgui",           "", DEPTH_TEST_ALWAYS},
         };
 
         renderSystem->getRenderer().getCompositor().setLayers(layers);
 
         debugWindow.setLayers(layers);
 
+        debugWindow.setLayerActive("Phong Ambient", false);
+        debugWindow.setLayerActive("Phong Diffuse", false);
+        debugWindow.setLayerActive("Phong Specular", false);
         debugWindow.setLayerActive("Normal Vectors", false);
         debugWindow.setLayerActive("Wireframe", false);
         debugWindow.setLayerActive("Lights", false);

@@ -32,6 +32,7 @@ namespace engine {
     public:
         enum TextureType {
             TEXTURE_2D,
+            TEXTURE_2D_MULTISAMPLE,
             TEXTURE_CUBE_MAP
         };
 
@@ -146,6 +147,7 @@ namespace engine {
             TextureFiltering filterMag = LINEAR;
             bool generateMipmap = false;
             MipMapFiltering mipmapFilter = NEAREST_MIPMAP_NEAREST;
+            int samples = 4;
         };
 
         explicit TextureBuffer(Attributes attributes) : attributes(attributes) {}

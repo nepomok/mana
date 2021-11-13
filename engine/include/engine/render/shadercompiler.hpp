@@ -34,7 +34,7 @@ namespace engine {
         };
 
         enum ShaderLanguage {
-            HLSL, //HLSL Shader Model 3
+            HLSL_SHADER_MODEL_4,
             GLSL_460, //GLSL 460 with OpenGL semantics
             GLSL_460_VK, //GLSL 460 with Vulkan semantics
             GLSL_ES_320 //GLSL 320 ES with OpenGL semantics
@@ -68,6 +68,9 @@ namespace engine {
          * When compiling hlsl to glsl globals defined in the hlsl source are stored in a struct which has an instance
          * with the name "Globals". When using the render allocator to create a shader program the
          * implementation will append the prefix automatically when needed.
+         *
+         * Compiling spirv to hlsl currently is only possible with vertex and fragment shaders.
+         * https://github.com/KhronosGroup/SPIRV-Cross/issues/904
          *
          * @param source
          * @param entryPoint

@@ -140,13 +140,13 @@ f 5/1/6 1/3/6 2/12/6
 namespace engine {
     SkyboxPass::SkyboxPass(RenderDevice &device)
             : device(device) {
-        ShaderSource vert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL);
-        ShaderSource frag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL);
+        ShaderSource vert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        ShaderSource frag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
 
         vert.preprocess(Renderer3D::getShaderIncludeCallback(),
-                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL));
+                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
         frag.preprocess(Renderer3D::getShaderIncludeCallback(),
-                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL));
+                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 
@@ -182,6 +182,8 @@ namespace engine {
 
         //Draw skybox
         gBuffer.attachColor({"skybox"});
+        gBuffer.detachDepthStencil();
+
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
         shader->setMat4("MANA_M", model);

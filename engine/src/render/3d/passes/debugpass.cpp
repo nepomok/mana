@@ -47,6 +47,7 @@ out Vertex {
 } vs_out;
 
 struct Globals {
+    int MSAA_SAMPLES;
     mat4 MODEL;
     mat4 VIEW;
     mat4 PROJECTION;
@@ -85,6 +86,7 @@ layout(location = 0) out vec4 pos;
 layout(location = 1) out vec4 color;
 
 struct Globals {
+    int MSAA_SAMPLES;
     mat4 MODEL;
     mat4 VIEW;
     mat4 PROJECTION;
@@ -95,7 +97,7 @@ struct Globals {
 
 uniform Globals globals;
 
-uniform sampler2D normal;
+uniform sampler2DMS normal;
 
 void drawLine(vec4 start, vec4 end)
 {
@@ -106,6 +108,17 @@ void drawLine(vec4 start, vec4 end)
     gl_Position = pos;
     EmitVertex();
     EndPrimitive();
+}
+
+vec4 msaaAverage(sampler2DMS sampler, vec2 uv)
+{
+    ivec2 size = textureSize(sampler);
+    vec4 ret;
+    for(int i = 0; i < globals.MSAA_SAMPLES; i++)
+    {
+        ret += texelFetch(sampler, ivec2(size.x * uv.x, size.y * uv.y), i);
+    }
+    return ret / globals.MSAA_SAMPLES;
 }
 
 void drawTextureNormal(vec4 vPos,
@@ -123,7 +136,7 @@ void drawTextureNormal(vec4 vPos,
 
     mat3 TBN = mat3(T, B, N);
 
-    vec3 tangentNormal = texture(normal, vUv).xyz;
+    vec3 tangentNormal = msaaAverage(normal, vUv).xyz;
     tangentNormal = normalize((tangentNormal * 2) - 1);
 
     //Transform tangent space normal into local space
@@ -558,7 +571,7 @@ namespace engine {
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
                                       gBuffer.getSize(),
-                                      false,
+                                      true,
                                       {},
                                       1,
                                       true,
@@ -596,7 +609,7 @@ namespace engine {
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
                                       gBuffer.getSize(),
-                                      false,
+                                      true,
                                       {},
                                       1,
                                       true,
@@ -624,7 +637,7 @@ namespace engine {
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
                                       gBuffer.getSize(),
-                                      false,
+                                      true,
                                       {},
                                       1,
                                       true,
@@ -661,6 +674,8 @@ namespace engine {
 
             RenderCommand command(*shaderLight);
             command.meshBuffers.emplace_back(*meshBuffer);
+
+            command.properties.depthTestWrite = false;
 
             ren.addCommand(command);
         }

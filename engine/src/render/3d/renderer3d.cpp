@@ -43,7 +43,7 @@ namespace engine {
 
     const std::map<std::string, std::string> &Renderer3D::getShaderMacros(ShaderCompiler::ShaderLanguage lang) {
         switch (lang) {
-            case ShaderCompiler::HLSL:
+            case ShaderCompiler::HLSL_SHADER_MODEL_4:
             case ShaderCompiler::GLSL_460:
             case ShaderCompiler::GLSL_ES_320:
                 return gMacros;

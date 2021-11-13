@@ -46,6 +46,8 @@ namespace engine {
         }
 
         gBuffer.attachColor({"imgui"});
+        gBuffer.detachDepthStencil();
+
         ImGui::Render();
         ImGuiCompat::DrawData(window, gBuffer.getRenderTarget());
     }

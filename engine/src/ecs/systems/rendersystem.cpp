@@ -180,7 +180,10 @@ namespace engine {
         if (it != cubeMaps.end())
             return *it->second;
         else {
-            auto tex = device.getAllocator().createTextureBuffer({TextureBuffer::TEXTURE_CUBE_MAP});
+            TextureBuffer::Attributes attribs;
+            attribs.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
+            attribs.wrapping = TextureBuffer::CLAMP_TO_EDGE; //Prevent texture seams by clamping
+            auto tex = device.getAllocator().createTextureBuffer(attribs);
             for (TextureBuffer::CubeMapFace face = TextureBuffer::POSITIVE_X;
                  face <= TextureBuffer::NEGATIVE_Z;
                  face = static_cast<TextureBuffer::CubeMapFace>(face + 1)) {

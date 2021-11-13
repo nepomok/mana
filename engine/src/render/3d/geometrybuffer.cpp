@@ -20,8 +20,9 @@
 #include "engine/render/3d/geometrybuffer.hpp"
 
 namespace engine {
-    GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size) : renderAllocator(allocator), size(size) {
-        renderTarget = allocator.createRenderTarget(size, 0);
+    GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size, int samples)
+            : renderAllocator(allocator), size(size), samples(samples) {
+        renderTarget = allocator.createRenderTarget(size, samples);
 
         const Mesh quadMesh(Mesh::TRI,
                             {
@@ -43,34 +44,23 @@ namespace engine {
     void GeometryBuffer::setSize(const Vec2i &s) {
         if (size == s)
             return;
-
         size = s;
-
-        for (int i = 0; i < currentColor.size(); i++)
-            renderTarget->detachColor(i);
-
-        renderTarget->detachDepthStencil();
-
-        for (auto &buf : buffers) {
-            TextureBuffer::Attributes attr;
-            attr.size = size;
-            attr.format = formats.at(buf.first);
-            buf.second = renderAllocator.createTextureBuffer(attr);
-        }
-
-        renderTarget = renderAllocator.createRenderTarget(size, 0);
-
-        if (!currentDepthStencil.empty())
-            renderTarget->attachDepthStencil(*buffers.at(currentDepthStencil));
-
-        renderTarget->setNumberOfColorAttachments(static_cast<int>(currentColor.size()));
-        for (int i = 0; i < currentColor.size(); i++) {
-            renderTarget->attachColor(i, *buffers.at(currentColor.at(i)));
-        }
+        reallocateBuffers();
     }
 
     Vec2i GeometryBuffer::getSize() {
         return size;
+    }
+
+    void GeometryBuffer::setSamples(int value) {
+        if (samples == value)
+            return;
+        samples = value;
+        reallocateBuffers();
+    }
+
+    int GeometryBuffer::getSamples() {
+        return samples;
     }
 
     RenderTarget &GeometryBuffer::getRenderTarget() {
@@ -87,6 +77,7 @@ namespace engine {
         }
 
         TextureBuffer::Attributes attr;
+        attr.textureType = TextureBuffer::TEXTURE_2D_MULTISAMPLE;
         attr.size = size;
         attr.format = format;
         buffers[name] = renderAllocator.createTextureBuffer(attr);
@@ -98,15 +89,21 @@ namespace engine {
     }
 
     void GeometryBuffer::attachColor(const std::vector<std::string> &attachments) {
-        for (int i = 0; i < currentColor.size(); i++)
-            renderTarget->detachColor(i);
+        detachColor();
         renderTarget->setNumberOfColorAttachments(static_cast<int>(attachments.size()));
         for (int i = 0; i < attachments.size(); i++)
             renderTarget->attachColor(i, *buffers.at(attachments.at(i)));
         currentColor = attachments;
     }
 
+    void GeometryBuffer::detachColor() {
+        for (int i = 0; i < currentColor.size(); i++)
+            renderTarget->detachColor(i);
+        currentColor.clear();
+    }
+
     void GeometryBuffer::attachDepthStencil(const std::string &name) {
+        detachDepthStencil();
         auto &buffer = getBuffer(name);
         if (buffer.getAttributes().format != TextureBuffer::ColorFormat::DEPTH_STENCIL)
             throw std::runtime_error("Invalid depth stencil texture " + name);
@@ -123,5 +120,34 @@ namespace engine {
     MeshBuffer &GeometryBuffer::getScreenQuad() {
         assert(screenQuad != nullptr);
         return *screenQuad;
+    }
+
+    void GeometryBuffer::reallocateBuffers() {
+        //Detach textures
+        for (int i = 0; i < currentColor.size(); i++)
+            renderTarget->detachColor(i);
+
+        renderTarget->detachDepthStencil();
+
+        //Reallocate objects
+        for (auto &buf: buffers) {
+            TextureBuffer::Attributes attr;
+            attr.textureType = TextureBuffer::TEXTURE_2D_MULTISAMPLE;
+            attr.size = size;
+            attr.format = formats.at(buf.first);
+            attr.samples = samples;
+            buf.second = renderAllocator.createTextureBuffer(attr);
+        }
+
+        renderTarget = renderAllocator.createRenderTarget(size, samples);
+
+        //Reattach textures
+        if (!currentDepthStencil.empty())
+            renderTarget->attachDepthStencil(*buffers.at(currentDepthStencil));
+
+        renderTarget->setNumberOfColorAttachments(static_cast<int>(currentColor.size()));
+        for (int i = 0; i < currentColor.size(); i++) {
+            renderTarget->attachColor(i, *buffers.at(currentColor.at(i)));
+        }
     }
 }

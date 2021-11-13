@@ -152,6 +152,8 @@ namespace engine {
                 switch (type) {
                     case TextureBuffer::TEXTURE_2D:
                         return GL_TEXTURE_2D;
+                    case TextureBuffer::TEXTURE_2D_MULTISAMPLE:
+                        return GL_TEXTURE_2D_MULTISAMPLE;
                     case TextureBuffer::TEXTURE_CUBE_MAP:
                         return GL_TEXTURE_CUBE_MAP;
                     default:

@@ -29,7 +29,7 @@ namespace engine {
     namespace opengl {
         static std::string getGlslSource(const ShaderSource &source) {
             switch (source.getLanguage()) {
-                case ShaderCompiler::HLSL:
+                case ShaderCompiler::HLSL_SHADER_MODEL_4:
                     return source.crossCompile(ShaderCompiler::GLSL_460).getSrc();
                 case ShaderCompiler::GLSL_460:
                 case ShaderCompiler::GLSL_460_VK:
@@ -383,7 +383,7 @@ namespace engine {
             if (fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
-            if (language == ShaderCompiler::HLSL)
+            if (language == ShaderCompiler::HLSL_SHADER_MODEL_4)
                 prefix = "Globals.";
             return std::make_unique<OGLShaderProgram>(getGlslSource(vertexShader), "", getGlslSource(fragmentShader),
                                                       prefix);
@@ -397,7 +397,7 @@ namespace engine {
                 || fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
-            if (language == ShaderCompiler::HLSL)
+            if (language == ShaderCompiler::HLSL_SHADER_MODEL_4)
                 prefix = "Globals.";
             return std::make_unique<OGLShaderProgram>(getGlslSource(vertexShader),
                                                       getGlslSource(geometryShader),

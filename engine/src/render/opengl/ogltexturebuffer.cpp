@@ -33,16 +33,20 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
     glGenTextures(1, &handle);
     glBindTexture(type, handle);
 
-    glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
-    glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
+    if (type != GL_TEXTURE_2D_MULTISAMPLE) {
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, OGLTypeConverter::convert(attributes.wrapping));
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, OGLTypeConverter::convert(attributes.wrapping));
+    }
     checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
-    glTexParameteri(type,
-                    GL_TEXTURE_MIN_FILTER,
-                    OGLTypeConverter::convert(attributes.filterMin));
-    glTexParameteri(type,
-                    GL_TEXTURE_MAG_FILTER,
-                    OGLTypeConverter::convert(attributes.filterMag));
+    if (type != GL_TEXTURE_2D_MULTISAMPLE) {
+        glTexParameteri(type,
+                        GL_TEXTURE_MIN_FILTER,
+                        OGLTypeConverter::convert(attributes.filterMin));
+        glTexParameteri(type,
+                        GL_TEXTURE_MAG_FILTER,
+                        OGLTypeConverter::convert(attributes.filterMag));
+    }
     checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
     if (attributes.textureType == TEXTURE_2D) {
@@ -74,6 +78,21 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
                      texFormat,
                      texType,
                      NULL);
+    } else if (attributes.textureType == TEXTURE_2D_MULTISAMPLE) {
+        GLuint texInternalFormat = OGLTypeConverter::convert(attributes.format);
+
+        if (attributes.format == ColorFormat::DEPTH) {
+            texInternalFormat = GL_DEPTH;
+        } else if (attributes.format == ColorFormat::DEPTH_STENCIL) {
+            texInternalFormat = GL_DEPTH24_STENCIL8;
+        }
+
+        glTexImage2DMultisample(type,
+                                attributes.samples,
+                                texInternalFormat,
+                                attributes.size.x,
+                                attributes.size.y,
+                                GL_TRUE);
     } else {
         for (unsigned int i = 0; i < 6; i++) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -89,7 +108,7 @@ OGLTextureBuffer::OGLTextureBuffer(Attributes attributes) : TextureBuffer(attrib
     }
     checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
 
-    if (attributes.generateMipmap) {
+    if (type != GL_TEXTURE_2D_MULTISAMPLE && attributes.generateMipmap) {
         glGenerateMipmap(type);
         glTexParameteri(type, GL_TEXTURE_MIN_FILTER,
                         OGLTypeConverter::convert(attributes.mipmapFilter));

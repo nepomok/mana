@@ -82,9 +82,15 @@ namespace engine {
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
 
-            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x, options.viewportSize.y);
+            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x,
+                       options.viewportSize.y);
 
             glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
+
+            auto ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if (ret != GL_FRAMEBUFFER_COMPLETE) {
+                throw std::runtime_error("Render Target framebuffer is not complete: " + std::to_string(ret));
+            }
 
             GLbitfield clearMask = 0;
             if (options.clearColor) {
@@ -165,7 +171,7 @@ namespace engine {
             }
 
             //Bind VAOs and draw.
-            for (auto meshBuffer : command.meshBuffers) {
+            for (auto meshBuffer: command.meshBuffers) {
                 auto &mesh = dynamic_cast<const OGLMeshBuffer &>(meshBuffer.get());
                 glBindVertexArray(mesh.VAO);
                 if (mesh.indexed) {

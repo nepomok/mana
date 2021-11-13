@@ -34,7 +34,7 @@ namespace engine {
             Layer() = default;
 
             Layer(std::string name,
-                  std::vector<std::string> color,
+                  std::string color,
                   std::string depth,
                   DepthTestMode depthTestMode = DEPTH_TEST_LESS,
                   BlendMode colorBlendModeSource = SRC_ALPHA,
@@ -50,8 +50,8 @@ namespace engine {
 
             std::string name;
 
-            // The names of the color textures in the geometry buffer
-            std::vector<std::string> color;
+            // The names of the color texture in the geometry buffer
+            std::string color;
 
             //The optional name of the depth texture in the geometry buffer
             std::string depth;

@@ -115,14 +115,12 @@ public:
         if (ImGui::TreeNode((void *) (intptr_t) nodeIndex, "%s", item.layer.name.c_str())) {
             drawLayerNodeButtons(item);
 
-            if (ImGui::TreeNode("Color Textures")) {
-                for (auto &color: item.layer.color)
-                    ImGui::Text("%s", color.c_str());
-                ImGui::TreePop();
-            }
+            ImGui::Text("Color Texture: %s", item.layer.color.c_str());
 
             if (!item.layer.depth.empty())
                 ImGui::Text("Depth Texture: %s", item.layer.depth.c_str());
+            else
+                ImGui::Text("No Depth Texture");
 
             ImGui::Text("Depth Test:    %s",
                         formatDepthTestMode(item.layer.depthTestMode).c_str());

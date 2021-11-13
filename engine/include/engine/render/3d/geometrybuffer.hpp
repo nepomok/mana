@@ -28,7 +28,7 @@
 namespace engine {
     class GeometryBuffer {
     public:
-        explicit GeometryBuffer(RenderAllocator &allocator, Vec2i size = {640, 320});
+        explicit GeometryBuffer(RenderAllocator &allocator, Vec2i size = {640, 320}, int samples = 4);
 
         ~GeometryBuffer();
 
@@ -40,6 +40,15 @@ namespace engine {
         void setSize(const Vec2i &s);
 
         Vec2i getSize();
+
+        /**
+         * Set the number of samples to use for the textures, this reallocates the render target and buffers.
+         *
+         * @param samples
+         */
+        void setSamples(int samples);
+
+        int getSamples();
 
         /**
          *
@@ -59,6 +68,8 @@ namespace engine {
          */
         void attachColor(const std::vector<std::string> &attachments);
 
+        void detachColor();
+
         void attachDepthStencil(const std::string &name);
 
         void detachDepthStencil();
@@ -71,6 +82,8 @@ namespace engine {
         MeshBuffer &getScreenQuad();
 
     private:
+        void reallocateBuffers();
+
         RenderAllocator &renderAllocator;
 
         std::unique_ptr<RenderTarget> renderTarget;
@@ -84,6 +97,8 @@ namespace engine {
         std::string currentDepthStencil;
 
         std::unique_ptr<MeshBuffer> screenQuad; //A quad mesh which covers the viewport in normalized screen coordinates
+
+        int samples; //The number of msaa samples to use for geometry textures, all geometry textures are TEXTURE_2D_MULTISAMPLE
     };
 }
 

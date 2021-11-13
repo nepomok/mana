@@ -24,9 +24,9 @@ static const char *SHADER_VERT = R"###(#version 460 core
 #define MAX_COLOR 15
 
 struct Layer {
-    sampler2D color[MAX_COLOR];
-    int num_color;
-    sampler2D depth;
+    int MSAA_SAMPLES;
+    sampler2DMS color;
+    sampler2DMS depth;
     int has_depth;
 };
 
@@ -63,9 +63,9 @@ static const char *SHADER_FRAG = R"###(#version 460 core
 #define MAX_COLOR 15
 
 struct Layer {
-    sampler2D color[MAX_COLOR];
-    int num_color;
-    sampler2D depth;
+    int MSAA_SAMPLES;
+    sampler2DMS color;
+    sampler2DMS depth;
     int has_depth;
 };
 
@@ -85,23 +85,25 @@ vec4 blend(vec4 colorA, vec4 colorB)
     return vec4((colorB.rgb * colorB.a + colorA.rgb * (1.0 - colorB.a)).rgb, 1);
 }
 
+vec4 msaaAverage(sampler2DMS sampler, vec2 uv)
+{
+    ivec2 size = textureSize(sampler);
+    vec4 ret;
+    for(int i = 0; i < globals.layer.MSAA_SAMPLES; i++)
+    {
+        ret += texelFetch(sampler, ivec2(size.x * uv.x, size.y * uv.y), i);
+    }
+    return ret / globals.layer.MSAA_SAMPLES;
+}
+
 void main()
 {
-    vec4 color = vec4(0, 0, 0, 0);
+    vec4 color = msaaAverage(globals.layer.color, fUv);
     float depth = 1;
 
-    for (int ci = 0; ci < globals.layer.num_color; ci++)
-    {
-        color += texture(globals.layer.color[ci], fUv);
-    }
-    color.a = normalize(color.a);
     if (globals.layer.has_depth != 0)
     {
-        depth = texture(globals.layer.depth, fUv).r;
-    }
-    else
-    {
-        depth = 1;
+        depth = msaaAverage(globals.layer.depth, fUv).r;
     }
 
     fragColor = color;
@@ -135,8 +137,10 @@ namespace engine {
         auto &ren = device.getRenderer();
 
         //Clear screen
-        ren.renderBegin(screen, RenderOptions({}, screen.getSize(), false,
-                                              {clearColor.r(), clearColor.g(), clearColor.b(), 255}));
+        ren.renderBegin(screen, RenderOptions({},
+                                              screen.getSize(),
+                                              false,
+                                              {0, 0, 0, 0}));
         ren.renderFinish();
 
         if (layers.empty())
@@ -150,24 +154,22 @@ namespace engine {
     void Compositor::drawLayer(RenderTarget &screen,
                                GeometryBuffer &buffer,
                                const Compositor::Layer &layer) {
-        if (layer.color.size() > 14)
-            throw std::runtime_error("Maximum of 15 color textures per layer");
-
         auto &ren = device.getRenderer();
+
+        std::string prefix = "globals.layer";
 
         std::vector<std::reference_wrapper<TextureBuffer>> textures;
 
-        std::string prefix = "globals.layer";
-        shader->setInt(prefix + ".num_color", static_cast<int>(layer.color.size()));
-        for (int ci = 0; ci < layer.color.size(); ci++) {
-            shader->setTexture(prefix + ".color[" + std::to_string(ci) + "]", static_cast<int>(textures.size()));
-            textures.emplace_back(buffer.getBuffer(layer.color.at(ci)));
-        }
-        shader->setInt(prefix + ".has_depth", !layer.depth.empty());
+        textures.emplace_back(buffer.getBuffer(layer.color));
+        assert(shader->setTexture(prefix + ".color", 0));
+
+        assert(shader->setInt(prefix + ".has_depth", !layer.depth.empty()));
         if (!layer.depth.empty()) {
-            shader->setTexture(prefix + ".depth", static_cast<int>(textures.size()));
             textures.emplace_back(buffer.getBuffer(layer.depth));
+            assert(shader->setTexture(prefix + ".depth", 1));
         }
+
+        assert(shader->setInt("globals.layer.MSAA_SAMPLES", textures.at(0).get().getAttributes().samples));
 
         RenderCommand command(*shader);
         command.meshBuffers.emplace_back(buffer.getScreenQuad());

@@ -120,6 +120,7 @@ SamplerState samplerState_normal
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
+
     ret.position = float4(v.fPos, 1);
 
     // Combine the 3 interpolated tangent, bitangent and normals into the TBN matrix
@@ -143,6 +144,7 @@ PS_OUTPUT main(PS_INPUT v) {
     ret.specular = specular.Sample(samplerState_specular, v.fUv);
     ret.shininess.r = shininess.Sample(samplerState_shininess, v.fUv).r;
     ret.id.x = 1;
+
     return ret;
 }
 )###";
@@ -199,16 +201,16 @@ namespace engine {
 
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
-        ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, HLSL);
-        ShaderSource fsVertNorm(SHADER_FRAG_GEOMETRY_VERTEXNORMALS, "main", FRAGMENT, HLSL);
-        ShaderSource fsTexNorm(SHADER_FRAG_GEOMETRY_TEXTURENORMALS, "main", FRAGMENT, HLSL);
+        ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, HLSL_SHADER_MODEL_4);
+        ShaderSource fsVertNorm(SHADER_FRAG_GEOMETRY_VERTEXNORMALS, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
+        ShaderSource fsTexNorm(SHADER_FRAG_GEOMETRY_TEXTURENORMALS, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
 
         vs.preprocess(Renderer3D::getShaderIncludeCallback(),
-                      Renderer3D::getShaderMacros(HLSL));
+                      Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
         fsVertNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
-                              Renderer3D::getShaderMacros(HLSL));
+                              Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
         fsTexNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
-                             Renderer3D::getShaderMacros(HLSL));
+                             Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
         shaderVertexNormals = allocator.createShaderProgram(vs, fsVertNorm);
@@ -266,7 +268,6 @@ namespace engine {
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
         // Draw deferred geometry
-        gBuffer.attachDepthStencil("depth");
         gBuffer.attachColor({
                                     "position",
                                     "normal",
@@ -276,6 +277,7 @@ namespace engine {
                                     "shininess",
                                     "id"
                             });
+        gBuffer.attachDepthStencil("depth");
 
         //Clear geometry buffer
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
@@ -339,7 +341,5 @@ namespace engine {
         }
 
         ren.renderFinish();
-
-        gBuffer.detachDepthStencil();
     }
 }

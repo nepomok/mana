@@ -33,8 +33,8 @@ namespace engine {
     }
 
     void ForwardPass::render(GeometryBuffer &gBuffer, Scene &scene) {
-        gBuffer.attachDepthStencil("forward_depth");
         gBuffer.attachColor({"forward"});
+        gBuffer.attachDepthStencil("forward_depth");
 
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
@@ -117,7 +117,5 @@ namespace engine {
         }
 
         ren.renderFinish();
-
-        gBuffer.detachDepthStencil();
     }
 }
