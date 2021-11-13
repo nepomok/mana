@@ -138,6 +138,8 @@ f 5/1/6 1/3/6 2/12/6
 )###");
 
 namespace engine {
+    const char *SkyboxPass::COLOR = "skybox";
+
     SkyboxPass::SkyboxPass(RenderDevice &device)
             : device(device) {
         ShaderSource vert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
@@ -167,7 +169,7 @@ namespace engine {
     }
 
     void SkyboxPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("skybox", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(SkyboxPass::COLOR, TextureBuffer::ColorFormat::RGBA);
     }
 
     void SkyboxPass::render(GeometryBuffer &gBuffer, Scene &scene) {
@@ -181,7 +183,7 @@ namespace engine {
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
 
         //Draw skybox
-        gBuffer.attachColor({"skybox"});
+        gBuffer.attachColor({COLOR});
         gBuffer.detachDepthStencil();
 
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
@@ -199,7 +201,7 @@ namespace engine {
         if (scene.skybox == nullptr) {
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {
                 defaultTexture->upload(static_cast<TextureBuffer::CubeMapFace>(i),
-                                      Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
+                                       Image<ColorRGBA>(1, 1, {scene.skyboxColor}));
             }
             skyboxCommand.textures.emplace_back(*defaultTexture);
         } else {

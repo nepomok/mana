@@ -247,6 +247,7 @@ public:
                 return item.active;
             }
         }
+        throw std::runtime_error("Invalid layer " + name);
     }
 
     void setLayerPinned(const std::string &name, bool pin) {
@@ -264,6 +265,7 @@ public:
                 return item.pinned;
             }
         }
+        throw std::runtime_error("Invalid layer " + name);
     }
 
 private:

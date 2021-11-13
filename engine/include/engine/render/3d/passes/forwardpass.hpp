@@ -25,6 +25,9 @@
 namespace engine {
     class ForwardPass : public RenderPass {
     public:
+        static const char *COLOR;
+        static const char *DEPTH;
+
         explicit ForwardPass(RenderDevice &device);
 
         ~ForwardPass() override;

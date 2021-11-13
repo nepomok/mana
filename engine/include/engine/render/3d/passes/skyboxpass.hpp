@@ -25,6 +25,8 @@
 namespace engine {
     class SkyboxPass : public RenderPass {
     public:
+        static const char *COLOR;
+
         explicit SkyboxPass(RenderDevice &device);
 
         ~SkyboxPass() override = default;

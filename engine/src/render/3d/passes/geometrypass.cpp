@@ -95,7 +95,8 @@ struct PS_OUTPUT {
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
      float4 shininess    :   SV_TARGET5;
-     float4 id           :   SV_TARGET6;
+     float4 emissive     :   SV_TARGET6;
+     float4 id           :   SV_TARGET7;
 };
 
 Texture2D diffuse;
@@ -162,8 +163,9 @@ struct PS_OUTPUT {
      float4 diffuse      :   SV_TARGET2;
      float4 ambient      :   SV_TARGET3;
      float4 specular     :   SV_TARGET4;
-     float4 shininess     :   SV_TARGET5;
-     float4 id           :   SV_TARGET6;
+     float4 shininess    :   SV_TARGET5;
+     float4 emissive     :   SV_TARGET6;
+     float4 id           :   SV_TARGET7;
 };
 
 Texture2D diffuse;
@@ -198,6 +200,16 @@ PS_OUTPUT main(PS_INPUT v) {
 
 namespace engine {
     using namespace ShaderCompiler;
+
+    const char *GeometryPass::DEPTH = "depth";
+    const char *GeometryPass::POSITION = "position";
+    const char *GeometryPass::NORMAL = "normal";
+    const char *GeometryPass::DIFFUSE = "diffuse";
+    const char *GeometryPass::AMBIENT = "ambient";
+    const char *GeometryPass::SPECULAR = "specular";
+    const char *GeometryPass::SHININESS = "shininess";
+    const char *GeometryPass::EMISSIVE = "emissive";
+    const char *GeometryPass::ID = "id";
 
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
@@ -235,14 +247,15 @@ namespace engine {
     GeometryPass::~GeometryPass() = default;
 
     void GeometryPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
-        gBuffer.addBuffer("position", TextureBuffer::ColorFormat::RGBA32F);
-        gBuffer.addBuffer("normal", TextureBuffer::ColorFormat::RGBA32F);
-        gBuffer.addBuffer("diffuse", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("ambient", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("specular", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("shininess", TextureBuffer::ColorFormat::R32F);
-        gBuffer.addBuffer("id", TextureBuffer::ColorFormat::R8UI);
+        gBuffer.addBuffer(DEPTH, TextureBuffer::ColorFormat::DEPTH_STENCIL);
+        gBuffer.addBuffer(POSITION, TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer(NORMAL, TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer(DIFFUSE, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(AMBIENT, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(SPECULAR, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(SHININESS, TextureBuffer::ColorFormat::R32F);
+        gBuffer.addBuffer(EMISSIVE, TextureBuffer::ColorFormat::R32F);
+        gBuffer.addBuffer(ID, TextureBuffer::ColorFormat::R8UI);
     }
 
     void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
@@ -269,15 +282,16 @@ namespace engine {
 
         // Draw deferred geometry
         gBuffer.attachColor({
-                                    "position",
-                                    "normal",
-                                    "diffuse",
-                                    "ambient",
-                                    "specular",
-                                    "shininess",
-                                    "id"
+                                    POSITION,
+                                    NORMAL,
+                                    DIFFUSE,
+                                    AMBIENT,
+                                    SPECULAR,
+                                    SHININESS,
+                                    EMISSIVE,
+                                    ID
                             });
-        gBuffer.attachDepthStencil("depth");
+        gBuffer.attachDepthStencil(DEPTH);
 
         //Clear geometry buffer
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));

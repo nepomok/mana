@@ -25,6 +25,10 @@
 namespace engine {
     class DebugPass : public RenderPass {
     public:
+        static const char *WIREFRAME;
+        static const char *LIGHTS;
+        static const char *NORMALS;
+
         explicit DebugPass(RenderDevice &device);
 
         ~DebugPass() override;

@@ -25,6 +25,16 @@
 namespace engine {
     class GeometryPass : public RenderPass {
     public:
+        static const char *DEPTH;
+        static const char *POSITION;
+        static const char *NORMAL;
+        static const char *DIFFUSE;
+        static const char *AMBIENT;
+        static const char *SPECULAR;
+        static const char *SHININESS;
+        static const char *EMISSIVE;
+        static const char *ID;
+
         explicit GeometryPass(RenderDevice &device);
 
         ~GeometryPass() override;

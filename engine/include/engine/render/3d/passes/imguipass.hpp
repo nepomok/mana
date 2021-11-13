@@ -29,6 +29,8 @@
 namespace engine {
     class ImGuiPass : public RenderPass {
     public:
+        static const char *COLOR;
+
         /**
          * A widget can call all imgui functions except setup, rendering and cleanup functions,
          * which are handled by the pass.

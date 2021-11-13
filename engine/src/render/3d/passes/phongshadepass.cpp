@@ -141,6 +141,11 @@ PS_OUTPUT main(PS_INPUT v) {
 namespace engine {
     using namespace ShaderCompiler;
 
+    const char *PhongShadePass::AMBIENT = "phong_ambient";
+    const char *PhongShadePass::DIFFUSE = "phong_diffuse";
+    const char *PhongShadePass::SPECULAR = "phong_specular";
+    const char *PhongShadePass::COMBINED = "phong_combined";
+
     PhongShadePass::PhongShadePass(RenderDevice &device)
             : renderDevice(device) {
         ShaderSource vertexShader(SHADER_VERT_LIGHTING,
@@ -152,8 +157,10 @@ namespace engine {
                                     FRAGMENT,
                                     HLSL_SHADER_MODEL_4);
 
-        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
-        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(), Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
+        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(),
+                                Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
+        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(),
+                                  Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 
@@ -161,10 +168,10 @@ namespace engine {
     }
 
     void PhongShadePass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("phong_ambient", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("phong_diffuse", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("phong_specular", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("phong_combined", TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(AMBIENT, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(DIFFUSE, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(SPECULAR, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(COMBINED, TextureBuffer::ColorFormat::RGBA);
     }
 
     void PhongShadePass::render(GeometryBuffer &gBuffer, Scene &scene) {

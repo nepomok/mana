@@ -19,6 +19,8 @@
 
 #include "engine/render/3d/passes/debugpass.hpp"
 
+#include "engine/render/3d/passes/geometrypass.hpp"
+
 #include "engine/render/shadercompiler.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
@@ -508,6 +510,10 @@ void main()
 namespace engine {
     using namespace ShaderCompiler;
 
+    const char *DebugPass::WIREFRAME = "debug_wireframe";
+    const char *DebugPass::LIGHTS = "debug_lights";
+    const char *DebugPass::NORMALS = "debug_normals";
+
     DebugPass::DebugPass(RenderDevice &device)
             : device(device) {
         ShaderSource vs(SHADER_VERT, "main", VERTEX, GLSL_460);
@@ -557,16 +563,16 @@ namespace engine {
     DebugPass::~DebugPass() = default;
 
     void DebugPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("debug_wireframe", TextureBuffer::RGBA);
-        gBuffer.addBuffer("debug_normals", TextureBuffer::RGBA);
-        gBuffer.addBuffer("debug_lights", TextureBuffer::RGBA);
+        gBuffer.addBuffer(WIREFRAME, TextureBuffer::RGBA);
+        gBuffer.addBuffer(NORMALS, TextureBuffer::RGBA);
+        gBuffer.addBuffer(LIGHTS, TextureBuffer::RGBA);
     }
 
     void DebugPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = device.getRenderer();
 
-        gBuffer.attachColor({"debug_normals"});
-        gBuffer.attachDepthStencil("depth");
+        gBuffer.attachColor({NORMALS});
+        gBuffer.attachDepthStencil(GeometryPass::DEPTH);
 
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
@@ -603,7 +609,7 @@ namespace engine {
 
         ren.renderFinish();
 
-        gBuffer.attachColor({"debug_wireframe"});
+        gBuffer.attachColor({WIREFRAME});
         gBuffer.detachDepthStencil();
 
         ren.renderBegin(gBuffer.getRenderTarget(),
@@ -631,8 +637,8 @@ namespace engine {
 
         ren.renderFinish();
 
-        gBuffer.attachColor({"debug_lights"});
-        gBuffer.attachDepthStencil("depth");
+        gBuffer.attachColor({LIGHTS});
+        gBuffer.attachDepthStencil(GeometryPass::DEPTH);
 
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},

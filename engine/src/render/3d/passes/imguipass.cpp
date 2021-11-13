@@ -24,6 +24,8 @@
 #include "imgui.h"
 
 namespace engine {
+    const char *ImGuiPass::COLOR = "imgui";
+
     ImGuiPass::ImGuiPass(Window &window, std::vector<std::reference_wrapper<Widget>> commands)
             : window(window), widgets(std::move(commands)) {
         ImGuiCompat::Init(window);
@@ -34,7 +36,7 @@ namespace engine {
     }
 
     void ImGuiPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("imgui", TextureBuffer::RGBA);
+        gBuffer.addBuffer(COLOR, TextureBuffer::RGBA);
     }
 
     void ImGuiPass::render(GeometryBuffer &gBuffer, Scene &scene) {
@@ -45,7 +47,7 @@ namespace engine {
             command.get().draw(scene);
         }
 
-        gBuffer.attachColor({"imgui"});
+        gBuffer.attachColor({COLOR});
         gBuffer.detachDepthStencil();
 
         ImGui::Render();

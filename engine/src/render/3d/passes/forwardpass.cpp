@@ -22,19 +22,22 @@
 #include "engine/math/rotation.hpp"
 
 namespace engine {
+    const char *ForwardPass::COLOR = "forward";
+    const char *ForwardPass::DEPTH = "forward_depth";
+
     ForwardPass::ForwardPass(RenderDevice &device)
             : device(device) {}
 
     ForwardPass::~ForwardPass() = default;
 
     void ForwardPass::prepareBuffer(GeometryBuffer &gBuffer) {
-        gBuffer.addBuffer("forward", TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer("forward_depth", TextureBuffer::ColorFormat::DEPTH_STENCIL);
+        gBuffer.addBuffer(COLOR, TextureBuffer::ColorFormat::RGBA);
+        gBuffer.addBuffer(DEPTH, TextureBuffer::ColorFormat::DEPTH_STENCIL);
     }
 
     void ForwardPass::render(GeometryBuffer &gBuffer, Scene &scene) {
-        gBuffer.attachColor({"forward"});
-        gBuffer.attachDepthStencil("forward_depth");
+        gBuffer.attachColor({COLOR});
+        gBuffer.attachDepthStencil(DEPTH);
 
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();

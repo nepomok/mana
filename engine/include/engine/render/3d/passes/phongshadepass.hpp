@@ -25,6 +25,11 @@
 namespace engine {
     class PhongShadePass : public RenderPass {
     public:
+        static const char *AMBIENT;
+        static const char *DIFFUSE;
+        static const char *SPECULAR;
+        static const char *COMBINED;
+
         explicit PhongShadePass(RenderDevice &device);
 
         ~PhongShadePass() override = default;
