@@ -80,6 +80,10 @@ protected:
 
         debugWindow.setLayers(layers);
 
+        int maxSamples = window->getRenderDevice().getMaxSampleCount();
+        debugWindow.setMaxSamples(maxSamples);
+        debugWindow.setSamples(maxSamples >= 4 ? 4 : 1);
+
         debugWindow.setLayerActive("Phong Ambient", false);
         debugWindow.setLayerActive("Phong Diffuse", false);
         debugWindow.setLayerActive("Phong Specular", false);
@@ -166,6 +170,7 @@ protected:
         }
 
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
+        renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
 
         ecs.update(deltaTime);
 

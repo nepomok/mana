@@ -37,6 +37,8 @@ namespace engine {
 
             RenderAllocator &getAllocator() override;
 
+            int getMaxSampleCount() override;
+
         private:
             OGLRenderer renderer;
             OGLRenderAllocator allocator;

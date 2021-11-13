@@ -35,5 +35,11 @@ namespace engine {
         RenderAllocator &OGLRenderDevice::getAllocator() {
             return dynamic_cast<RenderAllocator &>(allocator);
         }
+
+        int OGLRenderDevice::getMaxSampleCount() {
+            int ret = 0;
+            glGetIntegerv(GL_MAX_SAMPLES, &ret);
+            return ret;
+        }
     }
 }

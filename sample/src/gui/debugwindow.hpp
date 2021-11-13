@@ -178,6 +178,12 @@ public:
                 ImGui::TreePop();
             }
 
+            ImGui::InputInt("MSAA Samples", &samples);
+            if (samples > maxSamples)
+                samples = maxSamples;
+            else if (samples < 1)
+                samples = 1;
+
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
                         ImGui::GetIO().Framerate);
             ImGui::EndTabItem();
@@ -268,12 +274,28 @@ public:
         throw std::runtime_error("Invalid layer " + name);
     }
 
+    void setSamples(int value) {
+        samples = value;
+    }
+
+    int getSamples() const {
+        return samples;
+    }
+
+    void setMaxSamples(int value) {
+        maxSamples = value;
+        if (samples > value)
+            samples = value;
+    }
+
 private:
     std::string appendButtonLabelId(const std::string &label, int index) {
         return label + "###" + std::to_string(index);
     }
 
     std::vector<LayerTreeItem> items;
+    int maxSamples = 0;
+    int samples = 0;
 };
 
 #endif //MANA_DEBUGWINDOW_HPP
