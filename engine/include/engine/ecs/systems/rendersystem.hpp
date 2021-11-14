@@ -118,18 +118,18 @@ namespace engine {
 
         void unloadBundle(const std::string &bundle);
 
-        std::map<std::string, ulong> bundlesRef; //The reference count for bundles (bundle -> asset)
-        std::map<std::string, std::shared_ptr<Task>> bundleTasks;
+        std::unordered_map<std::string, ulong> bundlesRef; //The reference count for bundles (bundle -> asset)
+        std::unordered_map<std::string, std::shared_ptr<Task>> bundleTasks;
 
         std::mutex mutex;
-        std::map<std::string, AssetBundle> bundles; //Written to by bundle worker tasks and the main thread.
+        std::unordered_map<std::string, AssetBundle> bundles; //Written to by bundle worker tasks and the main thread.
 
-        std::map<AssetPath, ulong> assetRef; //The reference count for assets (asset -> buffer)
-        std::map<AssetPath, std::unique_ptr<TextureBuffer>> textures;
-        std::map<AssetPath, std::unique_ptr<MeshBuffer>> meshBuffers;
+        std::unordered_map<AssetPath, ulong, AssetPath::Hash> assetRef; //The reference count for assets (asset -> buffer)
+        std::unordered_map<AssetPath, std::unique_ptr<TextureBuffer>, AssetPath::Hash> textures;
+        std::unordered_map<AssetPath, std::unique_ptr<MeshBuffer>, AssetPath::Hash> meshBuffers;
 
-        std::map<std::array<AssetPath, 6>, ulong> cubeMapRef;
-        std::map<std::array<AssetPath, 6>, std::unique_ptr<TextureBuffer>> cubeMaps;
+        std::unordered_map<std::array<AssetPath, 6>, ulong, AssetPath::HashArray<6>> cubeMapRef;
+        std::unordered_map<std::array<AssetPath, 6>, std::unique_ptr<TextureBuffer>, AssetPath::HashArray<6>> cubeMaps;
     };
 }
 

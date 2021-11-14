@@ -29,6 +29,11 @@ namespace engine {
         std::string bundle; //The path to the bundle
         std::string asset; //The name of the asset in the bundle
 
+        std::size_t hash() const {
+            std::hash<std::string> hash;
+            return hash(bundle + "%" + asset);
+        }
+
         bool empty() const { return bundle.empty() && asset.empty(); }
 
         bool operator<(const AssetPath &other) const {
@@ -38,6 +43,23 @@ namespace engine {
         bool operator==(const AssetPath &other) const {
             return std::tie(bundle, asset) == std::tie(other.bundle, other.asset);
         }
+
+        struct Hash {
+            std::size_t operator()(const AssetPath &key) const {
+                return key.hash();
+            }
+        };
+
+        template<int S>
+        struct HashArray {
+            std::size_t operator()(const std::array<AssetPath, S> &value) const {
+                std::string hashStr;
+                for (auto &item : value)
+                    hashStr += item.bundle + "%" + item.asset;
+                std::hash<std::string> hash;
+                return hash(hashStr);
+            }
+        };
     };
 }
 #endif //MANA_ASSETPATH_HPP

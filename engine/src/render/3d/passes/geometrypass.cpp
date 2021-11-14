@@ -228,6 +228,20 @@ namespace engine {
         shaderVertexNormals = allocator.createShaderProgram(vs, fsVertNorm);
         shaderTextureNormals = allocator.createShaderProgram(vs, fsTexNorm);
 
+        //Set shader texture attachment points
+        shaderTextureNormals->setTexture("diffuse", 0);
+        shaderTextureNormals->setTexture("ambient", 1);
+        shaderTextureNormals->setTexture("specular", 2);
+        shaderTextureNormals->setTexture("shininess", 3);
+        shaderTextureNormals->setTexture("emissive", 4);
+        shaderTextureNormals->setTexture("normal", 5);
+
+        shaderVertexNormals->setTexture("diffuse", 0);
+        shaderVertexNormals->setTexture("ambient", 1);
+        shaderVertexNormals->setTexture("specular", 2);
+        shaderVertexNormals->setTexture("shininess", 3);
+        shaderVertexNormals->setTexture("emissive", 4);
+
         TextureBuffer::Attributes attributes;
         attributes.size = Vec2i(1, 1);
         attributes.format = TextureBuffer::RGBA;
@@ -261,24 +275,18 @@ namespace engine {
     void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = renderDevice.getRenderer();
 
-        //Set shader texture attachment points
-        shaderTextureNormals->setTexture("diffuse", 0);
-        shaderTextureNormals->setTexture("ambient", 1);
-        shaderTextureNormals->setTexture("specular", 2);
-        shaderTextureNormals->setTexture("shininess", 3);
-        shaderTextureNormals->setTexture("emissive", 4);
-        shaderTextureNormals->setTexture("normal", 5);
-
-        shaderVertexNormals->setTexture("diffuse", 0);
-        shaderVertexNormals->setTexture("ambient", 1);
-        shaderVertexNormals->setTexture("specular", 2);
-        shaderVertexNormals->setTexture("shininess", 3);
-        shaderVertexNormals->setTexture("emissive", 4);
-
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
         cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+
+        shaderVertexNormals->setMat4("MANA_V", view);
+        shaderVertexNormals->setMat4("MANA_P", projection);
+        shaderVertexNormals->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+
+        shaderTextureNormals->setMat4("MANA_V", view);
+        shaderTextureNormals->setMat4("MANA_P", projection);
+        shaderTextureNormals->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
         // Draw deferred geometry
         gBuffer.attachColor({
@@ -342,11 +350,8 @@ namespace engine {
             model = command.transform.model();
 
             shader->setMat4("MANA_M", model);
-            shader->setMat4("MANA_V", view);
-            shader->setMat4("MANA_P", projection);
             shader->setMat4("MANA_MVP", projection * view * model);
             shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
-            shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
             RenderCommand c(*shader);
             c.meshBuffers.emplace_back(command.meshBuffer);
