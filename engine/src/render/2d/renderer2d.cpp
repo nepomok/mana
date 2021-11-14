@@ -213,7 +213,7 @@ namespace engine {
 
     void Renderer2D::setProjection(const Rectf &projection) {
         camera.type = ORTHOGRAPHIC;
-        camera.transform.position = {0, 0, 1};
+        camera.transform.setPosition({0, 0, 1});
         camera.left = projection.position.x;
         camera.right = projection.dimensions.x;
         camera.top = projection.position.y;
@@ -338,9 +338,9 @@ namespace engine {
         defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
         defaultShader->setFloat("USE_TEXTURE", 0);
         defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                               (float) color.g() / 255,
-                                               (float) color.b() / 255,
-                                               (float) color.a() / 255));
+                                              (float) color.g() / 255,
+                                              (float) color.b() / 255,
+                                              (float) color.a() / 255));
 
         RenderCommand command(*defaultShader);
         command.properties.enableDepthTest = false;
@@ -379,9 +379,9 @@ namespace engine {
 
             defaultTextShader->setMat4("MODEL_MATRIX", modelMatrix);
             defaultTextShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
-                                                   (float) color.g() / 255,
-                                                   (float) color.b() / 255,
-                                                   (float) color.a() / 255));
+                                                      (float) color.g() / 255,
+                                                      (float) color.b() / 255,
+                                                      (float) color.a() / 255));
 
             defaultTextShader->setTexture("diffuse", 0);
 

@@ -278,7 +278,7 @@ namespace engine {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
-        cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+        cameraTranslation = MatrixMath::translate(scene.camera.transform.getPosition());
 
         shaderVertexNormals->setMat4("MANA_V", view);
         shaderVertexNormals->setMat4("MANA_P", projection);
@@ -351,7 +351,6 @@ namespace engine {
 
             shader->setMat4("MANA_M", model);
             shader->setMat4("MANA_MVP", projection * view * model);
-            shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
 
             RenderCommand c(*shader);
             c.meshBuffers.emplace_back(command.meshBuffer);

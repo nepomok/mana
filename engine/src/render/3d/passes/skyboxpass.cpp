@@ -180,7 +180,7 @@ namespace engine {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
-        cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+        cameraTranslation = MatrixMath::translate(scene.camera.transform.getPosition());
 
         //Draw skybox
         gBuffer.attachColor({COLOR});

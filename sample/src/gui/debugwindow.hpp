@@ -190,8 +190,8 @@ public:
         }
 
         if (ImGui::BeginTabItem("Camera")) {
-            ImGui::InputFloat3("Position", (float *) (&scene.camera.transform.position), "%.3f");
-            auto euler = scene.camera.transform.rotation.getEulerAngles();
+            ImGui::InputFloat3("Position", (float *) (&scene.camera.transform.getPosition()), "%.3f");
+            auto euler = scene.camera.transform.getRotation().getEulerAngles();
             ImGui::InputFloat3("Rotation", (float *) (&euler), "%.3f");
             ImGui::EndTabItem();
         }

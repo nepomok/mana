@@ -191,7 +191,7 @@ namespace engine {
                     break;
                 case LIGHT_POINT:
                     name = "MANA_LIGHTS_POINT[" + std::to_string(pointCount++) + "].";
-                    shader->setVec3(name + "position", light.transform.position);
+                    shader->setVec3(name + "position", light.transform.getPosition());
                     shader->setFloat(name + "constantValue", light.constant);
                     shader->setFloat(name + "linearValue", light.linear);
                     shader->setFloat(name + "quadraticValue", light.quadratic);
@@ -201,7 +201,7 @@ namespace engine {
                     break;
                 case LIGHT_SPOT:
                     name = "MANA_LIGHTS_SPOT[" + std::to_string(spotCount++) + "].";
-                    shader->setVec3(name + "position", light.transform.position);
+                    shader->setVec3(name + "position", light.transform.getPosition());
                     shader->setVec3(name + "direction", light.direction);
                     shader->setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
                     shader->setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
@@ -219,7 +219,7 @@ namespace engine {
         shader->setInt("MANA_LIGHT_COUNT_POINT", pointCount);
         shader->setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
 
-        shader->setVec3("MANA_VIEWPOS", scene.camera.transform.position);
+        shader->setVec3("MANA_VIEWPOS", scene.camera.transform.getPosition());
 
         shader->setTexture("position", 0);
         shader->setTexture("normal", 1);

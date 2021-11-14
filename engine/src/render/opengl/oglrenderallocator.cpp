@@ -230,9 +230,9 @@ namespace engine {
             Mat4f off[offsets.size()];
 
             for (int i = 0; i < offsets.size(); i++) {
-                off[i] = MatrixMath::translate(offsets.at(i).position)
-                         * MatrixMath::scale(offsets.at(i).scale)
-                         * offsets.at(i).rotation.matrix();
+                off[i] = MatrixMath::translate(offsets.at(i).getPosition())
+                         * MatrixMath::scale(offsets.at(i).getScale())
+                         * offsets.at(i).getRotation().matrix();
             }
 
             if (mesh.indexed) {

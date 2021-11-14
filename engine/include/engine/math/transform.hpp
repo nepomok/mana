@@ -26,35 +26,69 @@
 
 namespace engine {
     struct Transform {
-        Vec3f position;
-        Quaternion rotation;
-        Vec3f scale = Vec3f(1);
-
         Transform() = default;
 
-        Transform(Vec3f position, Vec3f rotation, Vec3f scale) : position(position),
-                                                                 rotation(rotation),
-                                                                 scale(scale) {}
+        Transform(Vec3f position, Vec3f rotation, Vec3f scale) : mPosition(position),
+                                                                 mRotation(rotation),
+                                                                 mScale(scale) {}
 
-        Transform(Vec3f position, Quaternion rotation, Vec3f scale) : position(position),
-                                                                      rotation(rotation),
-                                                                      scale(scale) {}
+        Transform(Vec3f position, Quaternion rotation, Vec3f scale) : mPosition(position),
+                                                                      mRotation(rotation),
+                                                                      mScale(scale) {}
 
         Transform &operator+=(const Transform &other) {
-            position += other.position;
-            rotation = other.rotation * rotation;
-            scale += other.scale;
+            mPosition += other.mPosition;
+            mRotation = other.mRotation * mRotation;
+            mScale += other.mScale;
             return *this;
         }
 
         Vec3f rotate(Vec3f vec) const {
-            Vec4f ret = MatrixMath::inverse(rotation.matrix()) * Vec4f(vec.x, vec.y, vec.z, 1);
+            Vec4f ret = MatrixMath::inverse(mRotation.matrix()) * Vec4f(vec.x, vec.y, vec.z, 1);
             return Vec3f(ret.x, ret.y, ret.z);
         }
 
-        Mat4f model() const {
-            return MatrixMath::translate(position) * rotation.matrix() * MatrixMath::scale(scale);
+        Mat4f model() {
+            if (dirty) {
+                dirty = false;
+                mModel = MatrixMath::translate(mPosition) * mRotation.matrix() * MatrixMath::scale(mScale);
+            }
+            return mModel;
         }
+
+        void setPosition(Vec3f position) {
+            dirty = true;
+            mPosition = position;
+        }
+
+        const Vec3f &getPosition() const {
+            return mPosition;
+        }
+
+        void setRotation(const Quaternion &quaternion) {
+            dirty = true;
+            mRotation = quaternion;
+        }
+
+        const Quaternion &getRotation() const {
+            return mRotation;
+        }
+
+        void setScale(const Vec3f &scale) {
+            dirty = true;
+            mScale = scale;
+        }
+
+        const Vec3f &getScale() const {
+            return mScale;
+        }
+
+    private:
+        Mat4f mModel;
+        Vec3f mPosition;
+        Quaternion mRotation;
+        Vec3f mScale = Vec3f(1);
+        bool dirty = true;
     };
 }
 

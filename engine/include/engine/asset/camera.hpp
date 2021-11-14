@@ -41,10 +41,10 @@ namespace engine {
         explicit Camera(CameraType type) : type(type) {}
 
         Mat4f view() const {
-            Mat4f ret = transform.rotation.matrix();
+            Mat4f ret = transform.getRotation().matrix();
 
             // "The engines move the universe" - Futurama (Negate camera position)
-            return ret * MatrixMath::translate(transform.position * -1);
+            return ret * MatrixMath::translate(transform.getPosition() * -1);
         }
 
         Mat4f projection() const {

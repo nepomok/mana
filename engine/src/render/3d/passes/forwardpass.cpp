@@ -42,7 +42,7 @@ namespace engine {
         Mat4f model, view, projection, cameraTranslation;
         view = scene.camera.view();
         projection = scene.camera.projection();
-        cameraTranslation = MatrixMath::translate(scene.camera.transform.position);
+        cameraTranslation = MatrixMath::translate(scene.camera.transform.getPosition());
 
         auto &ren = device.getRenderer();
 
@@ -84,7 +84,7 @@ namespace engine {
                         break;
                     case LIGHT_POINT:
                         name = "MANA_LIGHTS_POINT[" + std::to_string(i++) + "].";
-                        shader.setVec3(name + "position", light.transform.position);
+                        shader.setVec3(name + "position", light.transform.getPosition());
                         shader.setFloat(name + "constantValue", light.constant);
                         shader.setFloat(name + "linearValue", light.linear);
                         shader.setFloat(name + "quadraticValue", light.quadratic);
@@ -95,7 +95,7 @@ namespace engine {
                         break;
                     case LIGHT_SPOT:
                         name = "MANA_LIGHTS_SPOT[" + std::to_string(i++) + "].";
-                        shader.setVec3(name + "position", light.transform.position);
+                        shader.setVec3(name + "position", light.transform.getPosition());
                         shader.setVec3(name + "direction", light.direction);
                         shader.setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
                         shader.setFloat(name + "outerCutOff", cosf(degreesToRadians(light.outerCutOff)));
@@ -114,7 +114,7 @@ namespace engine {
             shader.setInt("MANA_LIGHT_COUNT_POINT", pointCount);
             shader.setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
 
-            shader.setVec3("MANA_VIEWPOS", scene.camera.transform.position);
+            shader.setVec3("MANA_VIEWPOS", scene.camera.transform.getPosition());
 
             ren.addCommand(unit.command);
         }

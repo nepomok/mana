@@ -30,8 +30,6 @@ float4x4 MANA_V;
 float4x4 MANA_P;
 float4x4 MANA_MVP;
 
-float4x4 MANA_M_INVERT;
-
 float3 MANA_VIEWPOS;
 float4x4 MANA_VIEW_TRANSLATION;
 

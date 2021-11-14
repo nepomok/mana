@@ -59,18 +59,21 @@ namespace engine {
     }
 
     Transform &operator<<(Transform &value, const Message &message) {
-        value.position << message["position"];
-        Vec3f euler;
-        value.rotation.setEulerAngles(euler << message["rotation"]);
-        value.scale << message["scale"];
+        Vec3f tmp;
+        tmp << message["position"];
+        value.setPosition(tmp);
+        tmp << message["rotation"];
+        value.setRotation(Quaternion(tmp));
+        tmp << message["scale"];
+        value.setScale(tmp);
         return value;
     }
 
     Message &operator<<(Message &message, const Transform &value) {
         auto map = std::map<std::string, Message>();
-        map["position"] << value.position;
-        map["rotation"] << value.rotation.getEulerAngles();
-        map["scale"] << value.scale;
+        map["position"] << value.getPosition();
+        map["rotation"] << value.getRotation().getEulerAngles();
+        map["scale"] << value.getScale();
         message = map;
         return message;
     }

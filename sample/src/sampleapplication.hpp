@@ -123,8 +123,9 @@ protected:
                 auto ent = entityManager.create();
                 auto transform = componentManager.create<TransformComponent>(ent);
                 transform = planeTransform;
-                transform.transform.position += Vec3f(static_cast<float>(x) * 20.0f, 0,
-                                                      -(static_cast<float>(y) * 20.0f));
+                transform.transform.setPosition(transform.transform.getPosition()
+                                                + Vec3f(static_cast<float>(x) * 20.0f, 0,
+                                                        -(static_cast<float>(y) * 20.0f)));
 
                 componentManager.update(ent, transform);
 

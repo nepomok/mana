@@ -51,13 +51,14 @@ public:
             Vec3f worldRot(0, rotation.y, 0);
             Vec3f localRot(rotation.x, 0, 0);
 
-            transform.transform.position += relativeMovement * pair.second.movementSpeed * deltaTime;
+            transform.transform.setPosition(
+                    transform.transform.getPosition() + relativeMovement * pair.second.movementSpeed * deltaTime);
             //Apply the world rotation by converting it to a quaternion and using it as multiplier
-            transform.transform.rotation = transform.transform.rotation
-                                           * Quaternion(worldRot * pair.second.rotationSpeed * deltaTime);
+            transform.transform.setRotation(transform.transform.getRotation()
+                                            * Quaternion(worldRot * pair.second.rotationSpeed * deltaTime));
             //Apply the local rotation by converting it to a quaternion and using the existing rotation as multiplier
-            transform.transform.rotation = Quaternion(localRot * pair.second.rotationSpeed * deltaTime)
-                                           * transform.transform.rotation;
+            transform.transform.setRotation(Quaternion(localRot * pair.second.rotationSpeed * deltaTime)
+                                            * transform.transform.getRotation());
 
             componentManager.update<TransformComponent>(pair.first, transform);
         }
