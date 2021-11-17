@@ -65,6 +65,7 @@ namespace engine {
 
         Scene scene3d;
 
+        //TODO: Culling
         //Create render commands
         for (auto &pair: componentManager.getPool<MeshRenderComponent>()) {
             auto &transform = componentManager.lookup<TransformComponent>(pair.first);
@@ -103,6 +104,7 @@ namespace engine {
                 renderMaterial.normalTexture = &getTexture(material.normalTexture);
             }
 
+            //TODO: Change transform walking / scene creation to allow model matrix caching
             scene3d.deferred.emplace_back(DeferredCommand(TransformComponent::walkHierarchy(transform, entityManager),
                                                           renderMaterial,
                                                           getMeshBuffer(render.mesh)));

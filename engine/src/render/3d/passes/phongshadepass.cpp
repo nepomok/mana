@@ -123,6 +123,8 @@ PS_OUTPUT main(PS_INPUT v) {
         ret.phong_specular = float4(comp.specular, 1);
 
         ret.phong_combined = ret.phong_ambient + ret.phong_diffuse + ret.phong_specular;
+
+        //Use the fragment diffuse alpha value because it is formed from averaged samples and thus should scale towards 0 at the edges
         ret.phong_combined.a = fragDiffuse.a;
     }
     else
