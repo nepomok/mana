@@ -46,16 +46,9 @@ namespace engine {
     private:
         RenderDevice &renderDevice;
 
-        std::unique_ptr<ShaderProgram> shaderTextureNormals;
-        std::unique_ptr<ShaderProgram> shaderVertexNormals;
+        std::unique_ptr<ShaderProgram> shader;
 
-        // The default texture buffers with a size of 1x1 pixels into which the color values of the material
-        // are stored if the user did not specify a texture in the material.
-        std::unique_ptr<TextureBuffer> diffuseDefault;
-        std::unique_ptr<TextureBuffer> ambientDefault;
-        std::unique_ptr<TextureBuffer> specularDefault;
-        std::unique_ptr<TextureBuffer> shininessDefault;
-        std::unique_ptr<TextureBuffer> emissiveDefault;
+        std::unique_ptr<TextureBuffer> defaultTexture; //1 pixel texture with value (0, 0, 0, 0)
     };
 }
 

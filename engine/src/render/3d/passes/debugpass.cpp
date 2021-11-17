@@ -584,6 +584,7 @@ namespace engine {
                                       false,
                                       false));
 
+        shaderNormals->activate();
         for (auto &deferredCommand: scene.deferred) {
             if (!shaderNormals->setFloat("globals.scale", 0.1f))
                 throw std::runtime_error("");
@@ -622,6 +623,7 @@ namespace engine {
                                       false,
                                       false));
 
+        shaderWireframe->activate();
         for (auto &deferredCommand: scene.deferred) {
             shaderWireframe->setMat4("globals.MODEL", deferredCommand.transform.model());
             shaderWireframe->setMat4("globals.VIEW", scene.camera.view());
@@ -650,6 +652,7 @@ namespace engine {
                                       false,
                                       false));
 
+        shaderLight->activate();
         for (auto &light: scene.lights) {
             shaderLight->setMat4("globals.MODEL", light.transform.model());
             shaderLight->setMat4("globals.VIEW", scene.camera.view());

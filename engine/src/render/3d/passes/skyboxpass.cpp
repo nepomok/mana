@@ -175,6 +175,7 @@ namespace engine {
     void SkyboxPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = device.getRenderer();
 
+        shader->activate();
         shader->setTexture("diffuse", 0);
 
         Mat4f model, view, projection, cameraTranslation;

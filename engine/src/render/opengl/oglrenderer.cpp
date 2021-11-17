@@ -119,7 +119,7 @@ namespace engine {
             }
 
             //Bind shader program
-            auto &shader = dynamic_cast<const OGLShaderProgram &>(command.shader.get());
+            auto &shader = dynamic_cast<OGLShaderProgram &>(command.shader.get());
             shader.activate();
 
             glDepthFunc(OGLTypeConverter::convert(command.properties.depthTestMode));

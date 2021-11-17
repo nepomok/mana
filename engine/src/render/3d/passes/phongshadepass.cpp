@@ -179,6 +179,8 @@ namespace engine {
         int pointCount = 0;
         int spotCount = 0;
 
+        shader->activate();
+
         for (auto &light: scene.lights) {
             std::string name;
             switch (light.type) {

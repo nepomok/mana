@@ -146,6 +146,8 @@ namespace engine {
         if (layers.empty())
             return;
 
+        shader->activate();
+
         for (auto &layer: layers) {
             drawLayer(screen, buffer, layer);
         }

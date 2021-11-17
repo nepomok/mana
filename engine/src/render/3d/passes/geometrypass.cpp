@@ -26,180 +26,150 @@
 
 #include "engine/asset/assetimporter.hpp"
 
-static const char *SHADER_VERT_GEOMETRY = R"###(
-#include "mana.hlsl"
+static const char *SHADER_VERT_GEOMETRY = R"###(#version 460
+layout (location = 0) in vec3 vPosition;
+layout (location = 1) in vec3 vNormal;
+layout (location = 2) in vec2 vUv;
+layout (location = 3) in vec3 vTangent;
+layout (location = 4) in vec3 vBitangent;
+layout (location = 5) in vec4 vInstanceRow0;
+layout (location = 6) in vec4 vInstanceRow1;
+layout (location = 7) in vec4 vInstanceRow2;
+layout (location = 8) in vec4 vInstanceRow3;
 
-struct VS_INPUT
+layout(location = 0) out vec3 fPos;
+layout(location = 1) out vec3 fNorm;
+layout(location = 2) out vec2 fUv;
+layout(location = 4) out vec4 vPos;
+layout(location = 5) out vec3 N;
+layout(location = 6) out vec3 T;
+layout(location = 7) out vec3 B;
+
+layout(location = 0) uniform mat4 MANA_M;
+layout(location = 1) uniform mat4 MANA_MVP;
+
+layout(location = 2) uniform int hasTextureNormal;
+
+layout(location = 3) uniform vec4 diffuseColor;
+layout(location = 4) uniform vec4 ambientColor;
+layout(location = 5) uniform vec4 specularColor;
+layout(location = 6) uniform float shininessColor;
+
+layout(location = 7) uniform vec4 emissiveColor;
+
+layout(location = 8) uniform sampler2D diffuse;
+layout(location = 9) uniform sampler2D ambient;
+layout(location = 10) uniform sampler2D specular;
+layout(location = 11) uniform sampler2D shininess;
+layout(location = 12) uniform sampler2D emissive;
+
+layout(location = 13) uniform sampler2D normal;
+
+void main()
 {
-    float3 position : POSITION0;
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-    float3 tangent: TANGENT;
-    float3 bitangent: BINORMAL;
-    float4 instanceRow0 : POSITION1;
-    float4 instanceRow1 : POSITION2;
-    float4 instanceRow2 : POSITION3;
-    float4 instanceRow3 : POSITION4;
-};
+    mat4 instanceMatrix = mat4(vInstanceRow0, vInstanceRow1, vInstanceRow2, vInstanceRow3);
 
-struct VS_OUTPUT
-{
-    float3  fPos : POSITION;
-    float3  fNorm : NORMAL;
-    float2  fUv : TEXCOORD0;
-    float4 vPos : SV_Position;
-    float3 N: TEXCOORD1;
-    float3 T: TEXCOORD2;
-    float3 B: TEXCOORD3;
-};
-
-VS_OUTPUT main(const VS_INPUT v)
-{
-    VS_OUTPUT ret;
-
-    float4x4 instanceMatrix = float4x4(v.instanceRow0, v.instanceRow1, v.instanceRow2, v.instanceRow3);
-
-    ret.vPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_MVP));
-    ret.fPos = mul(float4(v.position, 1), mul(instanceMatrix, MANA_M)).xyz;
-    ret.fUv = v.uv;
+    vPos = (instanceMatrix * MANA_MVP) * vec4(vPosition, 1);
+    fPos = ((instanceMatrix * MANA_M) * vec4(vPosition, 1)).xyz;
+    fUv = vUv;
 
     // Transform the normal, tangent and bitangent vectors into world space by multiplying with the model and instance matrix.
 
     // The model matrix is multiplied with the instance matrix so that the model transformation + instance transformation are applied to the normals.
-    float4x4 normalMatrix = mul(instanceMatrix, MANA_M);
+    mat4 normalMatrix = instanceMatrix * MANA_M;
 
-    ret.fNorm = normalize(mul(float4(v.normal, 1), normalMatrix).xyz);
+    fNorm = normalize((normalMatrix * vec4(vNormal, 1)).xyz);
 
-    ret.T = normalize(mul(float4(v.tangent, 1), normalMatrix).xyz);
-    ret.B = normalize(mul(float4(v.bitangent, 1), normalMatrix).xyz);
-    ret.N = normalize(mul(float4(v.normal, 1), normalMatrix).xyz);
+    T = normalize((normalMatrix * vec4(vTangent, 1)).xyz);
+    B = normalize((normalMatrix * vec4(vBitangent, 1)).xyz);
+    N = normalize((normalMatrix * vec4(vNormal, 1)).xyz);
 
-    return ret;
+    gl_Position = vPos;
 }
 )###";
 
-static const char *SHADER_FRAG_GEOMETRY_TEXTURENORMALS = R"###(
-struct PS_INPUT {
-    float3 fPos: POSITION;
-    float3 fNorm: NORMAL;
-    float2 fUv: TEXCOORD0;
-    float3 N: TEXCOORD1;
-    float3 T: TEXCOORD2;
-    float3 B: TEXCOORD3;
-};
+static const char *SHADER_FRAG_GEOMETRY = R"###(#version 460
+layout(location = 0) in vec3 fPos;
+layout(location = 1) in vec3 fNorm;
+layout(location = 2) in vec2 fUv;
+layout(location = 4) in vec4 vPos;
+layout(location = 5) in vec3 N;
+layout(location = 6) in vec3 T;
+layout(location = 7) in vec3 B;
 
-struct PS_OUTPUT {
-     float4 position     :   SV_TARGET0;
-     float4 normal       :   SV_TARGET1;
-     float4 diffuse      :   SV_TARGET2;
-     float4 ambient      :   SV_TARGET3;
-     float4 specular     :   SV_TARGET4;
-     float4 shininess    :   SV_TARGET5;
-     float4 emissive     :   SV_TARGET6;
-     float4 id           :   SV_TARGET7;
-};
+layout(location = 0) out vec4 oPosition;
+layout(location = 1) out vec4 oNormal;
+layout(location = 2) out vec4 oDiffuse;
+layout(location = 3) out vec4 oAmbient;
+layout(location = 4) out vec4 oSpecular;
+layout(location = 5) out vec4 oShininess;
+layout(location = 6) out vec4 oEmissive;
+layout(location = 7) out vec4 oId;
 
-Texture2D diffuse;
-Texture2D ambient;
-Texture2D specular;
-Texture2D shininess;
-Texture2D emissive;
-Texture2D normal;
+layout(location = 0) uniform mat4 MANA_M;
+layout(location = 1) uniform mat4 MANA_MVP;
 
-SamplerState samplerState_diffuse
-{};
-SamplerState samplerState_ambient
-{};
-SamplerState samplerState_specular
-{};
-SamplerState samplerState_shininess
-{};
-SamplerState samplerState_emissive
-{};
-SamplerState samplerState_normal
-{};
+layout(location = 2) uniform int hasTextureNormal;
 
-PS_OUTPUT main(PS_INPUT v) {
-    PS_OUTPUT ret;
+layout(location = 3) uniform vec4 diffuseColor;
+layout(location = 4) uniform vec4 ambientColor;
+layout(location = 5) uniform vec4 specularColor;
+layout(location = 6) uniform float shininessColor;
 
-    ret.position = float4(v.fPos, 1);
+layout(location = 7) uniform vec4 emissiveColor;
 
-    // Combine the 3 interpolated tangent, bitangent and normals into the TBN matrix
-    float3x3 TBN = float3x3(v.T, v.B, v.N);
+layout(location = 8) uniform sampler2D diffuse;
+layout(location = 9) uniform sampler2D ambient;
+layout(location = 10) uniform sampler2D specular;
+layout(location = 11) uniform sampler2D shininess;
+layout(location = 12) uniform sampler2D emissive;
 
-    // Sample tangent space normal from texture, texture is assigned correctly before the shader is invoked.
-    float3 tangentNormal = normal.Sample(samplerState_normal, v.fUv);
+layout(location = 13) uniform sampler2D normal;
 
-    // Scale tangent space normal into -1 / 1 range
-    tangentNormal = normalize((tangentNormal * 2) - 1);
+void main() {
+    oPosition = vec4(fPos, 1);
 
-    // Transform the tangent space normal into world space by multiplying with the TBN matrix.
-    float3 norm = mul(tangentNormal, TBN);
+    if (hasTextureNormal != 0)
+    {
+        // Combine the 3 interpolated tangent, bitangent and normals into the TBN matrix
+        mat3 TBN = mat3(T, B, N);
 
-    // Assign the world space normal
-    // The value assigned here is not the correct normal.
-    ret.normal = float4(norm, 1);
+        // Sample tangent space normal from texture, texture is assigned correctly before the shader is invoked.
+        vec3 tangentNormal = texture(normal, fUv).xyz;
 
-    ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
-    ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
-    ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.shininess.r = shininess.Sample(samplerState_shininess, v.fUv).r;
-    ret.id.x = 1;
+        // Scale tangent space normal into -1 / 1 range
+        tangentNormal = normalize((tangentNormal * 2) - 1);
 
-    return ret;
-}
-)###";
+        // Transform the tangent space normal into world space by multiplying with the TBN matrix.
+        vec3 norm = TBN * tangentNormal;
 
-static const char *SHADER_FRAG_GEOMETRY_VERTEXNORMALS = R"###(
-struct PS_INPUT {
-    float3 fPos: POSITION;
-    float3 fNorm: NORMAL;
-    float2 fUv: TEXCOORD0;
-};
+        // Assign the world space normal
+        // The value assigned here is not the correct normal.
+        oNormal = vec4(norm, 1);
+    }
+    else
+    {
+        oNormal = vec4(fNorm, 1);
+    }
 
-struct PS_OUTPUT {
-     float4 position     :   SV_TARGET0;
-     float4 normal       :   SV_TARGET1;
-     float4 diffuse      :   SV_TARGET2;
-     float4 ambient      :   SV_TARGET3;
-     float4 specular     :   SV_TARGET4;
-     float4 shininess    :   SV_TARGET5;
-     float4 emissive     :   SV_TARGET6;
-     float4 id           :   SV_TARGET7;
-};
+    oDiffuse = texture(diffuse, fUv) + diffuseColor;
+    oAmbient = texture(ambient, fUv) + ambientColor;
+    oSpecular = texture(specular, fUv) + specularColor;
+    oShininess.r = texture(shininess, fUv).r + shininessColor;
 
-Texture2D diffuse;
-Texture2D ambient;
-Texture2D specular;
-Texture2D shininess;
-Texture2D emissive;
-
-SamplerState samplerState_diffuse
-{};
-SamplerState samplerState_ambient
-{};
-SamplerState samplerState_specular
-{};
-SamplerState samplerState_shininess
-{};
-SamplerState samplerState_emissive
-{};
-
-PS_OUTPUT main(PS_INPUT v) {
-    PS_OUTPUT ret;
-    ret.position = float4(v.fPos, 1);
-    ret.normal = float4(v.fNorm, 1);
-    ret.diffuse = diffuse.Sample(samplerState_diffuse, v.fUv);
-    ret.ambient = ambient.Sample(samplerState_ambient, v.fUv);
-    ret.specular = specular.Sample(samplerState_specular, v.fUv);
-    ret.shininess.r = shininess.Sample(samplerState_shininess, v.fUv).r;
-    ret.id.x = 1;
-    return ret;
+    oId.x = 1;
 }
 )###";
 
 namespace engine {
     using namespace ShaderCompiler;
+
+    static inline Vec4f scaleColor(const ColorRGBA &color) {
+        return {static_cast<float>(color.r()) * 255,
+                static_cast<float>(color.g()) * 255,
+                static_cast<float>(color.b()) * 255,
+                static_cast<float>(color.a()) * 255};
+    }
 
     const char *GeometryPass::DEPTH = "depth";
     const char *GeometryPass::POSITION = "position";
@@ -213,49 +183,21 @@ namespace engine {
 
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
-        ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, HLSL_SHADER_MODEL_4);
-        ShaderSource fsVertNorm(SHADER_FRAG_GEOMETRY_VERTEXNORMALS, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
-        ShaderSource fsTexNorm(SHADER_FRAG_GEOMETRY_TEXTURENORMALS, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
+        ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, GLSL_460);
+        ShaderSource fs(SHADER_FRAG_GEOMETRY, "main", FRAGMENT, GLSL_460);
 
         vs.preprocess(Renderer3D::getShaderIncludeCallback(),
-                      Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
-        fsVertNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
-                              Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
-        fsTexNorm.preprocess(Renderer3D::getShaderIncludeCallback(),
-                             Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
+                      Renderer3D::getShaderMacros(GLSL_460));
+        fs.preprocess(Renderer3D::getShaderIncludeCallback(),
+                      Renderer3D::getShaderMacros(GLSL_460));
 
         auto &allocator = device.getAllocator();
-        shaderVertexNormals = allocator.createShaderProgram(vs, fsVertNorm);
-        shaderTextureNormals = allocator.createShaderProgram(vs, fsTexNorm);
-
-        //Set shader texture attachment points
-        shaderTextureNormals->setTexture("diffuse", 0);
-        shaderTextureNormals->setTexture("ambient", 1);
-        shaderTextureNormals->setTexture("specular", 2);
-        shaderTextureNormals->setTexture("shininess", 3);
-        shaderTextureNormals->setTexture("emissive", 4);
-        shaderTextureNormals->setTexture("normal", 5);
-
-        shaderVertexNormals->setTexture("diffuse", 0);
-        shaderVertexNormals->setTexture("ambient", 1);
-        shaderVertexNormals->setTexture("specular", 2);
-        shaderVertexNormals->setTexture("shininess", 3);
-        shaderVertexNormals->setTexture("emissive", 4);
+        shader = allocator.createShaderProgram(vs, fs);
 
         TextureBuffer::Attributes attributes;
-        attributes.size = Vec2i(1, 1);
-        attributes.format = TextureBuffer::RGBA;
-        attributes.textureType = TextureBuffer::TEXTURE_2D;
-        attributes.generateMipmap = false;
-        attributes.wrapping = TextureBuffer::REPEAT;
-
-        diffuseDefault = allocator.createTextureBuffer(attributes);
-        ambientDefault = allocator.createTextureBuffer(attributes);
-        specularDefault = allocator.createTextureBuffer(attributes);
-        emissiveDefault = allocator.createTextureBuffer(attributes);
-
-        attributes.format = TextureBuffer::R32F;
-        shininessDefault = allocator.createTextureBuffer(attributes);
+        attributes.size = {1, 1};
+        defaultTexture = allocator.createTextureBuffer(attributes);
+        defaultTexture->upload(Image<ColorRGBA>(1, 1, {{0, 0, 0, 0}}));
     }
 
     GeometryPass::~GeometryPass() = default;
@@ -275,18 +217,11 @@ namespace engine {
     void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = renderDevice.getRenderer();
 
-        Mat4f model, view, projection, cameraTranslation;
+        Mat4f model, view, projection;
         view = scene.camera.view();
         projection = scene.camera.projection();
-        cameraTranslation = MatrixMath::translate(scene.camera.transform.getPosition());
 
-        shaderVertexNormals->setMat4("MANA_V", view);
-        shaderVertexNormals->setMat4("MANA_P", projection);
-        shaderVertexNormals->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
-
-        shaderTextureNormals->setMat4("MANA_V", view);
-        shaderTextureNormals->setMat4("MANA_P", projection);
-        shaderTextureNormals->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
+        shader->activate();
 
         // Draw deferred geometry
         gBuffer.attachColor({
@@ -304,53 +239,74 @@ namespace engine {
         //Clear geometry buffer
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
+        std::vector<std::reference_wrapper<TextureBuffer>> textures;
+
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command: scene.deferred) {
-            std::vector<std::reference_wrapper<TextureBuffer>> textures;
+            textures.clear();
+
+            int textureIndex = 0;
 
             if (command.material.diffuseTexture == nullptr) {
-                diffuseDefault->upload({1, 1, {command.material.diffuse}});
-                textures.emplace_back(*diffuseDefault);
+                shader->setVec4(3, scaleColor(command.material.diffuse));
+                shader->setTexture(8, textureIndex++);
+                textures.emplace_back(*defaultTexture);
             } else {
+                shader->setVec4(3, scaleColor({0, 0, 0, 0}));
+                shader->setTexture(8, textureIndex++);
                 textures.emplace_back(*command.material.diffuseTexture);
             }
+
             if (command.material.ambientTexture == nullptr) {
-                ambientDefault->upload({1, 1, {command.material.ambient}});
-                textures.emplace_back(*ambientDefault);
+                shader->setVec4(4, scaleColor(command.material.ambient));
+                shader->setTexture(9, textureIndex++);
+                textures.emplace_back(*defaultTexture);
             } else {
+                shader->setVec4(4, scaleColor({0, 0, 0, 0}));
+                shader->setTexture(9, textureIndex++);
                 textures.emplace_back(*command.material.ambientTexture);
             }
+
             if (command.material.specularTexture == nullptr) {
-                specularDefault->upload({1, 1, {command.material.specular}});
-                textures.emplace_back(*specularDefault);
+                shader->setVec4(5, scaleColor(command.material.specular));
+                shader->setTexture(10, textureIndex++);
+                textures.emplace_back(*defaultTexture);
             } else {
+                shader->setVec4(5, scaleColor({0, 0, 0, 0}));
+                shader->setTexture(10, textureIndex++);
                 textures.emplace_back(*command.material.specularTexture);
             }
+
             if (command.material.shininessTexture == nullptr) {
-                shininessDefault->upload(Image<float>(1, 1, {command.material.shininess}));
-                textures.emplace_back(*shininessDefault);
+                shader->setFloat(6, command.material.shininess);
+                shader->setTexture(11, textureIndex++);
+                textures.emplace_back(*defaultTexture);
             } else {
+                shader->setVec4(6, scaleColor({0, 0, 0, 0}));
+                shader->setTexture(11, textureIndex++);
                 textures.emplace_back(*command.material.shininessTexture);
             }
+
             if (command.material.emissiveTexture == nullptr) {
-                emissiveDefault->upload({1, 1, {command.material.emissive}});
-                textures.emplace_back(*emissiveDefault);
+                shader->setVec4(7, scaleColor(command.material.emissive));
+                shader->setTexture(12, textureIndex++);
+                textures.emplace_back(*defaultTexture);
             } else {
+                shader->setVec4(7, scaleColor({0, 0, 0, 0}));
+                shader->setTexture(12, textureIndex++);
                 textures.emplace_back(*command.material.emissiveTexture);
             }
 
-            ShaderProgram *shader;
-            if (command.material.normalTexture == nullptr) {
-                shader = shaderVertexNormals.get();
-            } else {
-                shader = shaderTextureNormals.get();
+            shader->setInt(2, command.material.normalTexture != nullptr);
+            if (command.material.normalTexture != nullptr) {
+                shader->setTexture(13, textureIndex++);
                 textures.emplace_back(*command.material.normalTexture);
             }
 
             model = command.transform.model();
 
-            shader->setMat4("MANA_M", model);
-            shader->setMat4("MANA_MVP", projection * view * model);
+            shader->setMat4(0, model);
+            shader->setMat4(1, projection * view * model);
 
             RenderCommand c(*shader);
             c.meshBuffers.emplace_back(command.meshBuffer);

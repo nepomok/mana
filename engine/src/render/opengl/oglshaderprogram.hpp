@@ -54,7 +54,7 @@ namespace engine {
 
             OGLShaderProgram &operator=(const OGLShaderProgram &) = delete;
 
-            void activate() const;
+            void activate() override;
 
             bool setTexture(const std::string &name, int slot) override;
 
@@ -87,6 +87,38 @@ namespace engine {
             bool setMat3(const std::string &name, const Mat3f &value) override;
 
             bool setMat4(const std::string &name, const Mat4f &value) override;
+
+            bool setTexture(int location, int slot) override;
+
+            bool setBool(int location, bool value) override;
+
+            bool setInt(int location, int value) override;
+
+            bool setFloat(int location, float value) override;
+
+            bool setVec2(int location, const Vec2b &value) override;
+
+            bool setVec2(int location, const Vec2i &value) override;
+
+            bool setVec2(int location, const Vec2f &value) override;
+
+            bool setVec3(int location, const Vec3b &value) override;
+
+            bool setVec3(int location, const Vec3i &value) override;
+
+            bool setVec3(int location, const Vec3f &value) override;
+
+            bool setVec4(int location, const Vec4b &value) override;
+
+            bool setVec4(int location, const Vec4i &value) override;
+
+            bool setVec4(int location, const Vec4f &value) override;
+
+            bool setMat2(int location, const Mat2f &value) override;
+
+            bool setMat3(int location, const Mat3f &value) override;
+
+            bool setMat4(int location, const Mat4f &value) override;
 
         private:
             GLuint programID;
