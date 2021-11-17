@@ -194,6 +194,14 @@ namespace engine {
         auto &allocator = device.getAllocator();
         shader = allocator.createShaderProgram(vs, fs);
 
+        shader->activate();
+        shader->setTexture(8, 0);
+        shader->setTexture(9, 1);
+        shader->setTexture(10, 2);
+        shader->setTexture(11, 3);
+        shader->setTexture(12, 4);
+        shader->setTexture(13, 5);
+
         TextureBuffer::Attributes attributes;
         attributes.size = {1, 1};
         defaultTexture = allocator.createTextureBuffer(attributes);
@@ -240,66 +248,91 @@ namespace engine {
         ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getRenderTarget().getSize()));
 
         std::vector<std::reference_wrapper<TextureBuffer>> textures;
+        textures.reserve(6);
+
+        bool firstCommand = true;
+        RenderMaterial shaderMaterial;
 
         // Rasterize the geometry and store the geometry + shading data in the geometry buffer.
         for (auto &command: scene.deferred) {
             textures.clear();
 
-            int textureIndex = 0;
-
             if (command.material.diffuseTexture == nullptr) {
-                shader->setVec4(3, scaleColor(command.material.diffuse));
-                shader->setTexture(8, textureIndex++);
+                if (firstCommand || shaderMaterial.diffuse != command.material.diffuse) {
+                    shaderMaterial.diffuse = command.material.diffuse;
+                    shader->setVec4(3, scaleColor(command.material.diffuse));
+                }
                 textures.emplace_back(*defaultTexture);
             } else {
-                shader->setVec4(3, scaleColor({0, 0, 0, 0}));
-                shader->setTexture(8, textureIndex++);
+                if (firstCommand ||shaderMaterial.diffuse != ColorRGBA()) {
+                    shaderMaterial.diffuse = ColorRGBA();
+                    shader->setVec4(3, Vec4f());
+                }
                 textures.emplace_back(*command.material.diffuseTexture);
             }
 
             if (command.material.ambientTexture == nullptr) {
-                shader->setVec4(4, scaleColor(command.material.ambient));
-                shader->setTexture(9, textureIndex++);
+                if (firstCommand || shaderMaterial.ambient != command.material.ambient) {
+                    shaderMaterial.ambient = command.material.ambient;
+                    shader->setVec4(4, scaleColor(command.material.ambient));
+                }
                 textures.emplace_back(*defaultTexture);
             } else {
-                shader->setVec4(4, scaleColor({0, 0, 0, 0}));
-                shader->setTexture(9, textureIndex++);
+                if (firstCommand || shaderMaterial.ambient != ColorRGBA()) {
+                    shaderMaterial.ambient = ColorRGBA();
+                    shader->setVec4(4, Vec4f());
+                }
                 textures.emplace_back(*command.material.ambientTexture);
             }
 
             if (command.material.specularTexture == nullptr) {
-                shader->setVec4(5, scaleColor(command.material.specular));
-                shader->setTexture(10, textureIndex++);
+                if (firstCommand || shaderMaterial.specular != command.material.specular) {
+                    shaderMaterial.specular = command.material.specular;
+                    shader->setVec4(5, scaleColor(command.material.specular));
+                }
                 textures.emplace_back(*defaultTexture);
             } else {
-                shader->setVec4(5, scaleColor({0, 0, 0, 0}));
-                shader->setTexture(10, textureIndex++);
+                if (firstCommand || shaderMaterial.specular != ColorRGBA()) {
+                    shaderMaterial.specular = ColorRGBA();
+                    shader->setVec4(5, Vec4f());
+                }
                 textures.emplace_back(*command.material.specularTexture);
             }
 
             if (command.material.shininessTexture == nullptr) {
-                shader->setFloat(6, command.material.shininess);
-                shader->setTexture(11, textureIndex++);
+                if (firstCommand || shaderMaterial.shininess != command.material.shininess) {
+                    shaderMaterial.shininess = command.material.shininess;
+                    shader->setFloat(6, command.material.shininess);
+                }
                 textures.emplace_back(*defaultTexture);
             } else {
-                shader->setVec4(6, scaleColor({0, 0, 0, 0}));
-                shader->setTexture(11, textureIndex++);
+                if (firstCommand || shaderMaterial.shininess != 0) {
+                    shaderMaterial.shininess = 0;
+                    shader->setFloat(6, 0);
+                }
                 textures.emplace_back(*command.material.shininessTexture);
             }
 
             if (command.material.emissiveTexture == nullptr) {
-                shader->setVec4(7, scaleColor(command.material.emissive));
-                shader->setTexture(12, textureIndex++);
+                if (firstCommand || shaderMaterial.emissive != command.material.emissive) {
+                    shaderMaterial.emissive = command.material.emissive;
+                    shader->setVec4(7, scaleColor(command.material.emissive));
+                }
                 textures.emplace_back(*defaultTexture);
             } else {
-                shader->setVec4(7, scaleColor({0, 0, 0, 0}));
-                shader->setTexture(12, textureIndex++);
+                if (firstCommand || shaderMaterial.emissive != ColorRGBA()) {
+                    shaderMaterial.emissive = ColorRGBA();
+                    shader->setVec4(7, Vec4f());
+                }
                 textures.emplace_back(*command.material.emissiveTexture);
             }
 
-            shader->setInt(2, command.material.normalTexture != nullptr);
+            if (firstCommand || (shaderMaterial.normalTexture == nullptr) != (command.material.normalTexture == nullptr)) {
+                shaderMaterial.normalTexture = command.material.normalTexture;
+                shader->setInt(2, command.material.normalTexture != nullptr);
+            }
+
             if (command.material.normalTexture != nullptr) {
-                shader->setTexture(13, textureIndex++);
                 textures.emplace_back(*command.material.normalTexture);
             }
 
@@ -308,10 +341,11 @@ namespace engine {
             shader->setMat4(0, model);
             shader->setMat4(1, projection * view * model);
 
-            RenderCommand c(*shader);
-            c.meshBuffers.emplace_back(command.meshBuffer);
+            RenderCommand c(*shader, command.meshBuffer);
             c.textures = textures;
             ren.addCommand(c);
+
+            firstCommand = false;
         }
 
         ren.renderFinish();

@@ -173,8 +173,7 @@ namespace engine {
 
         assert(shader->setInt("globals.layer.MSAA_SAMPLES", textures.at(0).get().getAttributes().samples));
 
-        RenderCommand command(*shader);
-        command.meshBuffers.emplace_back(buffer.getScreenQuad());
+        RenderCommand command(*shader, buffer.getScreenQuad());
         command.textures = textures;
 
         command.properties.enableBlending = true;

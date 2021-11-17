@@ -107,7 +107,7 @@ namespace engine {
     };
 
     struct RenderCommand {
-        explicit RenderCommand(ShaderProgram &shader) : shader(shader) {}
+        explicit RenderCommand(ShaderProgram &shader, MeshBuffer &mesh) : shader(shader), mesh(mesh) {}
 
         RenderCommand(const RenderCommand &other) = default;
 
@@ -116,10 +116,8 @@ namespace engine {
         RenderCommand &operator=(RenderCommand &&other) = default;
 
         std::reference_wrapper<ShaderProgram> shader;
-
+        std::reference_wrapper<MeshBuffer> mesh;
         std::vector<std::reference_wrapper<TextureBuffer>> textures;
-        std::vector<std::reference_wrapper<MeshBuffer>> meshBuffers;
-
         RenderProperties properties;
     };
 }

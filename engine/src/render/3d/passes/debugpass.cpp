@@ -592,8 +592,7 @@ namespace engine {
             shaderNormals->setMat4("globals.VIEW", scene.camera.view());
             shaderNormals->setMat4("globals.PROJECTION", scene.camera.projection());
 
-            RenderCommand command(*shaderNormals);
-            command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
+            RenderCommand command(*shaderNormals, deferredCommand.meshBuffer);
 
             command.properties.depthTestWrite = false;
 
@@ -629,8 +628,7 @@ namespace engine {
             shaderWireframe->setMat4("globals.VIEW", scene.camera.view());
             shaderWireframe->setMat4("globals.PROJECTION", scene.camera.projection());
 
-            RenderCommand command = RenderCommand(*shaderWireframe);
-            command.meshBuffers.emplace_back(deferredCommand.meshBuffer);
+            RenderCommand command = RenderCommand(*shaderWireframe, deferredCommand.meshBuffer);
 
             command.properties.enableDepthTest = false;
 
@@ -681,8 +679,7 @@ namespace engine {
                 }
             }
 
-            RenderCommand command(*shaderLight);
-            command.meshBuffers.emplace_back(*meshBuffer);
+            RenderCommand command(*shaderLight, *meshBuffer);
 
             command.properties.depthTestWrite = false;
 

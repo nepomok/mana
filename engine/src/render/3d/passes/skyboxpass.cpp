@@ -196,8 +196,7 @@ namespace engine {
         shader->setMat4("MANA_M_INVERT", MatrixMath::inverse(model));
         shader->setMat4("MANA_VIEW_TRANSLATION", cameraTranslation);
 
-        RenderCommand skyboxCommand(*shader);
-        skyboxCommand.meshBuffers.emplace_back(*meshBuffer);
+        RenderCommand skyboxCommand(*shader, *meshBuffer);
 
         if (scene.skybox == nullptr) {
             for (int i = TextureBuffer::CubeMapFace::POSITIVE_X; i <= TextureBuffer::CubeMapFace::NEGATIVE_Z; i++) {

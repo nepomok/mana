@@ -245,11 +245,10 @@ namespace engine {
 
         shader.setTexture("diffuse", 0);
 
-        RenderCommand command(shader);
+        RenderCommand command(shader, buffer);
+        command.textures.emplace_back(texture);
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.meshBuffers.emplace_back(buffer);
-        command.textures.emplace_back(texture);
 
         renderDevice.getRenderer().addCommand(command);
     }
@@ -288,10 +287,9 @@ namespace engine {
                                               (float) color.b() / 255,
                                               (float) color.a() / 255));
 
-        RenderCommand command(*defaultShader);
+        RenderCommand command(*defaultShader, buffer);
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.meshBuffers.emplace_back(buffer);
 
         renderDevice.getRenderer().addCommand(command);
     }
@@ -317,10 +315,9 @@ namespace engine {
                                               (float) color.b() / 255,
                                               (float) color.a() / 255));
 
-        RenderCommand command(*defaultShader);
+        RenderCommand command(*defaultShader, buffer);
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.meshBuffers.emplace_back(buffer);
 
         renderDevice.getRenderer().addCommand(command);
     }
@@ -342,10 +339,9 @@ namespace engine {
                                               (float) color.b() / 255,
                                               (float) color.a() / 255));
 
-        RenderCommand command(*defaultShader);
+        RenderCommand command(*defaultShader, buffer);
         command.properties.enableDepthTest = false;
         command.properties.enableBlending = true;
-        command.meshBuffers.emplace_back(buffer);
 
         renderDevice.getRenderer().addCommand(command);
     }
@@ -385,11 +381,10 @@ namespace engine {
 
             defaultTextShader->setTexture("diffuse", 0);
 
-            RenderCommand command(*defaultTextShader);
+            RenderCommand command(*defaultTextShader, buffer);
+            command.textures.emplace_back(*textures.at(c));
             command.properties.enableDepthTest = false;
             command.properties.enableBlending = true;
-            command.meshBuffers.emplace_back(buffer);
-            command.textures.emplace_back(*textures.at(c));
 
             renderDevice.getRenderer().addCommand(command);
         }

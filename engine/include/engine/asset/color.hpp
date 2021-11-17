@@ -91,6 +91,17 @@ namespace engine {
             this->b() = v;
             this->a() = v;
         }
+
+        bool operator==(const ColorRGBA &other) {
+            return r() == other.r()
+                   && g() == other.g()
+                   && b() == other.b()
+                   && a() == other.a();
+        }
+
+        bool operator!=(const ColorRGBA &other) {
+            return !(*this == other);
+        }
     };
 }
 

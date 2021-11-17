@@ -170,30 +170,28 @@ namespace engine {
                 glDisable(GL_BLEND);
             }
 
-            //Bind VAOs and draw.
-            for (auto meshBuffer: command.meshBuffers) {
-                auto &mesh = dynamic_cast<const OGLMeshBuffer &>(meshBuffer.get());
-                glBindVertexArray(mesh.VAO);
-                if (mesh.indexed) {
-                    if (mesh.instanced)
-                        glDrawElementsInstanced(mesh.elementType,
-                                                mesh.elementCount,
-                                                GL_UNSIGNED_INT,
-                                                0,
-                                                mesh.instanceCount);
-                    else
-                        glDrawElements(mesh.elementType,
-                                       mesh.elementCount,
-                                       GL_UNSIGNED_INT,
-                                       0);
-                } else {
-                    if (mesh.instanced)
-                        glDrawArraysInstanced(mesh.elementType, 0, mesh.elementCount, mesh.instanceCount);
-                    else
-                        glDrawArrays(mesh.elementType, 0, mesh.elementCount);
-                }
-                glBindVertexArray(0);
+            //Bind VAO and draw.
+            auto &mesh = dynamic_cast<const OGLMeshBuffer &>(command.mesh.get());
+            glBindVertexArray(mesh.VAO);
+            if (mesh.indexed) {
+                if (mesh.instanced)
+                    glDrawElementsInstanced(mesh.elementType,
+                                            mesh.elementCount,
+                                            GL_UNSIGNED_INT,
+                                            0,
+                                            mesh.instanceCount);
+                else
+                    glDrawElements(mesh.elementType,
+                                   mesh.elementCount,
+                                   GL_UNSIGNED_INT,
+                                   0);
+            } else {
+                if (mesh.instanced)
+                    glDrawArraysInstanced(mesh.elementType, 0, mesh.elementCount, mesh.instanceCount);
+                else
+                    glDrawArrays(mesh.elementType, 0, mesh.elementCount);
             }
+            glBindVertexArray(0);
 
             //Unbind textures
             for (int y = 0; y < 10; y++) {

@@ -231,9 +231,7 @@ namespace engine {
         shader->setTexture("shininess", 5);
         shader->setTexture("depth", 6);
 
-        RenderCommand command(*shader);
-
-        command.meshBuffers.emplace_back(gBuffer.getScreenQuad());
+        RenderCommand command(*shader, gBuffer.getScreenQuad());
 
         command.textures.emplace_back(gBuffer.getBuffer("position"));
         command.textures.emplace_back(gBuffer.getBuffer("normal"));
