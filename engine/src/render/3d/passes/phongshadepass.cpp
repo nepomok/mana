@@ -84,57 +84,81 @@ Texture2DMS<float4> specular;
 Texture2DMS<float4> shininess;
 Texture2DMS<float4> depth;
 
-float4 msaaAverage(Texture2DMS<float4> tex, float2 uv)
+LightComponents getSampleLightComponents(int2 texCoord, int sample)
 {
-    uint2 size;
-    int samples;
-    tex.GetDimensions(size.x, size.y, samples);
-    float4 ret;
+    float3 fragPosition = position.Load(texCoord, sample).xyz;
+    float3 fragNormal = normal.Load(texCoord, sample).xyz;
+    float4 fragDiffuse = diffuse.Load(texCoord, sample);
+    float4 fragSpecular = specular.Load(texCoord, sample);
+    float fragShininess = shininess.Load(texCoord, sample).r;
+
+    return mana_calculate_light(fragPosition,
+                                fragNormal,
+                                fragDiffuse,
+                                fragSpecular,
+                                fragShininess);
+}
+
+LightComponents getAveragedLightComponents(int2 coord, int samples)
+{
+    LightComponents ret;
+
     for (int i = 0; i < samples; i++)
     {
-        int2 coord = uv * size;
-        ret += tex.Load(coord, i);
+        //Calculate lighting per sample to avoid averaging values such as position or normals
+        LightComponents sampleComp = getSampleLightComponents(coord, i);
+
+        ret.ambient += sampleComp.ambient;
+        ret.diffuse += sampleComp.diffuse;
+        ret.specular += sampleComp.specular;
     }
+
+    // Dividing the resulting phong colors by the number of samples mathematically is correct and returns the averaged
+    // phong colors, however for some reason the color is brighter than with only one sample and becomes
+    // brighter with more samples.
+    ret.ambient /= samples;
+    ret.diffuse /= samples;
+    ret.specular /= samples;
+
+    return ret;
+}
+
+//Returns a float between 0 and 1 indicating how many samples are covered for the given fragment coordinates
+float getSampleCoverage(int2 coord, int samples)
+{
+    int coveredSamples = 0;
+    for (int i = 0; i < samples; i++)
+    {
+        float sampleDepth = depth.Load(coord, i);
+        if (sampleDepth < 1)
+        {
+            coveredSamples++;
+        }
+    }
+    float ret = coveredSamples;
     return ret / samples;
 }
 
 PS_OUTPUT main(PS_INPUT v) {
     PS_OUTPUT ret;
 
-    float3 fragPos = msaaAverage(position, v.fUv).xyz;
-    float3 fragNorm = msaaAverage(normal, v.fUv).xyz;
-    float4 fragDiffuse = msaaAverage(diffuse, v.fUv);
-    float4 fragSpecular = msaaAverage(specular, v.fUv);
-    float fragShininess = msaaAverage(shininess, v.fUv).r;
+    uint2 size;
+    int samples;
+    position.GetDimensions(size.x, size.y, samples);
 
-    float fragDepth = msaaAverage(depth, v.fUv).r;
+    int2 coord = v.fUv * size;
 
-    LightComponents comp = mana_calculate_light(fragPos,
-                                                fragNorm,
-                                                fragDiffuse,
-                                                fragSpecular,
-                                                fragShininess);
+    LightComponents comp = getAveragedLightComponents(coord, samples);
 
-    float4 clearColor = float4(0, 0, 0, 0);
-    if (fragDepth < 1)
-    {
-        ret.phong_ambient = float4(comp.ambient, 1);
-        ret.phong_diffuse = float4(comp.diffuse, 1);
-        ret.phong_specular = float4(comp.specular, 1);
+    //Use coverage value as alpha
+    float coverage = getSampleCoverage(coord, samples);
 
-        ret.phong_combined = ret.phong_ambient + ret.phong_diffuse + ret.phong_specular;
+    ret.phong_ambient = float4(comp.ambient, coverage);
+    ret.phong_diffuse = float4(comp.diffuse, coverage);
+    ret.phong_specular = float4(comp.specular, coverage);
 
-        //Use the fragment diffuse alpha value because it is formed from averaged samples and thus should scale towards 0 at the edges
-        ret.phong_combined.a = fragDiffuse.a;
-    }
-    else
-    {
-        ret.phong_ambient = clearColor;
-        ret.phong_diffuse = clearColor;
-        ret.phong_specular = clearColor;
-
-        ret.phong_combined = clearColor;
-    }
+    ret.phong_combined = ret.phong_ambient + ret.phong_diffuse + ret.phong_specular;
+    ret.phong_combined.a = coverage;
 
     return ret;
 }
