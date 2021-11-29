@@ -17,23 +17,20 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDCOMMAND_HPP
-#define MANA_FORWARDCOMMAND_HPP
+#ifndef MANA_SHADERINCLUDE_HPP
+#define MANA_SHADERINCLUDE_HPP
 
-#include <utility>
+#include <map>
+#include <string>
 
-#include "engine/math/transform.hpp"
-#include "engine/render/meshbuffer.hpp"
-#include "engine/render/rendercommand.hpp"
+
+#include "engine/render/shadercompiler.hpp"
 
 namespace engine {
-    struct ForwardCommand {
-        ForwardCommand(Transform t, RenderCommand command) : transform(t),
-                                                             command(std::move(command)) {}
+    namespace ShaderInclude {
+        const std::map<std::string, std::string> &getShaderMacros(ShaderCompiler::ShaderLanguage lang);
 
-        Transform transform; // Affects the model matrix set when including mvp.hlsl or mvp.glsl
-        RenderCommand command;
-    };
+        const std::function<std::string(const char *)> &getShaderIncludeCallback();
+    }
 }
-
-#endif //MANA_FORWARDCOMMAND_HPP
+#endif //MANA_SHADERINCLUDE_HPP

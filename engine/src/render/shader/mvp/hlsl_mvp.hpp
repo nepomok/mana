@@ -17,23 +17,16 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_FORWARDCOMMAND_HPP
-#define MANA_FORWARDCOMMAND_HPP
+#ifndef MANA_HLSL_MVP_HPP
+#define MANA_HLSL_MVP_HPP
 
-#include <utility>
+static const char *HLSL_MVP = R"###(
+    float4x4 MANA_M;
+    float4x4 MANA_V;
+    float4x4 MANA_P;
+    float4x4 MANA_MVP;
+    float4x4 MANA_M_INVERT;
+    float4x4 MANA_VIEW_TRANSLATION;
+)###";
 
-#include "engine/math/transform.hpp"
-#include "engine/render/meshbuffer.hpp"
-#include "engine/render/rendercommand.hpp"
-
-namespace engine {
-    struct ForwardCommand {
-        ForwardCommand(Transform t, RenderCommand command) : transform(t),
-                                                             command(std::move(command)) {}
-
-        Transform transform; // Affects the model matrix set when including mvp.hlsl or mvp.glsl
-        RenderCommand command;
-    };
-}
-
-#endif //MANA_FORWARDCOMMAND_HPP
+#endif //MANA_HLSL_MVP_HPP

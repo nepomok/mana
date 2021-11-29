@@ -35,10 +35,6 @@
 namespace engine {
     class Renderer3D {
     public:
-        static const std::map<std::string, std::string> &getShaderMacros(ShaderCompiler::ShaderLanguage lang);
-
-        static const std::function<std::string(const char *)> &getShaderIncludeCallback();
-
         explicit Renderer3D(RenderDevice &device);
 
         ~Renderer3D();

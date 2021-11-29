@@ -24,6 +24,7 @@
 #include "engine/math/rotation.hpp"
 
 #include "engine/render/shadercompiler.hpp"
+#include "engine/render/shaderinclude.hpp"
 
 const char *SHADER_VERT_LIGHTING = R"###(
 struct VS_INPUT
@@ -207,10 +208,10 @@ namespace engine {
                                     FRAGMENT,
                                     HLSL_SHADER_MODEL_4);
 
-        vertexShader.preprocess(Renderer3D::getShaderIncludeCallback(),
-                                Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
-        fragmentShader.preprocess(Renderer3D::getShaderIncludeCallback(),
-                                  Renderer3D::getShaderMacros(HLSL_SHADER_MODEL_4));
+        vertexShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
+        fragmentShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                  ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 

@@ -25,6 +25,7 @@
 #include "engine/render/shadercompiler.hpp"
 
 #include "engine/asset/assetimporter.hpp"
+#include "engine/render/shaderinclude.hpp"
 
 static const char *SHADER_VERT_GEOMETRY = R"###(#version 460
 layout (location = 0) in vec3 vPosition;
@@ -161,10 +162,10 @@ namespace engine {
         ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, GLSL_460);
         ShaderSource fs(SHADER_FRAG_GEOMETRY, "main", FRAGMENT, GLSL_460);
 
-        vs.preprocess(Renderer3D::getShaderIncludeCallback(),
-                      Renderer3D::getShaderMacros(GLSL_460));
-        fs.preprocess(Renderer3D::getShaderIncludeCallback(),
-                      Renderer3D::getShaderMacros(GLSL_460));
+        vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(GLSL_460));
+        fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(GLSL_460));
 
         auto &allocator = device.getAllocator();
         shader = allocator.createShaderProgram(vs, fs);

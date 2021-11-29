@@ -23,6 +23,8 @@
 
 #include "engine/asset/assetimporter.hpp"
 
+#include "engine/render/shaderinclude.hpp"
+
 #include <sstream>
 
 static const char *SHADER_VERT = R"###(
@@ -148,10 +150,10 @@ namespace engine {
         ShaderSource vert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
         ShaderSource frag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
 
-        vert.preprocess(Renderer3D::getShaderIncludeCallback(),
-                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        frag.preprocess(Renderer3D::getShaderIncludeCallback(),
-                        Renderer3D::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 

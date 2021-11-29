@@ -19,43 +19,10 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-#include "render/shader/phong/hlsl_phong_shading.hpp"
-#include "render/shader/phong/glsl_phong_shading.hpp"
-
 #include <algorithm>
 #include <utility>
 
 namespace engine {
-    std::string includeCallback(const char *n) {
-        std::string name(n);
-        if (name == "phong.hlsl") {
-            return HLSL_PHONG_SHADING;
-        } else if (name == "phong.glsl") {
-            return GLSL_PHONG_SHADING;
-        } else {
-            throw std::runtime_error("Invalid name: " + name);
-        }
-    }
-
-    const std::map<std::string, std::string> gMacros = {{"MAX_LIGHTS", "20"}};
-
-    const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};
-
-    const std::map<std::string, std::string> &Renderer3D::getShaderMacros(ShaderCompiler::ShaderLanguage lang) {
-        switch (lang) {
-            case ShaderCompiler::HLSL_SHADER_MODEL_4:
-            case ShaderCompiler::GLSL_460:
-            case ShaderCompiler::GLSL_ES_320:
-                return gMacros;
-            default:
-                throw std::runtime_error("Not implemented");
-        }
-    }
-
-    const std::function<std::string(const char *)> &Renderer3D::getShaderIncludeCallback() {
-        return gIncludeFunc;
-    }
-
     Renderer3D::Renderer3D(RenderDevice &device)
             : passes(),
               geometryBuffer(device.getAllocator()),
