@@ -24,7 +24,7 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/prepass.hpp"
 #include "engine/render/3d/passes/phongshadepass.hpp"
 #include "engine/render/3d/passes/forwardpass.hpp"
 #include "engine/render/3d/passes/debugpass.hpp"
@@ -41,7 +41,7 @@ namespace engine {
               archive(archive) {
         ren = std::make_unique<Renderer3D>(device);
         ren->addRenderPass(std::move(std::make_unique<ForwardPass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<GeometryPass>(device)));
+        ren->addRenderPass(std::move(std::make_unique<PrePass>(device)));
         ren->addRenderPass(std::move(std::make_unique<PhongShadePass>(device)));
         ren->addRenderPass(std::move(std::make_unique<SkyboxPass>(device)));
         ren->addRenderPass(std::move(std::make_unique<DebugPass>(device)));

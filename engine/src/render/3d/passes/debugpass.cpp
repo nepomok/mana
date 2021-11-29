@@ -19,7 +19,7 @@
 
 #include "engine/render/3d/passes/debugpass.hpp"
 
-#include "engine/render/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/prepass.hpp"
 
 #include "engine/render/shadercompiler.hpp"
 
@@ -572,7 +572,7 @@ namespace engine {
         auto &ren = device.getRenderer();
 
         gBuffer.attachColor({NORMALS});
-        gBuffer.attachDepthStencil(GeometryPass::DEPTH);
+        gBuffer.attachDepthStencil(PrePass::DEPTH);
 
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},
@@ -638,7 +638,7 @@ namespace engine {
         ren.renderFinish();
 
         gBuffer.attachColor({LIGHTS});
-        gBuffer.attachDepthStencil(GeometryPass::DEPTH);
+        gBuffer.attachDepthStencil(PrePass::DEPTH);
 
         ren.renderBegin(gBuffer.getRenderTarget(),
                         RenderOptions({},

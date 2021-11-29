@@ -127,7 +127,7 @@
 #include "engine/render/3d/passes/forwardpass.hpp"
 #include "engine/render/3d/passes/phongshadepass.hpp"
 #include "engine/render/3d/passes/skyboxpass.hpp"
-#include "engine/render/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/prepass.hpp"
 #include "engine/render/3d/passes/outlinepass.hpp"
 #include "engine/render/3d/passes/shadowpass.hpp"
 #include "engine/render/3d/passes/imguipass.hpp"

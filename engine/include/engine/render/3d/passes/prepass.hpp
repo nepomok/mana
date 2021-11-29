@@ -17,13 +17,18 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GEOMETRYPASS_HPP
-#define MANA_GEOMETRYPASS_HPP
+#ifndef MANA_PREPASS_HPP
+#define MANA_PREPASS_HPP
 
 #include "engine/render/3d/renderpass.hpp"
 
 namespace engine {
-    class GeometryPass : public RenderPass {
+    /**
+     * The PrePass creates buffers which are accessed by the deferred passes.
+     *
+     * It executes a drawCall for each deferred command in the scene and stores the data in textures.
+     */
+    class PrePass : public RenderPass {
     public:
         static const char *DEPTH;
 
@@ -36,9 +41,9 @@ namespace engine {
         static const char *SPECULAR;
         static const char *SHININESS_ID; //x = shininess, y = id
 
-        explicit GeometryPass(RenderDevice &device);
+        explicit PrePass(RenderDevice &device);
 
-        ~GeometryPass() override;
+        ~PrePass() override;
 
         void prepareBuffer(GeometryBuffer &gBuffer) override;
 
@@ -53,4 +58,4 @@ namespace engine {
     };
 }
 
-#endif //MANA_GEOMETRYPASS_HPP
+#endif //MANA_PREPASS_HPP

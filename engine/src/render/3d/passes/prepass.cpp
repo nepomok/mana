@@ -19,7 +19,7 @@
 
 #include <sstream>
 
-#include "engine/render/3d/passes/geometrypass.hpp"
+#include "engine/render/3d/passes/prepass.hpp"
 
 #include "engine/render/3d/renderer3d.hpp"
 #include "engine/render/shadercompiler.hpp"
@@ -146,17 +146,17 @@ namespace engine {
                 static_cast<float>(color.a()) * 255};
     }
 
-    const char *GeometryPass::DEPTH = "depth";
-    const char *GeometryPass::POSITION = "position";
-    const char *GeometryPass::NORMAL = "normal";
-    const char *GeometryPass::TANGENT = "tangent";
-    const char *GeometryPass::TEXTURE_NORMAL = "texture_normal";
-    const char *GeometryPass::DIFFUSE = "diffuse";
-    const char *GeometryPass::AMBIENT = "ambient";
-    const char *GeometryPass::SPECULAR = "specular";
-    const char *GeometryPass::SHININESS_ID = "shininess_id";
+    const char *PrePass::DEPTH = "depth";
+    const char *PrePass::POSITION = "position";
+    const char *PrePass::NORMAL = "normal";
+    const char *PrePass::TANGENT = "tangent";
+    const char *PrePass::TEXTURE_NORMAL = "texture_normal";
+    const char *PrePass::DIFFUSE = "diffuse";
+    const char *PrePass::AMBIENT = "ambient";
+    const char *PrePass::SPECULAR = "specular";
+    const char *PrePass::SHININESS_ID = "shininess_id";
 
-    GeometryPass::GeometryPass(RenderDevice &device)
+    PrePass::PrePass(RenderDevice &device)
             : renderDevice(device) {
         ShaderSource vs(SHADER_VERT_GEOMETRY, "main", VERTEX, GLSL_460);
         ShaderSource fs(SHADER_FRAG_GEOMETRY, "main", FRAGMENT, GLSL_460);
@@ -183,9 +183,9 @@ namespace engine {
         defaultTexture->upload(Image<ColorRGBA>(1, 1, {{0, 0, 0, 0}}));
     }
 
-    GeometryPass::~GeometryPass() = default;
+    PrePass::~PrePass() = default;
 
-    void GeometryPass::prepareBuffer(GeometryBuffer &gBuffer) {
+    void PrePass::prepareBuffer(GeometryBuffer &gBuffer) {
         gBuffer.addBuffer(DEPTH, TextureBuffer::ColorFormat::DEPTH_STENCIL);
         gBuffer.addBuffer(POSITION, TextureBuffer::ColorFormat::RGBA32F);
         gBuffer.addBuffer(NORMAL, TextureBuffer::ColorFormat::RGBA32F);
@@ -197,7 +197,7 @@ namespace engine {
         gBuffer.addBuffer(SHININESS_ID, TextureBuffer::ColorFormat::RGBA32F);
     }
 
-    void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
+    void PrePass::render(GeometryBuffer &gBuffer, Scene &scene) {
         auto &ren = renderDevice.getRenderer();
 
         Mat4f model, view, projection;
