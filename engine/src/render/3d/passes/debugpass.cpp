@@ -213,7 +213,7 @@ void main()
 
 static const char *SHADER_VERT_LIGHT = R"###(#version 460 core
 
-#include "mana.glsl"
+#include "phong.glsl"
 
 struct Globals {
     mat4 MODEL;
@@ -258,7 +258,7 @@ void main()
 
 static const char *SHADER_GEOMETRY_LIGHT = R"###(#version 460 core
 
-#include "mana.glsl"
+#include "phong.glsl"
 
 struct Globals {
     mat4 MODEL;

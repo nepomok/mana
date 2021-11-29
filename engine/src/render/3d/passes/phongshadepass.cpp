@@ -62,7 +62,7 @@ VS_OUTPUT main(const VS_INPUT v)
 )###";
 
 const char *SHADER_FRAG_LIGHTING = R"###(
-#include "mana.hlsl"
+#include "phong.hlsl"
 
 struct PS_INPUT {
     float3 fPos: POSITION;

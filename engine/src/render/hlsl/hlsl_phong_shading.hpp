@@ -17,14 +17,10 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_HLSLINCLUDE_HPP
-#define MANA_HLSLINCLUDE_HPP
+#ifndef MANA_HLSL_PHONG_SHADING_HPP
+#define MANA_HLSL_PHONG_SHADING_HPP
 
-/**
- * The hlsl source packaged with the binary which is injected when SHADER_INCLUDE is found in a user shader,
- * the hlsl preprocessor could also look for the include and read it from a file relative to the binary.
- */
-static const char *SHADER_MANA_HLSL = R"###(
+static const char *HLSL_PHONG_SHADING = R"###(
 struct MANA_T_LIGHT_DIRECTIONAL {
     float3 direction;
     float3 ambient;
@@ -191,4 +187,4 @@ LightComponents mana_calculate_light(float3 fPos, float3 fNorm, float4 fDiffuse,
 }
 )###";
 
-#endif //MANA_HLSLINCLUDE_HPP
+#endif //MANA_HLSL_PHONG_SHADING_HPP

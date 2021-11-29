@@ -19,8 +19,8 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-#include "hlslinclude.hpp"
-#include "glslinclude.hpp"
+#include "render/hlsl/hlsl_phong_shading.hpp"
+#include "render/glsl/glsl_phong_shading.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -28,10 +28,10 @@
 namespace engine {
     std::string includeCallback(const char *n) {
         std::string name(n);
-        if (name == "mana.hlsl") {
-            return SHADER_MANA_HLSL;
-        } else if (name == "mana.glsl") {
-            return SHADER_MANA_GLSL;
+        if (name == "phong.hlsl") {
+            return HLSL_PHONG_SHADING;
+        } else if (name == "phong.glsl") {
+            return GLSL_PHONG_SHADING;
         } else {
             throw std::runtime_error("Invalid name: " + name);
         }
