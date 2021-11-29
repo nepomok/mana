@@ -389,6 +389,11 @@ namespace engine {
                                                       prefix);
         }
 
+        std::unique_ptr<MeshBuffer>
+        OGLRenderAllocator::createCustomMeshBuffer(const RenderAllocator::CustomMeshDefinition &mesh) {
+            throw std::runtime_error("Not Implemented");
+        }
+
         std::unique_ptr<ShaderProgram> OGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
                                                                                const ShaderSource &geometryShader,
                                                                                const ShaderSource &fragmentShader) {

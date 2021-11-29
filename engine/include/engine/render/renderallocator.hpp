@@ -73,6 +73,46 @@ namespace engine {
         virtual std::unique_ptr<MeshBuffer> createInstancedMeshBuffer(const Mesh &mesh,
                                                                       const std::vector<Transform> &offsets) = 0;
 
+        struct CustomMeshDefinition {
+            enum AttributeType {
+                UNSIGNED_BYTE, // 1 Byte unsigned
+                SIGNED_BYTE, // 1 Byte signed
+                UNSIGNED_INT, // 4 Byte unsigned
+                SIGNED_INT, // 4 Byte signed
+                FLOAT, // 4 Byte float
+                DOUBLE // 8 Byte double
+            };
+
+            char *data; // A pointer pointing to a buffer containing the mesh data in the specified format.
+            size_t dataLength; // The length of the buffer pointed at by the data pointer.
+            std::vector<std::pair<int, AttributeType>> vertex; //The count and type of the components of a vertex.
+        };
+
+        /**
+         * Create a mesh buffer with a configurable source layout.
+         *
+         * Eg the vertex layout
+         * {
+         *      { 3, FLOAT },
+         *      { 2, UNSIGNED_INT }
+         *      { 1, SIGNED_INT }
+         * }
+         *
+         * would give a vertex size of 24 bytes.
+         *
+         * The data is parsed as (mesh.dataLength / (3 * 4 + 2 * 4 + 1 * 4) vertices.
+         *
+         * The following input layout could be used when drawing the buffer:
+         *
+         * GLSL:
+         *  layout (location = 0) in vec3 attr0;
+         *  layout (location = 1) in vec2ui attr1;
+         *  layout (location = 2) in int attr2;
+         *
+         * @return
+         */
+        virtual std::unique_ptr<MeshBuffer> createCustomMeshBuffer(const CustomMeshDefinition &mesh) = 0;
+
         /**
          * Create a shader program instance for the given shader sources.
          *

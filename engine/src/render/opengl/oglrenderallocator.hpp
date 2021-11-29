@@ -36,6 +36,8 @@ namespace engine {
             std::unique_ptr<MeshBuffer> createInstancedMeshBuffer(const Mesh &mesh,
                                                                   const std::vector<Transform> &offsets) override;
 
+            std::unique_ptr<MeshBuffer> createCustomMeshBuffer(const CustomMeshDefinition &mesh) override;
+
             std::unique_ptr<ShaderProgram> createShaderProgram(const ShaderSource &vertexShader,
                                                                const ShaderSource &fragmentShader) override;
 

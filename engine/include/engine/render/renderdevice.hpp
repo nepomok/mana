@@ -39,7 +39,7 @@ namespace engine {
         virtual RenderAllocator &getAllocator() = 0;
 
         /**
-         * Returns the maximum number of samples supported in a render target or multisampled texture.
+         * Returns the maximum number of samples supported in a multi sampled render target or texture.
          *
          * @return
          */
