@@ -39,11 +39,9 @@ layout (location = 8) in vec4 vInstanceRow3;
 
 layout(location = 0) out vec3 fPos;
 layout(location = 1) out vec3 fNorm;
-layout(location = 2) out vec2 fUv;
+layout(location = 2) out vec3 fTan;
+layout(location = 3) out vec2 fUv;
 layout(location = 4) out vec4 vPos;
-layout(location = 5) out vec3 N;
-layout(location = 6) out vec3 T;
-layout(location = 7) out vec3 B;
 
 layout(location = 0) uniform mat4 MANA_M;
 layout(location = 1) uniform mat4 MANA_MVP;
@@ -65,6 +63,8 @@ layout(location = 12) uniform sampler2D emissive;
 
 layout(location = 13) uniform sampler2D normal;
 
+layout(location = 14) uniform mat4 TRANSFORM_ROTATION;
+
 void main()
 {
     mat4 instanceMatrix = mat4(vInstanceRow0, vInstanceRow1, vInstanceRow2, vInstanceRow3);
@@ -73,16 +73,8 @@ void main()
     fPos = ((instanceMatrix * MANA_M) * vec4(vPosition, 1)).xyz;
     fUv = vUv;
 
-    // Transform the normal, tangent and bitangent vectors into world space by multiplying with the model and instance matrix.
-
-    // The model matrix is multiplied with the instance matrix so that the model transformation + instance transformation are applied to the normals.
-    mat4 normalMatrix = instanceMatrix * MANA_M;
-
-    fNorm = normalize((normalMatrix * vec4(vNormal, 1)).xyz);
-
-    T = normalize((normalMatrix * vec4(vTangent, 1)).xyz);
-    B = normalize((normalMatrix * vec4(vBitangent, 1)).xyz);
-    N = normalize((normalMatrix * vec4(vNormal, 1)).xyz);
+    fNorm = normalize(vNormal);
+    fTan = normalize(vTangent);
 
     gl_Position = vPos;
 }
@@ -91,20 +83,18 @@ void main()
 static const char *SHADER_FRAG_GEOMETRY = R"###(#version 460
 layout(location = 0) in vec3 fPos;
 layout(location = 1) in vec3 fNorm;
-layout(location = 2) in vec2 fUv;
+layout(location = 2) in vec3 fTan;
+layout(location = 3) in vec2 fUv;
 layout(location = 4) in vec4 vPos;
-layout(location = 5) in vec3 N;
-layout(location = 6) in vec3 T;
-layout(location = 7) in vec3 B;
 
 layout(location = 0) out vec4 oPosition;
 layout(location = 1) out vec4 oNormal;
-layout(location = 2) out vec4 oDiffuse;
-layout(location = 3) out vec4 oAmbient;
-layout(location = 4) out vec4 oSpecular;
-layout(location = 5) out vec4 oShininess;
-layout(location = 6) out vec4 oEmissive;
-layout(location = 7) out vec4 oId;
+layout(location = 2) out vec4 oTangent;
+layout(location = 3) out vec4 oTexNormal;
+layout(location = 4) out vec4 oDiffuse;
+layout(location = 5) out vec4 oAmbient;
+layout(location = 6) out vec4 oSpecular;
+layout(location = 7) out vec4 oShininess;
 
 layout(location = 0) uniform mat4 MANA_M;
 layout(location = 1) uniform mat4 MANA_MVP;
@@ -128,36 +118,21 @@ layout(location = 13) uniform sampler2D normal;
 
 void main() {
     oPosition = vec4(fPos, 1);
-
-    if (hasTextureNormal != 0)
-    {
-        // Combine the 3 interpolated tangent, bitangent and normals into the TBN matrix
-        mat3 TBN = mat3(T, B, N);
-
-        // Sample tangent space normal from texture, texture is assigned correctly before the shader is invoked.
-        vec3 tangentNormal = texture(normal, fUv).xyz;
-
-        // Scale tangent space normal into -1 / 1 range
-        tangentNormal = normalize((tangentNormal * 2) - 1);
-
-        // Transform the tangent space normal into world space by multiplying with the TBN matrix.
-        vec3 norm = TBN * tangentNormal;
-
-        // Assign the world space normal
-        // The value assigned here is not the correct normal.
-        oNormal = vec4(norm, 1);
-    }
-    else
-    {
-        oNormal = vec4(fNorm, 1);
-    }
-
     oDiffuse = texture(diffuse, fUv) + diffuseColor;
     oAmbient = texture(ambient, fUv) + ambientColor;
     oSpecular = texture(specular, fUv) + specularColor;
     oShininess.r = texture(shininess, fUv).r + shininessColor;
 
-    oId.x = 1;
+    mat3 normalMatrix = transpose(inverse(mat3(MANA_M)));
+    oNormal = vec4(normalize(normalMatrix * fNorm), 1);
+    oTangent = vec4(normalize(normalMatrix * fTan), 1);
+
+    if (hasTextureNormal != 0)
+    {
+        vec3 texNormal = texture(normal, fUv).xyz;
+        texNormal = normalize(texNormal * 2.0 - 1.0);
+        oTexNormal = vec4(texNormal, 1);
+    }
 }
 )###";
 
@@ -174,12 +149,12 @@ namespace engine {
     const char *GeometryPass::DEPTH = "depth";
     const char *GeometryPass::POSITION = "position";
     const char *GeometryPass::NORMAL = "normal";
+    const char *GeometryPass::TANGENT = "tangent";
+    const char *GeometryPass::TEXTURE_NORMAL = "texture_normal";
     const char *GeometryPass::DIFFUSE = "diffuse";
     const char *GeometryPass::AMBIENT = "ambient";
     const char *GeometryPass::SPECULAR = "specular";
-    const char *GeometryPass::SHININESS = "shininess";
-    const char *GeometryPass::EMISSIVE = "emissive";
-    const char *GeometryPass::ID = "id";
+    const char *GeometryPass::SHININESS_ID = "shininess_id";
 
     GeometryPass::GeometryPass(RenderDevice &device)
             : renderDevice(device) {
@@ -214,12 +189,12 @@ namespace engine {
         gBuffer.addBuffer(DEPTH, TextureBuffer::ColorFormat::DEPTH_STENCIL);
         gBuffer.addBuffer(POSITION, TextureBuffer::ColorFormat::RGBA32F);
         gBuffer.addBuffer(NORMAL, TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer(TANGENT, TextureBuffer::ColorFormat::RGBA32F);
+        gBuffer.addBuffer(TEXTURE_NORMAL, TextureBuffer::ColorFormat::RGBA32F);
         gBuffer.addBuffer(DIFFUSE, TextureBuffer::ColorFormat::RGBA);
         gBuffer.addBuffer(AMBIENT, TextureBuffer::ColorFormat::RGBA);
         gBuffer.addBuffer(SPECULAR, TextureBuffer::ColorFormat::RGBA);
-        gBuffer.addBuffer(SHININESS, TextureBuffer::ColorFormat::R32F);
-        gBuffer.addBuffer(EMISSIVE, TextureBuffer::ColorFormat::R32F);
-        gBuffer.addBuffer(ID, TextureBuffer::ColorFormat::R8UI);
+        gBuffer.addBuffer(SHININESS_ID, TextureBuffer::ColorFormat::RGBA32F);
     }
 
     void GeometryPass::render(GeometryBuffer &gBuffer, Scene &scene) {
@@ -235,12 +210,12 @@ namespace engine {
         gBuffer.attachColor({
                                     POSITION,
                                     NORMAL,
+                                    TANGENT,
+                                    TEXTURE_NORMAL,
                                     DIFFUSE,
                                     AMBIENT,
                                     SPECULAR,
-                                    SHININESS,
-                                    EMISSIVE,
-                                    ID
+                                    SHININESS_ID
                             });
         gBuffer.attachDepthStencil(DEPTH);
 
@@ -264,7 +239,7 @@ namespace engine {
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
-                if (firstCommand ||shaderMaterial.diffuse != ColorRGBA()) {
+                if (firstCommand || shaderMaterial.diffuse != ColorRGBA()) {
                     shaderMaterial.diffuse = ColorRGBA();
                     shader->setVec4(3, Vec4f());
                 }
@@ -327,7 +302,8 @@ namespace engine {
                 textures.emplace_back(*command.material.emissiveTexture);
             }
 
-            if (firstCommand || (shaderMaterial.normalTexture == nullptr) != (command.material.normalTexture == nullptr)) {
+            if (firstCommand
+                || shaderMaterial.normalTexture != command.material.normalTexture) {
                 shaderMaterial.normalTexture = command.material.normalTexture;
                 shader->setInt(2, command.material.normalTexture != nullptr);
             }

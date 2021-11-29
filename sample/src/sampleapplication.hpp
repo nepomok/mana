@@ -72,7 +72,7 @@ protected:
                 {"Diffuse",        GeometryPass::DIFFUSE,    "",                  DEPTH_TEST_ALWAYS},
                 {"Ambient",        GeometryPass::AMBIENT,    "",                  DEPTH_TEST_ALWAYS},
                 {"Specular",       GeometryPass::SPECULAR,   "",                  DEPTH_TEST_ALWAYS},
-                {"Shininess",      GeometryPass::SHININESS,  "",                  DEPTH_TEST_ALWAYS},
+                {"Shininess",      GeometryPass::SHININESS_ID,  "",                  DEPTH_TEST_ALWAYS},
                 {"ImGui",          ImGuiPass::COLOR,         "",                  DEPTH_TEST_ALWAYS},
         };
 
@@ -82,7 +82,7 @@ protected:
 
         int maxSamples = window->getRenderDevice().getMaxSampleCount();
         debugWindow.setMaxSamples(maxSamples);
-        debugWindow.setSamples(maxSamples >= 4 ? 4 : 1);
+        debugWindow.setSamples(1);
 
         debugWindow.setLayerActive("Phong Ambient", false);
         debugWindow.setLayerActive("Phong Diffuse", false);

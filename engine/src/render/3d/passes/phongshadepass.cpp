@@ -51,10 +51,11 @@ VS_OUTPUT main(const VS_INPUT v)
 {
     VS_OUTPUT ret;
 
-    ret.vPos = float4(v.position, 1);
     ret.fPos = v.position;
     ret.fNorm = v.normal;
     ret.fUv = v.uv;
+
+    ret.vPos = float4(v.position, 1);
 
     return ret;
 }
@@ -78,25 +79,50 @@ struct PS_OUTPUT {
 
 Texture2DMS<float4> position;
 Texture2DMS<float4> normal;
+Texture2DMS<float4> tangent;
+Texture2DMS<float4> texNormal;
 Texture2DMS<float4> diffuse;
 Texture2DMS<float4> ambient;
 Texture2DMS<float4> specular;
 Texture2DMS<float4> shininess;
 Texture2DMS<float4> depth;
 
+float3 VIEW_POS;
+
 LightComponents getSampleLightComponents(int2 texCoord, int sample)
 {
     float3 fragPosition = position.Load(texCoord, sample).xyz;
     float3 fragNormal = normal.Load(texCoord, sample).xyz;
+    float3 fragTangent = tangent.Load(texCoord, sample).xyz;
     float4 fragDiffuse = diffuse.Load(texCoord, sample);
     float4 fragSpecular = specular.Load(texCoord, sample);
     float fragShininess = shininess.Load(texCoord, sample).r;
+    float3 fragTexNormal = texNormal.Load(texCoord, sample).xyz;
 
-    return mana_calculate_light(fragPosition,
+    if (length(fragTexNormal) > 0)
+    {
+        // Calculate lighting in tangent space, does not output correct value
+        float3x3 TBN = transpose(float3x3(cross(fragNormal, normalize(fragTangent - dot(fragTangent, fragNormal) * fragNormal)), fragTangent, fragNormal));
+
+        return mana_calculate_light(fragPosition * TBN,
+                                    fragTexNormal,
+                                    fragDiffuse,
+                                    fragSpecular,
+                                    fragShininess,
+                                    VIEW_POS * TBN,
+                                    TBN);
+    }
+    else
+    {
+        // Calculate lighting in world space
+        return mana_calculate_light(fragPosition,
                                 fragNormal,
                                 fragDiffuse,
                                 fragSpecular,
-                                fragShininess);
+                                fragShininess,
+                                VIEW_POS,
+                                float3x3(1));
+    }
 }
 
 LightComponents getAveragedLightComponents(int2 coord, int samples)
@@ -247,24 +273,28 @@ namespace engine {
         shader->setInt("MANA_LIGHT_COUNT_POINT", pointCount);
         shader->setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
 
-        shader->setVec3("MANA_VIEWPOS", scene.camera.transform.getPosition());
-
         shader->setTexture("position", 0);
         shader->setTexture("normal", 1);
-        shader->setTexture("diffuse", 2);
-        shader->setTexture("ambient", 3);
-        shader->setTexture("specular", 4);
-        shader->setTexture("shininess", 5);
-        shader->setTexture("depth", 6);
+        shader->setTexture("tangent", 2);
+        shader->setTexture("texNormal", 3);
+        shader->setTexture("diffuse", 4);
+        shader->setTexture("ambient", 5);
+        shader->setTexture("specular", 6);
+        shader->setTexture("shininess", 7);
+        shader->setTexture("depth", 8);
+
+        shader->setVec3("VIEW_POS", scene.camera.transform.getPosition());
 
         RenderCommand command(*shader, gBuffer.getScreenQuad());
 
         command.textures.emplace_back(gBuffer.getBuffer("position"));
         command.textures.emplace_back(gBuffer.getBuffer("normal"));
+        command.textures.emplace_back(gBuffer.getBuffer("tangent"));
+        command.textures.emplace_back(gBuffer.getBuffer("texture_normal"));
         command.textures.emplace_back(gBuffer.getBuffer("diffuse"));
         command.textures.emplace_back(gBuffer.getBuffer("ambient"));
         command.textures.emplace_back(gBuffer.getBuffer("specular"));
-        command.textures.emplace_back(gBuffer.getBuffer("shininess"));
+        command.textures.emplace_back(gBuffer.getBuffer("shininess_id"));
         command.textures.emplace_back(gBuffer.getBuffer("depth"));
 
         command.properties.enableDepthTest = false;

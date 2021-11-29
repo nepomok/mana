@@ -26,14 +26,15 @@ namespace engine {
     class GeometryPass : public RenderPass {
     public:
         static const char *DEPTH;
-        static const char *POSITION;
-        static const char *NORMAL;
+
+        static const char *POSITION; // The world space position
+        static const char *NORMAL; // The vertex normal
+        static const char *TANGENT; // The vertex tangent
+        static const char *TEXTURE_NORMAL; // The texture normal in tangent space
         static const char *DIFFUSE;
         static const char *AMBIENT;
         static const char *SPECULAR;
-        static const char *SHININESS;
-        static const char *EMISSIVE;
-        static const char *ID;
+        static const char *SHININESS_ID; //x = shininess, y = id
 
         explicit GeometryPass(RenderDevice &device);
 

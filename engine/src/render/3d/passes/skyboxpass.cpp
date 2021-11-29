@@ -26,8 +26,6 @@
 #include <sstream>
 
 static const char *SHADER_VERT = R"###(
-#include "mana.hlsl"
-
 struct VS_INPUT
 {
     float3 position : POSITION0;
@@ -49,6 +47,11 @@ struct VS_OUTPUT
     float4 vPos : SV_Position;
     float3 worldPos : POSITION1;
 };
+
+float4x4 MANA_VIEW_TRANSLATION;
+float4x4 MANA_M;
+float4x4 MANA_V;
+float4x4 MANA_P;
 
 VS_OUTPUT main(const VS_INPUT v)
 {
