@@ -21,18 +21,18 @@
 #define MANA_HLSL_PHONG_SHADING_HPP
 
 static const char *HLSL_PHONG_SHADING = R"###(
-struct MANA_T_LIGHT_DIRECTIONAL {
+struct DirectionalLight {
     float3 direction;
     float3 ambient;
     float3 diffuse;
     float3 specular;
 };
 
-MANA_T_LIGHT_DIRECTIONAL MANA_LIGHTS_DIRECTIONAL[MANA_MAX_LIGHTS];
+DirectionalLight DIRECTIONAL_LIGHTS[MAX_LIGHTS];
 
-int MANA_LIGHT_COUNT_DIRECTIONAL;
+int DIRECTIONAL_LIGHTS_COUNT;
 
-struct MANA_T_LIGHT_POINT {
+struct PointLight {
     float3 position;
     float constantValue;
     float linearValue;
@@ -42,11 +42,11 @@ struct MANA_T_LIGHT_POINT {
     float3 specular;
 };
 
-MANA_T_LIGHT_POINT MANA_LIGHTS_POINT[MANA_MAX_LIGHTS];
+PointLight POINT_LIGHTS[MAX_LIGHTS];
 
-int MANA_LIGHT_COUNT_POINT;
+int POINT_LIGHTS_COUNT;
 
-struct MANA_T_LIGHT_SPOT {
+struct SpotLight {
     float3 position;
     float3 direction;
     float cutOff;
@@ -59,9 +59,9 @@ struct MANA_T_LIGHT_SPOT {
     float3 specular;
 };
 
-MANA_T_LIGHT_SPOT MANA_LIGHTS_SPOT[MANA_MAX_LIGHTS];
+SpotLight SPOT_LIGHTS[MAX_LIGHTS];
 
-int MANA_LIGHT_COUNT_SPOT;
+int SPOT_LIGHTS_COUNT;
 
 struct LightComponents
 {
@@ -74,20 +74,20 @@ LightComponents mana_calculate_light_directional(float3 fPos, float3 fNorm, floa
 {
     LightComponents ret;
 
-    for (int i = 0; i < MANA_LIGHT_COUNT_DIRECTIONAL; i++)
+    for (int i = 0; i < DIRECTIONAL_LIGHTS_COUNT; i++)
     {
-        float3 ambient = MANA_LIGHTS_DIRECTIONAL[i].ambient * float3(diffuseColor.xyz);
+        float3 ambient = DIRECTIONAL_LIGHTS[i].ambient * float3(diffuseColor.xyz);
 
         float3 norm = normalize(fNorm);
-        float3 lightDir = normalize(-MANA_LIGHTS_DIRECTIONAL[i].direction);
+        float3 lightDir = normalize(-DIRECTIONAL_LIGHTS[i].direction);
 
         float diff = max(dot(norm, lightDir), 0.0);
-        float3 diffuse =  MANA_LIGHTS_DIRECTIONAL[i].diffuse * float3((diff * diffuseColor).xyz);
+        float3 diffuse =  DIRECTIONAL_LIGHTS[i].diffuse * float3((diff * diffuseColor).xyz);
 
         float3 viewDir = normalize(viewPosition - fPos);
         float3 reflectDir = normalize(reflect(-lightDir, norm));
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
-        float3 specular = MANA_LIGHTS_DIRECTIONAL[i].specular * float3((spec * specularColor).xyz);
+        float3 specular = DIRECTIONAL_LIGHTS[i].specular * float3((spec * specularColor).xyz);
 
         ret.ambient += ambient;
         ret.diffuse += diffuse;
@@ -101,24 +101,24 @@ LightComponents mana_calculate_light_point(float3 fPos, float3 fNorm, float4 dif
 {
     LightComponents ret;
 
-    for (int i = 0; i < MANA_LIGHT_COUNT_POINT; i++)
+    for (int i = 0; i < POINT_LIGHTS_COUNT; i++)
     {
-        float3 position = MANA_LIGHTS_POINT[i].position * lightTransformation;
+        float3 position = POINT_LIGHTS[i].position * lightTransformation;
         float distance    = length(position - fPos);
-        float attenuation = 1.0 / (MANA_LIGHTS_POINT[i].constantValue + MANA_LIGHTS_POINT[i].linearValue * distance + MANA_LIGHTS_POINT[i].quadraticValue * (distance * distance));
+        float attenuation = 1.0 / (POINT_LIGHTS[i].constantValue + POINT_LIGHTS[i].linearValue * distance + POINT_LIGHTS[i].quadraticValue * (distance * distance));
 
-        float3 ambient = MANA_LIGHTS_POINT[i].ambient * float3(diffuseColor.xyz);
+        float3 ambient = POINT_LIGHTS[i].ambient * float3(diffuseColor.xyz);
 
         float3 norm = normalize(fNorm);
         float3 lightDir = normalize(position - fPos);
 
         float diff = max(dot(norm, lightDir), 0.0);
-        float3 diffuse =  MANA_LIGHTS_POINT[i].diffuse * float3((diff * diffuseColor).xyz);
+        float3 diffuse =  POINT_LIGHTS[i].diffuse * float3((diff * diffuseColor).xyz);
 
         float3 viewDir = normalize(viewPosition - fPos);
         float3 reflectDir = reflect(-lightDir, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), shininess);
-        float3 specular = MANA_LIGHTS_POINT[i].specular * float3((spec * specularColor).xyz);
+        float3 specular = POINT_LIGHTS[i].specular * float3((spec * specularColor).xyz);
 
         ambient  *= attenuation;
         diffuse  *= attenuation;
@@ -136,31 +136,31 @@ LightComponents mana_calculate_light_spot(float3 fPos, float3 fNorm, float4 diff
 {
     LightComponents ret;
 
-    for (int i = 0; i < MANA_LIGHT_COUNT_SPOT; i++)
+    for (int i = 0; i < SPOT_LIGHTS_COUNT; i++)
     {
-        float3 position = MANA_LIGHTS_SPOT[i].position * lightTransformation;
+        float3 position = SPOT_LIGHTS[i].position * lightTransformation;
         float3 lightDir = normalize(position - fPos);
 
-        float3 ambient = MANA_LIGHTS_SPOT[i].ambient * diffuseColor.rgb;
+        float3 ambient = SPOT_LIGHTS[i].ambient * diffuseColor.rgb;
 
         float3 norm = normalize(fNorm);
         float diff = max(dot(norm, lightDir), 0.0);
-        float3 diffuse = MANA_LIGHTS_SPOT[i].diffuse * diff * diffuseColor.rgb;
+        float3 diffuse = SPOT_LIGHTS[i].diffuse * diff * diffuseColor.rgb;
 
         float3 viewDir = normalize(viewPosition - fPos);
         float3 reflectDir = reflect(-lightDir, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), roughness);
-        float3 specular = MANA_LIGHTS_SPOT[i].specular * spec * specularColor.rgb;
+        float3 specular = SPOT_LIGHTS[i].specular * spec * specularColor.rgb;
 
-        float theta = dot(lightDir, normalize(-MANA_LIGHTS_SPOT[i].direction));
-        float epsilon = (MANA_LIGHTS_SPOT[i].cutOff - MANA_LIGHTS_SPOT[i].outerCutOff);
-        float intensity = clamp((theta - MANA_LIGHTS_SPOT[i].outerCutOff) / epsilon, 0.0, 1.0);
+        float theta = dot(lightDir, normalize(-SPOT_LIGHTS[i].direction));
+        float epsilon = (SPOT_LIGHTS[i].cutOff - SPOT_LIGHTS[i].outerCutOff);
+        float intensity = clamp((theta - SPOT_LIGHTS[i].outerCutOff) / epsilon, 0.0, 1.0);
 
         diffuse  *= intensity;
         specular *= intensity;
 
         float distance    = length(position - fPos);
-        float attenuation = 1.0 / (MANA_LIGHTS_SPOT[i].constantValue + MANA_LIGHTS_SPOT[i].linearValue * distance + MANA_LIGHTS_SPOT[i].quadraticValue * (distance * distance));
+        float attenuation = 1.0 / (SPOT_LIGHTS[i].constantValue + SPOT_LIGHTS[i].linearValue * distance + SPOT_LIGHTS[i].quadraticValue * (distance * distance));
 
         diffuse   *= attenuation;
         specular *= attenuation;

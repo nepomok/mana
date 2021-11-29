@@ -235,14 +235,14 @@ namespace engine {
             std::string name;
             switch (light.type) {
                 case LIGHT_DIRECTIONAL:
-                    name = "MANA_LIGHTS_DIRECTIONAL[" + std::to_string(dirCount++) + "].";
+                    name = "DIRECTIONAL_LIGHTS[" + std::to_string(dirCount++) + "].";
                     shader->setVec3(name + "direction", light.direction);
                     shader->setVec3(name + "ambient", light.ambient);
                     shader->setVec3(name + "diffuse", light.diffuse);
                     shader->setVec3(name + "specular", light.specular);
                     break;
                 case LIGHT_POINT:
-                    name = "MANA_LIGHTS_POINT[" + std::to_string(pointCount++) + "].";
+                    name = "POINT_LIGHTS[" + std::to_string(pointCount++) + "].";
                     shader->setVec3(name + "position", light.transform.getPosition());
                     shader->setFloat(name + "constantValue", light.constant);
                     shader->setFloat(name + "linearValue", light.linear);
@@ -252,7 +252,7 @@ namespace engine {
                     shader->setVec3(name + "specular", light.specular);
                     break;
                 case LIGHT_SPOT:
-                    name = "MANA_LIGHTS_SPOT[" + std::to_string(spotCount++) + "].";
+                    name = "SPOT_LIGHTS[" + std::to_string(spotCount++) + "].";
                     shader->setVec3(name + "position", light.transform.getPosition());
                     shader->setVec3(name + "direction", light.direction);
                     shader->setFloat(name + "cutOff", cosf(degreesToRadians(light.cutOff)));
@@ -267,9 +267,9 @@ namespace engine {
             }
         }
 
-        shader->setInt("MANA_LIGHT_COUNT_DIRECTIONAL", dirCount);
-        shader->setInt("MANA_LIGHT_COUNT_POINT", pointCount);
-        shader->setInt("MANA_LIGHT_COUNT_SPOT", spotCount);
+        shader->setInt("DIRECTIONAL_LIGHTS_COUNT", dirCount);
+        shader->setInt("POINT_LIGHTS_COUNT", pointCount);
+        shader->setInt("SPOT_LIGHTS_COUNT", spotCount);
 
         shader->setTexture("position", 0);
         shader->setTexture("normal", 1);

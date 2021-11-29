@@ -19,8 +19,8 @@
 
 #include "engine/render/3d/renderer3d.hpp"
 
-#include "render/hlsl/hlsl_phong_shading.hpp"
-#include "render/glsl/glsl_phong_shading.hpp"
+#include "render/shader/phong/hlsl_phong_shading.hpp"
+#include "render/shader/phong/glsl_phong_shading.hpp"
 
 #include <algorithm>
 #include <utility>
@@ -37,7 +37,7 @@ namespace engine {
         }
     }
 
-    const std::map<std::string, std::string> gMacros = {{"MANA_MAX_LIGHTS", "20"}};
+    const std::map<std::string, std::string> gMacros = {{"MAX_LIGHTS", "20"}};
 
     const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};
 

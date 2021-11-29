@@ -220,9 +220,9 @@ struct Globals {
     mat4 VIEW;
     mat4 PROJECTION;
     int lightType;
-    MANA_T_LIGHT_DIRECTIONAL dirLight;
-    MANA_T_LIGHT_POINT pointLight;
-    MANA_T_LIGHT_SPOT spotLight;
+    DirectionalLight dirLight;
+    PointLight pointLight;
+    SpotLight spotLight;
 };
 
 uniform Globals globals;
@@ -265,9 +265,9 @@ struct Globals {
     mat4 VIEW;
     mat4 PROJECTION;
     int lightType;
-    MANA_T_LIGHT_DIRECTIONAL dirLight;
-    MANA_T_LIGHT_POINT pointLight;
-    MANA_T_LIGHT_SPOT spotLight;
+    DirectionalLight dirLight;
+    PointLight pointLight;
+    SpotLight spotLight;
 };
 
 uniform Globals globals;
