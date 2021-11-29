@@ -89,15 +89,38 @@ Texture2DMS<float4> depth;
 
 float3 VIEW_POS;
 
-LightComponents getSampleLightComponents(int2 texCoord, int sample)
+float4 averageMsaa(Texture2DMS<float4> tex, int2 coord, int samples)
 {
-    float3 fragPosition = position.Load(texCoord, sample).xyz;
-    float3 fragNormal = normal.Load(texCoord, sample).xyz;
-    float3 fragTangent = tangent.Load(texCoord, sample).xyz;
-    float4 fragDiffuse = diffuse.Load(texCoord, sample);
-    float4 fragSpecular = specular.Load(texCoord, sample);
-    float fragShininess = shininess.Load(texCoord, sample).r;
-    float3 fragTexNormal = texNormal.Load(texCoord, sample).xyz;
+    float4 ret;
+    for (int i = 0; i < samples; i++) {
+        ret += tex.Load(coord, i);
+    }
+    return ret / samples;
+}
+
+float4 averageMsaaDepth(Texture2DMS<float4> tex, Texture2DMS<float4> depthTexture, int2 coord, int samples)
+{
+    float4 ret;
+    int nSample = 0;
+    for (int i = 0; i < samples; i++) {
+        if (depthTexture.Load(coord, i).r < 1) {
+            ret += tex.Load(coord, i);
+            nSample++;
+        }
+    }
+    return ret / nSample;
+}
+
+LightComponents getAveragedLightComponents(int2 coord, int samples)
+{
+    //Per pixel lighting, this could produce artifacts where two primitives overlap a pixel and different samples belong to different primitives.
+    float3 fragPosition = averageMsaaDepth(position, depth, coord, samples).xyz;
+    float3 fragNormal = averageMsaaDepth(normal, depth, coord, samples).xyz;
+    float3 fragTangent = averageMsaaDepth(tangent, depth, coord, samples).xyz;
+    float4 fragDiffuse = averageMsaa(diffuse, coord, samples);
+    float4 fragSpecular = averageMsaa(specular, coord, samples);
+    float fragShininess = averageMsaa(shininess, coord, samples).r;
+    float3 fragTexNormal = averageMsaaDepth(texNormal, depth, coord, samples).xyz;
 
     if (length(fragTexNormal) > 0)
     {
@@ -125,30 +148,6 @@ LightComponents getSampleLightComponents(int2 texCoord, int sample)
     }
 }
 
-LightComponents getAveragedLightComponents(int2 coord, int samples)
-{
-    LightComponents ret;
-
-    for (int i = 0; i < samples; i++)
-    {
-        //Calculate lighting per sample to avoid averaging values such as position or normals
-        LightComponents sampleComp = getSampleLightComponents(coord, i);
-
-        ret.ambient += sampleComp.ambient;
-        ret.diffuse += sampleComp.diffuse;
-        ret.specular += sampleComp.specular;
-    }
-
-    // Dividing the resulting phong colors by the number of samples mathematically is correct and returns the averaged
-    // phong colors, however for some reason the color is brighter than with only one sample and becomes
-    // brighter with more samples.
-    ret.ambient /= samples;
-    ret.diffuse /= samples;
-    ret.specular /= samples;
-
-    return ret;
-}
-
 //Returns a float between 0 and 1 indicating how many samples are covered for the given fragment coordinates
 float getSampleCoverage(int2 coord, int samples)
 {
@@ -171,7 +170,6 @@ PS_OUTPUT main(PS_INPUT v) {
     uint2 size;
     int samples;
     position.GetDimensions(size.x, size.y, samples);
-
     int2 coord = v.fUv * size;
 
     LightComponents comp = getAveragedLightComponents(coord, samples);
