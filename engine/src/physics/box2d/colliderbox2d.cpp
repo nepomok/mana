@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_PHYSICS_BOX2D
+
 #include <stdexcept>
 
 #include "physics/box2d/colliderbox2d.hpp"
@@ -54,3 +56,5 @@ namespace engine {
         return fixture->GetDensity();
     }
 }
+
+#endif

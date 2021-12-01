@@ -34,18 +34,14 @@
 #include "engine/asset/assetimporter.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(Window &window, Archive &archive)
+    RenderSystem::RenderSystem(Window &window, Archive &archive, const std::set<RenderPass*>& passes)
             : screenTarget(window.getRenderTarget()),
               device(window.getRenderDevice()),
               ren(),
               archive(archive) {
         ren = std::make_unique<Renderer3D>(device);
-        ren->addRenderPass(std::move(std::make_unique<ForwardPass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<PrePass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<PhongShadePass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<SkyboxPass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<DebugPass>(device)));
-        ren->addRenderPass(std::move(std::make_unique<ImGuiPass>(window)));
+        for (auto &pass : passes)
+            ren->addRenderPass(std::unique_ptr<RenderPass>(pass));
     }
 
     RenderSystem::~RenderSystem() = default;

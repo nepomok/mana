@@ -44,7 +44,7 @@ namespace engine {
                          ComponentPool<MeshRenderComponent>::Listener,
                          ComponentPool<SkyboxComponent>::Listener {
     public:
-        RenderSystem(Window &window, Archive &archive);
+        RenderSystem(Window &window, Archive &archive, const std::set<RenderPass*>& passes);
 
         ~RenderSystem() override;
 

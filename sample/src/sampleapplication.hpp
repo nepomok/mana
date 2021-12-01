@@ -45,7 +45,15 @@ protected:
     void start() override {
         window->setSwapInterval(1);
 
-        renderSystem = new RenderSystem(*window, *archive);
+        renderSystem = new RenderSystem(*window, *archive, {});
+
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<PrePass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(
+                std::move(std::make_unique<PhongShadePass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<SkyboxPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<DebugPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ImGuiPass>(*window)));
 
         //Move is required because the ECS destructor deletes the system pointers.
         ecs = std::move(ECS(

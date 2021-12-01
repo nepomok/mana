@@ -17,8 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
 #include "opengl/glfwwindowgl.hpp"
-#include "glfwmonitor.hpp" //Has to come after glfwwindow because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
+#endif
+
+#include "glfwmonitor.hpp" //Has to come after glfwwindowgl because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
 
 namespace engine {
     namespace glfw {
@@ -40,8 +44,10 @@ namespace engine {
 
         std::unique_ptr<Window> createWindow(GraphicsBackend api) {
             switch (api) {
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
                 case OPENGL_4_6:
                     return std::make_unique<GLFWWindowGL>("Window GLFW", Vec2i(600, 300), WindowAttributes());
+#endif
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }
@@ -52,8 +58,10 @@ namespace engine {
                                              Vec2i size,
                                              WindowAttributes attributes) {
             switch (api) {
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
                 case OPENGL_4_6:
                     return std::make_unique<GLFWWindowGL>(title, size, attributes);
+#endif
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }
@@ -66,9 +74,11 @@ namespace engine {
                                              Monitor &monitor,
                                              VideoMode mode) {
             switch (api) {
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
                 case OPENGL_4_6:
                     return std::make_unique<GLFWWindowGL>(title, size, attributes, dynamic_cast<GLFWMonitor &>(monitor),
                                                           mode);
+#endif
                 default:
                     throw std::runtime_error("Unsupported graphics api");
             }

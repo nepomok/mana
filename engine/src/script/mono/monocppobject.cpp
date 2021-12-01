@@ -17,14 +17,47 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "engine/script/mono/monocppobject.hpp"
+
 #include <stdexcept>
+
+#ifndef BUILD_ENGINE_SCRIPT_MONO
+
+#define ERROR throw std::runtime_error("Mono support not built");
+
+engine::MonoCppObject::MonoCppObject() { ERROR }
+
+engine::MonoCppObject::MonoCppObject(void *objectPointer, bool pinned) { ERROR }
+
+engine::MonoCppObject::~MonoCppObject() {}
+
+engine::MonoCppObject::MonoCppObject(engine::MonoCppObject &&other) noexcept {}
+
+engine::MonoCppObject &engine::MonoCppObject::operator=(engine::MonoCppObject &&other) noexcept { return other; }
+
+engine::MonoCppObject
+engine::MonoCppObject::invokeMethod(const std::string &name, const engine::MonoCppArguments &args) const { ERROR }
+
+void engine::MonoCppObject::setField(const std::string &name, const engine::MonoCppValue &value) const { ERROR }
+
+void engine::MonoCppObject::getFieldValuePtr(const std::string &name, void *data) const { ERROR }
+
+bool engine::MonoCppObject::isNull() const { ERROR }
+
+bool engine::MonoCppObject::isPinned() const { ERROR }
+
+void *engine::MonoCppObject::getObjectPointer() const { ERROR }
+
+std::string engine::MonoCppObject::getClassNamespace() const { ERROR }
+
+std::string engine::MonoCppObject::getClassName() const { ERROR }
+
+#else
 
 #include <mono/jit/jit.h>
 #include <mono/metadata/loader.h>
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
-
-#include "engine/script/mono/monocppobject.hpp"
 
 namespace engine {
     MonoCppObject::MonoCppObject() : objectPointer(nullptr), gcHandle(0), pinned(false) {}
@@ -141,3 +174,5 @@ namespace engine {
         return mono_object_unbox(static_cast<MonoObject *>(objectPointer));
     }
 }
+
+#endif

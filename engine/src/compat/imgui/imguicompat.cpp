@@ -17,7 +17,21 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/imgui/imguicompat.hpp"
+#include "engine/compat/imgui/imguicompat.hpp"
+
+#ifndef BUILD_ENGINE_COMPAT_IMGUI
+
+void throwError() { throw std::runtime_error("No ImGui Support built into the library."); }
+
+void engine::ImGuiCompat::Init(engine::Window &window) { throwError(); }
+
+void engine::ImGuiCompat::Shutdown(engine::Window &window) { throwError(); }
+
+void engine::ImGuiCompat::NewFrame(engine::Window &window) { throwError(); }
+
+void engine::ImGuiCompat::DrawData(engine::Window &window, engine::RenderTarget &target) { throwError(); }
+
+#else
 
 #include <limits>
 
@@ -129,3 +143,5 @@ namespace engine {
         }
     }
 }
+
+#endif // BUILD_ENGINE_IMGUI

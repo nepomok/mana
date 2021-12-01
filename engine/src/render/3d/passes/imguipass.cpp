@@ -17,9 +17,11 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_COMPAT_IMGUI
+
 #include "engine/render/3d/passes/imguipass.hpp"
 
-#include "engine/imgui/imguicompat.hpp"
+#include "engine/compat/imgui/imguicompat.hpp"
 
 #include "imgui.h"
 
@@ -58,3 +60,5 @@ namespace engine {
         widgets = w;
     }
 }
+
+#endif

@@ -1,6 +1,3 @@
-#include <engine.hpp>
-#include "oglrendertarget.hpp"
-
 /**
  *  Mana - 3D Game Engine
  *  Copyright (C) 2021  Julian Zampiccoli
@@ -19,6 +16,8 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
+
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
 
 #include "oglrenderdevice.hpp"
 #include "ogltexturebuffer.hpp"
@@ -43,3 +42,5 @@ namespace engine {
         }
     }
 }
+
+#endif

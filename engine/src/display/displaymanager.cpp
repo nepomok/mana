@@ -19,9 +19,9 @@
 
 #include "engine/display/displaymanager.hpp"
 
-#include <utility>
-
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
 #include "glfw/glfwdisplay.hpp"
+#endif
 
 namespace engine {
     DisplayManager::DisplayManager() = default;
@@ -32,8 +32,10 @@ namespace engine {
 
     std::unique_ptr<Monitor> DisplayManager::getPrimaryMonitor() const {
         switch (displayApi) {
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
             case GLFW:
                 return glfw::getPrimaryMonitor();
+#endif
             default:
                 throw std::runtime_error("Unsupported display api");
         }
@@ -41,8 +43,10 @@ namespace engine {
 
     std::set<std::unique_ptr<Monitor>> DisplayManager::getMonitors() const {
         switch (displayApi) {
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
             case GLFW:
                 return glfw::getMonitors();
+#endif
             default:
                 throw std::runtime_error("Unsupported display api");
         }
@@ -50,8 +54,10 @@ namespace engine {
 
     std::unique_ptr<Window> DisplayManager::createWindow(GraphicsBackend graphicsBackend) const {
         switch (displayApi) {
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
             case GLFW:
                 return glfw::createWindow(graphicsBackend);
+#endif
             default:
                 throw std::runtime_error("Unsupported display api");
         }
@@ -62,8 +68,10 @@ namespace engine {
                                                          Vec2i size,
                                                          WindowAttributes attributes) const {
         switch (displayApi) {
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
             case GLFW:
                 return glfw::createWindow(graphicsBackend, title, size, attributes);
+#endif
             default:
                 throw std::runtime_error("Unsupported display api");
         }
@@ -76,8 +84,10 @@ namespace engine {
                                                          Monitor &monitor,
                                                          VideoMode mode) const {
         switch (displayApi) {
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
             case GLFW:
                 return glfw::createWindow(graphicsBackend, title, size, attributes, monitor, mode);
+#endif
             default:
                 throw std::runtime_error("Unsupported display api");
         }

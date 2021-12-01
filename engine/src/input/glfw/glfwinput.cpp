@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_DISPLAY_GLFW
+
 #include <map>
 #include <stdexcept>
 #include <mutex>
@@ -210,3 +212,5 @@ namespace engine {
         throw std::runtime_error("Not implemented");
     }
 }
+
+#endif

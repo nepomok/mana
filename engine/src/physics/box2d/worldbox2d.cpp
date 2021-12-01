@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_PHYSICS_BOX2D
+
 #include "physics/box2d/worldbox2d.hpp"
 #include "physics/box2d/rigidbodybox2d.hpp"
 #include "physics/box2d/commonbox2d.hpp"
@@ -92,3 +94,5 @@ namespace engine {
         world.Step(deltaTime, 10, 10);
     }
 }
+
+#endif

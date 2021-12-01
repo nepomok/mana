@@ -98,7 +98,7 @@
 #include "engine/io/archive/directoryarchive.hpp"
 #include "engine/io/schema/ecsschema.hpp"
 #include "engine/io/schema/mathschema.hpp"
-#include "engine/imgui/imguicompat.hpp"
+#include "engine/compat/imgui/imguicompat.hpp"
 #include "engine/input/inputlistener.hpp"
 #include "engine/input/input.hpp"
 #include "engine/input/device/keyboard.hpp"

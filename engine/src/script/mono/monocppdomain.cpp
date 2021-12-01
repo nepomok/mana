@@ -17,6 +17,30 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#include "engine/script/mono/monocppdomain.hpp"
+
+#ifndef BUILD_ENGINE_SCRIPT_MONO
+
+#define ERROR throw std::runtime_error("Mono support not built");
+
+engine::MonoCppDomain::MonoCppDomain() { ERROR }
+
+engine::MonoCppDomain::MonoCppDomain(const std::string &domainName) { ERROR }
+
+engine::MonoCppDomain::~MonoCppDomain() {  }
+
+engine::MonoCppAssembly &engine::MonoCppDomain::getMsCorLibAssembly() { ERROR }
+
+std::unique_ptr<engine::MonoCppAssembly> engine::MonoCppDomain::loadAssembly(const std::string &filePath) { ERROR }
+
+std::unique_ptr<engine::MonoCppAssembly> engine::MonoCppDomain::loadAssembly(std::istream &source) { ERROR }
+
+engine::MonoCppObject engine::MonoCppDomain::stringFromUtf8(const std::string &str, bool pinned) { ERROR }
+
+std::string engine::MonoCppDomain::stringToUtf8(const engine::MonoCppObject &strObject) { ERROR }
+
+#else
+
 #include <iterator>
 #include <string>
 #include <sstream>
@@ -26,8 +50,6 @@
 #include <mono/metadata/assembly.h>
 #include <mono/metadata/debug-helpers.h>
 #include <mono/metadata/mono-config.h>
-
-#include "engine/script/mono/monocppdomain.hpp"
 
 namespace engine {
     MonoCppDomain::MonoCppDomain()
@@ -92,3 +114,5 @@ namespace engine {
         return mono_string_to_utf8(static_cast<MonoString *>(strObject.getObjectPointer()));
     }
 }
+
+#endif

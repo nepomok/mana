@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_RENDERER_OPENGL
+
 #include "oglcheckerror.hpp"
 
 #include <stdexcept>
@@ -31,3 +33,5 @@ void checkGLError(const std::string &source) {
         throw std::runtime_error(error);
     }
 }
+
+#endif

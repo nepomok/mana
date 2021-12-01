@@ -19,9 +19,36 @@
 
 #include <stdexcept>
 
-#include "script/mono/mono.hpp"
-
 #include "engine/script/mono/monocppassembly.hpp"
+
+#ifndef BUILD_ENGINE_SCRIPT_MONO
+
+#define ERROR throw std::runtime_error("Mono support not built");
+
+engine::MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer, void *imagePointer) { ERROR }
+
+engine::MonoCppAssembly::~MonoCppAssembly() {  }
+
+engine::MonoCppObject
+engine::MonoCppAssembly::invokeStaticMethod(const std::string &nameSpace, const std::string &className,
+                                            const std::string &functionName,
+                                            const engine::MonoCppArguments &args) const { ERROR }
+
+void engine::MonoCppAssembly::setStaticField(const std::string &nameSpace, const std::string &className,
+                                             const std::string &fieldName,
+                                             engine::MonoCppValue value) const { ERROR }
+
+engine::MonoCppObject
+engine::MonoCppAssembly::getStaticField(const std::string &nameSpace, const std::string &className,
+                                        const std::string &fieldName) const { ERROR }
+
+engine::MonoCppObject
+engine::MonoCppAssembly::createObject(const std::string &nameSpace, const std::string &className,
+                                      bool pinned) const { ERROR }
+
+#else
+
+#include "script/mono/mono.hpp"
 
 namespace engine {
     MonoCppAssembly::MonoCppAssembly(void *domainPointer, void *assemblyPointer, void *imagePointer)
@@ -94,3 +121,5 @@ namespace engine {
         return std::move(MonoCppObject(o, pinned));
     }
 }
+
+#endif // BUILD_ENGINE_SCRIPT_MONO

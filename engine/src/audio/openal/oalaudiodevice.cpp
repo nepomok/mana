@@ -17,6 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#ifdef BUILD_ENGINE_AUDIO_OPENAL
+
 #include <stdexcept>
 
 #include "audio/openal/oalaudiocontext.hpp"
@@ -68,3 +70,5 @@ namespace engine {
         return std::make_unique<OALAudioContext>(alcCreateContext(device, nullptr));
     }
 }
+
+#endif

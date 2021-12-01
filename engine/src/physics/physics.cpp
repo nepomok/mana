@@ -21,13 +21,17 @@
 
 #include "engine/physics/physics.hpp"
 
+#ifdef BUILD_ENGINE_PHYSICS_BOX2D
 #include "physics/box2d/worldbox2d.hpp"
+#endif
 
 namespace engine {
     World2D *Physics::createWorld2D(Physics::PhysicsBackend backend) {
         switch (backend) {
+#ifdef BUILD_ENGINE_PHYSICS_BOX2D
             case BOX2D:
                 return new WorldBox2D();
+#endif
             default:
                 throw std::runtime_error("");
         }
