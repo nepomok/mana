@@ -51,8 +51,8 @@ public:
             Vec3f worldRot(0, rotation.y, 0);
             Vec3f localRot(rotation.x, 0, 0);
 
-            transform.transform.setPosition(
-                    transform.transform.getPosition() + relativeMovement * pair.second.movementSpeed * deltaTime);
+            transform.transform.setPosition(transform.transform.getPosition()
+                                            + relativeMovement * pair.second.movementSpeed * deltaTime);
             //Apply the world rotation by converting it to a quaternion and using it as multiplier
             transform.transform.setRotation(transform.transform.getRotation()
                                             * Quaternion(worldRot * pair.second.rotationSpeed * deltaTime));

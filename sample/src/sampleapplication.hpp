@@ -43,7 +43,7 @@ public:
 
 protected:
     void start() override {
-        window->setSwapInterval(1);
+        window->setSwapInterval(0);
 
         renderSystem = new RenderSystem(*window, *archive, {});
 
