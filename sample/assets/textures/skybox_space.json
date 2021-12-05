@@ -1,0 +1,36 @@
+{
+  "textures": [
+    {
+      "name": "SkyboxSpace",
+      "images": [
+        {
+          "bundle": "/images/deepbluespace-skybox/0.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/deepbluespace-skybox/1.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/deepbluespace-skybox/2.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/deepbluespace-skybox/3.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/deepbluespace-skybox/4.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/deepbluespace-skybox/5.png",
+          "asset": ""
+        }
+      ],
+      "attributes": {
+        "textureType": "cubemap"
+      }
+    }
+  ]
+}

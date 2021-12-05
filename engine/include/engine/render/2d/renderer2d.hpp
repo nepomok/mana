@@ -22,8 +22,8 @@
 
 #include <set>
 
-#include "engine/render/renderer.hpp"
-#include "engine/render/renderdevice.hpp"
+#include "engine/render/api/renderer.hpp"
+#include "engine/render/api/renderdevice.hpp"
 
 #include "engine/text/character.hpp"
 #include "engine/text/font.hpp"

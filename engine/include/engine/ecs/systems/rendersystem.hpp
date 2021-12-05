@@ -28,7 +28,7 @@
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
 
-#include "engine/render/3d/renderer3d.hpp"
+#include "engine/render/deferred/deferredrenderer.hpp"
 #include "engine/display/window.hpp"
 
 #include "engine/io/archive.hpp"
@@ -54,7 +54,7 @@ namespace engine {
 
         void update(float deltaTime, EntityManager &entityManager) override;
 
-        Renderer3D &getRenderer();
+        DeferredRenderer &getRenderer();
 
         template<typename T>
         T &getRenderPass() {
@@ -82,54 +82,10 @@ namespace engine {
         RenderDevice &device;
         Archive &archive;
 
-        std::unique_ptr<Renderer3D> ren;
+        std::unique_ptr<DeferredRenderer> ren;
 
-        /**
-         * Retrieve or allocate the texture buffer for a given path.
-         *
-         * @param path
-         * @return
-         */
-        TextureBuffer &getTexture(const AssetPath &path);
-
-        TextureBuffer &getCubemap(const std::array<AssetPath, 6> &paths);
-
-        MeshBuffer &getMeshBuffer(const AssetPath &path);
-
-        const Material &getMaterial(const AssetPath &path);
-
-        void loadMaterial(const AssetPath &path);
-
-        void loadTexture(const AssetPath &path);
-
-        void loadCubeMap(const std::array<AssetPath, 6> &paths);
-
-        void loadMeshBuffer(const AssetPath &path);
-
-        void unloadMaterial(const AssetPath &path);
-
-        void unloadTexture(const AssetPath &path);
-
-        void unloadCubeMap(const std::array<AssetPath, 6> &paths);
-
-        void unloadMeshBuffer(const AssetPath &path);
-
-        void loadBundle(const std::string &bundle);
-
-        void unloadBundle(const std::string &bundle);
-
-        std::unordered_map<std::string, ulong> bundlesRef; //The reference count for bundles (bundle -> asset)
-        std::unordered_map<std::string, std::shared_ptr<Task>> bundleTasks;
-
-        std::mutex mutex;
-        std::unordered_map<std::string, AssetBundle> bundles; //Written to by bundle worker tasks and the main thread.
-
-        std::unordered_map<AssetPath, ulong, AssetPath::Hash> assetRef; //The reference count for assets (asset -> buffer)
-        std::unordered_map<AssetPath, std::unique_ptr<TextureBuffer>, AssetPath::Hash> textures;
-        std::unordered_map<AssetPath, std::unique_ptr<MeshBuffer>, AssetPath::Hash> meshBuffers;
-
-        std::unordered_map<std::array<AssetPath, 6>, ulong, AssetPath::HashArray<6>> cubeMapRef;
-        std::unordered_map<std::array<AssetPath, 6>, std::unique_ptr<TextureBuffer>, AssetPath::HashArray<6>> cubeMaps;
+        AssetManager assetManager;
+        AssetRenderManager assetRenderManager;
     };
 }
 

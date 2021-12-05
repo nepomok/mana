@@ -42,7 +42,7 @@ void engine::ImGuiCompat::DrawData(engine::Window &window, engine::RenderTarget 
 #include "backends/imgui_impl_opengl3.h"
 
 #include "display/glfw/opengl/glfwwindowgl.hpp"
-#include "render/opengl/oglrendertarget.hpp"
+#include "render/api/opengl/oglrendertarget.hpp"
 
 static uint imGuiRefCounter = 0;
 

@@ -20,8 +20,8 @@
 #ifndef MANA_IMGUICOMPAT_HPP
 #define MANA_IMGUICOMPAT_HPP
 
-#include "engine/render/graphicsbackend.hpp"
-#include "engine/render/rendertarget.hpp"
+#include "engine/render/api/graphicsbackend.hpp"
+#include "engine/render/api/rendertarget.hpp"
 
 #include "engine/display/displaybackend.hpp"
 

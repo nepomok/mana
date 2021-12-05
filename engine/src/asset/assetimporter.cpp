@@ -34,9 +34,19 @@
 
 #include "extern/json.hpp"
 
+#include "engine/asset/mesh.hpp"
+
 namespace engine {
     static ColorRGBA convertJsonColor(const nlohmann::json &j) {
         return ColorRGBA(j["r"], j["g"], j["b"], j["a"]);
+    }
+
+    static TextureBuffer::TextureType convertJsonTextureType(const std::string &v) {
+        if (v == "texture2d")
+            return TextureBuffer::TEXTURE_2D;
+        else if (v == "cubemap")
+            return TextureBuffer::TEXTURE_CUBE_MAP;
+        throw std::runtime_error("Invalid texture type " + v);
     }
 
     static AssetBundle readJsonBundle(const std::string &path, Archive &archive, ThreadPool &pool);
@@ -68,6 +78,50 @@ namespace engine {
         }
 
         bundleMutex.unlock();
+    }
+
+    static Image<ColorRGBA> readImage(const std::string &buffer) {
+        int width, height, nrChannels;
+        stbi_uc *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
+                                              buffer.size(),
+                                              &width,
+                                              &height,
+                                              &nrChannels,
+                                              4);
+        if (data) {
+            auto ret = Image<ColorRGBA>(width, height);
+            std::memcpy(ret.getData(), data, (width * height) * (sizeof(stbi_uc) * 4));
+            stbi_image_free(data);
+            return ret;
+        } else {
+            stbi_image_free(data);
+            std::string error = "Failed to load image";
+            throw std::runtime_error(error);
+        }
+    }
+
+    static Texture readJsonTexture(std::istream &stream, Archive &archive) {
+        std::string buffer((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
+        nlohmann::json j = nlohmann::json::parse(buffer);
+
+        Texture texture;
+
+        auto it = j.find("images");
+        if (it != j.end()) {
+            for (auto &element: *it) {
+                texture.images.emplace_back((AssetPath) {element["bundle"], element["asset"]});
+            }
+        }
+
+        auto attr = j.find("attributes");
+        if (attr != j.end()) {
+            texture.attributes.textureType = convertJsonTextureType(attr->value("textureType", "texture2d"));
+            texture.attributes.generateMipmap = attr->value("generateMipmap", texture.attributes.textureType !=
+                                                                              TextureBuffer::TEXTURE_CUBE_MAP);
+            //TODO Parse texture attributes
+        }
+
+        return texture;
     }
 
     static AssetBundle readJsonBundle(std::istream &stream, Archive &archive, ThreadPool &pool) {
@@ -109,7 +163,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element["asset"];
 
-                ret.meshes[name] = refBundles.at(bundle).getMesh(asset);
+                ret.add(name, new Mesh(refBundles.at(bundle).get<Mesh>(asset)));
             }
         }
 
@@ -121,7 +175,7 @@ namespace engine {
                 auto it = element.find("bundle");
                 if (it != element.end()) {
                     std::string n = element.value("asset", "");
-                    ret.materials[name] = refBundles.at(*it).getMaterial(n);
+                    ret.add(name, new Material(refBundles.at(*it).get<Material>(n)));
                 } else {
                     Material mat;
 
@@ -136,23 +190,40 @@ namespace engine {
                     if (element.find("shininess") != element.end())
                         mat.shininess = element["shininess"];
 
-                    if (element.find("diffuseTexture") != element.end())
-                        mat.diffuseTexture = {element["diffuseTexture"]["bundle"], element["diffuseTexture"]["asset"]};
-                    if (element.find("ambientTexture") != element.end())
-                        mat.ambientTexture = {element["ambientTexture"]["bundle"], element["ambientTexture"]["asset"]};
-                    if (element.find("specularTexture") != element.end())
-                        mat.specularTexture = {element["specularTexture"]["bundle"],
-                                               element["specularTexture"]["asset"]};
-                    if (element.find("emissiveTexture") != element.end())
-                        mat.emissiveTexture = {element["emissiveTexture"]["bundle"],
-                                               element["emissiveTexture"]["asset"]};
-                    if (element.find("shininessTexture") != element.end())
-                        mat.shininessTexture = {element["shininessTexture"]["bundle"],
-                                                element["shininessTexture"]["asset"]};
-                    if (element.find("normalTexture") != element.end())
-                        mat.normalTexture = {element["normalTexture"]["bundle"], element["normalTexture"]["asset"]};
+                    if (element.find("diffuseTexture") != element.end()) {
+                        auto path = AssetPath(element["diffuseTexture"]["bundle"], element["diffuseTexture"]["asset"]);
+                        mat.diffuseTexture = path;
+                    }
 
-                    ret.materials[name] = mat;
+                    if (element.find("ambientTexture") != element.end()) {
+                        auto path = AssetPath(element["ambientTexture"]["bundle"], element["ambientTexture"]["asset"]);
+                        mat.ambientTexture = path;
+                    }
+
+                    if (element.find("specularTexture") != element.end()) {
+                        auto path = AssetPath(element["specularTexture"]["bundle"],
+                                              element["specularTexture"]["asset"]);
+                        mat.specularTexture = path;
+                    }
+
+                    if (element.find("emissiveTexture") != element.end()) {
+                        auto path = AssetPath(element["emissiveTexture"]["bundle"],
+                                              element["emissiveTexture"]["asset"]);
+                        mat.emissiveTexture = path;
+                    }
+
+                    if (element.find("shininessTexture") != element.end()) {
+                        auto path = AssetPath(element["shininessTexture"]["bundle"],
+                                              element["shininessTexture"]["asset"]);
+                        mat.shininessTexture = path;
+                    }
+
+                    if (element.find("normalTexture") != element.end()) {
+                        auto path = AssetPath(element["normalTexture"]["bundle"], element["normalTexture"]["asset"]);
+                        mat.normalTexture = path;
+                    }
+
+                    ret.add(name, new Material(mat));
                 }
             }
         }
@@ -161,15 +232,9 @@ namespace engine {
         if (iterator != j.end()) {
             for (auto &element: *iterator) {
                 std::string name = element["name"];
-
-                Texture texture;
-                texture.image = {element["image"]["bundle"], element["image"]["asset"]};
-
-                //TODO: Parse json texture attributes
-
-                texture.attributes.generateMipmap = true;
-
-                ret.textures[name] = texture;
+                auto s = std::stringstream(element.dump());
+                auto tex = readJsonTexture(s, archive);
+                ret.add(name, new Texture(tex));
             }
         }
 
@@ -180,7 +245,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element.value("asset", "");
 
-                ret.images[name] = refBundles.at(bundle).getImage(asset);
+                ret.add(name, new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
             }
         }
 
@@ -277,10 +342,10 @@ namespace engine {
             const auto &mesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[i]);
             std::string name = mesh.mName.C_Str();
 
-            if (ret.meshes.find(name) != ret.meshes.end())
-                throw std::runtime_error("Duplicate mesh name in memory");
+            if (ret.assets.find(name) != ret.assets.end())
+                throw std::runtime_error("Duplicate asset name in memory");
 
-            ret.meshes[name] = convertMesh(mesh);
+            ret.add(name, new Mesh(convertMesh(mesh)));
         }
 
         for (auto i = 0; i < scene.mNumMaterials; i++) {
@@ -289,33 +354,13 @@ namespace engine {
 
             scene.mMaterials[i]->Get<std::string>(AI_MATKEY_NAME, name);
 
-            if (ret.materials.find(name) != ret.materials.end())
+            if (ret.assets.find(name) != ret.assets.end())
                 continue; //TODO: Handle bundle entries without a name or sharing a name
 
-            ret.materials[name] = material;
+            ret.add(name, new Material(material));
         }
 
         return ret;
-    }
-
-    static Image<ColorRGBA> readImage(const std::string &buffer) {
-        int width, height, nrChannels;
-        stbi_uc *data = stbi_load_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
-                                              buffer.size(),
-                                              &width,
-                                              &height,
-                                              &nrChannels,
-                                              4);
-        if (data) {
-            auto ret = Image<ColorRGBA>(width, height);
-            std::memcpy(ret.getData(), data, (width * height) * (sizeof(stbi_uc) * 4));
-            stbi_image_free(data);
-            return ret;
-        } else {
-            stbi_image_free(data);
-            std::string error = "Failed to load image";
-            throw std::runtime_error(error);
-        }
     }
 
     struct LibSndBuffer {
@@ -436,7 +481,7 @@ namespace engine {
                                       &n) == 1) {
                 //Source is image
                 AssetBundle ret;
-                ret.images["0"] = readImage(buffer);
+                ret.add("0", new Image<ColorRGBA>(readImage(buffer)));
                 return ret;
             }
 
@@ -456,7 +501,7 @@ namespace engine {
             //Try to read source as audio
             auto audio = readAudio(buffer);
             AssetBundle ret;
-            ret.audio["0"] = audio;
+            ret.add("0", new Audio(audio));
 
             return ret;
         } else {
@@ -479,14 +524,14 @@ namespace engine {
                                               &y,
                                               &n) == 1) {
                         AssetBundle ret;
-                        ret.images["0"] = readImage(buffer);
+                        ret.add("0", new Image<ColorRGBA>(readImage(buffer)));
                         return ret;
                     }
 
                     //Try to read source as audio
                     auto audio = readAudio(buffer);
                     AssetBundle ret;
-                    ret.audio["0"] = audio;
+                    ret.add("0", new Audio(audio));
                     return ret;
                 }
             }

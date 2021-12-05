@@ -18,7 +18,7 @@
  */
 
 #include "engine/render/2d/renderer2d.hpp"
-#include "engine/render/shadercompiler.hpp"
+#include "engine/render/shader/shadercompiler.hpp"
 
 #include "engine/math/matrixmath.hpp"
 

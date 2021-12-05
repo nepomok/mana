@@ -22,16 +22,14 @@
 
 #include <string>
 
-#include "engine/asset/assetpath.hpp"
+#include "engine/asset/skybox.hpp"
 
 namespace engine {
     struct SkyboxComponent {
-        //Paths to skybox images, using paths here means immutable skybox images
-        //Mutable images would be desirable for animated skybox
-        std::array<AssetPath, 6> paths;
+        Skybox skybox;
 
         bool operator==(const SkyboxComponent &other) const {
-            return paths == other.paths;
+            return skybox.texture == other.skybox.texture;
         }
     };
 }

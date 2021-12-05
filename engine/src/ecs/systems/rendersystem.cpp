@@ -24,23 +24,25 @@
 
 #include "engine/ecs/components.hpp"
 
-#include "engine/render/3d/passes/prepass.hpp"
-#include "engine/render/3d/passes/phongshadepass.hpp"
-#include "engine/render/3d/passes/forwardpass.hpp"
-#include "engine/render/3d/passes/debugpass.hpp"
-#include "engine/render/3d/passes/skyboxpass.hpp"
-#include "engine/render/3d/passes/imguipass.hpp"
+#include "engine/render/deferred/passes/prepass.hpp"
+#include "engine/render/deferred/passes/phongshadepass.hpp"
+#include "engine/render/deferred/passes/forwardpass.hpp"
+#include "engine/render/deferred/passes/debugpass.hpp"
+#include "engine/render/deferred/passes/skyboxpass.hpp"
+#include "engine/render/deferred/passes/imguipass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(Window &window, Archive &archive, const std::set<RenderPass*>& passes)
+    RenderSystem::RenderSystem(Window &window, Archive &archive, const std::set<RenderPass *> &passes)
             : screenTarget(window.getRenderTarget()),
               device(window.getRenderDevice()),
               ren(),
-              archive(archive) {
-        ren = std::make_unique<Renderer3D>(device);
-        for (auto &pass : passes)
+              archive(archive),
+              assetManager(archive),
+              assetRenderManager(assetManager, device.getAllocator()) {
+        ren = std::make_unique<DeferredRenderer>(device, assetRenderManager);
+        for (auto &pass: passes)
             ren->addRenderPass(std::unique_ptr<RenderPass>(pass));
     }
 
@@ -59,10 +61,10 @@ namespace engine {
     void RenderSystem::update(float deltaTime, EntityManager &entityManager) {
         auto &componentManager = entityManager.getComponentManager();
 
-        Scene scene3d;
+        Scene scene;
 
         //TODO: Culling
-        //Create render commands
+        //Create deferred draw nodes
         for (auto &pair: componentManager.getPool<MeshRenderComponent>()) {
             auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             if (!transform.enabled)
@@ -72,44 +74,19 @@ namespace engine {
             if (!render.enabled)
                 continue;
 
-            auto &material = getMaterial(render.material);
-
-            RenderMaterial renderMaterial;
-            renderMaterial.diffuse = material.diffuse;
-            renderMaterial.ambient = material.ambient;
-            renderMaterial.specular = material.specular;
-            renderMaterial.emissive = material.emissive;
-            renderMaterial.shininess = material.shininess;
-
-            if (!material.diffuseTexture.bundle.empty()) {
-                renderMaterial.diffuseTexture = &getTexture(material.diffuseTexture);
-            }
-            if (!material.ambientTexture.bundle.empty()) {
-                renderMaterial.ambientTexture = &getTexture(material.ambientTexture);
-            }
-            if (!material.specularTexture.bundle.empty()) {
-                renderMaterial.specularTexture = &getTexture(material.specularTexture);
-            }
-            if (!material.emissiveTexture.bundle.empty()) {
-                renderMaterial.emissiveTexture = &getTexture(material.emissiveTexture);
-            }
-            if (!material.shininessTexture.bundle.empty()) {
-                renderMaterial.shininessTexture = &getTexture(material.shininessTexture);
-            }
-            if (!material.normalTexture.bundle.empty()) {
-                renderMaterial.normalTexture = &getTexture(material.normalTexture);
-            }
+            auto &material = assetManager.getAsset<Material>(render.material);
 
             //TODO: Change transform walking / scene creation to allow model matrix caching
-            scene3d.deferred.emplace_back(DeferredCommand(TransformComponent::walkHierarchy(transform, entityManager),
-                                                          renderMaterial,
-                                                          getMeshBuffer(render.mesh)));
+            scene.deferred.emplace_back(Scene::DeferredDrawNode(
+                    TransformComponent::walkHierarchy(transform, entityManager),
+                    AssetHandle<Mesh>(render.mesh, &assetManager, &assetRenderManager),
+                    assetManager.getAsset<Material>(render.material)));
         }
 
         //Get Skybox
         for (auto &pair: componentManager.getPool<SkyboxComponent>()) {
             auto &comp = pair.second;
-            scene3d.skybox = &getCubemap(comp.paths);
+            scene.skybox = comp.skybox;
         }
 
         //Get Camera
@@ -121,10 +98,10 @@ namespace engine {
 
             auto &comp = pair.second;
 
-            scene3d.camera = comp.camera;
-            scene3d.camera.transform = TransformComponent::walkHierarchy(tcomp, entityManager);
+            scene.camera = comp.camera;
+            scene.camera.transform = TransformComponent::walkHierarchy(tcomp, entityManager);
 
-            camera = scene3d.camera;
+            camera = scene.camera;
 
             break;
         }
@@ -142,210 +119,73 @@ namespace engine {
 
             lightComponent.light.transform = tcomp.transform;
 
-            scene3d.lights.emplace_back(lightComponent.light);
+            scene.lights.emplace_back(lightComponent.light);
         }
 
         //Render
-        ren->render(screenTarget, scene3d);
+        ren->render(screenTarget, scene);
     }
 
-    Renderer3D &RenderSystem::getRenderer() {
+    DeferredRenderer &RenderSystem::getRenderer() {
         return *ren;
     }
 
-    TextureBuffer &RenderSystem::getTexture(const AssetPath &path) {
-        auto it = textures.find(path);
-        if (it != textures.end())
-            return *it->second;
-        else {
-            bundleTasks.at(path.bundle)->wait();
-
-            auto &bundle = bundles.at(path.bundle);
-            auto &tex = bundle.getTexture(path.asset);
-
-            bundleTasks.at(tex.image.bundle)->wait();
-
-            std::lock_guard<std::mutex> guard(mutex);
-            auto &img = bundles.at(tex.image.bundle).getImage(tex.image.asset);
-            textures[path] = std::unique_ptr<TextureBuffer>(device.getAllocator().createTextureBuffer(tex.attributes));
-            textures[path]->upload(img);
-            return *textures[path];
-        }
-    }
-
-    TextureBuffer &RenderSystem::getCubemap(const std::array<AssetPath, 6> &paths) {
-        auto it = cubeMaps.find(paths);
-        if (it != cubeMaps.end())
-            return *it->second;
-        else {
-            TextureBuffer::Attributes attribs;
-            attribs.textureType = TextureBuffer::TEXTURE_CUBE_MAP;
-            attribs.wrapping = TextureBuffer::CLAMP_TO_EDGE; //Prevent texture seams by clamping
-            auto tex = device.getAllocator().createTextureBuffer(attribs);
-            for (TextureBuffer::CubeMapFace face = TextureBuffer::POSITIVE_X;
-                 face <= TextureBuffer::NEGATIVE_Z;
-                 face = static_cast<TextureBuffer::CubeMapFace>(face + 1)) {
-                auto &path = paths.at(face);
-
-                bundleTasks.at(path.bundle)->wait();
-
-                std::lock_guard<std::mutex> guard(mutex);
-
-                auto &bundle = bundles.at(path.bundle);
-                auto &img = bundle.getImage(path.asset);
-
-                tex->upload(face, img);
-            }
-            cubeMaps[paths] = std::move(tex);
-            return *cubeMaps[paths];
-        }
-    }
-
-    MeshBuffer &RenderSystem::getMeshBuffer(const AssetPath &path) {
-        auto it = meshBuffers.find(path);
-        if (it != meshBuffers.end())
-            return *it->second;
-        else {
-            bundleTasks.at(path.bundle)->wait();
-
-            std::lock_guard<std::mutex> guard(mutex);
-
-            auto &bundle = bundles.at(path.bundle);
-            auto mesh = device.getAllocator().createMeshBuffer(bundle.getMesh(path.asset));
-
-            meshBuffers[path] = std::move(mesh);
-
-            return *meshBuffers[path];
-        }
-    }
-
-    const Material &RenderSystem::getMaterial(const AssetPath &path) {
-        bundleTasks.at(path.bundle)->wait();
-        std::lock_guard<std::mutex> guard(mutex);
-        return bundles.at(path.bundle).getMaterial(path.asset);
-    }
-
-    void RenderSystem::loadMaterial(const AssetPath &path) {
-        loadBundle(path.bundle);
-        auto material = getMaterial(path);
-        loadTexture(material.diffuseTexture);
-        loadTexture(material.ambientTexture);
-        loadTexture(material.specularTexture);
-        loadTexture(material.emissiveTexture);
-        loadTexture(material.shininessTexture);
-        loadTexture(material.normalTexture);
-    }
-
-    void RenderSystem::loadTexture(const AssetPath &path) {
-        if (!path.empty()) {
-            loadBundle(path.bundle);
-            bundleTasks.at(path.bundle)->wait();
-            std::lock_guard<std::mutex> guard(mutex);
-            loadBundle(bundles.at(path.bundle)
-                               .getTexture(path.asset).image.bundle);
-            assetRef[path]++;
-        }
-    }
-
-    void RenderSystem::loadCubeMap(const std::array<AssetPath, 6> &paths) {
-        for (auto &path: paths) {
-            loadBundle(path.bundle);
-        }
-        cubeMapRef[paths]++;
-    }
-
-    void RenderSystem::loadMeshBuffer(const AssetPath &path) {
-        loadBundle(path.bundle);
-        assetRef[path]++;
-    }
-
-    void RenderSystem::unloadMaterial(const AssetPath &path) {
-        auto material = getMaterial(path);
-        unloadTexture(material.diffuseTexture);
-        unloadTexture(material.ambientTexture);
-        unloadTexture(material.specularTexture);
-        unloadTexture(material.emissiveTexture);
-        unloadTexture(material.shininessTexture);
-        unloadTexture(material.normalTexture);
-        unloadBundle(path.bundle);
-    }
-
-    void RenderSystem::unloadTexture(const AssetPath &path) {
-        if (!path.empty()) {
-            bundleTasks.at(path.bundle)->wait();
-            std::string tmp;
-            {
-                std::lock_guard<std::mutex> guard(mutex);
-                tmp = bundles.at(path.bundle).getTexture(path.asset).image.bundle;
-            }
-            unloadBundle(tmp);
-            unloadBundle(path.bundle);
-            assetRef.at(path)--;
-            if (assetRef.at(path) == 0) {
-                textures.erase(path);
-            }
-        }
-    }
-
-    void RenderSystem::unloadCubeMap(const std::array<AssetPath, 6> &paths) {
-        for (auto &path: paths) {
-            unloadBundle(path.bundle);
-        }
-        cubeMapRef.at(paths)--;
-        if (cubeMapRef.at(paths) == 0)
-            cubeMaps.erase(paths);
-    }
-
-    void RenderSystem::unloadMeshBuffer(const AssetPath &path) {
-        bundleTasks.at(path.bundle)->wait();
-        unloadBundle(path.bundle);
-        assetRef.at(path)--;
-        if (assetRef.at(path) == 0)
-            meshBuffers.erase(path);
-    }
-
-    void RenderSystem::loadBundle(const std::string &bundle) {
-        auto &ref = bundlesRef[bundle];
-        ref++;
-        if (bundleTasks.find(bundle) == bundleTasks.end()) {
-            bundleTasks[bundle] = ThreadPool::pool.addTask([this, bundle]() {
-                auto bdl = AssetImporter::import(bundle, archive);
-                std::lock_guard<std::mutex> guard(mutex);
-                bundles[bundle] = bdl;
-            });
-        }
-    }
-
-    void RenderSystem::unloadBundle(const std::string &bundle) {
-        auto ref = bundlesRef.at(bundle);
-        auto task = bundleTasks.at(bundle);
-        assert(ref > 0);
-        ref--;
-        if (ref == 0) {
-            task->wait();
-            std::lock_guard<std::mutex> guard(mutex);
-            bundles.erase(bundle);
-            bundleTasks.erase(bundle);
-            bundlesRef.erase(bundle);
-        }
-    }
-
     void RenderSystem::onComponentCreate(const Entity &entity, const MeshRenderComponent &component) {
-        loadMeshBuffer(component.mesh);
-        loadMaterial(component.material);
+        assetManager.incrementRef(component.material);
+        auto material = assetManager.getAsset<Material>(component.material);
+
+        assetRenderManager.incrementRef(component.mesh);
+
+        if (!material.diffuseTexture.empty()) {
+            assetRenderManager.incrementRef(material.diffuseTexture);
+        }
+        if (!material.ambientTexture.empty()) {
+            assetRenderManager.incrementRef(material.ambientTexture);
+        }
+        if (!material.specularTexture.empty()) {
+            assetRenderManager.incrementRef(material.specularTexture);
+        }
+        if (!material.emissiveTexture.empty()) {
+            assetRenderManager.incrementRef(material.emissiveTexture);
+        }
+        if (!material.shininessTexture.empty()) {
+            assetRenderManager.incrementRef(material.shininessTexture);
+        }
+        if (!material.normalTexture.empty()) {
+            assetRenderManager.incrementRef(material.normalTexture);
+        }
     }
 
     void RenderSystem::onComponentDestroy(const Entity &entity, const MeshRenderComponent &component) {
-        unloadMeshBuffer(component.mesh);
-        unloadMaterial(component.material);
+        assetRenderManager.decrementRef<Mesh>(component.mesh);
+        auto material = assetManager.getAsset<Material>(component.material);
+        if (!material.diffuseTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.diffuseTexture);
+        }
+        if (!material.ambientTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.ambientTexture);
+        }
+        if (!material.specularTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.specularTexture);
+        }
+        if (!material.emissiveTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.emissiveTexture);
+        }
+        if (!material.shininessTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.shininessTexture);
+        }
+        if (!material.normalTexture.empty()) {
+            assetRenderManager.decrementRef<Texture>(material.normalTexture);
+        }
+        assetManager.decrementRef(component.material);
     }
 
     void RenderSystem::onComponentCreate(const Entity &entity, const SkyboxComponent &component) {
-        loadCubeMap(component.paths);
+        assetRenderManager.incrementRef(component.skybox.texture);
     }
 
     void RenderSystem::onComponentDestroy(const Entity &entity, const SkyboxComponent &component) {
-        unloadCubeMap(component.paths);
+        assetRenderManager.decrementRef<TextureBuffer>(component.skybox.texture);
     }
 
     void RenderSystem::onComponentUpdate(const Entity &entity,
@@ -353,10 +193,8 @@ namespace engine {
                                          const MeshRenderComponent &newValue) {
         if (oldValue == newValue)
             return;
-        unloadMeshBuffer(oldValue.mesh);
-        unloadMaterial(oldValue.material);
-        loadMeshBuffer(newValue.mesh);
-        loadMaterial(newValue.material);
+        onComponentDestroy(entity, oldValue);
+        onComponentCreate(entity, newValue);
     }
 
     void RenderSystem::onComponentUpdate(const Entity &entity,
@@ -364,7 +202,7 @@ namespace engine {
                                          const SkyboxComponent &newValue) {
         if (oldValue == newValue)
             return;
-        unloadCubeMap(oldValue.paths);
-        loadCubeMap(newValue.paths);
+        onComponentDestroy(entity, oldValue);
+        onComponentCreate(entity, newValue);
     }
 }

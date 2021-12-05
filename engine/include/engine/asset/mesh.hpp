@@ -27,8 +27,10 @@
 
 #include "engine/asset/vertex.hpp"
 
+#include "engine/asset/asset.hpp"
+
 namespace engine {
-    struct Mesh {
+    struct Mesh : public Asset {
         enum Primitive {
             POINT,
             LINE,
@@ -53,6 +55,12 @@ namespace engine {
 
         Mesh(Primitive primitive, std::vector<Vertex> vertices) :
                 indexed(false), primitive(primitive), vertices(std::move(vertices)), indices() {}
+
+        ~Mesh() override = default;
+
+        Asset *clone() override {
+            return new Mesh(*this);
+        }
     };
 }
 

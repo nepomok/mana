@@ -2,10 +2,12 @@
   "textures": [
     {
       "name": "ColorMapSpecular",
-      "image": {
-        "bundle": "/images/container2_specular.png",
-        "asset": ""
-      }
+      "images": [
+        {
+          "bundle": "/images/container2_specular.png",
+          "asset": ""
+        }
+      ]
     }
   ]
 }

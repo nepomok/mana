@@ -24,6 +24,7 @@
 #include <stdexcept>
 
 #include "engine/asset/color.hpp"
+#include "engine/asset/asset.hpp"
 
 #include "engine/math/rectangle.hpp"
 
@@ -34,7 +35,7 @@ namespace engine {
      * @tparam T The type to use for a pixel
      */
     template<typename T>
-    class Image {
+    class Image : public Asset {
     public:
         Image()
                 : size(), buffer() {}
@@ -52,6 +53,8 @@ namespace engine {
 
         Image(Image &&other) noexcept: size(std::move(other.size)), buffer(std::move(other.buffer)) {}
 
+        ~Image() override = default;
+
         Image &operator=(const Image &copy) {
             this->size = copy.size;
             this->buffer = std::vector<T>(copy.buffer);
@@ -64,6 +67,10 @@ namespace engine {
             return *this;
         }
 
+        Asset *clone() override {
+            return new Image<T>(*this);
+        }
+
         Vec2i getSize() const { return size; }
 
         const T *getData() const { return buffer.data(); }
@@ -73,6 +80,8 @@ namespace engine {
         int getWidth() const { return size.x; }
 
         int getHeight() const { return size.y; }
+
+        bool empty() const { return buffer.empty(); }
 
         const T &getPixel(int x, int y) const {
             return buffer[scanLine(y) + x];

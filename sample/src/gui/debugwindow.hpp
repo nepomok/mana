@@ -24,7 +24,7 @@
 
 #include "engine/display/window.hpp"
 
-#include "engine/render/3d/passes/imguipass.hpp"
+#include "engine/render/deferred/passes/imguipass.hpp"
 
 #include "gui/stringformat.hpp"
 

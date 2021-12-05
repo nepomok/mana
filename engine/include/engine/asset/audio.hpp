@@ -22,9 +22,17 @@
 
 #include "engine/audio/audioformat.hpp"
 
+#include "engine/asset/asset.hpp"
+
 namespace engine {
-    class Audio {
+    class Audio : public Asset {
     public:
+        ~Audio() override = default;
+
+        Asset *clone() override {
+            return new Audio(*this);
+        }
+
         std::vector<uint8_t> buffer;
         AudioFormat format;
         unsigned int frequency;

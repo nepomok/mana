@@ -2,10 +2,16 @@
   "textures": [
     {
       "name": "ColorMapTexture",
-      "image": {
-        "bundle": "/images/container2.png",
-        "asset": ""
-      }
+      "images": [
+        {
+          "bundle": "/images/container2.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/container2.png",
+          "asset": ""
+        }
+      ]
     }
   ]
 }

@@ -52,6 +52,9 @@ endif ()
 
 if (BUILD_ENGINE_RENDERER_QT)
     add_compile_definitions(BUILD_ENGINE_RENDERER_QT)
+    find_package(Qt5Core REQUIRED)
+    find_package(Qt5Widgets REQUIRED)
+    target_link_libraries(mana Qt5::Core Qt5::Widgets)
 endif ()
 
 if (BUILD_ENGINE_COMPAT_IMGUI)

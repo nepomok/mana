@@ -22,6 +22,8 @@
 
 #include "engine/math/transform.hpp"
 
+#include "engine/asset/asset.hpp"
+
 namespace engine {
     enum LightType {
         LIGHT_DIRECTIONAL,
@@ -29,10 +31,16 @@ namespace engine {
         LIGHT_SPOT
     };
 
-    struct Light {
+    struct Light : public Asset {
         Light() : type() {}
 
         explicit Light(LightType type) : type(type) {}
+
+        ~Light() override = default;
+
+        Asset *clone() override {
+            return new Light(*this);
+        }
 
         LightType type;
 

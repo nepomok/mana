@@ -20,12 +20,16 @@
 #ifndef MANA_TEXTURE_HPP
 #define MANA_TEXTURE_HPP
 
+#include "engine/render/api/texturebuffer.hpp"
 #include "engine/asset/assetpath.hpp"
-#include "engine/render/texturebuffer.hpp"
 
 namespace engine {
-    struct Texture {
-        AssetPath image;
+    struct Texture : public Asset {
+        Asset *clone() override {
+            return new Texture(*this);
+        }
+
+        std::vector<AssetPath> images;
         TextureBuffer::Attributes attributes;
     };
 }

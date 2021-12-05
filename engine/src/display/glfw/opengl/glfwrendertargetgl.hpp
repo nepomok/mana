@@ -20,10 +20,10 @@
 #ifndef MANA_GLFWRENDERTARGETGL_HPP
 #define MANA_GLFWRENDERTARGETGL_HPP
 
-#include "../../../render/opengl/oglrendertarget.hpp"
+#include "render/api/opengl/oglrendertarget.hpp"
 
-#include "../../../render/opengl/ogltypeconverter.hpp"
-#include "../../../render/opengl/oglcheckerror.hpp"
+#include "render/api/opengl/ogltypeconverter.hpp"
+#include "render/api/opengl/oglcheckerror.hpp"
 
 namespace engine {
     namespace glfw {

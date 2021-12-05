@@ -20,19 +20,25 @@
 #ifndef MANA_MATERIAL_HPP
 #define MANA_MATERIAL_HPP
 
-#include "engine/asset/image.hpp"
+#include "engine/asset/texture.hpp"
 
-#include "engine/asset/assetpath.hpp"
+#include "engine/asset/asset.hpp"
+#include "engine/asset/texture.hpp"
 
 namespace engine {
-    struct Material {
+    struct Material : public Asset {
+        ~Material() override = default;
+
+        Asset *clone() override{
+            return new Material(*this);
+        }
+
         ColorRGBA diffuse{};
         ColorRGBA ambient{};
         ColorRGBA specular{};
         ColorRGBA emissive{};
         float shininess{32};
 
-        //Paths to texture objects
         AssetPath diffuseTexture;
         AssetPath ambientTexture;
         AssetPath specularTexture;

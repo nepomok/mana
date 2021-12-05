@@ -22,7 +22,7 @@
 
 #include <string>
 
-#include "engine/render/rendercommand.hpp"
+#include "engine/render/api/rendercommand.hpp"
 
 std::string formatBlendMode(engine::BlendMode mode) {
     switch (mode) {

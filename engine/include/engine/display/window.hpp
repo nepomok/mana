@@ -20,8 +20,8 @@
 #ifndef MANA_WINDOW_HPP
 #define MANA_WINDOW_HPP
 
-#include "engine/render/renderdevice.hpp"
-#include "engine/render/rendertarget.hpp"
+#include "engine/render/api/renderdevice.hpp"
+#include "engine/render/api/rendertarget.hpp"
 #include "engine/asset/image.hpp"
 
 #include "engine/display/windowlistener.hpp"

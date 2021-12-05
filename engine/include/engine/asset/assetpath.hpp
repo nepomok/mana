@@ -23,9 +23,15 @@
 #include <string>
 
 #include <tuple>
+#include <utility>
 
 namespace engine {
     struct AssetPath {
+        AssetPath() = default;
+
+        AssetPath(std::string bundle, std::string asset)
+                : bundle(std::move(bundle)), asset(std::move(asset)) {}
+
         std::string bundle; //The path to the bundle
         std::string asset; //The name of the asset in the bundle
 
@@ -54,7 +60,7 @@ namespace engine {
         struct HashArray {
             std::size_t operator()(const std::array<AssetPath, S> &value) const {
                 std::string hashStr;
-                for (auto &item : value)
+                for (auto &item: value)
                     hashStr += item.bundle + "%" + item.asset;
                 std::hash<std::string> hash;
                 return hash(hashStr);

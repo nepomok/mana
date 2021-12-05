@@ -23,42 +23,53 @@
 #include <map>
 #include <string>
 
-#include "engine/asset/mesh.hpp"
-#include "engine/asset/image.hpp"
-#include "engine/asset/material.hpp"
-#include "engine/asset/texture.hpp"
-
 namespace engine {
     class AssetBundle {
     public:
+        ~AssetBundle() {
+            for (auto &pair: assets)
+                delete pair.second;
+        }
+
+        AssetBundle() = default;
+
+        AssetBundle(const AssetBundle &other) {
+            *this = other;
+        }
+
+        AssetBundle &operator=(const AssetBundle &other) {
+            for (auto &pair: other.assets)
+                assets.insert({pair.first, pair.second->clone()});
+            return *this;
+        }
+
+        AssetBundle(AssetBundle &&other) = default;
+
+        AssetBundle &operator=(AssetBundle &&other) = default;
+
         template<typename T>
-        static const T &get(const std::string &name, const std::map<std::string, T> &map) {
+        const T &get(const std::string &name = "") const {
+            if (assets.empty())
+                throw std::runtime_error("Empty bundle map");
             if (name.empty()) {
-                if (map.empty())
-                    throw std::runtime_error("Invalid name " + name);
-                return map.begin()->second;
+                return dynamic_cast<const T &>(*assets.begin()->second);
             } else {
-                return map.at(name);
+                return dynamic_cast<const T &>(*assets.at(name));
             }
         }
 
-        const Mesh &getMesh(const std::string &name = {}) const { return get<Mesh>(name, meshes); }
-
-        const Material &getMaterial(const std::string &name = {}) const { return get<Material>(name, materials); }
-
-        const Image<ColorRGBA> &getImage(const std::string &name = {}) const {
-            return get<Image<ColorRGBA>>(name, images);
+        void add(const std::string &name, Asset *asset) {
+            if (assets.find(name) != assets.end())
+                throw std::runtime_error("Asset with name " + name + " already exists");
+            assets[name] = asset;
         }
 
-        const Texture &getTexture(const std::string &name = {}) const { return get<Texture>(name, textures); }
+        void remove(const std::string &name) {
+            delete assets.at(name);
+            assets.erase(name);
+        }
 
-        const Audio &getAudio(const std::string &name = {}) const { return get<Audio>(name, audio); }
-
-        std::map<std::string, Mesh> meshes;
-        std::map<std::string, Material> materials;
-        std::map<std::string, Image<ColorRGBA>> images;
-        std::map<std::string, Texture> textures;
-        std::map<std::string, Audio> audio;
+        std::map<std::string, Asset *> assets;
     };
 }
 

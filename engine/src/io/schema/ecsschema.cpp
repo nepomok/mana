@@ -159,22 +159,13 @@ namespace engine {
 
     SkyboxComponent &operator<<(SkyboxComponent &component, const Message &message) {
         component = SkyboxComponent();
-        int i = 0;
-        for (auto &node : message["paths"].getVector()) {
-            component.paths.at(i++) << node;
-        }
+        component.skybox.texture = {message["texture"]["bundle"], message["texture"]["asset"]};
         return component;
     }
 
     Message &operator<<(Message &message, const SkyboxComponent &component) {
         message = std::map<std::string, Message>();
-        auto vector = std::vector<Message>();
-        for (const auto &path : component.paths) {
-            Message m;
-            m << path;
-            vector.emplace_back(m);
-        }
-        message["paths"] = vector;
+        message << component.skybox.texture;
         return message;
     }
 
