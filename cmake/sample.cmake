@@ -1,9 +1,9 @@
 file(GLOB_RECURSE Sample.File.SRC sample/src/*.cpp sample/src/*.c)
 
-add_executable(sample-application ${Sample.File.SRC})
+add_executable(mana-sample ${Sample.File.SRC})
 
-target_include_directories(sample-application PRIVATE sample/src/)
-target_link_libraries(sample-application mana)
+target_include_directories(mana-sample PRIVATE sample/src/)
+target_link_libraries(mana-sample mana)
 
 # Copy mana dll and assets folder to binary dir
 file(COPY engine/csharp/mana.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})

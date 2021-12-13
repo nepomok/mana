@@ -21,7 +21,7 @@ target_include_directories(mana PUBLIC ${Engine.Dir.SRC})
 if (BUILD_ENGINE_COMPAT_IMGUI)
     include(cmake/imgui.cmake)
     add_compile_definitions(BUILD_ENGINE_IM_GUI)
-    target_link_libraries(mana imgui) # imgui target provided by lib/imgui.cmake
+    target_link_libraries(mana imgui) # imgui target provided by imgui.cmake
 endif ()
 
 target_link_libraries(mana
