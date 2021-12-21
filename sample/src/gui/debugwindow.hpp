@@ -178,11 +178,24 @@ public:
                 ImGui::TreePop();
             }
 
+            ImGui::Separator();
+
             ImGui::InputInt("MSAA Samples", &samples);
             if (samples > maxSamples)
                 samples = maxSamples;
             else if (samples < 1)
                 samples = 1;
+
+            ImGui::Separator();
+
+            ImGui::InputInt("Swap Interval", &swapInterval);
+
+            if (swapInterval < 0)
+                swapInterval = 0;
+
+            ImGui::Separator();
+
+            ImGui::Spacing();
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
                         ImGui::GetIO().Framerate);
@@ -288,6 +301,10 @@ public:
             samples = value;
     }
 
+    int getSwapInterval() {
+        return swapInterval;
+    }
+
 private:
     std::string appendButtonLabelId(const std::string &label, int index) {
         return label + "###" + std::to_string(index);
@@ -296,6 +313,7 @@ private:
     std::vector<LayerTreeItem> items;
     int maxSamples = 0;
     int samples = 0;
+    int swapInterval = 0;
 };
 
 #endif //MANA_DEBUGWINDOW_HPP

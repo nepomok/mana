@@ -181,6 +181,8 @@ protected:
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
         renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
 
+        wnd.setSwapInterval(debugWindow.getSwapInterval());
+
         ecs.update(deltaTime);
 
         window->swapBuffers();
