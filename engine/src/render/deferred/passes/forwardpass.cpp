@@ -57,7 +57,7 @@ namespace engine {
         for (auto &unit: scene.forward) {
             model = unit.transform.model();
 
-            auto &shader = unit.shader.allocate<ShaderProgram>();
+            auto &shader = unit.shader.getRenderObject<ShaderProgram>();
 
             shader.setMat4("MANA_M", model);
             shader.setMat4("MANA_V", view);
@@ -116,9 +116,9 @@ namespace engine {
 
             shader.setVec3("MANA_VIEWPOS", scene.camera.transform.getPosition());
 
-            RenderCommand command(shader, unit.mesh.allocate<MeshBuffer>());
+            RenderCommand command(shader, unit.mesh.getRenderObject<MeshBuffer>());
             for (auto &tex: unit.textures)
-                command.textures.emplace_back(tex.allocate<TextureBuffer>());
+                command.textures.emplace_back(tex.getRenderObject<TextureBuffer>());
             command.properties = unit.properties;
             ren.addCommand(command);
         }

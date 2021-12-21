@@ -29,9 +29,9 @@ namespace engine {
     public:
         AssetHandle() = default;
 
-        AssetHandle(const AssetPath &path, AssetManager *manager, AssetRenderManager *renderManager)
-                : path(path), manager(manager), renderManager(renderManager) {
-            manager->incrementRef(path);
+        AssetHandle(const AssetPath &path, AssetManager &manager, AssetRenderManager *renderManager)
+                : path(path), manager(&manager), renderManager(renderManager) {
+            manager.incrementRef(path);
             if (renderManager != nullptr)
                 renderManager->incrementRef(path);
         }
@@ -73,7 +73,7 @@ namespace engine {
         }
 
         template<typename R>
-        R &allocate() {
+        R &getRenderObject() {
             if (renderManager == nullptr)
                 throw std::runtime_error("nullptr dereference");
             return renderManager->get<R>(path);

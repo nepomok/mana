@@ -318,7 +318,7 @@ namespace engine {
             shader->setMat4(0, model);
             shader->setMat4(1, projection * view * model);
 
-            RenderCommand c(*shader, command.mesh.allocate<MeshBuffer>());
+            RenderCommand c(*shader, command.mesh.getRenderObject<MeshBuffer>());
             c.textures = textures;
             ren.addCommand(c);
 

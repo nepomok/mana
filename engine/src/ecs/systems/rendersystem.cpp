@@ -79,7 +79,7 @@ namespace engine {
             //TODO: Change transform walking / scene creation to allow model matrix caching
             scene.deferred.emplace_back(Scene::DeferredDrawNode(
                     TransformComponent::walkHierarchy(transform, entityManager),
-                    AssetHandle<Mesh>(render.mesh, &assetManager, &assetRenderManager),
+                    AssetHandle<Mesh>(render.mesh, assetManager, &assetRenderManager),
                     assetManager.getAsset<Material>(render.material)));
         }
 
