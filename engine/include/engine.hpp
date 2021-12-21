@@ -65,7 +65,6 @@
 #include "engine/display/window.hpp"
 #include "engine/compat/imgui/imguicompat.hpp"
 #include "engine/compat/qt/renderwidgetqt.hpp"
-#include "engine/physics/physics.hpp"
 #include "engine/physics/3d/rigidbody3d.hpp"
 #include "engine/physics/3d/world3d.hpp"
 #include "engine/physics/3d/collider3d.hpp"

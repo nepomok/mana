@@ -26,6 +26,12 @@
 namespace engine {
     class World2D {
     public:
+        enum Backend {
+            BOX2D
+        };
+
+        static std::unique_ptr<World2D> create(Backend backend);
+
         struct Contact {
             Collider2D *colliderA;
             Collider2D *colliderB;
