@@ -273,13 +273,37 @@ namespace engine {
         return ret;
     }
 
+    AudioSource::SourceState OALAudioSource::getState() {
+        ALint value = 0;
+        alGetSourcei(handle, AL_SOURCE_STATE, &value);
+        checkOALError();
+        switch (value) {
+            case AL_INITIAL:
+                return INITIAL;
+            case AL_PLAYING:
+                return PLAYING;
+            case AL_PAUSED:
+                return PAUSED;
+            case AL_STOPPED:
+                return STOPPED;
+            default:
+                throw std::runtime_error("Unknown state value");
+        }
+    }
+
     void OALAudioSource::setBuffer(const AudioBuffer &buffer) {
         auto &b = dynamic_cast<const OALAudioBuffer &>(buffer);
         alSourcei(handle, AL_BUFFER, b.handle);
         checkOALError();
     }
 
+    void OALAudioSource::clearBuffer() {
+        alSourcei(handle, AL_BUFFER, 0);
+        checkOALError();
+    }
+
     void OALAudioSource::queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) {
+        //TODO: Queued buffers clear
         ALuint b[buffers.size()];
         for (int i = 0; i < buffers.size(); i++) {
             auto &ob = dynamic_cast<const OALAudioBuffer &>(buffers[i].get());

@@ -102,7 +102,11 @@ namespace engine {
 
         bool getLooping() override;
 
+        SourceState getState() override;
+
         void setBuffer(const AudioBuffer &buffer) override;
+
+        void clearBuffer() override;
 
         void queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) override;
 

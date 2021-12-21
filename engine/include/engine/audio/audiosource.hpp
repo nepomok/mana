@@ -36,7 +36,9 @@ namespace engine {
         };
 
         enum SourceState {
+            INITIAL,
             STOPPED,
+            PAUSED,
             PLAYING
         };
 
@@ -114,7 +116,11 @@ namespace engine {
 
         virtual bool getLooping() = 0;
 
+        virtual SourceState getState() = 0;
+
         virtual void setBuffer(const AudioBuffer &buffer) = 0;
+
+        virtual void clearBuffer() = 0;
 
         virtual void queueBuffers(std::vector<std::reference_wrapper<const AudioBuffer>> buffers) = 0;
 
