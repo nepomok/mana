@@ -40,6 +40,12 @@ namespace engine {
             GLSL_ES_320 //GLSL 320 ES with OpenGL semantics
         };
 
+        enum OptimizationLevel {
+            OPTIMIZATION_NONE,
+            OPTIMIZATION_PERFORMANCE,
+            OPTIMIZATION_SIZE
+        };
+
         /**
          * Compile the given source to spirv.
          *
@@ -52,7 +58,8 @@ namespace engine {
         std::vector<uint32_t> compileToSPIRV(const std::string &source,
                                              const std::string &entryPoint,
                                              ShaderStage stage,
-                                             ShaderLanguage language);
+                                             ShaderLanguage language,
+                                             OptimizationLevel optimizationLevel = OPTIMIZATION_NONE);
 
         std::string decompileSPIRV(const std::vector<uint32_t> &source, ShaderLanguage targetLanguage);
 
@@ -60,7 +67,8 @@ namespace engine {
                                ShaderStage stage,
                                ShaderLanguage language,
                                const std::function<std::string(const char *)> &include = {},
-                               const std::map<std::string, std::string> &macros = {});
+                               const std::map<std::string, std::string> &macros = {},
+                               OptimizationLevel optimizationLevel = OPTIMIZATION_NONE);
 
         /**
          * Cross compile the source by using spirv as an intermediate.
@@ -83,7 +91,8 @@ namespace engine {
                                  const std::string &entryPoint,
                                  ShaderStage stage,
                                  ShaderLanguage language,
-                                 ShaderLanguage targetLanguage);
+                                 ShaderLanguage targetLanguage,
+                                 OptimizationLevel optimizationLevel = OPTIMIZATION_NONE);
     }
 }
 

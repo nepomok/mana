@@ -59,10 +59,24 @@ namespace engine {
         }
     };
 
+    shaderc_optimization_level convertOptimizationLevel(ShaderCompiler::OptimizationLevel opt) {
+        switch (opt) {
+            case ShaderCompiler::OPTIMIZATION_NONE:
+                return shaderc_optimization_level_zero;
+            case ShaderCompiler::OPTIMIZATION_PERFORMANCE:
+                return shaderc_optimization_level_performance;
+            case ShaderCompiler::OPTIMIZATION_SIZE:
+                return shaderc_optimization_level_size;
+            default:
+                throw std::runtime_error("Invalid optimization level " + std::to_string(opt));
+        }
+    }
+
     std::vector<uint32_t> ShaderCompiler::compileToSPIRV(const std::string &source,
                                                          const std::string &entryPoint,
                                                          ShaderCompiler::ShaderStage stage,
-                                                         ShaderCompiler::ShaderLanguage language) {
+                                                         ShaderCompiler::ShaderLanguage language,
+                                                         ShaderCompiler::OptimizationLevel optimizationLevel) {
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
 
@@ -102,7 +116,7 @@ namespace engine {
         options.SetAutoBindUniforms(false);
         options.SetAutoSampledTextures(true);
         options.SetAutoMapLocations(true);
-        options.SetOptimizationLevel(shaderc_optimization_level_zero);
+        options.SetOptimizationLevel(convertOptimizationLevel(optimizationLevel));
 
         auto compileResult = compiler.CompileGlslToSpv(source,
                                                        shaderStage,
@@ -203,7 +217,8 @@ namespace engine {
                                            ShaderCompiler::ShaderStage stage,
                                            ShaderCompiler::ShaderLanguage language,
                                            const std::function<std::string(const char *)> &include,
-                                           const std::map<std::string, std::string> &macros) {
+                                           const std::map<std::string, std::string> &macros,
+                                           ShaderCompiler::OptimizationLevel optimizationLevel) {
         shaderc_shader_kind shaderStage;
         switch (stage) {
             case VERTEX:
@@ -241,7 +256,7 @@ namespace engine {
         options.SetAutoSampledTextures(true);
         options.SetAutoMapLocations(true);
 
-        options.SetOptimizationLevel(shaderc_optimization_level_zero);
+        options.SetOptimizationLevel(convertOptimizationLevel(optimizationLevel));
 
         auto preProcessResult = compiler.PreprocessGlsl(source,
                                                         shaderStage,
@@ -259,11 +274,13 @@ namespace engine {
                                              const std::string &entryPoint,
                                              ShaderCompiler::ShaderStage stage,
                                              ShaderCompiler::ShaderLanguage sourceLanguage,
-                                             ShaderCompiler::ShaderLanguage targetLanguage) {
+                                             ShaderCompiler::ShaderLanguage targetLanguage,
+                                             ShaderCompiler::OptimizationLevel optimizationLevel) {
         return decompileSPIRV(compileToSPIRV(source,
                                              entryPoint,
                                              stage,
-                                             sourceLanguage),
+                                             sourceLanguage,
+                                             optimizationLevel),
                               targetLanguage);
     }
 }

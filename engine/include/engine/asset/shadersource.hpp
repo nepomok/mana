@@ -42,11 +42,14 @@ namespace engine {
         }
 
         void preprocess(const std::function<std::string(const char *)> &include = {},
-                        const std::map<std::string, std::string> &macros = {});
+                        const std::map<std::string, std::string> &macros = {},
+                        ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
-        std::vector<uint32_t> compile();
+        std::vector<uint32_t>
+        compile(ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
-        ShaderSource crossCompile(ShaderCompiler::ShaderLanguage targetLanguage) const;
+        ShaderSource crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,
+                                  ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE) const;
 
         const std::string &getSrc() const;
 

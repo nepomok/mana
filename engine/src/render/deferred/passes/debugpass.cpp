@@ -528,11 +528,15 @@ namespace engine {
         ShaderSource vsw(SHADER_VERT_WIREFRAME, "main", VERTEX, GLSL_460);
         ShaderSource gsw(SHADER_GEOMETRY_WIREFRAME, "main", GEOMETRY, GLSL_460);
 
-        vsl.preprocess(ShaderInclude::getShaderIncludeCallback(), ShaderInclude::getShaderMacros(GLSL_460));
-        gsl.preprocess(ShaderInclude::getShaderIncludeCallback(), ShaderInclude::getShaderMacros(GLSL_460));
+        vsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
+        gsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
 
-        vsw.preprocess(ShaderInclude::getShaderIncludeCallback(), ShaderInclude::getShaderMacros(GLSL_460));
-        gsw.preprocess(ShaderInclude::getShaderIncludeCallback(), ShaderInclude::getShaderMacros(GLSL_460));
+        vsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
+        gsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
 
         // Compile preprocessed glsl into spirv and back into glsl to get rid of unnecessary incompatible preprocessor statements added by shaderc when including in glsl.
         vsl = ShaderSource(ShaderCompiler::decompileSPIRV(vsl.compile(), ShaderLanguage::GLSL_460),

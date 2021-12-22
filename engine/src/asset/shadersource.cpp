@@ -32,30 +32,31 @@ namespace engine {
               preprocessed(preprocessed) {}
 
     void ShaderSource::preprocess(const std::function<std::string(const char *)> &include,
-                                  const std::map <std::string, std::string> &macros) {
+                                  const std::map <std::string, std::string> &macros,
+                                  ShaderCompiler::OptimizationLevel optimizationLevel) {
         if (preprocessed)
             throw std::runtime_error("Source already preprocessed");
-        src = ShaderCompiler::preprocess(src, stage, language, include, macros);
+        src = ShaderCompiler::preprocess(src, stage, language, include, macros, optimizationLevel);
         preprocessed = true;
     }
 
-    std::vector <uint32_t> ShaderSource::compile() {
+    std::vector <uint32_t> ShaderSource::compile(ShaderCompiler::OptimizationLevel optimizationLevel) {
         if (!preprocessed)
-            this->preprocess();
-        return compileToSPIRV(src, entryPoint, stage, language);
+            this->preprocess({}, {}, optimizationLevel);
+        return compileToSPIRV(src, entryPoint, stage, language, optimizationLevel);
     }
 
-    ShaderSource ShaderSource::crossCompile(ShaderCompiler::ShaderLanguage targetLanguage) const {
+    ShaderSource ShaderSource::crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,ShaderCompiler::OptimizationLevel optimizationLevel) const {
         std::string prSrc;
         if (!preprocessed)
-            prSrc = ShaderCompiler::preprocess(src, stage, language);
+            prSrc = ShaderCompiler::preprocess(src, stage, language, {}, {}, optimizationLevel);
         else
             prSrc = src;
-        return ShaderSource(ShaderCompiler::crossCompile(prSrc, entryPoint, stage, language, targetLanguage),
+        return {ShaderCompiler::crossCompile(prSrc, entryPoint, stage, language, targetLanguage, optimizationLevel),
                             entryPoint,
                             stage,
                             targetLanguage,
-                            true);
+                            true};
     }
 
     const std::string &ShaderSource::getSrc() const { return src; }
