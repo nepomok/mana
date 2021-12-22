@@ -24,9 +24,12 @@
 
 #include "render/shader/include/glsl_mvp.hpp"
 #include "render/shader/include/hlsl_mvp.hpp"
-
 #include "render/shader/include/glsl_phong_shading.hpp"
 #include "render/shader/include/hlsl_phong_shading.hpp"
+#include "render/shader/include/glsl_pi.hpp"
+#include "render/shader/include/hlsl_pi.hpp"
+#include "render/shader/include/glsl_noise.hpp"
+#include "render/shader/include/hlsl_noise.hpp"
 
 static std::string includeCallback(const char *n) {
     std::string name(n);
@@ -38,6 +41,14 @@ static std::string includeCallback(const char *n) {
         return HLSL_MVP;
     } else if (name == "mvp.glsl") {
         return GLSL_MVP;
+    } else if (name == "noise.hlsl") {
+        return HLSL_NOISE;
+    } else if (name == "noise.glsl") {
+        return GLSL_NOISE;
+    } else if (name == "pi.glsl") {
+        return HLSL_PI;
+    } else if (name == "pi.glsl") {
+        return GLSL_PI;
     } else {
         throw std::runtime_error("Invalid name: " + name);
     }

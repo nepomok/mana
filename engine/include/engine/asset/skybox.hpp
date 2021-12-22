@@ -27,8 +27,8 @@
 
 namespace engine {
     struct Skybox {
-        ColorRGBA color; // If images is empty skybox color should be used
-        AssetPath texture;
+        ColorRGBA color; // If texture is unassigned skybox color is drawn
+        AssetPath texture; // The cube map texture
     };
 }
 
