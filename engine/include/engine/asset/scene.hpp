@@ -38,12 +38,12 @@ namespace engine {
         struct DeferredDrawNode {
             DeferredDrawNode() = default;
 
-            DeferredDrawNode(Transform t, AssetHandle<Mesh> mesh, Material material)
-                    : transform(t), mesh(mesh), material(material) {}
+            DeferredDrawNode(Transform t, AssetHandle<Mesh> mesh, AssetHandle<Material> material)
+                    : transform(t), mesh(std::move(mesh)), material(std::move(material)) {}
 
             Transform transform;
             AssetHandle<Mesh> mesh;
-            Material material;
+            AssetHandle<Material> material;
 
             bool outline = false;
             ColorRGBA outlineColor;
@@ -62,6 +62,7 @@ namespace engine {
         Camera camera;
 
         std::vector<Light> lights;
+
         std::vector<DeferredDrawNode> deferred;
         std::vector<ForwardDrawNode> forward;
 

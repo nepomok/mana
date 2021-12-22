@@ -80,7 +80,7 @@ namespace engine {
             scene.deferred.emplace_back(Scene::DeferredDrawNode(
                     TransformComponent::walkHierarchy(transform, entityManager),
                     AssetHandle<Mesh>(render.mesh, assetManager, &assetRenderManager),
-                    assetManager.getAsset<Material>(render.material)));
+                    AssetHandle<Material>(render.material, assetManager)));
         }
 
         //Get Skybox

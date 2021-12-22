@@ -233,10 +233,10 @@ namespace engine {
         for (auto &command: scene.deferred) {
             textures.clear();
 
-            if (command.material.diffuseTexture.empty()) {
-                if (firstCommand || shaderMaterial.diffuse != command.material.diffuse) {
-                    shaderMaterial.diffuse = command.material.diffuse;
-                    shader->setVec4(3, scaleColor(command.material.diffuse));
+            if (command.material.get().diffuseTexture.empty()) {
+                if (firstCommand || shaderMaterial.diffuse != command.material.get().diffuse) {
+                    shaderMaterial.diffuse = command.material.get().diffuse;
+                    shader->setVec4(3, scaleColor(command.material.get().diffuse));
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
@@ -244,13 +244,13 @@ namespace engine {
                     shaderMaterial.diffuse = ColorRGBA();
                     shader->setVec4(3, Vec4f());
                 }
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.diffuseTexture));
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().diffuseTexture));
             }
 
-            if (command.material.ambientTexture.empty()) {
-                if (firstCommand || shaderMaterial.ambient != command.material.ambient) {
-                    shaderMaterial.ambient = command.material.ambient;
-                    shader->setVec4(4, scaleColor(command.material.ambient));
+            if (command.material.get().ambientTexture.empty()) {
+                if (firstCommand || shaderMaterial.ambient != command.material.get().ambient) {
+                    shaderMaterial.ambient = command.material.get().ambient;
+                    shader->setVec4(4, scaleColor(command.material.get().ambient));
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
@@ -258,13 +258,13 @@ namespace engine {
                     shaderMaterial.ambient = ColorRGBA();
                     shader->setVec4(4, Vec4f());
                 }
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.ambientTexture));
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().ambientTexture));
             }
 
-            if (command.material.specularTexture.empty()) {
-                if (firstCommand || shaderMaterial.specular != command.material.specular) {
-                    shaderMaterial.specular = command.material.specular;
-                    shader->setVec4(5, scaleColor(command.material.specular));
+            if (command.material.get().specularTexture.empty()) {
+                if (firstCommand || shaderMaterial.specular != command.material.get().specular) {
+                    shaderMaterial.specular = command.material.get().specular;
+                    shader->setVec4(5, scaleColor(command.material.get().specular));
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
@@ -272,13 +272,13 @@ namespace engine {
                     shaderMaterial.specular = ColorRGBA();
                     shader->setVec4(5, Vec4f());
                 }
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.specularTexture));
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().specularTexture));
             }
 
-            if (command.material.shininessTexture.empty()) {
-                if (firstCommand || shaderMaterial.shininess != command.material.shininess) {
-                    shaderMaterial.shininess = command.material.shininess;
-                    shader->setFloat(6, command.material.shininess);
+            if (command.material.get().shininessTexture.empty()) {
+                if (firstCommand || shaderMaterial.shininess != command.material.get().shininess) {
+                    shaderMaterial.shininess = command.material.get().shininess;
+                    shader->setFloat(6, command.material.get().shininess);
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
@@ -286,13 +286,13 @@ namespace engine {
                     shaderMaterial.shininess = 0;
                     shader->setFloat(6, 0);
                 }
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.shininessTexture));
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().shininessTexture));
             }
 
-            if (command.material.emissiveTexture.empty()) {
-                if (firstCommand || shaderMaterial.emissive != command.material.emissive) {
-                    shaderMaterial.emissive = command.material.emissive;
-                    shader->setVec4(7, scaleColor(command.material.emissive));
+            if (command.material.get().emissiveTexture.empty()) {
+                if (firstCommand || shaderMaterial.emissive != command.material.get().emissive) {
+                    shaderMaterial.emissive = command.material.get().emissive;
+                    shader->setVec4(7, scaleColor(command.material.get().emissive));
                 }
                 textures.emplace_back(*defaultTexture);
             } else {
@@ -300,17 +300,17 @@ namespace engine {
                     shaderMaterial.emissive = ColorRGBA();
                     shader->setVec4(7, Vec4f());
                 }
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.emissiveTexture));
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().emissiveTexture));
             }
 
             if (firstCommand
-                || !(shaderMaterial.normalTexture == command.material.normalTexture)) {
-                shaderMaterial.normalTexture = command.material.normalTexture;
-                shader->setInt(2, !command.material.normalTexture.empty());
+                || !(shaderMaterial.normalTexture == command.material.get().normalTexture)) {
+                shaderMaterial.normalTexture = command.material.get().normalTexture;
+                shader->setInt(2, !command.material.get().normalTexture.empty());
             }
 
-            if (!command.material.normalTexture.empty()) {
-                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.normalTexture));
+            if (!command.material.get().normalTexture.empty()) {
+                textures.emplace_back(assetRenderManager.get<TextureBuffer>(command.material.get().normalTexture));
             }
 
             model = command.transform.model();

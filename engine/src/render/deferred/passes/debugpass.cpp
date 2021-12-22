@@ -598,11 +598,11 @@ namespace engine {
 
             command.properties.depthTestWrite = false;
 
-            if (!deferredCommand.material.normalTexture.empty()) {
+            if (!deferredCommand.material.get().normalTexture.empty()) {
                 shaderNormals->setBool("globals.hasNormalTexture", true);
                 shaderNormals->setTexture("normal", 0);
                 command.textures.emplace_back(
-                        assetRenderManager.get<TextureBuffer>(deferredCommand.material.normalTexture));
+                        assetRenderManager.get<TextureBuffer>(deferredCommand.material.get().normalTexture));
             } else {
                 shaderNormals->setBool("globals.hasNormalTexture", false);
             }

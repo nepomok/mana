@@ -29,7 +29,7 @@ namespace engine {
     public:
         AssetHandle() = default;
 
-        AssetHandle(const AssetPath &path, AssetManager &manager, AssetRenderManager *renderManager)
+        AssetHandle(const AssetPath &path, AssetManager &manager, AssetRenderManager *renderManager = nullptr)
                 : path(path), manager(&manager), renderManager(renderManager) {
             manager.incrementRef(path);
             if (renderManager != nullptr)
@@ -49,6 +49,10 @@ namespace engine {
             *this = other;
         }
 
+        AssetHandle(AssetHandle<T> &&other) noexcept {
+            *this = std::move(other);
+        }
+
         AssetHandle<T> &operator=(const AssetHandle<T> &other) {
             if (this == &other)
                 return *this;
@@ -56,6 +60,7 @@ namespace engine {
             path = other.path;
             manager = other.manager;
             renderManager = other.renderManager;
+
             if (!path.empty()) {
                 if (manager != nullptr)
                     manager->incrementRef(path);
@@ -66,8 +71,23 @@ namespace engine {
             return *this;
         }
 
+        AssetHandle<T> &operator=(AssetHandle<T> &&other) noexcept {
+            if (this == &other)
+                return *this;
+
+            path = std::move(other.path);
+            manager = std::move(other.manager);
+            renderManager = std::move(other.renderManager);
+
+            other.path = {};
+            other.manager = nullptr;
+            other.renderManager = nullptr;
+
+            return *this;
+        }
+
         const T &get() {
-            if (renderManager == nullptr)
+            if (manager == nullptr)
                 throw std::runtime_error("nullptr dereference");
             return manager->getAsset<T>(path);
         }
