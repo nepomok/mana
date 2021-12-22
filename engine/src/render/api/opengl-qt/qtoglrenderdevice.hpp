@@ -39,6 +39,10 @@ namespace engine {
 
             RenderAllocator &getAllocator() override;
 
+            int getMaxSampleCount() override;
+
+            ShaderCompiler::ShaderLanguage getPreferredShaderLanguage() override;
+
         private:
             QtOGLRenderer renderer;
             QtOGLRenderAllocator allocator;

@@ -40,6 +40,10 @@ namespace engine {
             glGetIntegerv(GL_MAX_SAMPLES, &ret);
             return ret;
         }
+
+        ShaderCompiler::ShaderLanguage OGLRenderDevice::getPreferredShaderLanguage() {
+            return ShaderCompiler::GLSL_460;
+        }
     }
 }
 

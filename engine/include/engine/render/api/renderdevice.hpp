@@ -44,6 +44,8 @@ namespace engine {
          * @return
          */
         virtual int getMaxSampleCount() = 0;
+
+        virtual ShaderCompiler::ShaderLanguage getPreferredShaderLanguage() = 0;
     };
 }
 

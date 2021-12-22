@@ -4,6 +4,8 @@
 static const char *GLSL_NOISE = R"###(
 // https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 
+#include "pi.glsl"
+
 float permute(float x){return floor(mod(((x*34.0)+1.0)*x, 289.0));}
 vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x, 289.0);}

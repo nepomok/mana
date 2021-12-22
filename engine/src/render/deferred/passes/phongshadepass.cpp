@@ -26,6 +26,8 @@
 #include "engine/render/shader/shadercompiler.hpp"
 #include "engine/render/shader/shaderinclude.hpp"
 
+#include "engine/async/threadpool.hpp"
+
 const char *SHADER_VERT_LIGHTING = R"###(
 struct VS_INPUT
 {
@@ -199,19 +201,40 @@ namespace engine {
 
     PhongShadePass::PhongShadePass(RenderDevice &device)
             : renderDevice(device) {
-        ShaderSource vertexShader(SHADER_VERT_LIGHTING,
-                                  "main",
-                                  VERTEX,
-                                  HLSL_SHADER_MODEL_4);
-        ShaderSource fragmentShader(SHADER_FRAG_LIGHTING,
+        vertexShader = ShaderSource(SHADER_VERT_LIGHTING,
                                     "main",
-                                    FRAGMENT,
+                                    VERTEX,
                                     HLSL_SHADER_MODEL_4);
+        fragmentShader = ShaderSource(SHADER_FRAG_LIGHTING,
+                                      "main",
+                                      FRAGMENT,
+                                      HLSL_SHADER_MODEL_4);
 
-        vertexShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
-        fragmentShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                  ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
+        std::vector<std::shared_ptr<Task>> tasks;
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vertexShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                    ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fragmentShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                      ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
+        }));
+
+        for (auto &task : tasks)
+            task->wait();
+        tasks.clear();
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vertexShader.crossCompile(renderDevice.getPreferredShaderLanguage());
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fragmentShader.crossCompile(renderDevice.getPreferredShaderLanguage());
+        }));
+
+        for (auto &task : tasks)
+            task->wait();
+        tasks.clear();
 
         auto &allocator = device.getAllocator();
 

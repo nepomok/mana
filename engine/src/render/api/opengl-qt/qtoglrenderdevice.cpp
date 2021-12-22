@@ -32,5 +32,13 @@ namespace engine {
         RenderAllocator &QtOGLRenderDevice::getAllocator() {
             return dynamic_cast<RenderAllocator &>(allocator);
         }
+
+        int QtOGLRenderDevice::getMaxSampleCount() {
+            return 0;
+        }
+
+        ShaderCompiler::ShaderLanguage QtOGLRenderDevice::getPreferredShaderLanguage() {
+            return ShaderCompiler::GLSL_460;
+        }
     }
 }

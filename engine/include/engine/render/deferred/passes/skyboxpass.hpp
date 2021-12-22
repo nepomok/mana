@@ -44,6 +44,9 @@ namespace engine {
 
         TextureBuffer *texture = nullptr;
         ColorRGBA color;
+
+        ShaderSource vert;
+        ShaderSource frag;
     };
 }
 

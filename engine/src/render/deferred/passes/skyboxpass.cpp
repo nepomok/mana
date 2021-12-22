@@ -72,6 +72,7 @@ VS_OUTPUT main(const VS_INPUT v)
 )###";
 
 static const char *SHADER_FRAG = R"###(
+
 struct PS_INPUT {
     float3 fPos: POSITION0;
     float3 fNorm: NORMAL;
@@ -147,13 +148,34 @@ namespace engine {
 
     SkyboxPass::SkyboxPass(RenderDevice &device)
             : device(device) {
-        ShaderSource vert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        ShaderSource frag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        vert = ShaderSource(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        frag = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
 
-        vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        std::vector<std::shared_ptr<Task>> tasks;
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                    ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        }));
+
+        for (auto &task : tasks)
+            task->wait();
+        tasks.clear();
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vert.crossCompile(this->device.getPreferredShaderLanguage());
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            frag.crossCompile(this->device.getPreferredShaderLanguage());
+        }));
+
+        for (auto &task : tasks)
+            task->wait();
+        tasks.clear();
 
         auto &allocator = device.getAllocator();
 

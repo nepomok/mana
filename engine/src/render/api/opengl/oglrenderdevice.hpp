@@ -39,6 +39,8 @@ namespace engine {
 
             int getMaxSampleCount() override;
 
+            ShaderCompiler::ShaderLanguage getPreferredShaderLanguage() override;
+
         private:
             OGLRenderer renderer;
             OGLRenderAllocator allocator;

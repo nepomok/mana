@@ -42,6 +42,9 @@ namespace engine {
         RenderDevice &renderDevice;
 
         std::unique_ptr<ShaderProgram> shader;
+
+        ShaderSource vertexShader;
+        ShaderSource fragmentShader;
     };
 }
 

@@ -52,6 +52,9 @@ namespace engine {
     private:
         RenderDevice &renderDevice;
 
+        ShaderSource vs;
+        ShaderSource fs;
+
         std::unique_ptr<ShaderProgram> shader;
 
         std::unique_ptr<TextureBuffer> defaultTexture; //1 pixel texture with value (0, 0, 0, 0)

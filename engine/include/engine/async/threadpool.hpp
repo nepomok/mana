@@ -34,7 +34,7 @@ namespace engine {
     public:
         static ThreadPool pool;
 
-        explicit ThreadPool(unsigned int numberOfThreads = std::thread::hardware_concurrency()) : isShutdown(false) {
+        explicit ThreadPool(unsigned int numberOfThreads = std::thread::hardware_concurrency()) : mShutdown(false) {
             assert(numberOfThreads > 0);
             for (int i = 0; i < numberOfThreads; i++) {
                 threads.emplace_back(std::thread([this]() { pollTasks(); }));
@@ -49,7 +49,7 @@ namespace engine {
         }
 
         std::shared_ptr<Task> addTask(const std::function<void()> &work) {
-            if (isShutdown)
+            if (mShutdown)
                 throw std::runtime_error("Thread pool was shut down");
 
             std::shared_ptr<Task> ret;
@@ -74,9 +74,15 @@ namespace engine {
         }
 
         void shutdown() {
-            isShutdown = true;
+            mShutdown = true;
             taskVar.notify_all();
         }
+
+        bool isShutdown() const { return mShutdown; }
+
+        bool isError() const { return mError; }
+
+        std::string getErrorText() const { return errorText; }
 
     private:
         std::mutex taskMutex;
@@ -88,11 +94,13 @@ namespace engine {
 
         std::vector<std::thread> threads;
 
-        std::atomic<bool> isShutdown;
+        std::atomic<bool> mShutdown = false;
+        std::atomic<bool> mError = false;
+        std::string errorText;
 
         void pollTasks() {
             std::unique_lock<std::mutex> taskLock(taskMutex);
-            while (!isShutdown) {
+            while (!mShutdown) {
                 if (!tasks.empty()) {
                     auto task = tasks.begin()->second;
                     taskCache.emplace_back(tasks.begin()->first);
@@ -100,11 +108,24 @@ namespace engine {
                     tasks.erase(tasks.begin());
 
                     taskLock.unlock();
-                    task->start();
+                    try {
+                        task->start();
+                    } catch (const std::exception &e) {
+                        // Uncaught exception in task work
+
+                        taskLock.lock();
+                        mShutdown = true;
+                        errorText = e.what();
+                        taskLock.unlock();
+
+                        taskVar.notify_all();
+
+                        break;
+                    }
                     taskLock.lock();
                 }
                 taskVar.wait(taskLock, [this] {
-                    if (isShutdown)
+                    if (mShutdown)
                         return true;
                     return !tasks.empty();
                 });

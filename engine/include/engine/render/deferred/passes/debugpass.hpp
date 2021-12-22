@@ -40,6 +40,16 @@ namespace engine {
     private:
         RenderDevice &device;
 
+        ShaderSource vs;
+        ShaderSource gs;
+        ShaderSource fs;
+
+        ShaderSource vsl;
+        ShaderSource gsl;
+
+        ShaderSource vsw;
+        ShaderSource gsw;
+
         std::unique_ptr<ShaderProgram> shaderWireframe;
         std::unique_ptr<ShaderProgram> shaderNormals;
         std::unique_ptr<ShaderProgram> shaderLight;

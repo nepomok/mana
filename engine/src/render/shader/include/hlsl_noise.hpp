@@ -5,9 +5,11 @@ static const char *HLSL_NOISE = R"###(
 // https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
 // Ported to HLSL
 
-float permute(float x){return floor(mod(((x*34.0)+1.0)*x, 289.0));}
-float3 permute(float3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
-float4 permute(float4 x){return mod(((x*34.0)+1.0)*x, 289.0);}
+#include "pi.hlsl"
+
+float permute(float x){return floor(modf(((x*34.0)+1.0)*x, 289.0));}
+float3 permute(float3 x) { return modf(((x*34.0)+1.0)*x, 289.0); }
+float4 permute(float4 x){return modf(((x*34.0)+1.0)*x, 289.0);}
 
 float taylorInvSqrt(float r){return 1.79284291400159 - 0.85373472095314 * r;}
 float4 taylorInvSqrt(float4 r){return 1.79284291400159 - 0.85373472095314 * r;}
@@ -25,7 +27,7 @@ float simplex(float2 v){
   i1 = (x0.x > x0.y) ? float2(1.0, 0.0) : float2(0.0, 1.0);
   float4 x12 = x0.xyxy + C.xxzz;
   x12.xy -= i1;
-  i = mod(i, 289.0);
+  i = modf(i, 289.0);
   float3 p = permute( permute( i.y + float3(0.0, i1.y, 1.0 ))
   + i.x + float3(0.0, i1.x, 1.0 ));
   float3 m = max(0.5 - float3(dot(x0,x0), dot(x12.xy,x12.xy),
@@ -66,7 +68,7 @@ float simplex(float3 v){
   float3 x3 = x0 - 1. + 3.0 * C.xxx;
 
   // Permutations
-  i = mod(i, 289.0 );
+  i = modf(i, 289.0 );
   float4 p = permute( permute( permute(
              i.z + float4(0.0, i1.z, i2.z, 1.0 ))
            + i.y + float4(0.0, i1.y, i2.y, 1.0 ))
@@ -77,10 +79,10 @@ float simplex(float3 v){
   float n_ = 1.0/7.0; // N=7
   float3  ns = n_ * D.wyz - D.xzx;
 
-  float4 j = p - 49.0 * floor(p * ns.z *ns.z);  //  mod(p,N*N)
+  float4 j = p - 49.0 * floor(p * ns.z *ns.z);  //  modf(p,N*N)
 
   float4 x_ = floor(j * ns.z);
-  float4 y_ = floor(j - 7.0 * x_ );    // mod(j,N)
+  float4 y_ = floor(j - 7.0 * x_ );    // modf(j,N)
 
   float4 x = x_ *ns.x + ns.yyyy;
   float4 y = y_ *ns.x + ns.yyyy;
@@ -168,7 +170,7 @@ float simplex(float4 v){
   float4 x4 = x0 - 1.0 + 4.0 * C.xxxx;
 
   // Permutations
-  i = mod(i, 289.0);
+  i = modf(i, 289.0);
   float j0 = permute( permute( permute( permute(i.w) + i.z) + i.y) + i.x);
   float4 j1 = permute( permute( permute( permute (
              i.w + float4(i1.w, i2.w, i3.w, 1.0 ))
@@ -291,7 +293,7 @@ float4 fade(float4 t) {return t*t*t*(t*(t*6.0-15.0)+10.0);}
 float perlinc(float2 P){
   float4 Pi = floor(P.xyxy) + float4(0.0, 0.0, 1.0, 1.0);
   float4 Pf = frac(P.xyxy) - float4(0.0, 0.0, 1.0, 1.0);
-  Pi = mod(Pi, 289.0); // To avoid truncation effects in permutation
+  Pi = modf(Pi, 289.0); // To avoid truncation effects in permutation
   float4 ix = Pi.xzxz;
   float4 iy = Pi.yyww;
   float4 fx = Pf.xzxz;
@@ -327,8 +329,8 @@ float perlinc(float2 P){
 float perlinc(float4 P){
   float4 Pi0 = floor(P); // Integer part for indexing
   float4 Pi1 = Pi0 + 1.0; // Integer part + 1
-  Pi0 = mod(Pi0, 289.0);
-  Pi1 = mod(Pi1, 289.0);
+  Pi0 = modf(Pi0, 289.0);
+  Pi1 = modf(Pi1, 289.0);
   float4 Pf0 = frac(P); // Fractional part for interpolation
   float4 Pf1 = Pf0 - 1.0; // Fractional part - 1.0
   float4 ix = float4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
@@ -459,8 +461,8 @@ float perlinc(float4 P){
 
 // Classic Perlin noise, periodic version
 float perlinc(float4 P, float4 rep){
-  float4 Pi0 = mod(floor(P), rep); // Integer part modulo rep
-  float4 Pi1 = mod(Pi0 + 1.0, rep); // Integer part + 1 mod rep
+  float4 Pi0 = modf(floor(P), rep); // Integer part modfulo rep
+  float4 Pi1 = modf(Pi0 + 1.0, rep); // Integer part + 1 modf rep
   float4 Pf0 = frac(P); // Fractional part for interpolation
   float4 Pf1 = Pf0 - 1.0; // Fractional part - 1.0
   float4 ix = float4(Pi0.x, Pi1.x, Pi0.x, Pi1.x);
@@ -610,9 +612,9 @@ float noise(float2 p){
 	return res*res;
 }
 
-float mod289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-float4 mod289(float4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
-float4 perm(float4 x){return mod289(((x * 34.0) + 1.0) * x);}
+float modf289(float x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+float4 modf289(float4 x){return x - floor(x * (1.0 / 289.0)) * 289.0;}
+float4 perm(float4 x){return modf289(((x * 34.0) + 1.0) * x);}
 
 float noise(float3 p){
     float3 a = floor(p);
