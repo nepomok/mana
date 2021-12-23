@@ -28,16 +28,17 @@
 namespace engine {
     namespace opengl {
         static std::string getGlslSource(const ShaderSource &source) {
+            auto ret = source;
             switch (source.getLanguage()) {
-                case ShaderCompiler::HLSL_SHADER_MODEL_4:
-                    return source.crossCompile(ShaderCompiler::GLSL_460).getSrc();
                 case ShaderCompiler::GLSL_460:
                 case ShaderCompiler::GLSL_460_VK:
                 case ShaderCompiler::GLSL_ES_320:
-                    return source.getSrc();
+                    break;
                 default:
-                    throw std::runtime_error("Invalid language");
+                    ret.crossCompile(ShaderCompiler::GLSL_460);
+                    break;
             }
+            return ret.getSrc();
         }
 
         static GLenum getElementType(Mesh::Primitive primitive) {

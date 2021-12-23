@@ -321,6 +321,12 @@ public:
         return fpsLimit;
     }
 
+    void setScene(EntityManager &scene) {
+        for (auto &entity: scene.getEntities()) {
+            scene.getName(entity);
+        }
+    }
+
 private:
     std::string appendButtonLabelId(const std::string &label, int index) {
         return label + "###" + std::to_string(index);

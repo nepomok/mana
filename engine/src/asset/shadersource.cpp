@@ -40,23 +40,17 @@ namespace engine {
         preprocessed = true;
     }
 
+    void ShaderSource::crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,ShaderCompiler::OptimizationLevel optimizationLevel) {
+        if (!preprocessed)
+            preprocess();
+        src = ShaderCompiler::crossCompile(src, entryPoint, stage, language, targetLanguage, optimizationLevel);
+        language = targetLanguage;
+    }
+
     std::vector <uint32_t> ShaderSource::compile(ShaderCompiler::OptimizationLevel optimizationLevel) {
         if (!preprocessed)
             this->preprocess({}, {}, optimizationLevel);
         return compileToSPIRV(src, entryPoint, stage, language, optimizationLevel);
-    }
-
-    ShaderSource ShaderSource::crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,ShaderCompiler::OptimizationLevel optimizationLevel) const {
-        std::string prSrc;
-        if (!preprocessed)
-            prSrc = ShaderCompiler::preprocess(src, stage, language, {}, {}, optimizationLevel);
-        else
-            prSrc = src;
-        return {ShaderCompiler::crossCompile(prSrc, entryPoint, stage, language, targetLanguage, optimizationLevel),
-                            entryPoint,
-                            stage,
-                            targetLanguage,
-                            true};
     }
 
     const std::string &ShaderSource::getSrc() const { return src; }

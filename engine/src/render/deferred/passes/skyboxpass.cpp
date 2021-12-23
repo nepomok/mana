@@ -151,31 +151,10 @@ namespace engine {
         vert = ShaderSource(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
         frag = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
 
-        std::vector<std::shared_ptr<Task>> tasks;
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                    ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        }));
-
-        for (auto &task : tasks)
-            task->wait();
-        tasks.clear();
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vert.crossCompile(this->device.getPreferredShaderLanguage());
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            frag.crossCompile(this->device.getPreferredShaderLanguage());
-        }));
-
-        for (auto &task : tasks)
-            task->wait();
-        tasks.clear();
+        vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 

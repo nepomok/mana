@@ -3,11 +3,12 @@
 
 #include "engine/asset/scene.hpp"
 
+#include "engine/render/api/renderer.hpp"
+
 namespace engine {
-    class ForwardRenderer {
-    public:
-        void draw(const Scene &scene);
-    };
+    namespace ForwardRenderer {
+        void renderScene(Renderer &ren, RenderTarget &target, Scene &scene);
+    }
 }
 
 #endif //MANA_FORWARDRENDERER_HPP

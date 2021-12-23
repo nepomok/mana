@@ -164,20 +164,10 @@ namespace engine {
          vs = ShaderSource(SHADER_VERT_GEOMETRY, "main", VERTEX, GLSL_460);
          fs = ShaderSource(SHADER_FRAG_GEOMETRY, "main", FRAGMENT, GLSL_460);
 
-        std::vector<std::shared_ptr<Task>> tasks;
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                          ShaderInclude::getShaderMacros(GLSL_460));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                          ShaderInclude::getShaderMacros(GLSL_460));
-        }));
-
-        for (auto &task : tasks)
-            task->wait();
-        tasks.clear();
+        vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(GLSL_460));
+        fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(GLSL_460));
 
         auto &allocator = device.getAllocator();
         shader = allocator.createShaderProgram(vs, fs);

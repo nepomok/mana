@@ -210,31 +210,10 @@ namespace engine {
                                       FRAGMENT,
                                       HLSL_SHADER_MODEL_4);
 
-        std::vector<std::shared_ptr<Task>> tasks;
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vertexShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                    ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fragmentShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                                      ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
-        }));
-
-        for (auto &task : tasks)
-            task->wait();
-        tasks.clear();
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vertexShader.crossCompile(renderDevice.getPreferredShaderLanguage());
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fragmentShader.crossCompile(renderDevice.getPreferredShaderLanguage());
-        }));
-
-        for (auto &task : tasks)
-            task->wait();
-        tasks.clear();
+        vertexShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
+        fragmentShader.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                                  ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 

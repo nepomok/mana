@@ -177,38 +177,12 @@ namespace engine {
         fs = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
         fsText = ShaderSource(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
 
-        std::vector<std::shared_ptr<Task>> tasks;
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+        vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        fsText.preprocess(ShaderInclude::getShaderIncludeCallback(),
                           ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                          ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fsText.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                              ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
-        }));
-
-        for (auto &task: tasks)
-            task->wait();
-        tasks.clear();
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vs.crossCompile(renderDevice.getPreferredShaderLanguage());
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fs.crossCompile(renderDevice.getPreferredShaderLanguage());
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            fsText.crossCompile(renderDevice.getPreferredShaderLanguage());
-        }));
-
-        for (auto &task: tasks)
-            task->wait();
-        tasks.clear();
 
         defaultShader = device.getAllocator().createShaderProgram(vs, fs);
         defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);
@@ -271,6 +245,7 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
+        shader.activate();
         shader.setMat4("MODEL_MATRIX", modelMatrix);
         shader.setFloat("USE_TEXTURE", 1);
         shader.setVec4("COLOR", Vec4f(1, 1, 1, 1));

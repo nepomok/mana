@@ -45,11 +45,11 @@ namespace engine {
                         const std::map<std::string, std::string> &macros = {},
                         ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
-        std::vector<uint32_t>
-        compile(ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
+        void crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,
+                                                ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
-        ShaderSource crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,
-                                  ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE) const;
+        [[nodiscard]] std::vector<uint32_t> compile(ShaderCompiler::OptimizationLevel optimizationLevel
+        = ShaderCompiler::OPTIMIZATION_NONE);
 
         const std::string &getSrc() const;
 

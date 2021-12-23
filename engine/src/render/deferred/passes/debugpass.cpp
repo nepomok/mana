@@ -531,46 +531,24 @@ namespace engine {
         vsw = ShaderSource(SHADER_VERT_WIREFRAME, "main", VERTEX, GLSL_460);
         gsw = ShaderSource(SHADER_GEOMETRY_WIREFRAME, "main", GEOMETRY, GLSL_460);
 
-        std::vector<std::shared_ptr<Task>> tasks;
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                           ShaderInclude::getShaderMacros(GLSL_460));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            gsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                           ShaderInclude::getShaderMacros(GLSL_460));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                           ShaderInclude::getShaderMacros(GLSL_460));
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            gsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                           ShaderInclude::getShaderMacros(GLSL_460));
-        }));
 
-        for (auto &task: tasks)
-            task->wait();
-        tasks.clear();
+        vsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
+
+        gsl.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
+
+        vsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
+
+        gsw.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                       ShaderInclude::getShaderMacros(GLSL_460));
 
         //Cross Compile glsl to remove "Google" directives from source.
-
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vsl = vsl.crossCompile(GLSL_460);
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            gsl = gsl.crossCompile(GLSL_460);
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            vsw = vsw.crossCompile(GLSL_460);
-        }));
-        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
-            gsw = gsw.crossCompile(GLSL_460);
-        }));
-
-        for (auto &task: tasks)
-            task->wait();
-        tasks.clear();
+        vsl.crossCompile(GLSL_460);
+        gsl.crossCompile(GLSL_460);
+        vsw.crossCompile(GLSL_460);
+        gsw.crossCompile(GLSL_460);
 
         shaderWireframe = device.getAllocator().createShaderProgram(vsw, gsw, fs);
         shaderNormals = device.getAllocator().createShaderProgram(vs, gs, fs);

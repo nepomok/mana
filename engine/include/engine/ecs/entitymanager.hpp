@@ -55,6 +55,10 @@ namespace engine {
             entityNamesReverse[entity] = name;
         }
 
+        const std::string &getName(const Entity &entity) {
+            return entityNamesReverse.at(entity);
+        }
+
         Entity getByName(const std::string &name) {
             return entityNames.at(name);
         }
