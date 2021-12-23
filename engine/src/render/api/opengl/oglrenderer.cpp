@@ -113,6 +113,8 @@ namespace engine {
         }
 
         void OGLRenderer::addCommand(RenderCommand &command) {
+            drawCalls++;
+
             //Bind textures
             for (int i = 0; i < command.textures.size(); i++) {
                 auto &texture = dynamic_cast<const OGLTextureBuffer &>(command.textures.at(i).get());
@@ -242,6 +244,14 @@ namespace engine {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
             checkGLError("OGLRenderer::renderClear");
+        }
+
+        void OGLRenderer::debugDrawCallRecordStart() {
+            drawCalls = 0;
+        }
+
+        unsigned long OGLRenderer::debugDrawCallRecordStop() {
+            return drawCalls;
         }
     }
 }

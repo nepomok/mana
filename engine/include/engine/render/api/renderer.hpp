@@ -66,6 +66,10 @@ namespace engine {
         virtual void renderFinish() = 0;
 
         virtual void renderClear(RenderTarget &target, ColorRGBA color) = 0;
+
+        virtual void debugDrawCallRecordStart() = 0;
+
+        virtual unsigned long debugDrawCallRecordStop() = 0;
     };
 }
 

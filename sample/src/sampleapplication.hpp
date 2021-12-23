@@ -194,12 +194,18 @@ protected:
             fpsAverage = alpha * fpsAverage + (1.0 - alpha) * fps;
         }
 
+        debugWindow.setDrawCalls(drawCalls);
+        
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
         renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
 
         wnd.setSwapInterval(debugWindow.getSwapInterval());
 
+        wnd.getRenderDevice().getRenderer().debugDrawCallRecordStart();
+
         ecs.update(deltaTime);
+
+        drawCalls = wnd.getRenderDevice().getRenderer().debugDrawCallRecordStop();
 
         window->swapBuffers();
     }
@@ -242,6 +248,7 @@ private:
 private:
     Entity cameraEntity;
     double fpsAverage = 1;
+    unsigned long drawCalls = 0;// The number of draw calls in the last update
 
     RenderSystem *renderSystem{};
 

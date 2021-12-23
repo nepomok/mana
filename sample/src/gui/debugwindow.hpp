@@ -197,8 +197,10 @@ public:
 
             ImGui::Spacing();
 
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate,
-                        ImGui::GetIO().Framerate);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls)",
+                        1000.0f / ImGui::GetIO().Framerate,
+                        ImGui::GetIO().Framerate,
+                        drawCalls);
             ImGui::EndTabItem();
         }
 
@@ -305,6 +307,10 @@ public:
         return swapInterval;
     }
 
+    void setDrawCalls(unsigned long value) {
+        drawCalls = value;
+    }
+
 private:
     std::string appendButtonLabelId(const std::string &label, int index) {
         return label + "###" + std::to_string(index);
@@ -314,6 +320,7 @@ private:
     int maxSamples = 0;
     int samples = 0;
     int swapInterval = 0;
+    unsigned long drawCalls = 0;
 };
 
 #endif //MANA_DEBUGWINDOW_HPP

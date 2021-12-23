@@ -35,6 +35,13 @@ namespace engine {
             void renderFinish() override;
 
             void renderClear(RenderTarget &target, ColorRGBA color) override;
+
+            void debugDrawCallRecordStart() override;
+
+            unsigned long debugDrawCallRecordStop() override;
+
+        private:
+            unsigned long drawCalls = 0;
         };
     }
 }
