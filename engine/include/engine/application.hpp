@@ -21,6 +21,7 @@
 #define MANA_APPLICATION_HPP
 
 #include <chrono>
+#include <thread>
 
 #include "engine/display/displaymanager.hpp"
 #include "engine/ecs/ecs.hpp"
@@ -69,10 +70,17 @@ namespace engine {
             auto lastFrame = std::chrono::high_resolution_clock::now();
             while (!window->shouldClose()) {
                 auto frame = std::chrono::high_resolution_clock::now();
-                auto frameDelta = frame - lastFrame;
-                float deltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(frameDelta).count();
-                lastFrame = frame;
-                update(deltaTime);
+                update(mDeltaTime);
+                if (fpsLimit != 0) {
+                    auto delta = std::chrono::high_resolution_clock::now() - frame;
+                    float s = 1 / fpsLimit;
+                    float diff = std::chrono::duration_cast<std::chrono::duration<float>>(delta).count() - s;
+                    if (diff < 0)
+                        std::this_thread::sleep_for(
+                                std::chrono::nanoseconds(static_cast<long>(diff * -1 * 1000000000.0f)));
+                }
+                auto frameDelta = std::chrono::high_resolution_clock::now() - frame;
+                mDeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(frameDelta).count();
             }
             stop();
             return 0;
@@ -81,6 +89,9 @@ namespace engine {
     protected:
         DisplayManager display;
         ECS ecs;
+
+        float fpsLimit = 0;
+        float mDeltaTime = 0;
 
         DisplayBackend displayBackend;
         GraphicsBackend graphicsBackend;

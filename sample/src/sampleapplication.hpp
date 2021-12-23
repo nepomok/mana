@@ -195,7 +195,7 @@ protected:
         }
 
         debugWindow.setDrawCalls(drawCalls);
-        
+
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
         renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
 
@@ -208,6 +208,8 @@ protected:
         drawCalls = wnd.getRenderDevice().getRenderer().debugDrawCallRecordStop();
 
         window->swapBuffers();
+
+        fpsLimit = debugWindow.getFpsLimit();
     }
 
 private:

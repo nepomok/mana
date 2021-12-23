@@ -186,16 +186,18 @@ public:
             else if (samples < 1)
                 samples = 1;
 
-            ImGui::Separator();
-
             ImGui::InputInt("Swap Interval", &swapInterval);
 
             if (swapInterval < 0)
                 swapInterval = 0;
 
+            ImGui::InputFloat("FPS Limit", &fpsLimit);
+
+            if (fpsLimit < 0)
+                fpsLimit = 0;
+
             ImGui::Separator();
 
-            ImGui::Spacing();
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls)",
                         1000.0f / ImGui::GetIO().Framerate,
@@ -216,7 +218,7 @@ public:
         ImGui::End();
     }
 
-    std::vector<Compositor::Layer> getSelectedLayers() {
+    std::vector<Compositor::Layer> getSelectedLayers() const {
         std::vector<Compositor::Layer> pin;
         std::map<int, std::vector<Compositor::Layer>> tmp;
         for (auto &item: items)
@@ -262,7 +264,7 @@ public:
         }
     }
 
-    bool getLayerActive(const std::string &name) {
+    bool getLayerActive(const std::string &name) const {
         for (auto &item: items) {
             if (item.layer.name == name) {
                 return item.active;
@@ -280,7 +282,7 @@ public:
         }
     }
 
-    bool getLayerPinned(const std::string &name) {
+    bool getLayerPinned(const std::string &name) const {
         for (auto &item: items) {
             if (item.layer.name == name) {
                 return item.pinned;
@@ -303,12 +305,20 @@ public:
             samples = value;
     }
 
-    int getSwapInterval() {
+    int getSwapInterval() const {
         return swapInterval;
     }
 
     void setDrawCalls(unsigned long value) {
         drawCalls = value;
+    }
+
+    void setFpsLimit(float value) {
+        fpsLimit = value;
+    }
+
+    float getFpsLimit() const {
+        return fpsLimit;
     }
 
 private:
@@ -321,6 +331,7 @@ private:
     int samples = 0;
     int swapInterval = 0;
     unsigned long drawCalls = 0;
+    float fpsLimit = 0;
 };
 
 #endif //MANA_DEBUGWINDOW_HPP
