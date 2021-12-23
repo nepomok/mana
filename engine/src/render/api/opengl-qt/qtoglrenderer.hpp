@@ -33,6 +33,8 @@ namespace engine {
             void addCommand(RenderCommand &command) override;
 
             void renderFinish() override;
+
+            void renderClear(RenderTarget &target, ColorRGBA color) override;
         };
     }
 }

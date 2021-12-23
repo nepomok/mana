@@ -64,6 +64,8 @@ namespace engine {
         virtual void addCommand(RenderCommand &command) = 0;
 
         virtual void renderFinish() = 0;
+
+        virtual void renderClear(RenderTarget &target, ColorRGBA color) = 0;
     };
 }
 

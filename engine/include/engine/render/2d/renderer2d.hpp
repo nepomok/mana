@@ -118,6 +118,10 @@ namespace engine {
     private:
         RenderDevice &renderDevice;
 
+        ShaderSource vs;
+        ShaderSource fs;
+        ShaderSource fsText;
+
         std::unique_ptr<ShaderProgram> defaultShader = nullptr;
         std::unique_ptr<ShaderProgram> defaultTextShader = nullptr;
 

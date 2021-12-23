@@ -24,6 +24,10 @@
 
 #include "engine/asset/camera.hpp"
 
+#include "engine/async/threadpool.hpp"
+#include "engine/render/shader/shadercompiler.hpp"
+#include "engine/render/shader/shaderinclude.hpp"
+
 static const char *SHADER_VERT = R"###(
 float4x4 MODEL_MATRIX;
 float USE_TEXTURE;
@@ -169,9 +173,42 @@ namespace engine {
 
     Renderer2D::Renderer2D(RenderDevice &device)
             : renderDevice(device) {
-        ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        vs = ShaderSource(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        fs = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        fsText = ShaderSource(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+
+        std::vector<std::shared_ptr<Task>> tasks;
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                          ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                          ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fsText.preprocess(ShaderInclude::getShaderIncludeCallback(),
+                              ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+        }));
+
+        for (auto &task: tasks)
+            task->wait();
+        tasks.clear();
+
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            vs.crossCompile(renderDevice.getPreferredShaderLanguage());
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fs.crossCompile(renderDevice.getPreferredShaderLanguage());
+        }));
+        tasks.emplace_back(ThreadPool::pool.addTask([this]() {
+            fsText.crossCompile(renderDevice.getPreferredShaderLanguage());
+        }));
+
+        for (auto &task: tasks)
+            task->wait();
+        tasks.clear();
 
         defaultShader = device.getAllocator().createShaderProgram(vs, fs);
         defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);

@@ -38,19 +38,19 @@ public:
             : Application(argc,
                           argv,
                           std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {
+        window->setSwapInterval(0);
+        window->update();
+        window->getRenderDevice().getRenderer().renderClear(window->getRenderTarget(), bgColor);
+        window->swapBuffers();
+
         ren2d = std::make_unique<Renderer2D>(window->getRenderDevice());
+        drawLoadingScreen(0);
     }
 
     ~SampleApplication() override = default;
 
 protected:
     void start() override {
-        window->setSwapInterval(0);
-
-        window->update();
-
-        drawLoadingScreen(0);
-
         renderSystem = new RenderSystem(*window, *archive, {});
 
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
@@ -219,7 +219,7 @@ private:
         else if (progress < 0)
             progress = 0;
 
-        ren2d->renderBegin(window->getRenderTarget(), true, {}, window->getRenderTarget().getSize(), {38, 38, 38, 255});
+        ren2d->renderBegin(window->getRenderTarget(), true, {}, window->getRenderTarget().getSize(), bgColor);
         ren2d->setProjection({{-1, -1},
                               {1,  1}});
         float xdim = 0.5;
@@ -248,6 +248,8 @@ private:
     DebugWindow debugWindow;
 
     std::unique_ptr<Renderer2D> ren2d;
+
+    ColorRGBA bgColor = {38, 38, 38, 255};
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

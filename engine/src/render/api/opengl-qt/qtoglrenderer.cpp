@@ -207,5 +207,35 @@ namespace engine {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             checkGLError("QtOGLRenderer::renderFinish");
         }
+
+        void QtOGLRenderer::renderClear(RenderTarget &target, ColorRGBA color) {
+            glEnable(GL_MULTISAMPLE);
+
+            glClearColor((float) color.r() / (float) 255,
+                         (float) color.g() / (float) 255,
+                         (float) color.b() / (float) 255,
+                         (float) color.a() / (float) 255);
+
+            auto &fb = dynamic_cast<QtOGLRenderTarget &>(target);
+
+            GLint vpData[4];
+            glGetIntegerv(GL_VIEWPORT, vpData);
+
+            auto size = fb.getSize();
+            glViewport(0, 0, size.x, size.y);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
+
+            auto ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if (ret != GL_FRAMEBUFFER_COMPLETE) {
+                throw std::runtime_error("Render Target framebuffer is not complete: " + std::to_string(ret));
+            }
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            checkGLError("OGLRenderer::renderClear");
+        }
     }
 }
