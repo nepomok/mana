@@ -39,7 +39,6 @@ public:
                           argv,
                           std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {
         window->setSwapInterval(0);
-        window->update();
         window->getRenderDevice().getRenderer().renderClear(window->getRenderTarget(), bgColor);
         window->swapBuffers();
 
@@ -175,6 +174,8 @@ protected:
     }
 
     void update(float deltaTime) override {
+        auto frameStart = std::chrono::high_resolution_clock::now();
+
         auto &wnd = *window;
 
         wnd.update();
@@ -207,9 +208,15 @@ protected:
 
         drawCalls = wnd.getRenderDevice().getRenderer().debugDrawCallRecordStop();
 
-        window->swapBuffers();
-
         fpsLimit = debugWindow.getFpsLimit();
+
+        if (fpsLimit != 0) {
+            auto delta = std::chrono::high_resolution_clock::now() - frameStart;
+            auto time = std::chrono::nanoseconds(static_cast<long>(1000000000.0f / fpsLimit));
+            std::this_thread::sleep_for(time - delta);
+        }
+
+        wnd.swapBuffers();
     }
 
 private:
@@ -244,10 +251,11 @@ private:
         ren2d->renderPresent();
 
         window->swapBuffers();
-        window->update();
     }
 
 private:
+    ECS ecs;
+
     Entity cameraEntity;
     double fpsAverage = 1;
     unsigned long drawCalls = 0;// The number of draw calls in the last update

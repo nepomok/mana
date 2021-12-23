@@ -30,6 +30,11 @@
 namespace engine {
     class Application {
     public:
+        /**
+         * @param argc
+         * @param argv
+         * @param archive The archive instance to use as root archive.
+         */
         explicit Application(int argc, char *argv[], std::unique_ptr<Archive> archive)
                 : archive(std::move(archive)), display() {
             std::vector<std::string> args;
@@ -61,6 +66,7 @@ namespace engine {
                 }
             }
             window = display.createWindow(graphicsBackend);
+            window->update();
         }
 
         virtual ~Application() = default;
@@ -68,16 +74,12 @@ namespace engine {
         virtual int loop() {
             start();
             auto lastFrame = std::chrono::high_resolution_clock::now();
+            float deltaTime = 0;
             while (!window->shouldClose()) {
-                auto frame = std::chrono::high_resolution_clock::now();
-                update(mDeltaTime);
-                if (fpsLimit != 0) {
-                    auto delta = std::chrono::high_resolution_clock::now() - frame;
-                    auto time = std::chrono::nanoseconds(static_cast<long>(1000000000.0f / fpsLimit));
-                    std::this_thread::sleep_for(time - delta);
-                }
-                auto frameDelta = std::chrono::high_resolution_clock::now() - frame;
-                mDeltaTime = static_cast<float>(frameDelta.count()) / 1000000000.0f;
+                auto frameStart = std::chrono::high_resolution_clock::now();
+                update(deltaTime);
+                auto frameDelta = std::chrono::high_resolution_clock::now() - frameStart;
+                deltaTime = static_cast<float>(frameDelta.count()) / 1000000000.0f;
             }
             stop();
             return 0;
@@ -85,10 +87,6 @@ namespace engine {
 
     protected:
         DisplayManager display;
-        ECS ecs;
-
-        float fpsLimit = 0;
-        float mDeltaTime = 0;
 
         DisplayBackend displayBackend;
         GraphicsBackend graphicsBackend;
@@ -96,15 +94,13 @@ namespace engine {
         std::unique_ptr<Archive> archive = nullptr;
         std::unique_ptr<Window> window = nullptr;
 
+        float fpsLimit = 0;
+
         virtual void start() {}
 
         virtual void stop() {}
 
-        virtual void update(float deltaTime) {
-            window->update();
-            ecs.update(deltaTime);
-            window->swapBuffers();
-        }
+        virtual void update(float deltaTime) {}
     };
 }
 
