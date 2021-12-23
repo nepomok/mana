@@ -37,7 +37,9 @@ public:
     SampleApplication(int argc, char *argv[])
             : Application(argc,
                           argv,
-                          std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {}
+                          std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {
+        ren2d = std::make_unique<Renderer2D>(window->getRenderDevice());
+    }
 
     ~SampleApplication() override = default;
 
@@ -45,15 +47,25 @@ protected:
     void start() override {
         window->setSwapInterval(0);
 
+        window->update();
+
+        drawLoadingScreen(0);
+
         renderSystem = new RenderSystem(*window, *archive, {});
 
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
+        drawLoadingScreen(0.1);
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<PrePass>(window->getRenderDevice())));
+        drawLoadingScreen(0.2);
         renderSystem->getRenderer().addRenderPass(
                 std::move(std::make_unique<PhongShadePass>(window->getRenderDevice())));
+        drawLoadingScreen(0.3);
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<SkyboxPass>(window->getRenderDevice())));
+        drawLoadingScreen(0.4);
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<DebugPass>(window->getRenderDevice())));
+        drawLoadingScreen(0.5);
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ImGuiPass>(*window)));
+        drawLoadingScreen(0.6);
 
         //Move is required because the ECS destructor deletes the system pointers.
         ecs = std::move(ECS(
@@ -63,6 +75,8 @@ protected:
                 }
         ));
         ecs.start();
+
+        drawLoadingScreen(0.7);
 
         std::vector<Compositor::Layer> layers = {
                 {"Skybox",         SkyboxPass::COLOR,        "",             DEPTH_TEST_ALWAYS},
@@ -143,6 +157,8 @@ protected:
 
         window->getInput().addListener(*this);
 
+        drawLoadingScreen(1);
+
         Application::start();
     }
 
@@ -197,6 +213,32 @@ private:
 
     void onKeyUp(keyboard::Key key) override {}
 
+    void drawLoadingScreen(float progress) {
+        if (progress > 1)
+            progress = 1;
+        else if (progress < 0)
+            progress = 0;
+
+        ren2d->renderBegin(window->getRenderTarget(), true, {}, window->getRenderTarget().getSize(), {38, 38, 38, 255});
+        ren2d->setProjection({{-1, -1},
+                              {1,  1}});
+        float xdim = 0.5;
+        float ydim = 0.05;
+        ren2d->draw(Rectf({-xdim / 2, -ydim / 2}, {xdim, ydim}),
+                    ColorRGBA(71, 71, 71, 255),
+                    true);
+        float xpos = -xdim / 2 * progress;
+        float xscaledim = xdim * progress;
+        xpos -= (xdim - xscaledim) / 2;
+        ren2d->draw(Rectf({xpos, -ydim / 2}, {xscaledim, ydim}),
+                    ColorRGBA(119, 255, 74, 255),
+                    true);
+        ren2d->renderPresent();
+
+        window->swapBuffers();
+        window->update();
+    }
+
 private:
     Entity cameraEntity;
     double fpsAverage = 1;
@@ -204,6 +246,8 @@ private:
     RenderSystem *renderSystem{};
 
     DebugWindow debugWindow;
+
+    std::unique_ptr<Renderer2D> ren2d;
 };
 
 #endif //MANA_SAMPLEAPPLICATION_HPP

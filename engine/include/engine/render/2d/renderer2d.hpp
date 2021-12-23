@@ -66,7 +66,8 @@ namespace engine {
         void renderBegin(RenderTarget &target,
                          bool clear,
                          Vec2i viewportOffset,
-                         Vec2i viewportSize);
+                         Vec2i viewportSize,
+                         ColorRGBA clearColor = ColorRGBA(0, 0, 0, 0));
 
         /**
          * Set the projection bounds.

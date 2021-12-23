@@ -24,14 +24,10 @@
 
 #include "engine/asset/camera.hpp"
 
-static const char *SHADER_GLOBALS = R"###(
+static const char *SHADER_VERT = R"###(
 float4x4 MODEL_MATRIX;
 float USE_TEXTURE;
 float4 COLOR;
-)###";
-
-static const char *SHADER_VERT = R"###(
-#include "globals.hlsl"
 
 struct VS_INPUT
 {
@@ -62,7 +58,9 @@ VS_OUTPUT main(const VS_INPUT v)
 )###";
 
 static const char *SHADER_FRAG = R"###(
-#include "globals.hlsl"
+float4x4 MODEL_MATRIX;
+float USE_TEXTURE;
+float4 COLOR;
 
 struct PS_INPUT {
     float2 uv: TEXCOORD0;
@@ -88,7 +86,9 @@ PS_OUTPUT main(PS_INPUT v) {
 )###";
 
 static const char *SHADER_TEXT_FRAG = R"###(
-#include "globals.hlsl"
+float4x4 MODEL_MATRIX;
+float USE_TEXTURE;
+float4 COLOR;
 
 struct PS_INPUT {
     float2 uv: TEXCOORD0;
@@ -110,10 +110,6 @@ PS_OUTPUT main(PS_INPUT v) {
     return ret;
 }
 )###";
-
-static std::string includeCallback(const char *name) {
-    return SHADER_GLOBALS;
-}
 
 static float distance(float val1, float val2) {
     float abs = val1 - val2;
@@ -176,9 +172,7 @@ namespace engine {
         ShaderSource vs(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
         ShaderSource fs(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
         ShaderSource fsText(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        vs.preprocess(includeCallback);
-        fs.preprocess(includeCallback);
-        fsText.preprocess(includeCallback);
+
         defaultShader = device.getAllocator().createShaderProgram(vs, fs);
         defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);
     }
@@ -199,11 +193,12 @@ namespace engine {
     void Renderer2D::renderBegin(RenderTarget &target,
                                  bool clear,
                                  Vec2i viewportOffset,
-                                 Vec2i viewportSize) {
+                                 Vec2i viewportSize,
+                                 ColorRGBA clearColor) {
         renderDevice.getRenderer().renderBegin(target, RenderOptions(viewportOffset,
                                                                      viewportSize,
                                                                      true,
-                                                                     {},
+                                                                     clearColor,
                                                                      1,
                                                                      clear, clear, clear));
         screenSize = viewportSize;
@@ -280,6 +275,7 @@ namespace engine {
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
+        defaultShader->activate();
         defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
         defaultShader->setFloat("USE_TEXTURE", 0);
         defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
@@ -301,13 +297,16 @@ namespace engine {
                           float rotation) {
         Mesh mesh = getLine(start, end, center);
 
-        MeshBuffer &buffer = **allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh)).first;
+        auto it = allocatedMeshes.insert(renderDevice.getAllocator().createMeshBuffer(mesh));
+
+        MeshBuffer &buffer = **it.first;
 
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = modelMatrix * MatrixMath::rotate(Vec3f(0, 0, rotation));
 
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
+        defaultShader->activate();
         defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
         defaultShader->setFloat("USE_TEXTURE", 0);
         defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
@@ -332,6 +331,7 @@ namespace engine {
         Mat4f modelMatrix = MatrixMath::identity();
         modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
+        defaultShader->activate();
         defaultShader->setMat4("MODEL_MATRIX", modelMatrix);
         defaultShader->setFloat("USE_TEXTURE", 0);
         defaultShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
@@ -373,12 +373,12 @@ namespace engine {
             modelMatrix = modelMatrix * MatrixMath::translate(Vec3f(xpos, ypos, 0));
             modelMatrix = camera.projection() * camera.view() * modelMatrix;
 
+            defaultTextShader->activate();
             defaultTextShader->setMat4("MODEL_MATRIX", modelMatrix);
             defaultTextShader->setVec4("COLOR", Vec4f((float) color.r() / 255,
                                                       (float) color.g() / 255,
                                                       (float) color.b() / 255,
                                                       (float) color.a() / 255));
-
             defaultTextShader->setTexture("diffuse", 0);
 
             RenderCommand command(*defaultTextShader, buffer);
