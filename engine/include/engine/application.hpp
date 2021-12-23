@@ -73,14 +73,11 @@ namespace engine {
                 update(mDeltaTime);
                 if (fpsLimit != 0) {
                     auto delta = std::chrono::high_resolution_clock::now() - frame;
-                    float s = 1 / fpsLimit;
-                    float diff = std::chrono::duration_cast<std::chrono::duration<float>>(delta).count() - s;
-                    if (diff < 0)
-                        std::this_thread::sleep_for(
-                                std::chrono::nanoseconds(static_cast<long>(diff * -1 * 1000000000.0f)));
+                    auto time = std::chrono::nanoseconds(static_cast<long>(1000000000.0f / fpsLimit));
+                    std::this_thread::sleep_for(time - delta);
                 }
                 auto frameDelta = std::chrono::high_resolution_clock::now() - frame;
-                mDeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>(frameDelta).count();
+                mDeltaTime = static_cast<float>(frameDelta.count()) / 1000000000.0f;
             }
             stop();
             return 0;
