@@ -163,7 +163,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element["asset"];
 
-                ret.add(name, new Mesh(refBundles.at(bundle).get<Mesh>(asset)));
+                ret.add<Mesh>(name, new Mesh(refBundles.at(bundle).get<Mesh>(asset)));
             }
         }
 
@@ -175,7 +175,7 @@ namespace engine {
                 auto it = element.find("bundle");
                 if (it != element.end()) {
                     std::string n = element.value("asset", "");
-                    ret.add(name, new Material(refBundles.at(*it).get<Material>(n)));
+                    ret.add<Material>(name, new Material(refBundles.at(*it).get<Material>(n)));
                 } else {
                     Material mat;
 
@@ -223,7 +223,7 @@ namespace engine {
                         mat.normalTexture = path;
                     }
 
-                    ret.add(name, new Material(mat));
+                    ret.add<Material>(name, new Material(mat));
                 }
             }
         }
@@ -234,7 +234,7 @@ namespace engine {
                 std::string name = element["name"];
                 auto s = std::stringstream(element.dump());
                 auto tex = readJsonTexture(s, archive);
-                ret.add(name, new Texture(tex));
+                ret.add<Texture>(name, new Texture(tex));
             }
         }
 
@@ -245,7 +245,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element.value("asset", "");
 
-                ret.add(name, new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
+                ret.add<Image<ColorRGBA>>(name, new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
             }
         }
 
@@ -341,23 +341,16 @@ namespace engine {
         for (auto i = 0; i < scene.mNumMeshes; i++) {
             const auto &mesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[i]);
             std::string name = mesh.mName.C_Str();
-
-            if (ret.assets.find(name) != ret.assets.end())
-                throw std::runtime_error("Duplicate asset name in memory");
-
-            ret.add(name, new Mesh(convertMesh(mesh)));
+            ret.add<Mesh>(name, new Mesh(convertMesh(mesh)));
         }
 
         for (auto i = 0; i < scene.mNumMaterials; i++) {
             auto material = convertMaterial(dynamic_cast<const aiMaterial &>(*scene.mMaterials[i]));
-            std::string name;
 
-            scene.mMaterials[i]->Get<std::string>(AI_MATKEY_NAME, name);
+            aiString materialName;
+            scene.mMaterials[i]->Get(AI_MATKEY_NAME, materialName);
 
-            if (ret.assets.find(name) != ret.assets.end())
-                continue; //TODO: Handle bundle entries without a name or sharing a name
-
-            ret.add(name, new Material(material));
+            ret.add<Material>(materialName.data, new Material(material));
         }
 
         return ret;
@@ -481,7 +474,7 @@ namespace engine {
                                       &n) == 1) {
                 //Source is image
                 AssetBundle ret;
-                ret.add("0", new Image<ColorRGBA>(readImage(buffer)));
+                ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
                 return ret;
             }
 
@@ -501,7 +494,7 @@ namespace engine {
             //Try to read source as audio
             auto audio = readAudio(buffer);
             AssetBundle ret;
-            ret.add("0", new Audio(audio));
+            ret.add<Audio>("0", new Audio(audio));
 
             return ret;
         } else {
@@ -524,14 +517,14 @@ namespace engine {
                                               &y,
                                               &n) == 1) {
                         AssetBundle ret;
-                        ret.add("0", new Image<ColorRGBA>(readImage(buffer)));
+                        ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
                         return ret;
                     }
 
                     //Try to read source as audio
                     auto audio = readAudio(buffer);
                     AssetBundle ret;
-                    ret.add("0", new Audio(audio));
+                    ret.add<Audio>("0", new Audio(audio));
                     return ret;
                 }
             }

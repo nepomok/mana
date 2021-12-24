@@ -27,6 +27,8 @@
 
 #include "systems/playerinputsystem.hpp"
 #include "components/playercontrollercomponent.hpp"
+#include "systems/transformanimationsystem.hpp"
+#include "components/transformanimationcomponent.hpp"
 
 #include "gui/debugwindow.hpp"
 
@@ -70,6 +72,7 @@ protected:
         ecs = std::move(ECS(
                 {
                         new PlayerInputSystem(window->getInput()),
+                        new TransformAnimationSystem(),
                         renderSystem
                 }
         ));
@@ -136,24 +139,17 @@ protected:
 
         componentManager.create<PlayerControllerComponent>(cameraEntity);
 
+        auto islandEntity = entityManager.getByName("Island");
+        componentManager.create<TransformAnimationComponent>(islandEntity, {{},
+                                                                            {0, 0, 0}});
+
         auto planeEntity = entityManager.getByName("Plane");
-        auto planeTransform = componentManager.lookup<TransformComponent>(planeEntity);
-        auto planeRender = componentManager.lookup<MeshRenderComponent>(planeEntity);
-        for (int x = 0; x < 10; x++) {
-            for (int y = 0; y < 10; y++) {
-                auto ent = entityManager.create();
-                auto transform = componentManager.create<TransformComponent>(ent);
-                transform = planeTransform;
-                transform.transform.setPosition(transform.transform.getPosition()
-                                                + Vec3f(static_cast<float>(x) * 20.0f, 0,
-                                                        -(static_cast<float>(y) * 20.0f)));
+        componentManager.create<TransformAnimationComponent>(planeEntity, {{},
+                                                                            {5.57281, 4.985, 7.78}});
 
-                componentManager.update(ent, transform);
-
-                componentManager.create<MeshRenderComponent>(ent, planeRender);
-            }
-        }
-
+        auto sphereEntity = entityManager.getByName("Sphere");
+        componentManager.create<TransformAnimationComponent>(sphereEntity, {{},
+                                                                           {7.151281, 61.985, 24.78}});
         window->getInput().addListener(*this);
 
         drawLoadingScreen(1);

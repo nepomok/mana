@@ -29,13 +29,9 @@ namespace engine {
     const char *ImGuiPass::COLOR = "imgui";
 
     ImGuiPass::ImGuiPass(Window &window, std::vector<std::reference_wrapper<Widget>> commands)
-            : window(window), widgets(std::move(commands)) {
-        ImGuiCompat::Init(window);
-    }
+            : window(window), widgets(std::move(commands)) {}
 
-    ImGuiPass::~ImGuiPass() {
-        ImGuiCompat::Shutdown(window);
-    }
+    ImGuiPass::~ImGuiPass() {}
 
     void ImGuiPass::prepareBuffer(GeometryBuffer &gBuffer) {
         gBuffer.addBuffer(COLOR, TextureBuffer::RGBA);

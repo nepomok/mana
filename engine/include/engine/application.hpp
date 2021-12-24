@@ -22,10 +22,15 @@
 
 #include <chrono>
 #include <thread>
+#include <iomanip>
 
 #include "engine/display/displaymanager.hpp"
 #include "engine/ecs/ecs.hpp"
 #include "engine/io/archive.hpp"
+
+#include "engine/compat/imgui/imguicompat.hpp"
+
+#include "imgui.h"
 
 namespace engine {
     class Application {
@@ -67,21 +72,66 @@ namespace engine {
             }
             window = display.createWindow(graphicsBackend);
             window->update();
+
+            ImGuiCompat::Init(*window);
         }
 
-        virtual ~Application() = default;
+        virtual ~Application() {
+            ImGuiCompat::Shutdown(*window);
+        }
 
         virtual int loop() {
+//Disable catch all exception handler in debug build to be able to use debugger exception handler
+#ifndef MANA_DEBUG_BUILD
+            try {
+#endif
             start();
             auto lastFrame = std::chrono::high_resolution_clock::now();
             float deltaTime = 0;
-            while (!window->shouldClose()) {
+            while (!window->shouldClose() && !shutdown) {
                 auto frameStart = std::chrono::high_resolution_clock::now();
                 update(deltaTime);
                 auto frameDelta = std::chrono::high_resolution_clock::now() - frameStart;
                 deltaTime = static_cast<float>(frameDelta.count()) / 1000000000.0f;
             }
             stop();
+#ifndef MANA_DEBUG_BUILD
+            }
+            catch (const std::exception &e) {
+                // Show uncaught exception dialog
+                auto time = std::chrono::system_clock::now();
+                auto time_t = std::chrono::system_clock::to_time_t(time);
+                std::stringstream stream;
+                stream << std::put_time(std::localtime(&time_t), "%Y-%m-%d %X");
+                auto timeStr = stream.str();
+
+                while (true) {
+                    window->update();
+
+                    ImGuiCompat::NewFrame(*window);
+                    ImGui::NewFrame();
+
+                    ImGui::Begin(("Uncaught Exception " + timeStr).c_str());
+
+                    ImGui::Text("%s", e.what());
+
+                    ImGui::Separator();
+
+                    if (ImGui::Button("Quit") || window->shouldClose()) {
+                        break;
+                    }
+
+                    ImGui::Dummy({600, 0});
+
+                    ImGui::End();
+
+                    ImGui::Render();
+                    ImGuiCompat::DrawData(*window, window->getRenderTarget());
+
+                    window->swapBuffers();
+                }
+            }
+#endif
             return 0;
         }
 
@@ -95,6 +145,8 @@ namespace engine {
         std::unique_ptr<Window> window = nullptr;
 
         float fpsLimit = 0;
+
+        bool shutdown = false;
 
         virtual void start() {}
 

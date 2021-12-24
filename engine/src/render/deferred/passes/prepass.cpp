@@ -143,10 +143,10 @@ namespace engine {
     using namespace ShaderCompiler;
 
     static inline Vec4f scaleColor(const ColorRGBA &color) {
-        return {static_cast<float>(color.r()) * 255,
-                static_cast<float>(color.g()) * 255,
-                static_cast<float>(color.b()) * 255,
-                static_cast<float>(color.a()) * 255};
+        return {static_cast<float>(color.r()) / 255,
+                static_cast<float>(color.g()) / 255,
+                static_cast<float>(color.b()) / 255,
+                static_cast<float>(color.a()) / 255};
     }
 
     const char *PrePass::DEPTH = "depth";

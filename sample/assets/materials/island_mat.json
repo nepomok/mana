@@ -1,0 +1,48 @@
+{
+  "materials": [
+    {
+      "name": "grass",
+      "type": "material",
+      "shininess": 13,
+      "specular": {
+        "r": 125, "g": 125, "b": 125, "a": 255
+      },
+      "diffuse": {
+        "r": 41, "g": 85, "b": 42, "a": 255
+      }
+    },
+    {
+      "name": "leaves",
+      "type": "material",
+      "shininess": 13,
+      "specular": {
+        "r": 125, "g": 125, "b": 125, "a": 255
+      },
+      "diffuse": {
+        "r": 42, "g": 140, "b": 42, "a": 255
+      }
+    },
+    {
+      "name": "stone",
+      "type": "material",
+      "shininess": 13,
+      "specular": {
+        "r": 125, "g": 125, "b": 125, "a": 255
+      },
+      "diffuse": {
+        "r": 51, "g": 51, "b": 51, "a": 255
+      }
+    },
+    {
+      "name": "wood",
+      "type": "material",
+      "shininess": 13,
+      "specular": {
+        "r": 125, "g": 125, "b": 125, "a": 255
+      },
+      "diffuse": {
+        "r": 58, "g": 38, "b": 19, "a": 255
+      }
+    }
+  ]
+}

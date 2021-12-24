@@ -13,6 +13,13 @@ endif()
 
 find_package (Threads REQUIRED)
 
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message("Debug Build")
+    add_compile_definitions("MANA_DEBUG_BUILD")
+else()
+    message("Release Build")
+endif ()
+
 include(cmake/config.cmake)
 include_directories(${USER_INCLUDE})
 link_directories(${USER_LINK})

@@ -23,12 +23,13 @@
 #include <map>
 #include <string>
 
+#include <typeindex>
+
 namespace engine {
     class AssetBundle {
     public:
         ~AssetBundle() {
-            for (auto &pair: assets)
-                delete pair.second;
+            assets.clear();
         }
 
         AssetBundle() = default;
@@ -38,8 +39,13 @@ namespace engine {
         }
 
         AssetBundle &operator=(const AssetBundle &other) {
-            for (auto &pair: other.assets)
-                assets.insert({pair.first, pair.second->clone()});
+            for (auto &pair: other.assets) {
+                auto index = pair.first;
+                for (auto &assetMap: pair.second)
+                    for (auto &asset: assetMap.second)
+                        assets[index][assetMap.first].emplace_back(asset->clone());
+            }
+
             return *this;
         }
 
@@ -51,25 +57,29 @@ namespace engine {
         const T &get(const std::string &name = "") const {
             if (assets.empty())
                 throw std::runtime_error("Empty bundle map");
+
+            auto index = std::type_index(typeid(T));
+
             if (name.empty()) {
-                return dynamic_cast<const T &>(*assets.begin()->second);
+                return dynamic_cast<const T &>(*assets.at(index).begin()->second.at(0));
             } else {
-                return dynamic_cast<const T &>(*assets.at(name));
+                return dynamic_cast<const T &>(*assets.at(index).at(name).at(0));
             }
         }
 
-        void add(const std::string &name, Asset *asset) {
-            if (assets.find(name) != assets.end())
-                throw std::runtime_error("Asset with name " + name + " already exists");
-            assets[name] = asset;
+        template<typename T>
+        void add(const std::string &name, T *asset) {
+            auto index = std::type_index(typeid(T));
+            assets[index][name].emplace_back(std::move(std::unique_ptr<Asset>(asset)));
         }
 
+        template<typename T>
         void remove(const std::string &name) {
-            delete assets.at(name);
-            assets.erase(name);
+            auto index = std::type_index(typeid(T));
+            assets.at(index).at(name).clear();
         }
 
-        std::map<std::string, Asset *> assets;
+        std::map<std::type_index, std::map<std::string, std::vector<std::unique_ptr<Asset>>>> assets;
     };
 }
 
