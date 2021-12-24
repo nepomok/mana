@@ -21,7 +21,7 @@
 #define MANA_KEYBOARD_HPP
 
 namespace engine {
-    namespace keyboard {
+    namespace Keyboard {
         enum Key {
             KEY_RETURN,
             KEY_ESCAPE,

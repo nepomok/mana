@@ -221,13 +221,18 @@ protected:
     }
 
 private:
-    void onKeyDown(keyboard::Key key) override {
-        if (key == keyboard::KEY_F1) {
+    void onKeyDown(Keyboard::Key key) override {
+        if (key == Keyboard::KEY_F1) {
             debugWindow.setLayerActive("ImGui", !debugWindow.getLayerActive("ImGui"));
+        } else if (key == Keyboard::KEY_F2) {
+            auto &cmgr = ecs.getEntityManager().getComponentManager();
+            auto comp = cmgr.lookup<AudioSourceComponent>(cameraEntity);
+            comp.play = !comp.play;
+            cmgr.update(cameraEntity,comp);
         }
     }
 
-    void onKeyUp(keyboard::Key key) override {}
+    void onKeyUp(Keyboard::Key key) override {}
 
     void drawLoadingScreen(float progress) {
         if (progress > 1)

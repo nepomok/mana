@@ -83,24 +83,24 @@ private:
 
     Vec3f getMovementInput() {
         Vec3f ret;
-        if (input.getKey(keyboard::KEY_W))
+        if (input.getKey(Keyboard::KEY_W))
             ret.z = 1;
-        else if (input.getKey(keyboard::KEY_S))
+        else if (input.getKey(Keyboard::KEY_S))
             ret.z = -1;
-        if (input.getKey(keyboard::KEY_A))
+        if (input.getKey(Keyboard::KEY_A))
             ret.x = 1;
-        else if (input.getKey(keyboard::KEY_D))
+        else if (input.getKey(Keyboard::KEY_D))
             ret.x = -1;
-        if (input.getKey(keyboard::KEY_E))
+        if (input.getKey(Keyboard::KEY_E))
             ret.y = 1;
-        else if (input.getKey(keyboard::KEY_Q))
+        else if (input.getKey(Keyboard::KEY_Q))
             ret.y = -1;
         for (auto &pad: input.getGamepads()) {
-            ret.x += applyDeadzone(input.getGamepadAxis(pad, gamepad::LEFT_X) * -1);
-            ret.z += applyDeadzone(input.getGamepadAxis(pad, gamepad::LEFT_Y) * -1);
-            if (input.getGamepadButton(pad, gamepad::BUMPER_LEFT)) {
+            ret.x += applyDeadzone(input.getGamepadAxis(pad, GamePad::LEFT_X) * -1);
+            ret.z += applyDeadzone(input.getGamepadAxis(pad, GamePad::LEFT_Y) * -1);
+            if (input.getGamepadButton(pad, GamePad::BUMPER_LEFT)) {
                 ret.y = -1;
-            } else if (input.getGamepadButton(pad, gamepad::BUMPER_RIGHT)) {
+            } else if (input.getGamepadButton(pad, GamePad::BUMPER_RIGHT)) {
                 ret.y = 1;
             }
         }
@@ -109,17 +109,17 @@ private:
 
     Vec3f getRotationInput() {
         Vec3f ret;
-        if (input.getKey(keyboard::KEY_UP))
+        if (input.getKey(Keyboard::KEY_UP))
             ret.x = 1;
-        else if (input.getKey(keyboard::KEY_DOWN))
+        else if (input.getKey(Keyboard::KEY_DOWN))
             ret.x = -1;
-        if (input.getKey(keyboard::KEY_LEFT))
+        if (input.getKey(Keyboard::KEY_LEFT))
             ret.y = -1;
-        else if (input.getKey(keyboard::KEY_RIGHT))
+        else if (input.getKey(Keyboard::KEY_RIGHT))
             ret.y = 1;
         for (auto &pad: input.getGamepads()) {
-            ret.x += applyDeadzone(input.getGamepadAxis(pad, gamepad::RIGHT_Y) * -1);
-            ret.y += applyDeadzone(input.getGamepadAxis(pad, gamepad::RIGHT_X));
+            ret.x += applyDeadzone(input.getGamepadAxis(pad, GamePad::RIGHT_Y) * -1);
+            ret.y += applyDeadzone(input.getGamepadAxis(pad, GamePad::RIGHT_X));
         }
         return normalize(ret);
     }

@@ -91,7 +91,7 @@ namespace engine {
     }
 
     void GLFWInput::glfwKeyCallback(int key, int scancode, int action, int mods) {
-        keyboard::Key k = GLFWTypeConverter::convertKey(key);
+        Keyboard::Key k = GLFWTypeConverter::convertKey(key);
         bool kd = action != GLFW_RELEASE;
         for (auto listener: listeners) {
             if (kd)
@@ -111,17 +111,17 @@ namespace engine {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(mouse::LEFT);
+                    listener->onMouseKeyDown(Mouse::LEFT);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(mouse::MIDDLE);
+                    listener->onMouseKeyDown(Mouse::MIDDLE);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(mouse::RIGHT);
+                    listener->onMouseKeyDown(Mouse::RIGHT);
                 }
                 break;
         }
@@ -165,11 +165,11 @@ namespace engine {
         throw std::runtime_error("Not Implemented");
     }
 
-    bool GLFWInput::getKey(keyboard::Key key) {
+    bool GLFWInput::getKey(Keyboard::Key key) {
         return glfwGetKey(&wndH, GLFWTypeConverter::convertKey(key)) == GLFW_PRESS;
     }
 
-    bool GLFWInput::getMouseButton(mouse::Button key) {
+    bool GLFWInput::getMouseButton(Mouse::Button key) {
         return glfwGetMouseButton(&wndH, GLFWTypeConverter::convertMouseKey(key)) == GLFW_PRESS;
     }
 
@@ -187,7 +187,7 @@ namespace engine {
         return glfwGetGamepadName(id);
     }
 
-    float GLFWInput::getGamepadAxis(int id, gamepad::Axis axis) {
+    float GLFWInput::getGamepadAxis(int id, GamePad::Axis axis) {
         GLFWgamepadstate state;
         if (!glfwGetGamepadState(id, &state)) {
             throw std::runtime_error("Failed to get axis for gamepad " + std::to_string(id));
@@ -195,7 +195,7 @@ namespace engine {
         return state.axes[GLFWTypeConverter::convertGamepadAxis(axis)];
     }
 
-    bool GLFWInput::getGamepadButton(int id, gamepad::Button button) {
+    bool GLFWInput::getGamepadButton(int id, GamePad::Button button) {
         GLFWgamepadstate state;
         if (!glfwGetGamepadState(id, &state)) {
             throw std::runtime_error("Failed to get button for gamepad " + std::to_string(id));

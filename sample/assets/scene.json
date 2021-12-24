@@ -55,10 +55,10 @@
           "enabled": true,
           "componentType": "audio_source",
           "audio": {
-            "bundle": "/audio/Farbro-Tectonic.wav",
+            "bundle": "/audio/Farbro-Tectonic-Mono.wav",
             "asset": ""
           },
-          "play": true,
+          "play": false,
           "loop": true
         }
       ]

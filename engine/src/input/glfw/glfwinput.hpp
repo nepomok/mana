@@ -55,9 +55,9 @@ namespace engine {
 
         void clearMouseCursorImage() override;
 
-        bool getKey(keyboard::Key key) override;
+        bool getKey(Keyboard::Key key) override;
 
-        bool getMouseButton(mouse::Button key) override;
+        bool getMouseButton(Mouse::Button key) override;
 
         Vec2d getMousePosition() override;
 
@@ -65,9 +65,9 @@ namespace engine {
 
         std::string getGamepadName(int id) override;
 
-        float getGamepadAxis(int id, gamepad::Axis axis) override;
+        float getGamepadAxis(int id, GamePad::Axis axis) override;
 
-        bool getGamepadButton(int id, gamepad::Button key) override;
+        bool getGamepadButton(int id, GamePad::Button key) override;
 
     private:
         GLFWwindow &wndH;

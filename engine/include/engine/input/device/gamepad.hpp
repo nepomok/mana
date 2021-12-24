@@ -25,7 +25,7 @@
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    namespace gamepad {
+    namespace GamePad {
         enum Axis {
             LEFT_X,
             LEFT_Y,

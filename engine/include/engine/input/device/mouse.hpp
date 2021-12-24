@@ -23,7 +23,7 @@
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    namespace mouse {
+    namespace Mouse {
         enum Button {
             LEFT,
             MIDDLE,

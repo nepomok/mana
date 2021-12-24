@@ -36,9 +36,11 @@ namespace engine {
             auto &comp = pair.second;
             auto &transform = componentManager.lookup<TransformComponent>(pair.first);
             auto &source = sources.at(pair.first);
+
             source->setPosition(transform.transform.getPosition() * AUDIO_POS_SCALE);
             source->setLooping(comp.loop);
             source->setVelocity(comp.velocity);
+
             //TODO: Source Volume and Distance
 
             if (comp.play && !comp.playing) {
@@ -71,8 +73,8 @@ namespace engine {
     void AudioSystem::onComponentUpdate(const Entity &entity,
                                         const AudioSourceComponent &oldValue,
                                         const AudioSourceComponent &newValue) {
-        sources[entity]->stop();
         if (!(oldValue.audioPath == newValue.audioPath)) {
+            sources[entity]->stop();
             auto handle = AssetHandle<Audio>(newValue.audioPath, assetManager);
             buffers.at(entity)->upload(handle.get().buffer, handle.get().format, handle.get().frequency);
             sources.at(entity)->setBuffer(*buffers.at(entity));

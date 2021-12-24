@@ -43,9 +43,9 @@ namespace engine {
 
         virtual void clearMouseCursorImage() = 0;
 
-        virtual bool getKey(keyboard::Key key) = 0;
+        virtual bool getKey(Keyboard::Key key) = 0;
 
-        virtual bool getMouseButton(mouse::Button button) = 0;
+        virtual bool getMouseButton(Mouse::Button button) = 0;
 
         virtual Vec2d getMousePosition() = 0;
 
@@ -53,9 +53,9 @@ namespace engine {
 
         virtual std::string getGamepadName(int id) = 0;
 
-        virtual float getGamepadAxis(int id, gamepad::Axis axis) = 0;
+        virtual float getGamepadAxis(int id, GamePad::Axis axis) = 0;
 
-        virtual bool getGamepadButton(int id, gamepad::Button button) = 0;
+        virtual bool getGamepadButton(int id, GamePad::Button button) = 0;
     };
 }
 
