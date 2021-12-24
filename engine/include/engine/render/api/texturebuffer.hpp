@@ -142,7 +142,7 @@ namespace engine {
             TextureType textureType = TEXTURE_2D;
             Vec2i size = {};
             ColorFormat format = RGBA;
-            TextureWrapping wrapping = REPEAT;
+            TextureWrapping wrapping = CLAMP_TO_EDGE;
             TextureFiltering filterMin = LINEAR;
             TextureFiltering filterMag = LINEAR;
             bool generateMipmap = true;

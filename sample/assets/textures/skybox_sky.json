@@ -1,0 +1,36 @@
+{
+  "textures": [
+    {
+      "name": "SkyboxSky",
+      "images": [
+        {
+          "bundle": "/images/evgeniy-skybox/0.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/evgeniy-skybox/1.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/evgeniy-skybox/2.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/evgeniy-skybox/3.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/evgeniy-skybox/4.png",
+          "asset": ""
+        },
+        {
+          "bundle": "/images/evgeniy-skybox/5.png",
+          "asset": ""
+        }
+      ],
+      "attributes": {
+        "textureType": "cubemap"
+      }
+    }
+  ]
+}

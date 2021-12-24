@@ -119,7 +119,7 @@
           "enabled": true,
           "componentType": "skybox",
           "texture": {
-            "bundle": "/textures/skybox_space.json",
+            "bundle": "/textures/skybox_sky.json",
             "asset": ""
           }
         }
