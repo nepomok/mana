@@ -25,35 +25,54 @@
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    namespace GamePad {
-        enum Axis {
-            LEFT_X,
-            LEFT_Y,
-            RIGHT_X,
-            RIGHT_Y,
-            TRIGGER_LEFT,
-            TRIGGER_RIGHT,
-            AXIS_UNDEFINED
-        };
+    enum GamePadAxis {
+        LEFT_X,
+        LEFT_Y,
+        RIGHT_X,
+        RIGHT_Y,
+        TRIGGER_LEFT,
+        TRIGGER_RIGHT,
+        AXIS_UNDEFINED
+    };
 
-        enum Button {
-            A,
-            B,
-            X,
-            Y,
-            BUMPER_LEFT,
-            BUMPER_RIGHT,
-            BACK,
-            START,
-            GUIDE,
-            LEFT_STICK,
-            RIGHT_STICK,
-            DPAD_UP,
-            DPAD_RIGHT,
-            DPADP_LEFT,
-            BUTTON_UNDEFINED
-        };
-    }
+    enum GamePadButton {
+        A,
+        B,
+        X,
+        Y,
+        BUMPER_LEFT,
+        BUMPER_RIGHT,
+        BACK,
+        START,
+        GUIDE,
+        LEFT_STICK,
+        RIGHT_STICK,
+        DPAD_UP,
+        DPAD_RIGHT,
+        DPADP_LEFT,
+        GAMEPAD_BUTTON_UNDEFINED,
+        TRIANGLE = Y,
+        RECTANGLE = X,
+        CROSS = A,
+        CIRCLE = B
+    };
+
+    class GamePad {
+    public:
+        double getGamepadAxis(GamePadAxis axis) const {
+            return axies.at(axis);
+        }
+
+        bool getGamepadButton(GamePadButton button) const {
+            return buttonsDown.find(button) != buttonsDown.end();
+        }
+
+        std::string vendor; //Vendor if available eg sony
+        std::string model; // Model if available eg ds4
+
+        std::map<GamePadAxis, double> axies;
+        std::set<GamePadButton> buttonsDown;
+    };
 }
 
 #endif //MANA_GAMEPAD_HPP

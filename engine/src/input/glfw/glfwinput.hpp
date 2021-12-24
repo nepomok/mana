@@ -29,7 +29,7 @@
 #include "engine/input/input.hpp"
 
 namespace engine {
-    class GLFWInput : public Input {
+    class GLFWInput : public Input, InputListener {
     public:
         explicit GLFWInput(GLFWwindow &wndH);
 
@@ -51,29 +51,49 @@ namespace engine {
 
         std::string getClipboardText() override;
 
-        void setMouseCursorImage(const Image <ColorRGBA> &image) override;
+        void setMouseCursorImage(const Image<ColorRGBA> &image) override;
 
         void clearMouseCursorImage() override;
 
-        bool getKey(Keyboard::Key key) override;
+        const std::map<int, Keyboard> &getKeyboards() const override;
 
-        bool getMouseButton(Mouse::Button key) override;
+        const std::map<int, Mouse> &getMice() const override;
 
-        Vec2d getMousePosition() override;
+        const std::map<int, GamePad> &getGamePads() const override;
 
-        std::set<int> getGamepads() override;
+    private:
+        void onKeyDown(KeyboardKey key) override;
 
-        std::string getGamepadName(int id) override;
+        void onKeyUp(KeyboardKey key) override;
 
-        float getGamepadAxis(int id, GamePad::Axis axis) override;
+        void onMouseMove(double xPos, double yPos) override;
 
-        bool getGamepadButton(int id, GamePad::Button key) override;
+        void onMouseWheelScroll(double amount) override;
+
+        void onMouseKeyDown(MouseButton key) override;
+
+        void onMouseKeyUp(MouseButton key) override;
+
+        void onGamepadConnected(int id) override;
+
+        void onGamepadDisconnected(int id) override;
+
+        void onGamepadAxis(int id, GamePadAxis axis, double amount) override;
+
+        void onGamepadButtonDown(int id, GamePadButton button) override;
+
+        void onGamepadButtonUp(int id, GamePadButton button) override;
 
     private:
         GLFWwindow &wndH;
 
         std::set<InputListener *> listeners;
-        std::set<int> gamepads;
+
+        std::map<int, Keyboard> keyboards;
+
+        std::map<int, Mouse> mice;
+
+        std::map<int, GamePad> gamepads;
     };
 }
 

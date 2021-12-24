@@ -29,9 +29,9 @@
 namespace engine {
     class InputListener {
     public:
-        virtual void onKeyDown(Keyboard::Key key) {};
+        virtual void onKeyDown(KeyboardKey key) {};
 
-        virtual void onKeyUp(Keyboard::Key key) {};
+        virtual void onKeyUp(KeyboardKey key) {};
 
         /**
          * @param xPos The mouse x position in pixels relative to the window.
@@ -44,9 +44,9 @@ namespace engine {
          */
         virtual void onMouseWheelScroll(double amount) {};
 
-        virtual void onMouseKeyDown(Mouse::Button key) {};
+        virtual void onMouseKeyDown(MouseButton key) {};
 
-        virtual void onMouseKeyUp(Mouse::Button key) {};
+        virtual void onMouseKeyUp(MouseButton key) {};
 
         virtual void onTextInput(const std::string &text) {};
 
@@ -54,11 +54,11 @@ namespace engine {
 
         virtual void onGamepadDisconnected(int id) {};
 
-        virtual void onGamepadAxis(int id, GamePad::Axis axis, double amount) {};
+        virtual void onGamepadAxis(int id, GamePadAxis axis, double amount) {};
 
-        virtual void onGamepadButtonDown(int id, GamePad::Button button) {};
+        virtual void onGamepadButtonDown(int id, GamePadButton button) {};
 
-        virtual void onGamepadButtonUp(int id, GamePad::Button button) {};
+        virtual void onGamepadButtonUp(int id, GamePadButton button) {};
     };
 }
 

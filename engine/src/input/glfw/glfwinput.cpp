@@ -76,22 +76,29 @@ namespace engine {
         //GLFW Does not appear to send connected events for joysticks which are already connected when the application starts.
         for (int i = GLFW_JOYSTICK_1; i < GLFW_JOYSTICK_16; i++) {
             if (glfwJoystickIsGamepad(i)) {
-                gamepads.insert(i);
+                gamepads[i] = GamePad();
                 for (auto listener: listeners)
                     listener->onGamepadConnected(i);
             }
         }
 
         glfwSetJoystickCallback(engine::glfwJoystickCallback);
+
+        listeners.insert(this);
+
+        //GLFW Supports only one keyboard and mouse
+        keyboards[0] = Keyboard();
+        mice[0] = Mouse();
     }
 
     GLFWInput::~GLFWInput() {
         std::lock_guard<std::mutex> guard(windowMappingMutex);
         windowMapping.erase(&wndH);
+        listeners.erase(this);
     }
 
     void GLFWInput::glfwKeyCallback(int key, int scancode, int action, int mods) {
-        Keyboard::Key k = GLFWTypeConverter::convertKey(key);
+        KeyboardKey k = GLFWTypeConverter::convertKey(key);
         bool kd = action != GLFW_RELEASE;
         for (auto listener: listeners) {
             if (kd)
@@ -111,18 +118,20 @@ namespace engine {
         switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(Mouse::LEFT);
+                    listener->onMouseKeyDown(LEFT);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_MIDDLE:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(Mouse::MIDDLE);
+                    listener->onMouseKeyDown(MIDDLE);
                 }
                 break;
             case GLFW_MOUSE_BUTTON_RIGHT:
                 for (auto listener: listeners) {
-                    listener->onMouseKeyDown(Mouse::RIGHT);
+                    listener->onMouseKeyDown(RIGHT);
                 }
+                break;
+            default:
                 break;
         }
     }
@@ -131,7 +140,7 @@ namespace engine {
         if (glfwJoystickIsGamepad(jid)) {
             switch (event) {
                 case GLFW_CONNECTED:
-                    gamepads.insert(jid);
+                    gamepads[jid] = GamePad();
                     for (auto listener: listeners)
                         listener->onGamepadConnected(jid);
                     break;
@@ -165,44 +174,6 @@ namespace engine {
         throw std::runtime_error("Not Implemented");
     }
 
-    bool GLFWInput::getKey(Keyboard::Key key) {
-        return glfwGetKey(&wndH, GLFWTypeConverter::convertKey(key)) == GLFW_PRESS;
-    }
-
-    bool GLFWInput::getMouseButton(Mouse::Button key) {
-        return glfwGetMouseButton(&wndH, GLFWTypeConverter::convertMouseKey(key)) == GLFW_PRESS;
-    }
-
-    Vec2d GLFWInput::getMousePosition() {
-        Vec2d ret;
-        glfwGetCursorPos(&wndH, &ret.x, &ret.y);
-        return ret;
-    }
-
-    std::set<int> GLFWInput::getGamepads() {
-        return gamepads;
-    }
-
-    std::string GLFWInput::getGamepadName(int id) {
-        return glfwGetGamepadName(id);
-    }
-
-    float GLFWInput::getGamepadAxis(int id, GamePad::Axis axis) {
-        GLFWgamepadstate state;
-        if (!glfwGetGamepadState(id, &state)) {
-            throw std::runtime_error("Failed to get axis for gamepad " + std::to_string(id));
-        }
-        return state.axes[GLFWTypeConverter::convertGamepadAxis(axis)];
-    }
-
-    bool GLFWInput::getGamepadButton(int id, GamePad::Button button) {
-        GLFWgamepadstate state;
-        if (!glfwGetGamepadState(id, &state)) {
-            throw std::runtime_error("Failed to get button for gamepad " + std::to_string(id));
-        }
-        return state.buttons[GLFWTypeConverter::convertGamepadButton(button)];
-    }
-
     //TODO: Implement cursor image change
     void GLFWInput::setMouseCursorImage(const Image<ColorRGBA> &image) {
         throw std::runtime_error("Not implemented");
@@ -210,6 +181,63 @@ namespace engine {
 
     void GLFWInput::clearMouseCursorImage() {
         throw std::runtime_error("Not implemented");
+    }
+
+    const std::map<int, Keyboard> &GLFWInput::getKeyboards() const {
+        return keyboards;
+    }
+
+    const std::map<int, Mouse> &GLFWInput::getMice() const {
+        return mice;
+    }
+
+    const std::map<int, GamePad> &GLFWInput::getGamePads() const {
+        return gamepads;
+    }
+
+    void GLFWInput::onKeyDown(KeyboardKey key) {
+        keyboards[0].keysDown.insert(key);
+    }
+
+    void GLFWInput::onKeyUp(KeyboardKey key) {
+        keyboards[0].keysDown.erase(key);
+    }
+
+    void GLFWInput::onMouseMove(double xPos, double yPos) {
+        mice[0].position.x = xPos;
+        mice[0].position.y = yPos;
+    }
+
+    void GLFWInput::onMouseWheelScroll(double amount) {
+        mice[0].wheelDelta = amount;
+    }
+
+    void GLFWInput::onMouseKeyDown(MouseButton key) {
+        mice[0].buttonsDown.insert(key);
+    }
+
+    void GLFWInput::onMouseKeyUp(MouseButton key) {
+        mice[0].buttonsDown.erase(key);
+    }
+
+    void GLFWInput::onGamepadConnected(int id) {
+        gamepads[id] = GamePad();
+    }
+
+    void GLFWInput::onGamepadDisconnected(int id) {
+        gamepads.erase(id);
+    }
+
+    void GLFWInput::onGamepadAxis(int id, GamePadAxis axis, double amount) {
+        gamepads[id].axies.at(axis) = amount;
+    }
+
+    void GLFWInput::onGamepadButtonDown(int id, GamePadButton button) {
+        gamepads[id].buttonsDown.insert(button);
+    }
+
+    void GLFWInput::onGamepadButtonUp(int id, GamePadButton button) {
+        gamepads[id].buttonsDown.erase(button);
     }
 }
 

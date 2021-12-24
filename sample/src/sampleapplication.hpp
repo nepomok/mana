@@ -221,10 +221,10 @@ protected:
     }
 
 private:
-    void onKeyDown(Keyboard::Key key) override {
-        if (key == Keyboard::KEY_F1) {
+    void onKeyDown(KeyboardKey key) override {
+        if (key == KEY_F1) {
             debugWindow.setLayerActive("ImGui", !debugWindow.getLayerActive("ImGui"));
-        } else if (key == Keyboard::KEY_F2) {
+        } else if (key == KEY_F2) {
             auto &cmgr = ecs.getEntityManager().getComponentManager();
             auto comp = cmgr.lookup<AudioSourceComponent>(cameraEntity);
             comp.play = !comp.play;
@@ -232,7 +232,7 @@ private:
         }
     }
 
-    void onKeyUp(Keyboard::Key key) override {}
+    void onKeyUp(KeyboardKey key) override {}
 
     void drawLoadingScreen(float progress) {
         if (progress > 1)

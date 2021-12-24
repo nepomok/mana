@@ -23,19 +23,28 @@
 #include "engine/math/vector2.hpp"
 
 namespace engine {
-    namespace Mouse {
-        enum Button {
-            LEFT,
-            MIDDLE,
-            RIGHT,
-            OPTIONAL_1,
-            OPTIONAL_2,
-            OPTIONAL_3,
-            OPTIONAL_4,
-            OPTIONAL_5,
-            BUTTON_UNDEFINED
-        };
-    }
+    enum MouseButton {
+        LEFT,
+        MIDDLE,
+        RIGHT,
+        OPTIONAL_1,
+        OPTIONAL_2,
+        OPTIONAL_3,
+        OPTIONAL_4,
+        OPTIONAL_5,
+        MOUSE_BUTTON_UNDEFINED
+    };
+
+    class Mouse {
+    public:
+        bool getButton(MouseButton button) const {
+            return buttonsDown.find(button) != buttonsDown.end();
+        }
+
+        double wheelDelta;
+        Vec2d position;
+        std::set<MouseButton> buttonsDown;
+    };
 }
 
 #endif //MANA_MOUSE_HPP

@@ -43,19 +43,11 @@ namespace engine {
 
         virtual void clearMouseCursorImage() = 0;
 
-        virtual bool getKey(Keyboard::Key key) = 0;
+        virtual const std::map<int, Keyboard> &getKeyboards() const = 0;
 
-        virtual bool getMouseButton(Mouse::Button button) = 0;
+        virtual const std::map<int, Mouse> &getMice() const = 0;
 
-        virtual Vec2d getMousePosition() = 0;
-
-        virtual std::set<int> getGamepads() = 0;
-
-        virtual std::string getGamepadName(int id) = 0;
-
-        virtual float getGamepadAxis(int id, GamePad::Axis axis) = 0;
-
-        virtual bool getGamepadButton(int id, GamePad::Button button) = 0;
+        virtual const std::map<int, GamePad> &getGamePads() const = 0;
     };
 }
 
