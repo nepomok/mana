@@ -5,10 +5,10 @@
 #include "engine/ecs/system.hpp"
 
 
-#include "engine/audio/audiodevice.hpp"
 #include "engine/ecs/components/audio/audiosourcecomponent.hpp"
 #include "engine/ecs/components/transformcomponent.hpp"
 
+#include "platform/audio/audiodevice.hpp"
 
 namespace engine {
     class AudioSystem : public System, ComponentPool<AudioSourceComponent>::Listener {

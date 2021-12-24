@@ -20,12 +20,12 @@
 #ifndef MANA_IMGUICOMPAT_HPP
 #define MANA_IMGUICOMPAT_HPP
 
-#include "engine/render/api/graphicsbackend.hpp"
-#include "engine/render/api/rendertarget.hpp"
+#include "platform/graphics/graphicsbackend.hpp"
+#include "platform/graphics/rendertarget.hpp"
 
-#include "engine/display/displaybackend.hpp"
+#include "platform/display/displaybackend.hpp"
 
-#include "engine/display/window.hpp"
+#include "platform/display/window.hpp"
 
 namespace engine {
     namespace ImGuiCompat {

@@ -24,11 +24,11 @@
 #include <thread>
 #include <iomanip>
 
-#include "engine/display/displaymanager.hpp"
 #include "engine/ecs/ecs.hpp"
 #include "engine/io/archive.hpp"
-
 #include "engine/compat/imgui/imguicompat.hpp"
+
+#include "platform/display/displaymanager.hpp"
 
 #include "imgui.h"
 

@@ -25,7 +25,7 @@
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions_3_3_Core>
 
-#include "engine/render/api/rendertarget.hpp"
+#include "platform/graphics/rendertarget.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
 
 namespace engine {

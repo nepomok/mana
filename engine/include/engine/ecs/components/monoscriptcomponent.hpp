@@ -20,7 +20,7 @@
 #ifndef MANA_MONOSCRIPTCOMPONENT_HPP
 #define MANA_MONOSCRIPTCOMPONENT_HPP
 
-#include "engine/script/script.hpp"
+#include "platform/script/script.hpp"
 
 namespace engine {
     struct MonoScriptComponent {

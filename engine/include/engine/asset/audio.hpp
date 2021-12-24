@@ -20,7 +20,7 @@
 #ifndef MANA_AUDIO_HPP
 #define MANA_AUDIO_HPP
 
-#include "engine/audio/audioformat.hpp"
+#include "platform/audio/audioformat.hpp"
 
 #include "engine/asset/asset.hpp"
 

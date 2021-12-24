@@ -22,7 +22,7 @@
 
 #include "engine/ecs/system.hpp"
 
-#include "engine/physics/3d/world3d.hpp"
+#include "platform/physics/3d/world3d.hpp"
 
 namespace engine {
     class Physics3DSystem : public System {

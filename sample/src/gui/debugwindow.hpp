@@ -22,7 +22,7 @@
 
 #include "imgui.h"
 
-#include "engine/display/window.hpp"
+#include "platform/display/window.hpp"
 
 #include "engine/render/deferred/passes/imguipass.hpp"
 

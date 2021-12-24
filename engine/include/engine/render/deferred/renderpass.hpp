@@ -24,8 +24,8 @@
 #include "engine/asset/scene.hpp"
 #include "geometrybuffer.hpp"
 
-#include "engine/render/api/renderer.hpp"
-#include "engine/render/api/renderdevice.hpp"
+#include "platform/graphics/renderer.hpp"
+#include "platform/graphics/renderdevice.hpp"
 
 namespace engine {
     /**

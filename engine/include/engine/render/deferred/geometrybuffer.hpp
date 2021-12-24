@@ -22,8 +22,8 @@
 
 #include <memory>
 
-#include "engine/render/api/renderdevice.hpp"
-#include "engine/render/api/texturebuffer.hpp"
+#include "platform/graphics/renderdevice.hpp"
+#include "platform/graphics/texturebuffer.hpp"
 
 namespace engine {
     /**

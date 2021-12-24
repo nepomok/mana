@@ -22,10 +22,10 @@
 
 #include "engine/ecs/system.hpp"
 
-#include "engine/script/mono/monoscript.hpp"
-#include "engine/script/mono/monocppassembly.hpp"
+#include "platform/script/mono/monoscript.hpp"
+#include "platform/script/mono/monocppassembly.hpp"
 
-#include "engine/input/input.hpp"
+#include "platform/input/input.hpp"
 #include "engine/io/archive.hpp"
 
 namespace engine {

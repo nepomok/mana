@@ -20,7 +20,7 @@
 #ifndef MANA_TEXTURE_HPP
 #define MANA_TEXTURE_HPP
 
-#include "engine/render/api/texturebuffer.hpp"
+#include "platform/graphics/texturebuffer.hpp"
 #include "engine/asset/assetpath.hpp"
 
 namespace engine {

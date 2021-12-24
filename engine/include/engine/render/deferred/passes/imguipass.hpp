@@ -24,7 +24,7 @@
 
 #include "engine/render/deferred/renderpass.hpp"
 
-#include "engine/display/window.hpp"
+#include "platform/display/window.hpp"
 
 namespace engine {
     class ImGuiPass : public RenderPass {

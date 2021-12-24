@@ -22,7 +22,7 @@
 
 #include "geometrybuffer.hpp"
 
-#include "engine/render/api/rendercommand.hpp"
+#include "platform/graphics/rendercommand.hpp"
 
 namespace engine {
     /**

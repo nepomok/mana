@@ -20,7 +20,7 @@
 #ifndef MANA_MONOSYNCCOMPONENT_HPP
 #define MANA_MONOSYNCCOMPONENT_HPP
 
-#include "engine/script/script.hpp"
+#include "platform/script/script.hpp"
 
 namespace engine {
     struct MonoSyncComponent {

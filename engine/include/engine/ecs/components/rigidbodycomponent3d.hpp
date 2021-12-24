@@ -20,7 +20,7 @@
 #ifndef MANA_RIGIDBODYCOMPONENT3D_HPP
 #define MANA_RIGIDBODYCOMPONENT3D_HPP
 
-#include "engine/physics/3d/rigidbody3d.hpp"
+#include "platform/physics/3d/rigidbody3d.hpp"
 
 namespace engine {
     struct RigidBodyComponent3D {

@@ -21,6 +21,7 @@
 #define MANA_SAMPLEAPPLICATION_HPP
 
 #include "engine.hpp"
+#include "platform.hpp"
 
 #include <filesystem>
 #include <memory>

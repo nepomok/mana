@@ -24,13 +24,13 @@
 #include <map>
 #include <typeindex>
 
-#include "engine/render/api/renderer.hpp"
-#include "engine/render/api/renderdevice.hpp"
+#include "platform/graphics/renderer.hpp"
+#include "platform/graphics/renderdevice.hpp"
 #include "engine/render/shader/shadercompiler.hpp"
 
 #include "engine/asset/manager/assetrendermanager.hpp"
-#include "engine/render/deferred/renderpass.hpp"
-#include "engine/render/deferred/compositor.hpp"
+#include "renderpass.hpp"
+#include "compositor.hpp"
 
 #include "engine/asset/scene.hpp"
 

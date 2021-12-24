@@ -3,7 +3,7 @@
 
 #include "engine/asset/scene.hpp"
 
-#include "engine/render/api/renderer.hpp"
+#include "platform/graphics/renderer.hpp"
 
 namespace engine {
     namespace ForwardRenderer {

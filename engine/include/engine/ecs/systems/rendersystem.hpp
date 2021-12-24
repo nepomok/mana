@@ -24,16 +24,13 @@
 #include <string>
 
 #include "engine/ecs/system.hpp"
-
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
-
 #include "engine/render/deferred/deferredrenderer.hpp"
-#include "engine/display/window.hpp"
-
 #include "engine/io/archive.hpp"
-
 #include "engine/asset/assetimporter.hpp"
+
+#include "platform/display/window.hpp"
 
 namespace engine {
     class ECS;
