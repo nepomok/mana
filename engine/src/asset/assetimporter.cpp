@@ -245,7 +245,8 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element.value("asset", "");
 
-                ret.add<Image<ColorRGBA>>(name, new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
+                ret.add<Image<ColorRGBA>>(name,
+                                          new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
             }
         }
 
@@ -368,14 +369,26 @@ namespace engine {
 
     sf_count_t sf_vio_seek(sf_count_t offset, int whence, void *user_data) {
         auto *buffer = reinterpret_cast<LibSndBuffer *>(user_data);
-        buffer->pos = offset;
+        switch (whence) {
+            case SF_SEEK_SET:
+                buffer->pos = offset;
+                break;
+            case SF_SEEK_CUR:
+                buffer->pos += offset;
+                break;
+            case SF_SEEK_END:
+                buffer->pos = buffer->data.size() - offset;
+                break;
+            default:
+                throw std::runtime_error("Invalid whence");
+        }
         return buffer->pos;
     }
 
     sf_count_t sf_vio_read(void *ptr, sf_count_t count, void *user_data) {
         auto *buffer = reinterpret_cast<LibSndBuffer *>(user_data);
         sf_count_t ret;
-        for (ret = 0; ret <= count && buffer->pos + ret < buffer->data.size(); ret++) {
+        for (ret = 0; ret < count && buffer->pos + ret < buffer->data.size(); ret++) {
             static_cast<char *>(ptr)[ret] = buffer->data.at(buffer->pos + ret);
         }
         buffer->pos += ret;
@@ -388,7 +401,7 @@ namespace engine {
 
     sf_count_t sf_vio_tell(void *user_data) {
         auto *buffer = reinterpret_cast<LibSndBuffer *>(user_data);
-        return buffer->data.size();
+        return buffer->pos;
     }
 
     static Audio readAudio(const std::string &buf) {
@@ -464,19 +477,22 @@ namespace engine {
 
     AssetBundle AssetImporter::import(std::istream &stream, const std::string &hint, Archive *archive) {
         if (hint.empty()) {
-            //Try to read source as image
             std::string buffer((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-            int x, y, n;
-            if (stbi_info_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
-                                      buffer.size(),
-                                      &x,
-                                      &y,
-                                      &n) == 1) {
-                //Source is image
-                AssetBundle ret;
-                ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
-                return ret;
-            }
+
+            try {
+                //Try to read source as image
+                int x, y, n;
+                if (stbi_info_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
+                                          buffer.size(),
+                                          &x,
+                                          &y,
+                                          &n) == 1) {
+                    //Source is image
+                    AssetBundle ret;
+                    ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
+                    return ret;
+                }
+            } catch (const std::exception &e) {}
 
             //Try to read source as json
             try {
@@ -484,12 +500,12 @@ namespace engine {
                     throw std::runtime_error("Null archive while parsing json");
 
                 return readJsonBundle(stream, *archive, ThreadPool::pool);
-            } catch (std::exception &e) {}
+            } catch (const std::exception &e) {}
 
             //Try to read source as asset
             try {
                 return readAsset(buffer, hint, archive);
-            } catch (std::exception &e) {}
+            } catch (const std::exception &e) {}
 
             //Try to read source as audio
             auto audio = readAudio(buffer);
@@ -508,18 +524,22 @@ namespace engine {
                     std::string buffer((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
                     return readAsset(buffer, hint, archive);
                 } else {
-                    //Try to read source as image
                     std::string buffer((std::istreambuf_iterator<char>(stream)), std::istreambuf_iterator<char>());
-                    int x, y, n;
-                    if (stbi_info_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
-                                              buffer.size(),
-                                              &x,
-                                              &y,
-                                              &n) == 1) {
-                        AssetBundle ret;
-                        ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
-                        return ret;
-                    }
+
+                    try {
+                        //Try to read source as image
+
+                        int x, y, n;
+                        if (stbi_info_from_memory(reinterpret_cast<const stbi_uc *>(buffer.data()),
+                                                  buffer.size(),
+                                                  &x,
+                                                  &y,
+                                                  &n) == 1) {
+                            AssetBundle ret;
+                            ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
+                            return ret;
+                        }
+                    } catch (const std::exception &e) {}
 
                     //Try to read source as audio
                     auto audio = readAudio(buffer);

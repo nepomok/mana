@@ -52,7 +52,11 @@ public:
 
 protected:
     void start() override {
-        renderSystem = new RenderSystem(*window, *archive, {});
+
+        assetManager = std::make_unique<AssetManager>(*archive);
+        audioDevice = AudioDevice::createDevice(engine::OpenAL);
+
+        renderSystem = new RenderSystem(*window, *archive, {}, *assetManager);
 
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
         drawLoadingScreen(0.1);
@@ -73,6 +77,7 @@ protected:
                 {
                         new PlayerInputSystem(window->getInput()),
                         new TransformAnimationSystem(),
+                        new AudioSystem(*audioDevice, *assetManager),
                         renderSystem
                 }
         ));
@@ -145,11 +150,11 @@ protected:
 
         auto planeEntity = entityManager.getByName("Plane");
         componentManager.create<TransformAnimationComponent>(planeEntity, {{},
-                                                                            {5.57281, 4.985, 7.78}});
+                                                                           {5.57281, 4.985, 7.78}});
 
         auto sphereEntity = entityManager.getByName("Sphere");
         componentManager.create<TransformAnimationComponent>(sphereEntity, {{},
-                                                                           {7.151281, 61.985, 24.78}});
+                                                                            {7.151281, 61.985, 24.78}});
         window->getInput().addListener(*this);
 
         drawLoadingScreen(1);
@@ -257,8 +262,11 @@ private:
     unsigned long drawCalls = 0;// The number of draw calls in the last update
 
     RenderSystem *renderSystem{};
+    std::unique_ptr<AudioDevice> audioDevice;
 
     DebugWindow debugWindow;
+
+    std::unique_ptr<AssetManager> assetManager;
 
     std::unique_ptr<Renderer2D> ren2d;
 

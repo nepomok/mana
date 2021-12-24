@@ -158,4 +158,6 @@
 #include "engine/async/threadpool.hpp"
 #include "engine/async/task.hpp"
 
+#include "engine/ecs/systems/audiosystem.hpp"
+
 #endif // MANA_HPP

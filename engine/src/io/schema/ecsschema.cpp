@@ -257,19 +257,40 @@ namespace engine {
         return message;
     }
 
+    AudioSourceComponent &operator<<(AudioSourceComponent &component, const Message &message) {
+        if (message.getMap().find("audio") != message.getMap().end()) {
+            component.audioPath = AssetPath(message["audio"]["bundle"], message["audio"]["asset"]);
+            component.play = message.value("play", false);
+            component.loop = message.value("loop", false);
+        }
+        return component;
+    }
+
+    Message &operator<<(Message &message, const AudioSourceComponent &component) {
+        return message;
+    }
+
+    AudioListenerComponent &operator<<(AudioListenerComponent &component, const Message &message) {
+        return component;
+    }
+
+    Message &operator<<(Message &message, const AudioListenerComponent &component) {
+        return message;
+    }
+
     EntityManager &operator<<(EntityManager &entityManager, const Message &message) {
         auto &componentManager = entityManager.getComponentManager();
 
         entityManager.clear();
 
         auto entities = message.getMap().at("entities").getMap();
-        for (auto &entity : entities) {
+        for (auto &entity: entities) {
             auto ent = entityManager.create();
 
             entityManager.setName(ent, entity.first);
 
             auto components = entity.second.getMap().at("components").getVector();
-            for (auto &component : components) {
+            for (auto &component: components) {
                 auto componentType = component.at("componentType").getString();
                 if (componentType == "transform") {
                     TransformComponent comp;
@@ -301,6 +322,14 @@ namespace engine {
                     SkyboxComponent comp;
                     comp << component;
                     componentManager.create<SkyboxComponent>(ent, comp);
+                } else if (componentType == "audio_listener") {
+                    AudioListenerComponent comp;
+                    comp << component;
+                    componentManager.create<AudioListenerComponent>(ent, comp);
+                } else if (componentType == "audio_source"){
+                    AudioSourceComponent comp;
+                    comp << component;
+                    componentManager.create<AudioSourceComponent>(ent, comp);
                 } else {
                     throw std::runtime_error("Invalid component type " + componentType);
                 }

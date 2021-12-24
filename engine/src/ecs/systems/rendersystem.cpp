@@ -34,12 +34,15 @@
 #include "engine/asset/assetimporter.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(Window &window, Archive &archive, const std::set<RenderPass *> &passes)
+    RenderSystem::RenderSystem(Window &window,
+                               Archive &archive,
+                               const std::set<RenderPass *> &passes,
+                               AssetManager &assetManager)
             : screenTarget(window.getRenderTarget()),
               device(window.getRenderDevice()),
               ren(),
               archive(archive),
-              assetManager(archive),
+              assetManager(assetManager),
               assetRenderManager(assetManager, device.getAllocator()) {
         ren = std::make_unique<DeferredRenderer>(device, assetRenderManager);
         for (auto &pass: passes)

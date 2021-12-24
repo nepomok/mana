@@ -46,6 +46,20 @@
         {
           "enabled": true,
           "componentType": "sync_mono"
+        },
+        {
+          "enabled": true,
+          "componentType": "audio_listener"
+        },
+        {
+          "enabled": true,
+          "componentType": "audio_source",
+          "audio": {
+            "bundle": "/audio/Farbro-Tectonic.wav",
+            "asset": ""
+          },
+          "play": true,
+          "loop": true
         }
       ]
     },

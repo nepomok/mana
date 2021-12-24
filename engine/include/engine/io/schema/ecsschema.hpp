@@ -22,6 +22,9 @@
 
 #include "engine/io/message.hpp"
 
+#include "engine/ecs/components/audio/audiosourcecomponent.hpp"
+#include "engine/ecs/components/audio/audiolistenercomponent.hpp"
+
 #include "engine/ecs/components.hpp"
 #include "engine/ecs/entitymanager.hpp"
 
@@ -66,6 +69,14 @@ namespace engine {
     MonoSyncComponent &operator<<(MonoSyncComponent &component, const Message &message);
 
     Message &operator<<(Message &message, const MonoSyncComponent &component);
+
+    AudioSourceComponent &operator<<(AudioSourceComponent &component, const Message &message);
+
+    Message &operator <<(Message &message, const AudioSourceComponent &component);
+
+    AudioListenerComponent &operator<<(AudioListenerComponent &component, const Message &message);
+
+    Message &operator <<(Message &message, const AudioListenerComponent &component);
 
     EntityManager &operator<<(EntityManager &manager, const Message &message);
 
