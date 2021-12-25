@@ -26,7 +26,7 @@
 #include "platform/script/mono/monocppassembly.hpp"
 
 #include "platform/input/input.hpp"
-#include "engine/io/archive.hpp"
+#include "../../../../../platform/include/platform/io/archive.hpp"
 
 namespace engine {
     class MonoScriptingSystem : public System, InputListener {

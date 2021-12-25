@@ -27,7 +27,7 @@
 #include "engine/ecs/components/meshrendercomponent.hpp"
 #include "engine/ecs/components/skyboxcomponent.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
-#include "engine/io/archive.hpp"
+#include "../../../../../platform/include/platform/io/archive.hpp"
 #include "engine/asset/assetimporter.hpp"
 
 #include "platform/display/window.hpp"

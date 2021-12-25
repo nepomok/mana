@@ -23,7 +23,7 @@
 #include <array>
 
 #include "engine/asset/assetpath.hpp"
-#include "common/color.hpp"
+#include "platform/common/color.hpp"
 
 namespace engine {
     struct Skybox {

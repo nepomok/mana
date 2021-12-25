@@ -20,7 +20,7 @@
 #ifndef MANA_TRANSFORMCOMPONENT_HPP
 #define MANA_TRANSFORMCOMPONENT_HPP
 
-#include "common/transform.hpp"
+#include "platform/common/transform.hpp"
 
 #include <string>
 

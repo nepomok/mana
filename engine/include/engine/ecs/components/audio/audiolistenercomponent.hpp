@@ -1,7 +1,7 @@
 #ifndef MANA_AUDIOLISTENERCOMPONENT_HPP
 #define MANA_AUDIOLISTENERCOMPONENT_HPP
 
-#include "common/vector3.hpp"
+#include "platform/common/vector3.hpp"
 
 namespace engine {
     struct AudioListenerComponent {
