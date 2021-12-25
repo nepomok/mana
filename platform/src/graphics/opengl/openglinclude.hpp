@@ -20,6 +20,6 @@
 #ifndef MANA_OPENGLINCLUDE_HPP
 #define MANA_OPENGLINCLUDE_HPP
 
-#include "../../../../extern/include/glad.h"
+#include "glad.h"
 
 #endif //MANA_OPENGLINCLUDE_HPP

@@ -27,9 +27,9 @@
 
 #include <sndfile.h>
 
-#include "../../../extern/include/stb_image.h"
+#include "stb_image.h"
+#include "json.hpp"
 #include "platform/async/threadpool.hpp"
-#include "../../../extern/include/json.hpp"
 #include "platform/common/mesh.hpp"
 
 #include "platform/audio/audioformat.hpp"

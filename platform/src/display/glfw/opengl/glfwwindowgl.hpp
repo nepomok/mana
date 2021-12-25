@@ -22,7 +22,7 @@
 
 #include <set>
 
-#include "../../../../../extern/include/glad.h"
+#include "glad.h"
 
 #include "platform/display/window.hpp"
 #include "platform/display/windowattributes.hpp"
