@@ -20,7 +20,7 @@
 #ifndef MANA_COLLIDERCOMPONENT3D_HPP
 #define MANA_COLLIDERCOMPONENT3D_HPP
 
-#include "engine/math/vector3.hpp"
+#include "common/vector3.hpp"
 
 namespace engine {
     struct ColliderComponent3D {

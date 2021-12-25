@@ -9,6 +9,10 @@ set(Engine.Dir.SRC engine/src/engine/)
 
 file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c)
 
+set(Engine.Dir.SRC engine/src/engine/)
+
+file(GLOB_RECURSE Engine.File.SRC ${Engine.Dir.SRC}*.cpp ${Engine.Dir.SRC}*.c engine/src/common/*.cpp engine/src/common/*.c)
+
 add_library(mana-engine SHARED ${Engine.File.SRC})
 
 target_include_directories(mana-engine PUBLIC engine/include/)

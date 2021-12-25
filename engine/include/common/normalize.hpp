@@ -20,9 +20,9 @@
 #ifndef MANA_NORMALIZE_HPP
 #define MANA_NORMALIZE_HPP
 
-#include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
-#include "engine/math/vector4.hpp"
+#include "common/vector2.hpp"
+#include "common/vector3.hpp"
+#include "common/vector4.hpp"
 
 namespace engine {
     template<typename T>

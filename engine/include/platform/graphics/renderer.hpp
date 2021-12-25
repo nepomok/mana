@@ -20,7 +20,7 @@
 #ifndef MANA_RENDERER_HPP
 #define MANA_RENDERER_HPP
 
-#include "engine/asset/image.hpp"
+#include "common/image.hpp"
 #include "rendercommand.hpp"
 #include "rendertarget.hpp"
 #include "meshbuffer.hpp"

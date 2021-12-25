@@ -23,8 +23,8 @@
 #include <vector>
 #include <cassert>
 
-#include "engine/math/vector4.hpp"
-#include "engine/math/vector3.hpp"
+#include "common/vector3.hpp"
+#include "common/vector4.hpp"
 
 namespace engine {
     /**

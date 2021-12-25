@@ -20,15 +20,15 @@
 #ifndef MANA_SHADER_HPP
 #define MANA_SHADER_HPP
 
-#include "engine/asset/shadersource.hpp"
+#include "platform/graphics/shadersource.hpp"
 
 #include "engine/asset/asset.hpp"
 
 namespace engine {
-    struct Shader : public Asset {
+    struct Shader : public AssetBase {
         ~Shader() override = default;
 
-        Asset *clone() override {
+        AssetBase *clone() override {
             return new Shader(*this);
         }
 

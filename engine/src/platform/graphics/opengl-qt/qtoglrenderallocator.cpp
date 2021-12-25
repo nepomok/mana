@@ -30,12 +30,12 @@ namespace engine {
         static std::string getGlslSource(const ShaderSource &source) {
             auto ret = source;
             switch (source.getLanguage()) {
-                case ShaderCompiler::GLSL_460:
-                case ShaderCompiler::GLSL_460_VK:
-                case ShaderCompiler::GLSL_ES_320:
+                case GLSL_460:
+                case GLSL_460_VK:
+                case GLSL_ES_320:
                     break;
                 default:
-                    ret.crossCompile(ShaderCompiler::GLSL_460);
+                    ret.crossCompile(GLSL_460);
                     break;
             }
             return ret.getSrc();
@@ -394,7 +394,7 @@ namespace engine {
             if (fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
-            if (language == ShaderCompiler::HLSL_SHADER_MODEL_4)
+            if (language == HLSL_SHADER_MODEL_4)
                 prefix = "Globals.";
             return std::make_unique<QtOGLShaderProgram>(getGlslSource(vertexShader), "", getGlslSource(fragmentShader),
                                                         prefix);
@@ -409,7 +409,7 @@ namespace engine {
                 || fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
             std::string prefix;
-            if (language == ShaderCompiler::HLSL_SHADER_MODEL_4)
+            if (language == HLSL_SHADER_MODEL_4)
                 prefix = "Globals.";
             return std::make_unique<QtOGLShaderProgram>(getGlslSource(vertexShader),
                                                         getGlslSource(geometryShader),

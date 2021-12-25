@@ -23,8 +23,8 @@
 #include <cassert>
 #include <vector>
 
-#include "engine/math/rectangle.hpp"
-#include "engine/math/vector2.hpp"
+#include "common/rectangle.hpp"
+#include "common/vector2.hpp"
 
 namespace engine {
     class Grid {

@@ -23,10 +23,8 @@
 #include <vector>
 #include <stdexcept>
 
-#include "engine/asset/color.hpp"
-#include "engine/asset/asset.hpp"
-
-#include "engine/math/rectangle.hpp"
+#include "common/color.hpp"
+#include "common/rectangle.hpp"
 
 namespace engine {
     /**
@@ -35,7 +33,7 @@ namespace engine {
      * @tparam T The type to use for a pixel
      */
     template<typename T>
-    class Image : public Asset {
+    class Image {
     public:
         Image()
                 : size(), buffer() {}
@@ -53,8 +51,6 @@ namespace engine {
 
         Image(Image &&other) noexcept: size(std::move(other.size)), buffer(std::move(other.buffer)) {}
 
-        ~Image() override = default;
-
         Image &operator=(const Image &copy) {
             this->size = copy.size;
             this->buffer = std::vector<T>(copy.buffer);
@@ -65,10 +61,6 @@ namespace engine {
             this->size = std::move(other.size);
             this->buffer = std::move(other.buffer);
             return *this;
-        }
-
-        Asset *clone() override {
-            return new Image<T>(*this);
         }
 
         Vec2i getSize() const { return size; }

@@ -27,10 +27,10 @@
 
 #include <sndfile.h>
 
-#include "engine/extern/stb_image.h"
+#include "common/extern/stb_image.h"
 #include "engine/async/threadpool.hpp"
-#include "engine/extern/json.hpp"
-#include "engine/asset/mesh.hpp"
+#include "common/extern/json.hpp"
+#include "common/mesh.hpp"
 
 #include "platform/audio/audioformat.hpp"
 
@@ -161,7 +161,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element["asset"];
 
-                ret.add<Mesh>(name, new Mesh(refBundles.at(bundle).get<Mesh>(asset)));
+                ret.add<Mesh>(name, refBundles.at(bundle).get<Mesh>(asset));
             }
         }
 
@@ -173,7 +173,7 @@ namespace engine {
                 auto it = element.find("bundle");
                 if (it != element.end()) {
                     std::string n = element.value("asset", "");
-                    ret.add<Material>(name, new Material(refBundles.at(*it).get<Material>(n)));
+                    ret.add<Material>(name, refBundles.at(*it).get<Material>(n));
                 } else {
                     Material mat;
 
@@ -221,7 +221,7 @@ namespace engine {
                         mat.normalTexture = path;
                     }
 
-                    ret.add<Material>(name, new Material(mat));
+                    ret.add<Material>(name, mat);
                 }
             }
         }
@@ -232,7 +232,7 @@ namespace engine {
                 std::string name = element["name"];
                 auto s = std::stringstream(element.dump());
                 auto tex = readJsonTexture(s, archive);
-                ret.add<Texture>(name, new Texture(tex));
+                ret.add<Texture>(name, tex);
             }
         }
 
@@ -243,8 +243,7 @@ namespace engine {
                 std::string bundle = element["bundle"];
                 std::string asset = element.value("asset", "");
 
-                ret.add<Image<ColorRGBA>>(name,
-                                          new Image<ColorRGBA>(refBundles.at(bundle).get<Image<ColorRGBA>>(asset)));
+                ret.add<Image<ColorRGBA>>(name, refBundles.at(bundle).get<Image<ColorRGBA>>(asset));
             }
         }
 
@@ -340,7 +339,7 @@ namespace engine {
         for (auto i = 0; i < scene.mNumMeshes; i++) {
             const auto &mesh = dynamic_cast<const aiMesh &>(*scene.mMeshes[i]);
             std::string name = mesh.mName.C_Str();
-            ret.add<Mesh>(name, new Mesh(convertMesh(mesh)));
+            ret.add<Mesh>(name, convertMesh(mesh));
         }
 
         for (auto i = 0; i < scene.mNumMaterials; i++) {
@@ -349,7 +348,7 @@ namespace engine {
             aiString materialName;
             scene.mMaterials[i]->Get(AI_MATKEY_NAME, materialName);
 
-            ret.add<Material>(materialName.data, new Material(material));
+            ret.add<Material>(materialName.data, material);
         }
 
         return ret;
@@ -487,7 +486,7 @@ namespace engine {
                                           &n) == 1) {
                     //Source is image
                     AssetBundle ret;
-                    ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
+                    ret.add<Image<ColorRGBA>>("0", readImage(buffer));
                     return ret;
                 }
             } catch (const std::exception &e) {}
@@ -508,7 +507,7 @@ namespace engine {
             //Try to read source as audio
             auto audio = readAudio(buffer);
             AssetBundle ret;
-            ret.add<Audio>("0", new Audio(audio));
+            ret.add<Audio>("0", audio);
 
             return ret;
         } else {
@@ -534,7 +533,7 @@ namespace engine {
                                                   &y,
                                                   &n) == 1) {
                             AssetBundle ret;
-                            ret.add<Image<ColorRGBA>>("0", new Image<ColorRGBA>(readImage(buffer)));
+                            ret.add<Image<ColorRGBA>>("0", readImage(buffer));
                             return ret;
                         }
                     } catch (const std::exception &e) {}
@@ -542,7 +541,7 @@ namespace engine {
                     //Try to read source as audio
                     auto audio = readAudio(buffer);
                     AssetBundle ret;
-                    ret.add<Audio>("0", new Audio(audio));
+                    ret.add<Audio>("0", audio);
                     return ret;
                 }
             }

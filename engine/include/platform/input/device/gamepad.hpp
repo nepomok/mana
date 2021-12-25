@@ -22,7 +22,7 @@
 
 #include <map>
 
-#include "engine/math/vector2.hpp"
+#include "common/vector2.hpp"
 
 namespace engine {
     enum GamePadAxis {

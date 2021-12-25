@@ -26,10 +26,10 @@
 #include "engine/asset/texture.hpp"
 
 namespace engine {
-    struct Material : public Asset {
+    struct Material : public AssetBase {
         ~Material() override = default;
 
-        Asset *clone() override{
+        AssetBase *clone() override{
             return new Material(*this);
         }
 

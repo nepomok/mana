@@ -41,7 +41,7 @@ namespace engine {
 
             int getMaxSampleCount() override;
 
-            ShaderCompiler::ShaderLanguage getPreferredShaderLanguage() override;
+            ShaderLanguage getPreferredShaderLanguage() override;
 
         private:
             QtOGLRenderer renderer;

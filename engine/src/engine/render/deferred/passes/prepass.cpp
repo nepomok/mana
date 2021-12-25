@@ -21,7 +21,7 @@
 
 #include "engine/render/deferred/passes/prepass.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 #include "engine/render/shader/shaderinclude.hpp"
 #include "engine/asset/assetimporter.hpp"
 
@@ -320,6 +320,7 @@ namespace engine {
 
             RenderCommand c(*shader, command.mesh.getRenderObject<MeshBuffer>());
             c.textures = textures;
+            c.properties.enableFaceCulling = true;
             ren.addCommand(c);
 
             firstCommand = false;

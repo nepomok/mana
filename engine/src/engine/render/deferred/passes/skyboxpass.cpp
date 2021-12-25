@@ -146,13 +146,13 @@ namespace engine {
 
     SkyboxPass::SkyboxPass(RenderDevice &device)
             : device(device) {
-        vert = ShaderSource(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        frag = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        vert = ShaderSource(SHADER_VERT, "main", VERTEX, HLSL_SHADER_MODEL_4);
+        frag = ShaderSource(SHADER_FRAG, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
 
         vert.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+                        ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
         frag.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                        ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+                        ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         auto &allocator = device.getAllocator();
 

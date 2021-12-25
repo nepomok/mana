@@ -20,32 +20,24 @@
 #ifndef MANA_SHADERSOURCE_HPP
 #define MANA_SHADERSOURCE_HPP
 
-#include "engine/render/shader/shadercompiler.hpp"
-
-#include "engine/asset/asset.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 
 namespace engine {
-    class ShaderSource : public Asset {
+    class ShaderSource {
     public:
         ShaderSource() = default;
 
         ShaderSource(std::string src,
                      std::string entryPoint,
-                     ShaderCompiler::ShaderStage stage,
-                     ShaderCompiler::ShaderLanguage language,
+                     ShaderStage stage,
+                     ShaderLanguage language,
                      bool preprocessed = false);
-
-        ~ShaderSource() override = default;
-
-        Asset *clone() override {
-            return new ShaderSource(*this);
-        }
 
         void preprocess(const std::function<std::string(const char *)> &include = {},
                         const std::map<std::string, std::string> &macros = {},
                         ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
-        void crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,
+        void crossCompile(ShaderLanguage targetLanguage,
                                                 ShaderCompiler::OptimizationLevel optimizationLevel = ShaderCompiler::OPTIMIZATION_NONE);
 
         [[nodiscard]] std::vector<uint32_t> compile(ShaderCompiler::OptimizationLevel optimizationLevel
@@ -55,9 +47,9 @@ namespace engine {
 
         const std::string &getEntryPoint() const;
 
-        ShaderCompiler::ShaderStage getStage() const;
+        ShaderStage getStage() const;
 
-        ShaderCompiler::ShaderLanguage getLanguage() const;
+        ShaderLanguage getLanguage() const;
 
         bool isPreProcessed() const;
 
@@ -66,8 +58,8 @@ namespace engine {
     private:
         std::string src{};
         std::string entryPoint{};
-        ShaderCompiler::ShaderStage stage{};
-        ShaderCompiler::ShaderLanguage language{};
+        ShaderStage stage{};
+        ShaderLanguage language{};
         bool preprocessed{};
     };
 }

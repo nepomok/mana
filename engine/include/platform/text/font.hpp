@@ -23,9 +23,9 @@
 #include <istream>
 #include <memory>
 
-#include "engine/math/vector2.hpp"
+#include "common/vector2.hpp"
 
-#include "engine/text/character.hpp"
+#include "character.hpp"
 
 //TODO: Design text metrics / formatting abstraction
 namespace engine {

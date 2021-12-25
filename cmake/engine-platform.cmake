@@ -8,7 +8,7 @@ option(BUILD_ENGINE_AUDIO_OPENAL "Build the OpenAL audio implementation" ON)
 set(Engine.Platform.Dir.INCLUDE engine/include/)
 set(Engine.Platform.Dir.SRC engine/src/platform/)
 
-file(GLOB_RECURSE Engine.Platform.File.SRC ${Engine.Platform.Dir.SRC}*.cpp ${Engine.Platform.Dir.SRC}*.c)
+file(GLOB_RECURSE Engine.Platform.File.SRC ${Engine.Platform.Dir.SRC}*.cpp ${Engine.Platform.Dir.SRC}*.c engine/src/common/*.cpp engine/src/common/*.c)
 
 add_library(mana-engine-platform STATIC ${Engine.Platform.File.SRC})
 

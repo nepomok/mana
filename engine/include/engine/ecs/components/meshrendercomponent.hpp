@@ -20,7 +20,7 @@
 #ifndef MANA_MESHRENDERCOMPONENT_HPP
 #define MANA_MESHRENDERCOMPONENT_HPP
 
-#include "engine/asset/image.hpp"
+#include "common/image.hpp"
 #include "engine/asset/assetpath.hpp"
 
 namespace engine {

@@ -20,10 +20,10 @@
 #ifndef MANA_GRAPHICSMATH_HPP
 #define MANA_GRAPHICSMATH_HPP
 
-#include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
-#include "engine/math/vector4.hpp"
-#include "engine/math/matrix.hpp"
+#include "common/vector2.hpp"
+#include "common/vector3.hpp"
+#include "common/vector4.hpp"
+#include "common/matrix.hpp"
 
 namespace engine {
     namespace MatrixMath {

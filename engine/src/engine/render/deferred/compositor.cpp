@@ -114,8 +114,8 @@ void main()
 namespace engine {
     Compositor::Compositor(RenderDevice &device, std::vector<Layer> layers)
             : device(device), layers(std::move(layers)) {
-        ShaderSource shaderVert(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::GLSL_460);
-        ShaderSource shaderFrag(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::GLSL_460);
+        ShaderSource shaderVert(SHADER_VERT, "main", VERTEX, GLSL_460);
+        ShaderSource shaderFrag(SHADER_FRAG, "main", FRAGMENT, GLSL_460);
         shader = std::unique_ptr<ShaderProgram>(device.getAllocator().createShaderProgram(shaderVert, shaderFrag));
     }
 

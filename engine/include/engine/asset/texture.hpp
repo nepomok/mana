@@ -24,11 +24,7 @@
 #include "engine/asset/assetpath.hpp"
 
 namespace engine {
-    struct Texture : public Asset {
-        Asset *clone() override {
-            return new Texture(*this);
-        }
-
+    struct Texture {
         std::vector<AssetPath> images;
         TextureBuffer::Attributes attributes;
     };

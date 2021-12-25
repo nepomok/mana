@@ -22,13 +22,13 @@
 
 #include "engine/io/message.hpp"
 
-#include "engine/math/grid.hpp"
-#include "engine/math/matrix.hpp"
-#include "engine/math/rectangle.hpp"
-#include "engine/math/transform.hpp"
-#include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
-#include "engine/math/vector4.hpp"
+#include "common/grid.hpp"
+#include "common/matrix.hpp"
+#include "common/rectangle.hpp"
+#include "common/transform.hpp"
+#include "common/vector2.hpp"
+#include "common/vector3.hpp"
+#include "common/vector4.hpp"
 
 namespace engine {
     Grid &operator<<(Grid &grid, const Message &message);

@@ -20,7 +20,7 @@
 #ifndef MANA_WINDOWLISTENER_HPP
 #define MANA_WINDOWLISTENER_HPP
 
-#include "engine/math/vector2.hpp"
+#include "common/vector2.hpp"
 
 namespace engine {
     class WindowListener {

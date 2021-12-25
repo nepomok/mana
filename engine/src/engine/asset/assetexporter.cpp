@@ -19,7 +19,7 @@
 
 #include "engine/asset/assetexporter.hpp"
 
-#include "engine/extern/stb_image_write.h"
+#include "common/extern/stb_image_write.h"
 
 void streamWriteFunc(void *context, void *data, int size) {
     auto &stream = *static_cast<std::ostream *>(context);

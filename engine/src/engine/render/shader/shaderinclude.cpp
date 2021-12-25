@@ -58,11 +58,11 @@ static const std::map<std::string, std::string> gMacros = {{"MAX_LIGHTS", "20"}}
 static const std::function<std::string(const char *)> gIncludeFunc = {includeCallback};
 
 namespace engine {
-    const std::map<std::string, std::string> &ShaderInclude::getShaderMacros(ShaderCompiler::ShaderLanguage lang) {
+    const std::map<std::string, std::string> &ShaderInclude::getShaderMacros(ShaderLanguage lang) {
         switch (lang) {
-            case ShaderCompiler::HLSL_SHADER_MODEL_4:
-            case ShaderCompiler::GLSL_460:
-            case ShaderCompiler::GLSL_ES_320:
+            case HLSL_SHADER_MODEL_4:
+            case GLSL_460:
+            case GLSL_ES_320:
                 return gMacros;
             default:
                 throw std::runtime_error("Not implemented");

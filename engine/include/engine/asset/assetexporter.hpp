@@ -20,8 +20,8 @@
 #ifndef MANA_ASSETEXPORTER_HPP
 #define MANA_ASSETEXPORTER_HPP
 
-#include "engine/asset/image.hpp"
-#include "engine/asset/color.hpp"
+#include "common/image.hpp"
+#include "common/color.hpp"
 
 #include <ostream>
 

@@ -19,10 +19,10 @@
 
 #include "engine/render/deferred/passes/debugpass.hpp"
 #include "engine/render/deferred/passes/prepass.hpp"
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
 #include "engine/render/shader/shaderinclude.hpp"
-#include "engine/math/rotation.hpp"
+#include "common/rotation.hpp"
 #include "engine/async/threadpool.hpp"
 
 //TODO: Fix tangent space to local space texture normal transformation

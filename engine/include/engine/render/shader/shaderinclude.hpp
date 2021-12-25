@@ -24,7 +24,7 @@
 #include <string>
 
 
-#include "shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 
 namespace engine {
     /**
@@ -33,7 +33,7 @@ namespace engine {
      * phong.glsl/hlsl
      */
     namespace ShaderInclude {
-        const std::map<std::string, std::string> &getShaderMacros(ShaderCompiler::ShaderLanguage lang);
+        const std::map<std::string, std::string> &getShaderMacros(ShaderLanguage lang);
 
         const std::function<std::string(const char *)> &getShaderIncludeCallback();
     }

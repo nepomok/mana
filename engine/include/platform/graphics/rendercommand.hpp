@@ -98,7 +98,7 @@ namespace engine {
         StencilAction stencilPass = StencilAction::STENCIL_KEEP;
 
         bool enableFaceCulling = false;
-        FaceCullingMode faceCullMode = FaceCullingMode::CULL_FRONT;
+        FaceCullingMode faceCullMode = FaceCullingMode::CULL_BACK;
         bool faceCullClockwiseWinding = false;
 
         bool enableBlending = false;

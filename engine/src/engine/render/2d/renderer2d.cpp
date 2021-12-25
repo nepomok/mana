@@ -18,13 +18,13 @@
  */
 
 
-#include "engine/math/matrixmath.hpp"
+#include "common/matrixmath.hpp"
 #include "engine/asset/camera.hpp"
 #include "engine/async/threadpool.hpp"
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 #include "engine/render/shader/shaderinclude.hpp"
 #include "engine/render/2d/renderer2d.hpp"
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 
 static const char *SHADER_VERT = R"###(
 float4x4 MODEL_MATRIX;
@@ -171,16 +171,16 @@ namespace engine {
 
     Renderer2D::Renderer2D(RenderDevice &device)
             : renderDevice(device) {
-        vs = ShaderSource(SHADER_VERT, "main", ShaderCompiler::VERTEX, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        fs = ShaderSource(SHADER_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
-        fsText = ShaderSource(SHADER_TEXT_FRAG, "main", ShaderCompiler::FRAGMENT, ShaderCompiler::HLSL_SHADER_MODEL_4);
+        vs = ShaderSource(SHADER_VERT, "main", VERTEX, HLSL_SHADER_MODEL_4);
+        fs = ShaderSource(SHADER_FRAG, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
+        fsText = ShaderSource(SHADER_TEXT_FRAG, "main", FRAGMENT, HLSL_SHADER_MODEL_4);
 
         vs.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+                      ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
         fs.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                      ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+                      ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
         fsText.preprocess(ShaderInclude::getShaderIncludeCallback(),
-                          ShaderInclude::getShaderMacros(ShaderCompiler::HLSL_SHADER_MODEL_4));
+                          ShaderInclude::getShaderMacros(HLSL_SHADER_MODEL_4));
 
         defaultShader = device.getAllocator().createShaderProgram(vs, fs);
         defaultTextShader = device.getAllocator().createShaderProgram(vs, fsText);

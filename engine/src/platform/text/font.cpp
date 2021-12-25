@@ -17,26 +17,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/text/character.hpp"
+#include "platform/text/font.hpp"
+
+#include "platform/text/freetype/ftfont.hpp"
 
 namespace engine {
-    Recti Character::getMetrics(const std::string &str, const std::map<char, Character> &chars) {
-        Vec2i origin(0); //The origin of the text
-        Vec2i size(0); //The size of the text
-        for (auto c : str) {
-            //Add advance (The only factor for size x increment)
-            size.x += chars.at(c).advance;
-
-            auto min = origin.y - chars.at(c).bearing.y;
-            if (min < 0) {
-                origin.y += min * -1;
-            }
-
-            int height = origin.y + chars.at(c).image.getHeight() - chars.at(c).bearing.y;
-            if (size.y < height) {
-                size.y = height;
-            }
-        }
-        return {origin, size};
+    std::unique_ptr<Font> Font::createFont(std::istream &stream) {
+        return std::make_unique<FTFont>(stream);
     }
 }

@@ -26,7 +26,7 @@
 
 #include "platform/graphics/renderer.hpp"
 #include "platform/graphics/renderdevice.hpp"
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 
 #include "engine/asset/manager/assetrendermanager.hpp"
 #include "renderpass.hpp"

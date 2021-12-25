@@ -19,7 +19,7 @@
 
 #include "engine/io/protocol/jsonprotocol.hpp"
 
-#include "engine/extern/json.hpp"
+#include "common/extern/json.hpp"
 
 namespace engine {
     nlohmann::json convertMessage(const Message &message) {

@@ -24,7 +24,7 @@
 #include <map>
 
 #include <GLFW/glfw3.h>
-#include <engine/asset/image.hpp>
+#include <common/image.hpp>
 
 #include "platform/input/input.hpp"
 

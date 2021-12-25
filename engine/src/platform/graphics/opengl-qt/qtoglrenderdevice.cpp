@@ -37,8 +37,8 @@ namespace engine {
             return 0;
         }
 
-        ShaderCompiler::ShaderLanguage QtOGLRenderDevice::getPreferredShaderLanguage() {
-            return ShaderCompiler::GLSL_460;
+        ShaderLanguage QtOGLRenderDevice::getPreferredShaderLanguage() {
+            return GLSL_460;
         }
     }
 }

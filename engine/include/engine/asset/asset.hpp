@@ -21,11 +21,25 @@
 #define MANA_ASSET_HPP
 
 namespace engine {
-    class Asset {
+    class AssetBase {
     public:
-        virtual ~Asset() = default;
+        virtual ~AssetBase() = default;
 
-        virtual Asset *clone() = 0;
+        virtual AssetBase *clone() = 0;
+    };
+
+    template<typename T>
+    class Asset : public AssetBase {
+    public:
+        Asset() = default;
+
+        explicit Asset(const T &instance) : instance(instance) {}
+
+        AssetBase *clone() override {
+            return new Asset<T>(instance);
+        }
+
+        T instance;
     };
 }
 

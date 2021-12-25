@@ -24,7 +24,7 @@
 
 #include "freetype/freetype.h"
 
-#include "engine/text/font.hpp"
+#include "platform/text/font.hpp"
 
 namespace engine {
     class FTFont : public Font {

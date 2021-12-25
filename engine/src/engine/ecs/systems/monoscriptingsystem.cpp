@@ -27,8 +27,6 @@
 #include "engine/io/schema/ecsschema.hpp"
 #include "engine/io/protocol/jsonprotocol.hpp"
 
-#include "platform/script/sceneinterface.hpp"
-
 namespace engine {
     /*struct RuntimeScript : Component::UserData {
         bool enabled = false;

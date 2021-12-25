@@ -26,8 +26,8 @@
 #include "texturebuffer.hpp"
 #include "meshbuffer.hpp"
 #include "shaderprogram.hpp"
-#include "engine/asset/shadersource.hpp"
-#include "engine/asset/mesh.hpp"
+#include "shadersource.hpp"
+#include "common/mesh.hpp"
 
 namespace engine {
     class RenderAllocator {

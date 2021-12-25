@@ -20,8 +20,8 @@
 #ifndef MANA_JOINT_HPP
 #define MANA_JOINT_HPP
 
-#include "engine/math/vector2.hpp"
-#include "engine/math/vector3.hpp"
+#include "common/vector2.hpp"
+#include "common/vector3.hpp"
 
 namespace engine {
     class Joint2D {

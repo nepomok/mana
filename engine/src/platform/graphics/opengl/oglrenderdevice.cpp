@@ -41,8 +41,8 @@ namespace engine {
             return ret;
         }
 
-        ShaderCompiler::ShaderLanguage OGLRenderDevice::getPreferredShaderLanguage() {
-            return ShaderCompiler::GLSL_460;
+        ShaderLanguage OGLRenderDevice::getPreferredShaderLanguage() {
+            return GLSL_460;
         }
     }
 }

@@ -20,6 +20,8 @@
 #ifndef MANA_VERTEX_HPP
 #define MANA_VERTEX_HPP
 
+#include "common/vector3.hpp"
+
 namespace engine {
     struct Vertex {
         float data[14];

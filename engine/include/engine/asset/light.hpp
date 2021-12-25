@@ -20,7 +20,7 @@
 #ifndef MANA_LIGHT_HPP
 #define MANA_LIGHT_HPP
 
-#include "engine/math/transform.hpp"
+#include "common/transform.hpp"
 
 #include "engine/asset/asset.hpp"
 
@@ -31,14 +31,14 @@ namespace engine {
         LIGHT_SPOT
     };
 
-    struct Light : public Asset {
+    struct Light : public AssetBase {
         Light() : type() {}
 
         explicit Light(LightType type) : type(type) {}
 
         ~Light() override = default;
 
-        Asset *clone() override {
+        AssetBase *clone() override {
             return new Light(*this);
         }
 

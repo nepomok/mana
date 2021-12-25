@@ -25,6 +25,8 @@
 
 #include <typeindex>
 
+#include "engine/asset/asset.hpp"
+
 namespace engine {
     class AssetBundle {
     public:
@@ -61,16 +63,20 @@ namespace engine {
             auto index = std::type_index(typeid(T));
 
             if (name.empty()) {
-                return dynamic_cast<const T &>(*assets.at(index).begin()->second.at(0));
+                return dynamic_cast<const T &>(
+                        dynamic_cast<Asset<T> &>(*assets.at(index).begin()->second.at(0)).instance
+                );
             } else {
-                return dynamic_cast<const T &>(*assets.at(index).at(name).at(0));
+                return dynamic_cast<const T &>(
+                        dynamic_cast<Asset<T> &>(*assets.at(index).at(name).at(0)).instance
+                );
             }
         }
 
         template<typename T>
-        void add(const std::string &name, T *asset) {
+        void add(const std::string &name, const T &asset) {
             auto index = std::type_index(typeid(T));
-            assets[index][name].emplace_back(std::move(std::unique_ptr<Asset>(asset)));
+            assets[index][name].emplace_back(std::move(std::make_unique<Asset<T>>(asset)));
         }
 
         template<typename T>
@@ -79,7 +85,7 @@ namespace engine {
             assets.at(index).at(name).clear();
         }
 
-        std::map<std::type_index, std::map<std::string, std::vector<std::unique_ptr<Asset>>>> assets;
+        std::map<std::type_index, std::map<std::string, std::vector<std::unique_ptr<AssetBase>>>> assets;
     };
 }
 

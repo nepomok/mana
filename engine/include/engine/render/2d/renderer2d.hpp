@@ -25,8 +25,8 @@
 #include "platform/graphics/renderer.hpp"
 #include "platform/graphics/renderdevice.hpp"
 
-#include "engine/text/character.hpp"
-#include "engine/text/font.hpp"
+#include "platform/text/character.hpp"
+#include "platform/text/font.hpp"
 
 #include "engine/asset/camera.hpp"
 

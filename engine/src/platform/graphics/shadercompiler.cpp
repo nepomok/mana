@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/render/shader/shadercompiler.hpp"
+#include "platform/graphics/shadercompiler.hpp"
 
 #include <stdexcept>
 
@@ -74,9 +74,9 @@ namespace engine {
 
     std::vector<uint32_t> ShaderCompiler::compileToSPIRV(const std::string &source,
                                                          const std::string &entryPoint,
-                                                         ShaderCompiler::ShaderStage stage,
-                                                         ShaderCompiler::ShaderLanguage language,
-                                                         ShaderCompiler::OptimizationLevel optimizationLevel) {
+                                                         ShaderStage stage,
+                                                         ShaderLanguage language,
+                                                         OptimizationLevel optimizationLevel) {
         shaderc::Compiler compiler;
         shaderc::CompileOptions options;
 
@@ -132,7 +132,7 @@ namespace engine {
     }
 
     std::string ShaderCompiler::decompileSPIRV(const std::vector<uint32_t> &source,
-                                               ShaderCompiler::ShaderLanguage targetLanguage) {
+                                               ShaderLanguage targetLanguage) {
         switch (targetLanguage) {
             case HLSL_SHADER_MODEL_4: {
                 spirv_cross::CompilerHLSL sCompiler(source);
@@ -214,11 +214,11 @@ namespace engine {
     }
 
     std::string ShaderCompiler::preprocess(const std::string &source,
-                                           ShaderCompiler::ShaderStage stage,
-                                           ShaderCompiler::ShaderLanguage language,
+                                           ShaderStage stage,
+                                           ShaderLanguage language,
                                            const std::function<std::string(const char *)> &include,
                                            const std::map<std::string, std::string> &macros,
-                                           ShaderCompiler::OptimizationLevel optimizationLevel) {
+                                           OptimizationLevel optimizationLevel) {
         shaderc_shader_kind shaderStage;
         switch (stage) {
             case VERTEX:
@@ -272,10 +272,10 @@ namespace engine {
 
     std::string ShaderCompiler::crossCompile(const std::string &source,
                                              const std::string &entryPoint,
-                                             ShaderCompiler::ShaderStage stage,
-                                             ShaderCompiler::ShaderLanguage sourceLanguage,
-                                             ShaderCompiler::ShaderLanguage targetLanguage,
-                                             ShaderCompiler::OptimizationLevel optimizationLevel) {
+                                             ShaderStage stage,
+                                             ShaderLanguage sourceLanguage,
+                                             ShaderLanguage targetLanguage,
+                             OptimizationLevel optimizationLevel) {
         return decompileSPIRV(compileToSPIRV(source,
                                              entryPoint,
                                              stage,

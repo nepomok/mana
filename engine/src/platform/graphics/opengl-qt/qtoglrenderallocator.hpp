@@ -20,7 +20,8 @@
 #ifndef MANA_QTOGLRENDERALLOCATOR_HPP
 #define MANA_OGLRENDERALLOCATOR_HPP
 
-#include "engine.hpp"
+#include "common/mesh.hpp"
+#include "platform/graphics/renderallocator.hpp"
 
 #include <QOpenGLFunctions_4_5_Core>
 

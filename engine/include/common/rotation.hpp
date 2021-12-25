@@ -22,7 +22,7 @@
 
 #include <cmath>
 
-#include "engine/math/vector2.hpp"
+#include "common/vector2.hpp"
 
 #define PI 3.141592653589793238463
 

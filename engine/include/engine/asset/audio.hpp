@@ -25,11 +25,11 @@
 #include "engine/asset/asset.hpp"
 
 namespace engine {
-    class Audio : public Asset {
+    class Audio : public AssetBase {
     public:
         ~Audio() override = default;
 
-        Asset *clone() override {
+        AssetBase *clone() override {
             return new Audio(*this);
         }
 

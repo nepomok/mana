@@ -17,13 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "engine/asset/shadersource.hpp"
+#include "platform/graphics/shadersource.hpp"
 
 namespace engine {
     ShaderSource::ShaderSource(std::string src,
                                std::string entryPoint,
-                               ShaderCompiler::ShaderStage stage,
-                               ShaderCompiler::ShaderLanguage language,
+                               ShaderStage stage,
+                               ShaderLanguage language,
                                bool preprocessed)
             : src(std::move(src)),
               entryPoint(std::move(entryPoint)),
@@ -40,7 +40,7 @@ namespace engine {
         preprocessed = true;
     }
 
-    void ShaderSource::crossCompile(ShaderCompiler::ShaderLanguage targetLanguage,ShaderCompiler::OptimizationLevel optimizationLevel) {
+    void ShaderSource::crossCompile(ShaderLanguage targetLanguage,ShaderCompiler::OptimizationLevel optimizationLevel) {
         if (!preprocessed)
             preprocess();
         src = ShaderCompiler::crossCompile(src, entryPoint, stage, language, targetLanguage, optimizationLevel);
@@ -57,9 +57,9 @@ namespace engine {
 
     const std::string &ShaderSource::getEntryPoint() const { return entryPoint; }
 
-    ShaderCompiler::ShaderStage ShaderSource::getStage() const { return stage; }
+    ShaderStage ShaderSource::getStage() const { return stage; }
 
-    ShaderCompiler::ShaderLanguage ShaderSource::getLanguage() const { return language; }
+    ShaderLanguage ShaderSource::getLanguage() const { return language; }
 
     bool ShaderSource::isPreProcessed() const { return preprocessed; }
 }

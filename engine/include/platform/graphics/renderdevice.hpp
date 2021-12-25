@@ -26,7 +26,7 @@
 #include "graphicsbackend.hpp"
 #include "renderer.hpp"
 #include "renderobject.hpp"
-#include "engine/asset/mesh.hpp"
+#include "common/mesh.hpp"
 #include "renderallocator.hpp"
 
 namespace engine {
@@ -45,7 +45,7 @@ namespace engine {
          */
         virtual int getMaxSampleCount() = 0;
 
-        virtual ShaderCompiler::ShaderLanguage getPreferredShaderLanguage() = 0;
+        virtual ShaderLanguage getPreferredShaderLanguage() = 0;
     };
 }
 
