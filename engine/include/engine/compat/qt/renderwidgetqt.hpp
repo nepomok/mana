@@ -31,7 +31,9 @@
 namespace engine {
     class RenderWidgetQt : public QOpenGLWidget {
     public:
-        void setScene(Scene *s) {
+        explicit RenderWidgetQt(AssetRenderManager &assetRenderManager);
+
+        void setScene(const Scene &s) {
             scene = s;
         }
 
@@ -42,19 +44,25 @@ namespace engine {
 
         void resizeGL(int w, int h) override {
             QOpenGLWidget::resizeGL(w, h);
-            ren.getGeometryBuffer().setSize({w, h});
+            ren->getGeometryBuffer().setSize({w, h});
         }
 
         void paintGL() override {
+            std::unique_ptr<RenderTarget> target = getWidgetRenderTarget();
+            ren->render(*target, scene);
             QOpenGLWidget::paintGL();
-            if (scene != nullptr) {
-                //    ren.render()
-            }
+        }
+
+        std::shared_ptr<RenderDevice> getRenderDevice() {
+            return renderDevice;
         }
 
     private:
-        DeferredRenderer ren;
-        Scene *scene = nullptr;
+        std::unique_ptr<RenderTarget> getWidgetRenderTarget();
+
+        std::shared_ptr<RenderDevice> renderDevice;
+        std::unique_ptr<DeferredRenderer> ren;
+        Scene scene;
     };
 }
 

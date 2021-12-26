@@ -23,7 +23,7 @@
 #include "qtogltexturebuffer.hpp"
 
 namespace engine {
-    opengl::QtOGLRenderTarget::QtOGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size(), samples() {}
+    opengl::QtOGLRenderTarget::QtOGLRenderTarget(GLuint FBO, Vec2i size, int samples) : FBO(FBO), colorRBO(), depthStencilRBO(), size(size), samples(samples) {}
 
     opengl::QtOGLRenderTarget::QtOGLRenderTarget(Vec2i size, int samples)
             : FBO(), colorRBO(), depthStencilRBO(), size(size), samples(samples) {
@@ -321,10 +321,6 @@ namespace engine {
                                0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         checkGLError("");
-    }
-
-    GLuint opengl::QtOGLRenderTarget::getFBO() const {
-        return FBO;
     }
 
     void opengl::QtOGLRenderTarget::detachColor(int index) {

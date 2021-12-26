@@ -19,7 +19,7 @@
 
 #include "engine/render/deferred/passes/imguipass.hpp"
 
-#include "platform/compat/imgui/imguicompat.hpp"
+#include "engine/compat/imgui/imguicompat.hpp"
 
 #include "imgui.h"
 

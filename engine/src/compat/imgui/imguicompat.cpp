@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "platform/compat/imgui/imguicompat.hpp"
+#include "engine/compat/imgui/imguicompat.hpp"
 
 #include <limits>
 

@@ -30,7 +30,7 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderTarget : public RenderTarget, public QOpenGLFunctions_4_5_Core {
         public:
-            QtOGLRenderTarget();
+            QtOGLRenderTarget(GLuint FBO, Vec2i size, int samples);
 
             QtOGLRenderTarget(Vec2i size, int samples);
 
@@ -87,7 +87,9 @@ namespace engine {
 
             void detachDepthStencil() override;
 
-            virtual GLuint getFBO() const;
+            GLuint getFBO() const { return FBO; }
+
+            void setFBO(GLuint value) { FBO = value; }
 
         protected:
             GLuint FBO;
