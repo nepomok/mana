@@ -19,8 +19,8 @@
 
 #include <stdexcept>
 
-#include "platform/common/rotation.hpp"
-#include "platform/common/matrixmath.hpp"
+#include "common/rotation.hpp"
+#include "common/matrixmath.hpp"
 
 #include "qtoglshaderprogram.hpp"
 #include "qtoglcheckerror.hpp"

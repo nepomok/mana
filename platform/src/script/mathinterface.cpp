@@ -19,8 +19,8 @@
 
 #include "mathinterface.hpp"
 
-#include "platform/common/matrix.hpp"
-#include "platform/common/matrixmath.hpp"
+#include "common/matrix.hpp"
+#include "common/matrixmath.hpp"
 
 namespace engine {
     namespace MathInterface {

@@ -24,8 +24,8 @@
 #include <string>
 
 #include "videomode.hpp"
-#include "platform/common/vector2.hpp"
-#include "platform/common/rectangle.hpp"
+#include "common/vector2.hpp"
+#include "common/rectangle.hpp"
 
 namespace engine {
     class Monitor {

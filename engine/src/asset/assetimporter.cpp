@@ -30,7 +30,7 @@
 #include "stb_image.h"
 #include "json.hpp"
 #include "platform/async/threadpool.hpp"
-#include "platform/common/mesh.hpp"
+#include "common/mesh.hpp"
 
 #include "platform/audio/audioformat.hpp"
 

@@ -18,6 +18,7 @@ target_include_directories(mana-platform PUBLIC platform/include/)
 target_include_directories(mana-platform PUBLIC platform/src/)
 
 target_link_libraries(mana-platform
+        mana-common
         mana-extern
         Threads::Threads
         freetype

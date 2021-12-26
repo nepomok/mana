@@ -26,7 +26,7 @@
 #include "graphicsbackend.hpp"
 #include "renderer.hpp"
 #include "renderobject.hpp"
-#include "platform/common/mesh.hpp"
+#include "common/mesh.hpp"
 #include "renderallocator.hpp"
 
 namespace engine {

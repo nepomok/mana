@@ -27,7 +27,7 @@
 #include "meshbuffer.hpp"
 #include "shaderprogram.hpp"
 #include "shadersource.hpp"
-#include "platform/common/mesh.hpp"
+#include "common/mesh.hpp"
 
 namespace engine {
     class RenderAllocator {

@@ -24,7 +24,7 @@
 
 #include "inputlistener.hpp"
 
-#include "platform/common/image.hpp"
+#include "common/image.hpp"
 
 namespace engine {
     class Input {

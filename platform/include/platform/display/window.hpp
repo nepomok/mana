@@ -22,7 +22,7 @@
 
 #include "../graphics/renderdevice.hpp"
 #include "../graphics/rendertarget.hpp"
-#include "platform/common/image.hpp"
+#include "common/image.hpp"
 
 #include "windowlistener.hpp"
 #include "monitor.hpp"
@@ -31,7 +31,7 @@
 #include "displaybackend.hpp"
 
 #include "../input/input.hpp"
-#include "platform/common/vector2.hpp"
+#include "common/vector2.hpp"
 
 namespace engine {
     class Window {

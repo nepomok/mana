@@ -25,9 +25,9 @@
 #include <functional>
 
 #include "platform/graphics/shaderprogram.hpp"
-#include "platform/common/vector2.hpp"
-#include "platform/common/vector3.hpp"
-#include "platform/common/matrix.hpp"
+#include "common/vector2.hpp"
+#include "common/vector3.hpp"
+#include "common/matrix.hpp"
 
 #include "qtopenglinclude.hpp"
 

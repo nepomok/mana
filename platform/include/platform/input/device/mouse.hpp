@@ -20,7 +20,7 @@
 #ifndef MANA_MOUSE_HPP
 #define MANA_MOUSE_HPP
 
-#include "platform/common/vector2.hpp"
+#include "common/vector2.hpp"
 
 namespace engine {
     enum MouseButton {

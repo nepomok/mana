@@ -25,6 +25,7 @@ include(cmake/config.cmake)
 include_directories(${USER_INCLUDE})
 link_directories(${USER_LINK})
 
+include(cmake/common.cmake)
 include(cmake/extern.cmake)
 include(cmake/platform.cmake)
 include(cmake/engine.cmake)

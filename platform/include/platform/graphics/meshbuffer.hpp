@@ -22,7 +22,7 @@
 
 #include "renderobject.hpp"
 
-#include "platform/common/transform.hpp"
+#include "common/transform.hpp"
 
 namespace engine {
     class MeshBuffer : public RenderObject {

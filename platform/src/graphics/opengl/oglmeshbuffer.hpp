@@ -21,7 +21,7 @@
 #define MANA_OGLMESHBUFFER_HPP
 
 #include "platform/graphics/meshbuffer.hpp"
-#include "platform/common/matrixmath.hpp"
+#include "common/matrixmath.hpp"
 
 #include "oglcheckerror.hpp"
 

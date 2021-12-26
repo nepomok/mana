@@ -25,7 +25,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "platform/common/image.hpp"
+#include "common/image.hpp"
 #include "platform/input/input.hpp"
 
 namespace engine {

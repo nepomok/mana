@@ -24,7 +24,7 @@
 
 #include "audiobuffer.hpp"
 
-#include "platform/common/vector3.hpp"
+#include "common/vector3.hpp"
 
 namespace engine {
     class AudioSource {

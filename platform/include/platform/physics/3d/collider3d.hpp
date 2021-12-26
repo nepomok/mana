@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "platform/common/vector3.hpp"
+#include "common/vector3.hpp"
 
 namespace engine {
     class Collider3D {

@@ -22,8 +22,8 @@
 #include <string>
 #include <set>
 
-#include "platform/common/matrixmath.hpp"
-#include "platform/common/rotation.hpp"
+#include "common/matrixmath.hpp"
+#include "common/rotation.hpp"
 
 #include "oglrenderer.hpp"
 

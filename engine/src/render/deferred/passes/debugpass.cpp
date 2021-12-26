@@ -22,7 +22,7 @@
 #include "engine/render/deferred/deferredrenderer.hpp"
 #include "engine/render/shader/shaderinclude.hpp"
 
-#include "platform/common/rotation.hpp"
+#include "common/rotation.hpp"
 #include "platform/async/threadpool.hpp"
 #include "platform/graphics/shadercompiler.hpp"
 
