@@ -21,6 +21,7 @@ else()
 endif ()
 
 include(cmake/config.cmake)
+
 include_directories(${USER_INCLUDE})
 link_directories(${USER_LINK})
 

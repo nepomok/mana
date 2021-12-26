@@ -1,5 +1,3 @@
-add_compile_definitions(BOX2D_VERSION=${BOX2D_VERSION})
-
 set(Engine.Dir.INCLUDE engine/include/)
 set(Engine.Dir.SRC engine/src/)
 

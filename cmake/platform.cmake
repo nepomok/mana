@@ -33,6 +33,7 @@ if (BUILD_ENGINE_SCRIPT_MONO)
 endif ()
 
 if (BUILD_ENGINE_PHYSICS_BOX2D)
+    add_compile_definitions(BOX2D_VERSION=${BOX2D_VERSION})
     add_compile_definitions(BUILD_ENGINE_PHYSICS_BOX2D)
     target_link_libraries(mana-platform ${BOX2D_LIB})
 endif ()
