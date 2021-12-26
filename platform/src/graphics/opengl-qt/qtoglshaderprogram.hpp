@@ -125,6 +125,7 @@ namespace engine {
         private:
             GLuint programID;
             std::string prefix;
+            std::map<std::string, GLint> locations;
         };
     }
 }
