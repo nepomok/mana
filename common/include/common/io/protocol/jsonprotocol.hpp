@@ -20,7 +20,7 @@
 #ifndef MANA_JSONPROTOCOL_HPP
 #define MANA_JSONPROTOCOL_HPP
 
-#include "../protocol.hpp"
+#include "common/io/protocol.hpp"
 
 namespace engine {
     class JsonProtocol : public Protocol {

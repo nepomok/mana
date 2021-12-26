@@ -23,13 +23,12 @@
 #include <string>
 #include <vector>
 
-#include "../../../../platform/include/platform/io/archive.hpp"
-
 #include "engine/asset/material.hpp"
 #include "engine/asset/audio.hpp"
 #include "engine/asset/assetbundle.hpp"
 
-#include "platform/async/threadpool.hpp"
+#include "common/async/threadpool.hpp"
+#include "common/io/archive.hpp"
 
 namespace engine {
     namespace AssetImporter {

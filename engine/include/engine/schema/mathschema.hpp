@@ -20,7 +20,7 @@
 #ifndef MANA_MATHSCHEMA_HPP
 #define MANA_MATHSCHEMA_HPP
 
-#include "../../../../platform/include/platform/io/message.hpp"
+#include "common/io/message.hpp"
 
 #include "common/grid.hpp"
 #include "common/matrix.hpp"

@@ -22,7 +22,7 @@
 
 #include <map>
 #include <string>
-
+#include <memory>
 #include <typeindex>
 
 #include "engine/asset/asset.hpp"

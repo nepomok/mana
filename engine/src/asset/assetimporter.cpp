@@ -29,7 +29,7 @@
 
 #include "stb_image.h"
 #include "json.hpp"
-#include "platform/async/threadpool.hpp"
+#include "common/async/threadpool.hpp"
 #include "common/mesh.hpp"
 
 #include "platform/audio/audioformat.hpp"

@@ -7,3 +7,5 @@ add_library(mana-common STATIC ${Common.File.SRC})
 
 target_include_directories(mana-common PUBLIC common/include/)
 target_include_directories(mana-common PUBLIC common/src/)
+
+target_link_libraries(mana-common mana-extern)

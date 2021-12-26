@@ -25,8 +25,8 @@
 #include <iomanip>
 
 #include "engine/ecs/ecs.hpp"
-#include "../../../platform/include/platform/io/archive.hpp"
-#include "engine/compat/imgui/imguicompat.hpp"
+#include "common/io/archive.hpp"
+#include "platform/compat/imgui/imguicompat.hpp"
 
 #include "platform/display/displaymanager.hpp"
 

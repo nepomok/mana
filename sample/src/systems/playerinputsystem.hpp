@@ -21,6 +21,7 @@
 #define MANA_PLAYERINPUTSYSTEM_HPP
 
 #include "engine/ecs/system.hpp"
+#include "common/normalize.hpp"
 
 #include "components/playercontrollercomponent.hpp"
 

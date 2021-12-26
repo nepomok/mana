@@ -25,7 +25,7 @@
 #include "engine/ecs/components.hpp"
 
 #include "engine/schema/ecsschema.hpp"
-#include "platform/io/protocol/jsonprotocol.hpp"
+#include "common/io/protocol/jsonprotocol.hpp"
 
 namespace engine {
     /*struct RuntimeScript : Component::UserData {

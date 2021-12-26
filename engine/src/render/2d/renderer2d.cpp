@@ -22,7 +22,7 @@
 #include "engine/render/2d/renderer2d.hpp"
 
 #include "common/matrixmath.hpp"
-#include "platform/async/threadpool.hpp"
+#include "common/async/threadpool.hpp"
 #include "platform/graphics/shadercompiler.hpp"
 #include "platform/graphics/shadercompiler.hpp"
 

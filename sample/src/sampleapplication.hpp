@@ -22,6 +22,7 @@
 
 #include "engine.hpp"
 #include "platform.hpp"
+#include "common.hpp"
 
 #include <filesystem>
 #include <memory>

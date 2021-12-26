@@ -22,7 +22,7 @@
 #include "engine/render/deferred/passes/phongshadepass.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
 #include "common/rotation.hpp"
-#include "platform/async/threadpool.hpp"
+#include "common/async/threadpool.hpp"
 
 const char *SHADER_VERT_LIGHTING = R"###(
 struct VS_INPUT

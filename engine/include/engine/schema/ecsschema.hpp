@@ -20,7 +20,7 @@
 #ifndef MANA_ECSSCHEMA_HPP
 #define MANA_ECSSCHEMA_HPP
 
-#include "../../../../platform/include/platform/io/message.hpp"
+#include "common/io/message.hpp"
 
 #include "engine/ecs/components/audio/audiosourcecomponent.hpp"
 #include "engine/ecs/components/audio/audiolistenercomponent.hpp"

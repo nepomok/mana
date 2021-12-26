@@ -9,7 +9,6 @@ target_include_directories(mana-engine PUBLIC engine/include/)
 target_include_directories(mana-engine PUBLIC engine/src/)
 
 target_link_libraries(mana-engine
-        mana-common
         mana-platform
         assimp
         sndfile)

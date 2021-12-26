@@ -23,7 +23,7 @@
 #include "engine/render/shader/shaderinclude.hpp"
 
 #include "common/rotation.hpp"
-#include "platform/async/threadpool.hpp"
+#include "common/async/threadpool.hpp"
 #include "platform/graphics/shadercompiler.hpp"
 
 //TODO: Fix tangent space to local space texture normal transformation

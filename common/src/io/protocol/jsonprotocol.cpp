@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "platform/io/protocol/jsonprotocol.hpp"
+#include "common/io/protocol/jsonprotocol.hpp"
 
 #include "json.hpp"
 

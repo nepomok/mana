@@ -52,8 +52,6 @@
 #include "engine/ecs/components/gui/canvascomponent.hpp"
 #include "engine/ecs/components/audio/audiosourcecomponent.hpp"
 #include "engine/ecs/components/audio/audiolistenercomponent.hpp"
-#include "engine/compat/imgui/imguicompat.hpp"
-#include "engine/compat/qt/renderwidgetqt.hpp"
 #include "engine/schema/ecsschema.hpp"
 #include "engine/schema/mathschema.hpp"
 #include "engine/render/2d/renderer2d.hpp"
