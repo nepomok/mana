@@ -241,6 +241,8 @@ private:
         else if (progress < 0)
             progress = 0;
 
+        window->update();
+
         ren2d->renderBegin(window->getRenderTarget(), true, {}, window->getRenderTarget().getSize(), bgColor);
         ren2d->setProjection({{-1, -1},
                               {1,  1}});
