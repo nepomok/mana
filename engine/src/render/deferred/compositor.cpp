@@ -85,13 +85,14 @@ vec4 blend(vec4 colorA, vec4 colorB)
     return vec4((colorB.rgb * colorB.a + colorA.rgb * (1.0 - colorB.a)).rgb, 1);
 }
 
-vec4 msaaAverage(sampler2DMS sampler, vec2 uv)
+vec4 msaaAverage(sampler2DMS color, vec2 uv)
 {
-    ivec2 size = textureSize(sampler);
     vec4 ret;
+    ivec2 size = textureSize(color);
+    ivec2 pos = ivec2(size.x * uv.x, size.y * uv.y);
     for(int i = 0; i < globals.layer.MSAA_SAMPLES; i++)
     {
-        ret += texelFetch(sampler, ivec2(size.x * uv.x, size.y * uv.y), i);
+        ret += texelFetch(color, pos, i);
     }
     return ret / globals.layer.MSAA_SAMPLES;
 }
@@ -99,7 +100,7 @@ vec4 msaaAverage(sampler2DMS sampler, vec2 uv)
 void main()
 {
     vec4 color = msaaAverage(globals.layer.color, fUv);
-    float depth = 1;
+    float depth = 0;
 
     if (globals.layer.has_depth != 0)
     {
