@@ -25,6 +25,8 @@ include(cmake/config.cmake)
 include_directories(${USER_INCLUDE})
 link_directories(${USER_LINK})
 
+include(cmake/imgui.cmake)
+include(cmake/implot.cmake)
 include(cmake/common.cmake)
 include(cmake/extern.cmake)
 include(cmake/platform.cmake)

@@ -26,6 +26,8 @@
 
 #include "platform/display/window.hpp"
 
+#include "imgui.h"
+
 namespace engine {
     class ImGuiPass : public RenderPass {
     public:

@@ -31,6 +31,7 @@
 #include "platform/display/displaymanager.hpp"
 
 #include "imgui.h"
+#include "implot.h"
 
 namespace engine {
     class Application {
@@ -73,11 +74,17 @@ namespace engine {
             window = display.createWindow(graphicsBackend);
             window->update();
 
+            imGuiContext = ImGui::CreateContext();
             ImGuiCompat::Init(*window);
+
+            imPlotContext = ImPlot::CreateContext();
         }
 
         virtual ~Application() {
+            ImPlot::DestroyContext(imPlotContext);
+
             ImGuiCompat::Shutdown(*window);
+            ImGui::DestroyContext(imGuiContext);
         }
 
         virtual int loop() {
@@ -143,6 +150,9 @@ namespace engine {
 
         std::unique_ptr<Archive> archive = nullptr;
         std::unique_ptr<Window> window = nullptr;
+
+        ImGuiContext *imGuiContext;
+        ImPlotContext *imPlotContext;
 
         float fpsLimit = 0;
 

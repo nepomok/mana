@@ -4,3 +4,6 @@
 [submodule "submodules/bullet3"]
 	path = submodules/bullet3
 	url = https://github.com/bulletphysics/bullet3
+[submodule "submodules/implot"]
+	path = submodules/implot
+	url = https://github.com/epezent/implot

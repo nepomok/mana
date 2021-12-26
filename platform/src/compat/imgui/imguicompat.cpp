@@ -27,30 +27,14 @@
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
+#include "implot.h"
+
 #include "display/glfw/opengl/glfwwindowgl.hpp"
 #include "graphics/opengl/oglrendertarget.hpp"
-
-static uint imGuiRefCounter = 0;
-
-static void joinImGui() {
-    if (imGuiRefCounter == std::numeric_limits<uint>::max()) {
-        throw std::runtime_error("Counter overflow");
-    }
-    if (imGuiRefCounter++ == 0)
-        ImGui::CreateContext();
-}
-
-static void leaveImGui() {
-    if (imGuiRefCounter == 0)
-        throw std::runtime_error("Counter underflow");
-    if (--imGuiRefCounter == 0)
-        ImGui::DestroyContext();
-}
 
 namespace engine {
     namespace ImGuiCompat {
         void Init(Window &window) {
-            joinImGui();
             switch (window.getDisplayBackend()) {
                 case GLFW:
                     ImGui_ImplGlfw_InitForOpenGL(dynamic_cast<glfw::GLFWWindowGL &>(window).wndH, true);
@@ -86,7 +70,6 @@ namespace engine {
                 default:
                     throw std::runtime_error("Not supported");
             }
-            leaveImGui();
         }
 
         void NewFrame(Window &window) {

@@ -21,6 +21,7 @@
 #define MANA_DEBUGWINDOW_HPP
 
 #include "imgui.h"
+#include "implot.h"
 
 #include "platform/display/window.hpp"
 
@@ -135,7 +136,36 @@ public:
         }
     }
 
+    void drawFrameTimeGraph() {
+        if (ImPlot::BeginPlot("Frame Graph")) {
+            std::vector<float> x;
+            for (int i = 0; i < frameRateHistory.size(); i++)
+                x.emplace_back(i);
+
+            ImPlot::SetupAxisLimits(ImAxis_Y1, 0, 100);
+            ImPlot::SetupAxisLimits(::ImAxis_X1, 0, 100);
+
+            ImPlot::PlotLine("Frames Per Second", x.data(), frameRateHistory.data(), frameRateHistory.size());
+            ImPlot::PlotLine("Frame Time (ms)", x.data(), frameTimeHistory.data(), frameTimeHistory.size());
+            ImPlot::PlotLine("Number of Draw Calls", x.data(), drawCallHistory.data(), drawCallHistory.size());
+
+            ImPlot::EndPlot();
+        }
+    }
+
     void draw(Scene &scene) override {
+        frameRateHistory.emplace(frameRateHistory.begin(), ImGui::GetIO().Framerate);
+        if (frameRateHistory.size() >= 10000)
+            frameRateHistory.erase(frameRateHistory.end() - 1);
+
+        frameTimeHistory.emplace(frameTimeHistory.begin(), 1000.0f / ImGui::GetIO().Framerate);
+        if (frameTimeHistory.size() >= 10000)
+            frameTimeHistory.erase(frameTimeHistory.end() - 1);
+
+        drawCallHistory.emplace(drawCallHistory.begin(), drawCalls);
+        if (drawCallHistory.size() >= 10000)
+            drawCallHistory.erase(drawCallHistory.end() - 1);
+
         ImGui::StyleColorsDark();
 
         ImGui::Begin("Debug Window");
@@ -196,13 +226,11 @@ public:
             if (fpsLimit < 0)
                 fpsLimit = 0;
 
-            ImGui::Separator();
+            ImGui::EndTabItem();
+        }
 
-
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls)",
-                        1000.0f / ImGui::GetIO().Framerate,
-                        ImGui::GetIO().Framerate,
-                        drawCalls);
+        if (ImGui::BeginTabItem("Profiling")) {
+            drawFrameTimeGraph();
             ImGui::EndTabItem();
         }
 
@@ -214,6 +242,13 @@ public:
         }
 
         ImGui::EndTabBar();
+
+        ImGui::Separator();
+
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls)",
+                    1000.0f / ImGui::GetIO().Framerate,
+                    ImGui::GetIO().Framerate,
+                    drawCalls);
 
         ImGui::End();
     }
@@ -338,6 +373,10 @@ private:
     int swapInterval = 0;
     unsigned long drawCalls = 0;
     float fpsLimit = 0;
+
+    std::vector<float> frameRateHistory;
+    std::vector<float> frameTimeHistory;
+    std::vector<float> drawCallHistory;
 };
 
 #endif //MANA_DEBUGWINDOW_HPP

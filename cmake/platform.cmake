@@ -1,5 +1,3 @@
-include(cmake/imgui.cmake)
-
 option(BUILD_ENGINE_DISPLAY_GLFW "Build the glfw display implementation" ON)
 option(BUILD_ENGINE_RENDERER_OPENGL "Build the OpenGL render support (Window and Render implementations" ON)
 option(BUILD_ENGINE_RENDERER_QT "Build the Qt render support (Window and Render implementations)" ON)
@@ -25,7 +23,8 @@ target_link_libraries(mana-platform
         spirv-cross-core
         spirv-cross-glsl
         spirv-cross-hlsl
-        imgui)
+        imgui
+        implot)
 
 if (BUILD_ENGINE_SCRIPT_MONO)
     add_compile_definitions(BUILD_ENGINE_SCRIPT_MONO)
