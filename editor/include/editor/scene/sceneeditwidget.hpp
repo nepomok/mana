@@ -25,14 +25,15 @@ public:
         splitter->addWidget(entityEditWidget);
         layout->addWidget(splitter);
         sceneTree->headerItem()->setHidden(true);
+        layout->setMargin(0);
     }
 
     void setEntityManager(engine::EntityManager *value) {
         entityManager = value;
     }
 
-private:
     QSplitter *splitter;
+private:
     QTreeWidget *sceneTree;
     EntityEditWidget *entityEditWidget;
 

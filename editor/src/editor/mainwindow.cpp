@@ -26,6 +26,7 @@
 
 #include "engine.hpp"
 #include "common.hpp"
+#include "base64.hpp"
 
 using namespace engine;
 
@@ -44,18 +45,26 @@ MainWindow::MainWindow() {
     sceneEditWidget = new SceneEditWidget(this);
     fileBrowser = new FileBrowser(this);
 
-    sceneSplitter = new QSplitter(this);
-    fileSplitter = new QSplitter(this);
+    middleSplitter = new QSplitter(this);
+    leftSplitter = new QSplitter(this);
+    rightSplitter = new QSplitter(this);
 
-    fileSplitter->setOrientation(Qt::Vertical);
+    tabWidget = new QTabWidget(this);
 
-    fileSplitter->addWidget(sceneEditWidget);
-    fileSplitter->addWidget(fileBrowser);
+    leftSplitter->setOrientation(Qt::Vertical);
+    rightSplitter->setOrientation(Qt::Vertical);
 
-    sceneSplitter->addWidget(renderWidget);
-    sceneSplitter->addWidget(fileSplitter);
+    leftSplitter->addWidget(renderWidget);
+    leftSplitter->addWidget(tabWidget);
 
-    rootLayout->addWidget(sceneSplitter);
+    rightSplitter->addWidget(sceneEditWidget);
+    rightSplitter->addWidget(fileBrowser);
+
+    middleSplitter->addWidget(leftSplitter);
+    middleSplitter->addWidget(rightSplitter);
+
+    rootLayout->addWidget(middleSplitter);
+
     rootWidget->setLayout(rootLayout);
 
     renderScene.skybox.texture = {"/textures/skybox_sky.json", ""};
@@ -65,9 +74,12 @@ MainWindow::MainWindow() {
     renderWidget->setScene(renderScene);
 
     timer.start(1000 / 60);
+
+    loadStateFile();
 }
 
 MainWindow::~MainWindow() {
+    saveStateFile();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
@@ -84,6 +96,38 @@ void MainWindow::mousePressEvent(QMouseEvent *event) {
 
 void MainWindow::onTimeout() {
     renderWidget->setScene(renderScene);
+}
+
+void MainWindow::loadStateFile() {
+    try {
+        std::ifstream fs("mana_editor_state.json");
+        if (fs.good()) {
+            JsonProtocol jsonProtocol;
+            auto msg = jsonProtocol.deserialize(fs);
+
+            std::string dec;
+            Base64::Decode(msg.at("leftSplitter").getString(), dec);
+            leftSplitter->restoreState(QByteArray::fromStdString(dec));
+            Base64::Decode(msg.at("rightSplitter").getString(), dec);
+            rightSplitter->restoreState(QByteArray::fromStdString(dec));
+            Base64::Decode(msg.at("middleSplitter").getString(), dec);
+            middleSplitter->restoreState(QByteArray::fromStdString(dec));
+            Base64::Decode(msg.at("sceneEditSplitter").getString(), dec);
+            sceneEditWidget->splitter->restoreState(QByteArray::fromStdString(dec));
+        }
+    } catch (const std::exception &e) {}
+}
+
+void MainWindow::saveStateFile() {
+    Message msg((std::map<std::string, Message>()));
+    msg["leftSplitter"] = Base64::Encode(leftSplitter->saveState().toStdString());
+    msg["rightSplitter"] = Base64::Encode(rightSplitter->saveState().toStdString());
+    msg["middleSplitter"] = Base64::Encode(middleSplitter->saveState().toStdString());
+    msg["sceneEditSplitter"] = Base64::Encode(sceneEditWidget->splitter->saveState().toStdString());
+
+    std::ofstream fs("mana_editor_state.json");
+    JsonProtocol jsonProtocol;
+    jsonProtocol.serialize(fs, msg);
 }
 
 

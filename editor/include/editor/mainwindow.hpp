@@ -25,6 +25,7 @@
 #include <QVBoxLayout>
 #include <QSplitter>
 #include <QTimer>
+#include <QTabWidget>
 
 #include "engine/compat/qt/renderwidgetqt.hpp"
 #include "engine.hpp"
@@ -53,15 +54,21 @@ protected slots:
     void onTimeout();
 
 private:
+    void loadStateFile();
+
+    void saveStateFile();
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;
 
-    QSplitter *sceneSplitter;
-    QSplitter *fileSplitter;
+    QSplitter *middleSplitter;
+    QSplitter *leftSplitter;
+    QSplitter *rightSplitter;
 
     engine::RenderWidgetQt *renderWidget;
     SceneEditWidget *sceneEditWidget;
     FileBrowser *fileBrowser;
+
+    QTabWidget *tabWidget;
 
     engine::EntityManager entityManager;
     engine::Scene renderScene;

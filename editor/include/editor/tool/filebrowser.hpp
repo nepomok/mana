@@ -14,6 +14,7 @@ public:
         setLayout(new QVBoxLayout());
         listWidget = new QListWidget(this);
         layout()->addWidget(listWidget);
+        layout()->setMargin(0);
     }
 
     void setCurrentPath(const std::string &value) {
