@@ -30,6 +30,7 @@
 
 #include "editor/scene/sceneeditwidget.hpp"
 #include "editor/scene/entityeditwidget.hpp"
+#include "editor/tool/filebrowser.hpp"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -48,13 +49,13 @@ protected:
 private:
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;
-    QVBoxLayout *leftLayout;
-    QVBoxLayout *rightLayout;
 
     QSplitter *sceneSplitter;
+    QSplitter *fileSplitter;
 
     engine::RenderWidgetQt *renderWidget;
     SceneEditWidget *sceneEditWidget;
+    FileBrowser *fileBrowser;
 
     std::unique_ptr<engine::Archive> archive;
     std::unique_ptr<engine::AssetManager> assetManager;

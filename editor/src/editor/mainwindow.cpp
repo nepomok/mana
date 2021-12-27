@@ -36,23 +36,27 @@ MainWindow::MainWindow() {
     setCentralWidget(rootWidget);
 
     rootLayout = new QHBoxLayout();
-    leftLayout = new QVBoxLayout();
-    rightLayout = new QVBoxLayout();
-
-    rootWidget->setLayout(rootLayout);
 
     archive = std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets");
     assetManager = std::make_unique<AssetManager>(*archive);
 
-    sceneSplitter = new QSplitter(rightLayout->widget());
+    renderWidget = new RenderWidgetQt(this, *assetManager);
+    sceneEditWidget = new SceneEditWidget(this);
+    fileBrowser = new FileBrowser(this);
 
-    renderWidget = new RenderWidgetQt(leftLayout->widget(), *assetManager);
-    sceneEditWidget = new SceneEditWidget(sceneSplitter);
+    sceneSplitter = new QSplitter(this);
+    fileSplitter = new QSplitter(this);
+
+    fileSplitter->setOrientation(Qt::Vertical);
+
+    fileSplitter->addWidget(sceneEditWidget);
+    fileSplitter->addWidget(fileBrowser);
 
     sceneSplitter->addWidget(renderWidget);
-    sceneSplitter->addWidget(sceneEditWidget);
+    sceneSplitter->addWidget(fileSplitter);
 
     rootLayout->addWidget(sceneSplitter);
+    rootWidget->setLayout(rootLayout);
 }
 
 MainWindow::~MainWindow() {

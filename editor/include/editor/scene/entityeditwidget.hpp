@@ -8,6 +8,7 @@
 class EntityEditWidget : public QWidget {
 Q_OBJECT
 public:
+    //TODO: Components Display / Edit
     explicit EntityEditWidget(QWidget *parent)
             : QWidget(parent) {}
 

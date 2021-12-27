@@ -13,6 +13,7 @@
 class SceneEditWidget : public QWidget {
 Q_OBJECT
 public:
+    //TODO: QTreeWidget entities display
     explicit SceneEditWidget(QWidget *parent)
             : QWidget(parent) {
         auto layout = new QHBoxLayout(this);
@@ -23,6 +24,7 @@ public:
         splitter->addWidget(sceneTree);
         splitter->addWidget(entityEditWidget);
         layout->addWidget(splitter);
+        sceneTree->headerItem()->setHidden(true);
     }
 
     void setEntityManager(engine::EntityManager *value) {
