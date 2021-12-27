@@ -31,7 +31,9 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderDevice : public RenderDevice, public QOpenGLFunctions_4_5_Core {
         public:
-            QtOGLRenderDevice() = default;
+            QtOGLRenderDevice() {
+                QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
+            }
 
             ~QtOGLRenderDevice() override = default;
 

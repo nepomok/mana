@@ -65,8 +65,6 @@ namespace engine {
         }
 
         void QtOGLRenderer::renderBegin(RenderTarget &target, const RenderOptions &options) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
             glClearColor((float) options.clearColorValue.r() / (float) 255,
                          (float) options.clearColorValue.g() / (float) 255,
                          (float) options.clearColorValue.b() / (float) 255,
@@ -80,13 +78,18 @@ namespace engine {
                 glDisable(GL_MULTISAMPLE);
 
             auto &fb = dynamic_cast<QtOGLRenderTarget &>(target);
+            glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
+
+            auto ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if (ret != GL_FRAMEBUFFER_COMPLETE) {
+                throw std::runtime_error("Render Target framebuffer is not complete: " + std::to_string(ret));
+            }
 
             GLint vpData[4];
             glGetIntegerv(GL_VIEWPORT, vpData);
 
-            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x, options.viewportSize.y);
-
-            glBindFramebuffer(GL_FRAMEBUFFER, fb.getFBO());
+            glViewport(options.viewportOffset.x, options.viewportOffset.y, options.viewportSize.x,
+                       options.viewportSize.y);
 
             GLbitfield clearMask = 0;
             if (options.clearColor) {
@@ -100,6 +103,8 @@ namespace engine {
             if (options.clearStencil) {
                 clearMask |= GL_STENCIL_BUFFER_BIT;
             }
+
+            checkGLError("OGLRenderer::renderBegin");
 
             glClear(clearMask);
 
@@ -230,6 +235,7 @@ namespace engine {
 
             auto ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
             if (ret != GL_FRAMEBUFFER_COMPLETE) {
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
                 throw std::runtime_error("Render Target framebuffer is not complete: " + std::to_string(ret));
             }
 

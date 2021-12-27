@@ -28,10 +28,14 @@
 #include "platform/graphics/rendertarget.hpp"
 #include "engine/render/deferred/deferredrenderer.hpp"
 
+#include "engine/render/deferred/passes/skyboxpass.hpp"
+#include "engine/render/deferred/passes/prepass.hpp"
+#include "engine/render/deferred/passes/phongshadepass.hpp"
+
 namespace engine {
     class RenderWidgetQt : public QOpenGLWidget {
     public:
-        explicit RenderWidgetQt(AssetRenderManager &assetRenderManager);
+        RenderWidgetQt(QWidget *parent, AssetManager &assetManager);
 
         void setScene(const Scene &s) {
             scene = s;
@@ -40,6 +44,15 @@ namespace engine {
     protected:
         void initializeGL() override {
             QOpenGLWidget::initializeGL();
+            renderDevice = getWidgetRenderDevice();
+            assetRenderManager = std::make_unique<AssetRenderManager>(assetManager,
+                                                                      renderDevice->getAllocator());
+            ren = std::make_unique<DeferredRenderer>(*renderDevice, *assetRenderManager);
+            ren->addRenderPass(std::make_unique<SkyboxPass>(*renderDevice));
+            ren->addRenderPass(std::make_unique<PrePass>(*renderDevice));
+            ren->addRenderPass(std::make_unique<PhongShadePass>(*renderDevice));
+            ren->getCompositor().setLayers({Compositor::Layer("Skybox", SkyboxPass::COLOR, ""),
+                                            Compositor::Layer("Phong", PhongShadePass::COMBINED, "")});
         }
 
         void resizeGL(int w, int h) override {
@@ -48,21 +61,25 @@ namespace engine {
         }
 
         void paintGL() override {
-            std::unique_ptr<RenderTarget> target = getWidgetRenderTarget();
-            ren->render(*target, scene);
             QOpenGLWidget::paintGL();
-        }
-
-        std::shared_ptr<RenderDevice> getRenderDevice() {
-            return renderDevice;
+            std::unique_ptr<RenderTarget> target = getWidgetRenderTarget();
+            if (!target->isComplete())
+                return;
+            ren->render(*target, scene);
         }
 
     private:
         std::unique_ptr<RenderTarget> getWidgetRenderTarget();
 
-        std::shared_ptr<RenderDevice> renderDevice;
-        std::unique_ptr<DeferredRenderer> ren;
+        std::unique_ptr<RenderDevice> getWidgetRenderDevice();
+
+        AssetManager &assetManager;
+
         Scene scene;
+
+        std::unique_ptr<RenderDevice> renderDevice;
+        std::unique_ptr<AssetRenderManager> assetRenderManager;
+        std::unique_ptr<DeferredRenderer> ren;
     };
 }
 

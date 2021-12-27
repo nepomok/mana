@@ -27,7 +27,7 @@
 
 namespace engine {
     struct Skybox {
-        ColorRGBA color; // If texture is unassigned skybox color is drawn
+        ColorRGBA color = {12, 123, 123, 255}; // If texture is unassigned skybox color is drawn
         AssetPath texture; // The cube map texture
     };
 }

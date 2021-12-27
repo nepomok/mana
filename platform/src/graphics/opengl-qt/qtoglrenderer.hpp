@@ -28,6 +28,10 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderer : public Renderer, public QOpenGLFunctions_4_5_Core {
         public:
+            QtOGLRenderer() {
+                QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
+            }
+
             void renderBegin(RenderTarget &target, const RenderOptions &options) override;
 
             void addCommand(RenderCommand &command) override;

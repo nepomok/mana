@@ -172,7 +172,8 @@ namespace engine {
                           GL_DEPTH_BUFFER_BIT,
                           GL_NEAREST);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
@@ -217,7 +218,8 @@ namespace engine {
                           targetRect.y,
                           GL_STENCIL_BUFFER_BIT,
                           GL_NEAREST);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
         checkGLError("OGLUserFrameBuffer::blitFramebuffer");
     }
@@ -333,6 +335,13 @@ namespace engine {
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, depthStencilRBO);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    bool opengl::OGLRenderTarget::isComplete() {
+        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        auto ret = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        return ret == GL_FRAMEBUFFER_COMPLETE;
     }
 }
 

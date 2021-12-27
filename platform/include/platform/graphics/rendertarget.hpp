@@ -78,6 +78,8 @@ namespace engine {
         virtual void detachStencil() = 0;
 
         virtual void detachDepthStencil() = 0;
+
+        virtual bool isComplete() = 0;
     };
 }
 

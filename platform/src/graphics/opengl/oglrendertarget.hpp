@@ -85,6 +85,8 @@ namespace engine {
 
             void detachDepthStencil() override;
 
+            bool isComplete() override;
+
             virtual GLuint getFBO();
 
         protected:

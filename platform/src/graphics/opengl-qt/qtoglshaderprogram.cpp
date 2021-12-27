@@ -113,14 +113,10 @@ namespace engine {
         }
 
         QtOGLShaderProgram::~QtOGLShaderProgram() {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
             glDeleteProgram(programID);
         }
 
         void QtOGLShaderProgram::activate() {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
             glUseProgram(programID);
             checkGLError("");
         }

@@ -55,17 +55,14 @@ namespace engine {
         }
 
         std::unique_ptr<RenderTarget> QtOGLRenderAllocator::createRenderTarget(Vec2i size, int samples) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             return std::make_unique<QtOGLRenderTarget>(size, samples);
         }
 
         std::unique_ptr<TextureBuffer> QtOGLRenderAllocator::createTextureBuffer(TextureBuffer::Attributes attributes) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             return std::make_unique<QtOGLTextureBuffer>(attributes);
         }
 
         std::unique_ptr<MeshBuffer> QtOGLRenderAllocator::createMeshBuffer(const Mesh &mesh) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             auto ret = std::make_unique<QtOGLMeshBuffer>();
 
             try {
@@ -218,7 +215,6 @@ namespace engine {
 
         std::unique_ptr<MeshBuffer> QtOGLRenderAllocator::createInstancedMeshBuffer(const Mesh &mesh,
                                                                                     const std::vector<Transform> &offsets) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             auto ret = std::make_unique<QtOGLMeshBuffer>();
 
             try {
@@ -389,7 +385,6 @@ namespace engine {
 
         std::unique_ptr<ShaderProgram> QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
                                                                                  const ShaderSource &fragmentShader) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             auto language = vertexShader.getLanguage();
             if (fragmentShader.getLanguage() != language)
                 throw std::runtime_error("Mixed language shaders not supported");
@@ -403,7 +398,6 @@ namespace engine {
         std::unique_ptr<ShaderProgram> QtOGLRenderAllocator::createShaderProgram(const ShaderSource &vertexShader,
                                                                                  const ShaderSource &geometryShader,
                                                                                  const ShaderSource &fragmentShader) {
-            QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
             auto language = vertexShader.getLanguage();
             if (geometryShader.getLanguage() != language
                 || fragmentShader.getLanguage() != language)

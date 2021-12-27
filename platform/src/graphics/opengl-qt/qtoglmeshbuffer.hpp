@@ -53,14 +53,15 @@ namespace engine {
                                          indexed(false),
                                          instanced(false),
                                          instanceCount(0),
-                                         instanceVBO(0) {}
+                                         instanceVBO(0) {
+                QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
+            }
 
             QtOGLMeshBuffer(const QtOGLMeshBuffer &copy) = delete;
 
             QtOGLMeshBuffer &operator=(const QtOGLMeshBuffer &copy) = delete;
 
             ~QtOGLMeshBuffer() override {
-                QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
                 glDeleteVertexArrays(1, &VAO);
                 glDeleteBuffers(1, &VBO);
                 if (indexed) {

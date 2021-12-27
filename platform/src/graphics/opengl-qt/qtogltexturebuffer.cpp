@@ -35,17 +35,21 @@ QtOGLTextureBuffer::QtOGLTextureBuffer(Attributes attributes) : TextureBuffer(at
     glGenTextures(1, &handle);
     glBindTexture(type, handle);
 
-    glTexParameteri(type, GL_TEXTURE_WRAP_S, QtOGLTypeConverter::convert(attributes.wrapping));
-    glTexParameteri(type, GL_TEXTURE_WRAP_T, QtOGLTypeConverter::convert(attributes.wrapping));
-    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+    if (type != GL_TEXTURE_2D_MULTISAMPLE) {
+        glTexParameteri(type, GL_TEXTURE_WRAP_S, QtOGLTypeConverter::convert(attributes.wrapping));
+        glTexParameteri(type, GL_TEXTURE_WRAP_T, QtOGLTypeConverter::convert(attributes.wrapping));
+    }
+    checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
-    glTexParameteri(type,
-                    GL_TEXTURE_MIN_FILTER,
-                    QtOGLTypeConverter::convert(attributes.filterMin));
-    glTexParameteri(type,
-                    GL_TEXTURE_MAG_FILTER,
-                    QtOGLTypeConverter::convert(attributes.filterMag));
-    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+    if (type != GL_TEXTURE_2D_MULTISAMPLE) {
+        glTexParameteri(type,
+                        GL_TEXTURE_MIN_FILTER,
+                        QtOGLTypeConverter::convert(attributes.filterMin));
+        glTexParameteri(type,
+                        GL_TEXTURE_MAG_FILTER,
+                        QtOGLTypeConverter::convert(attributes.filterMag));
+    }
+    checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
     if (attributes.textureType == TEXTURE_2D) {
         GLuint texInternalFormat = QtOGLTypeConverter::convert(attributes.format);
@@ -76,6 +80,21 @@ QtOGLTextureBuffer::QtOGLTextureBuffer(Attributes attributes) : TextureBuffer(at
                      texFormat,
                      texType,
                      NULL);
+    } else if (attributes.textureType == TEXTURE_2D_MULTISAMPLE) {
+        GLuint texInternalFormat = QtOGLTypeConverter::convert(attributes.format);
+
+        if (attributes.format == ColorFormat::DEPTH) {
+            texInternalFormat = GL_DEPTH;
+        } else if (attributes.format == ColorFormat::DEPTH_STENCIL) {
+            texInternalFormat = GL_DEPTH24_STENCIL8;
+        }
+
+        glTexImage2DMultisample(type,
+                                attributes.samples,
+                                texInternalFormat,
+                                attributes.size.x,
+                                attributes.size.y,
+                                GL_TRUE);
     } else {
         for (unsigned int i = 0; i < 6; i++) {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
@@ -89,9 +108,9 @@ QtOGLTextureBuffer::QtOGLTextureBuffer(Attributes attributes) : TextureBuffer(at
                          NULL);
         }
     }
-    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+    checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
-    if (attributes.generateMipmap) {
+    if (type != GL_TEXTURE_2D_MULTISAMPLE && attributes.generateMipmap) {
         glGenerateMipmap(type);
         glTexParameteri(type, GL_TEXTURE_MIN_FILTER,
                         QtOGLTypeConverter::convert(attributes.mipmapFilter));
@@ -101,18 +120,14 @@ QtOGLTextureBuffer::QtOGLTextureBuffer(Attributes attributes) : TextureBuffer(at
 
     glBindTexture(type, 0);
 
-    checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+    checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 }
 
 QtOGLTextureBuffer::~QtOGLTextureBuffer() {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     glDeleteTextures(1, &handle);
 }
 
 void QtOGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::RGB;
@@ -135,12 +150,10 @@ void QtOGLTextureBuffer::upload(const Image<ColorRGB> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(RGB)");
+    checkGLError("QtOGLTextureBuffer::upload(RGB)");
 }
 
 void QtOGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::RGBA;
@@ -163,12 +176,10 @@ void QtOGLTextureBuffer::upload(const Image<ColorRGBA> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(RGBA)");
+    checkGLError("QtOGLTextureBuffer::upload(RGBA)");
 }
 
 void QtOGLTextureBuffer::upload(const Image<float> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R32F;
@@ -191,12 +202,10 @@ void QtOGLTextureBuffer::upload(const Image<float> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(float)");
+    checkGLError("QtOGLTextureBuffer::upload(float)");
 }
 
 void QtOGLTextureBuffer::upload(const Image<int> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -219,12 +228,10 @@ void QtOGLTextureBuffer::upload(const Image<int> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(int)");
+    checkGLError("QtOGLTextureBuffer::upload(int)");
 }
 
 void QtOGLTextureBuffer::upload(const Image<char> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -248,12 +255,10 @@ void QtOGLTextureBuffer::upload(const Image<char> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(char)");
+    checkGLError("QtOGLTextureBuffer::upload(char)");
 }
 
 void QtOGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_2D);
 
     attributes.format = TextureBuffer::R;
@@ -277,12 +282,10 @@ void QtOGLTextureBuffer::upload(const Image<unsigned char> &buffer) {
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-    checkGLError("OGLTextureBuffer::upload(unsigned char)");
+    checkGLError("QtOGLTextureBuffer::upload(unsigned char)");
 }
 
 engine::Image<ColorRGBA> QtOGLTextureBuffer::download() {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     if (attributes.textureType != TEXTURE_2D)
         throw std::runtime_error("TextureBuffer not texture 2d");
 
@@ -290,13 +293,11 @@ engine::Image<ColorRGBA> QtOGLTextureBuffer::download() {
     glBindTexture(GL_TEXTURE_2D, handle);
     glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *) output.getData());
     glBindTexture(GL_TEXTURE_2D, 0);
-    checkGLError("OGLTextureBuffer::download");
+    checkGLError("QtOGLTextureBuffer::download");
     return output;
 }
 
 void QtOGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     setTextureType(TextureBuffer::TEXTURE_CUBE_MAP);
 
     attributes.format = TextureBuffer::RGBA;
@@ -319,12 +320,10 @@ void QtOGLTextureBuffer::upload(CubeMapFace face, const Image<ColorRGBA> &buffer
 
     glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-    checkGLError("OGLTextureBuffer::upload(CUBEMAP)");
+    checkGLError("QtOGLTextureBuffer::upload(CUBEMAP)");
 }
 
 Image<ColorRGBA> QtOGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     if (attributes.textureType != TEXTURE_CUBE_MAP)
         throw std::runtime_error("TextureBuffer not cubemap");
 
@@ -332,8 +331,6 @@ Image<ColorRGBA> QtOGLTextureBuffer::download(TextureBuffer::CubeMapFace face) {
 }
 
 void QtOGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     auto faceSize = buffer.getSize();
     faceSize.x = faceSize.x / 6;
     if (faceSize.x != faceSize.y)
@@ -345,8 +342,6 @@ void QtOGLTextureBuffer::uploadCubeMap(const Image<ColorRGBA> &buffer) {
 }
 
 Image<ColorRGBA> QtOGLTextureBuffer::downloadCubeMap() {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     auto size = attributes.size;
     size.x = size.x * 6;
     Image<ColorRGBA> ret(size);
@@ -357,8 +352,6 @@ Image<ColorRGBA> QtOGLTextureBuffer::downloadCubeMap() {
 }
 
 void QtOGLTextureBuffer::setTextureType(TextureType t) {
-    QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
-
     if (attributes.textureType != t) {
         attributes.textureType = t;
 
@@ -371,7 +364,7 @@ void QtOGLTextureBuffer::setTextureType(TextureType t) {
 
         glTexParameteri(type, GL_TEXTURE_WRAP_S, QtOGLTypeConverter::convert(attributes.wrapping));
         glTexParameteri(type, GL_TEXTURE_WRAP_T, QtOGLTypeConverter::convert(attributes.wrapping));
-        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+        checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
         glTexParameteri(type,
                         GL_TEXTURE_MIN_FILTER,
@@ -379,7 +372,7 @@ void QtOGLTextureBuffer::setTextureType(TextureType t) {
         glTexParameteri(type,
                         GL_TEXTURE_MAG_FILTER,
                         QtOGLTypeConverter::convert(attributes.filterMag));
-        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+        checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
         if (attributes.textureType == TEXTURE_2D) {
             GLuint texInternalFormat = QtOGLTypeConverter::convert(attributes.format);
@@ -423,7 +416,7 @@ void QtOGLTextureBuffer::setTextureType(TextureType t) {
                              NULL);
             }
         }
-        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+        checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
 
         if (attributes.generateMipmap) {
             glGenerateMipmap(type);
@@ -434,6 +427,6 @@ void QtOGLTextureBuffer::setTextureType(TextureType t) {
         }
 
         glBindTexture(type, 0);
-        checkGLError("OGLTextureBuffer::OGLTextureBuffer()");
+        checkGLError("QtOGLTextureBuffer::QtOGLTextureBuffer()");
     }
 }

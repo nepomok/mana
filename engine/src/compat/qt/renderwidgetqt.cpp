@@ -4,14 +4,16 @@
 #include "graphics/opengl-qt/qtoglrendertarget.hpp"
 
 namespace engine {
-    RenderWidgetQt::RenderWidgetQt(AssetRenderManager &assetRenderManager) {
-        renderDevice = std::make_unique<opengl::QtOGLRenderDevice>();
-        ren = std::make_unique<DeferredRenderer>(*renderDevice, assetRenderManager);
-    }
+    RenderWidgetQt::RenderWidgetQt(QWidget *parent, AssetManager &assetManager)
+            : QOpenGLWidget(parent), assetManager(assetManager) {}
 
     std::unique_ptr<RenderTarget> RenderWidgetQt::getWidgetRenderTarget() {
-        return std::make_unique<opengl::QtOGLRenderTarget>(defaultFramebufferObject(),
+        return std::move(std::make_unique<opengl::QtOGLRenderTarget>(defaultFramebufferObject(),
                                                            Vec2i(frameSize().rwidth(), frameSize().rheight()),
-                                                           1);
+                                                           1));
+    }
+
+    std::unique_ptr<RenderDevice> RenderWidgetQt::getWidgetRenderDevice() {
+        return std::move(std::make_unique<opengl::QtOGLRenderDevice>());
     }
 }

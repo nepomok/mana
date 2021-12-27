@@ -87,6 +87,8 @@ namespace engine {
 
             void detachDepthStencil() override;
 
+            bool isComplete() override;
+
             GLuint getFBO() const { return FBO; }
 
             void setFBO(GLuint value) { FBO = value; }

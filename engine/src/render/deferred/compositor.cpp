@@ -137,12 +137,7 @@ namespace engine {
                                    const std::vector<Layer> &pLayers) {
         auto &ren = device.getRenderer();
 
-        //Clear screen
-        ren.renderBegin(screen, RenderOptions({},
-                                              screen.getSize(),
-                                              false,
-                                              {0, 0, 0, 0}));
-        ren.renderFinish();
+        ren.renderClear(screen, {0, 0, 0, 255});
 
         if (layers.empty())
             return;

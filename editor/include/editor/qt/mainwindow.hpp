@@ -24,7 +24,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-#include "editor/qt/widgets/scenedisplaywidget.hpp"
+#include "engine/compat/qt/renderwidgetqt.hpp"
 
 #include "engine.hpp"
 #include "editor.hpp"
@@ -49,9 +49,12 @@ private:
     QVBoxLayout *leftLayout;
     QVBoxLayout *rightLayout;
 
-    SceneDisplayWidget *sceneDisplay;
+    QWidget *renderContainer;
+    engine::RenderWidgetQt *renderWidget;
 
-    engine::MonoCppDomain domain;
+    std::unique_ptr<engine::Archive> archive;
+    std::unique_ptr<engine::AssetManager> assetManager;
+    std::unique_ptr<engine::AssetRenderManager> assetRenderManager;
 };
 
 #endif //MANA_MAINWINDOW_HPP

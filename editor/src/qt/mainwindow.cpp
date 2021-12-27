@@ -22,6 +22,10 @@
 #include <QVBoxLayout>
 #include <QKeyEvent>
 #include <QMenuBar>
+#include <QSizePolicy>
+
+#include "engine.hpp"
+#include "common.hpp"
 
 using namespace engine;
 
@@ -34,29 +38,24 @@ MainWindow::MainWindow() {
     rootLayout = new QHBoxLayout();
     leftLayout = new QVBoxLayout();
     rightLayout = new QVBoxLayout();
-    rootLayout->addLayout(leftLayout, 1);
-    rootLayout->addLayout(rightLayout, 0);
-
-    sceneDisplay = new SceneDisplayWidget(this);
-
-    leftLayout->addWidget(sceneDisplay);
 
     rootWidget->setLayout(rootLayout);
 
-    sceneDisplay->setFocusPolicy(Qt::ClickFocus);
-}
+    rootLayout->addLayout(leftLayout, 1);
+    rootLayout->addLayout(rightLayout, 0);
+
+    archive = std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets");
+    assetManager = std::make_unique<AssetManager>(*archive);
+
+    renderWidget = new RenderWidgetQt(leftLayout->widget(), *assetManager);
+
+    leftLayout->addWidget(renderWidget, 1);}
 
 MainWindow::~MainWindow() {
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
     QWidget::keyPressEvent(event);
-    if (event->key() == Qt::Key_Space && !event->isAutoRepeat()) {
-        if (sceneDisplay->getHighlightedNodes().empty())
-            sceneDisplay->setHighlightedNodes({"plane"});
-        else
-            sceneDisplay->setHighlightedNodes({});
-    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event) {

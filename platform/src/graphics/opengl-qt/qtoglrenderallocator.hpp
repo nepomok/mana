@@ -29,6 +29,10 @@ namespace engine {
     namespace opengl {
         class QtOGLRenderAllocator : public RenderAllocator, public QOpenGLFunctions_4_5_Core {
         public:
+            QtOGLRenderAllocator() {
+                QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
+            }
+
             std::unique_ptr<RenderTarget> createRenderTarget(Vec2i size, int samples) override;
 
             std::unique_ptr<TextureBuffer> createTextureBuffer(TextureBuffer::Attributes attributes) override;
