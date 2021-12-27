@@ -17,7 +17,13 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_NODEEDITWIDGET_HPP
-#define MANA_NODEEDITWIDGET_HPP
+#include <QApplication>
 
-#endif //MANA_NODEEDITWIDGET_HPP
+#include "editor/mainwindow.hpp"
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    MainWindow win;
+    win.show();
+    return app.exec();
+}

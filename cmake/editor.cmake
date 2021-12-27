@@ -4,7 +4,7 @@ find_package(Qt5Widgets REQUIRED)
 set(Editor.Dir.INCLUDE editor/include/)
 set(Editor.Dir.SRC editor/src/)
 
-file(GLOB_RECURSE Editor.File.Qt.GUI_HDR editor/include/editor/qt/*.hpp)
+file(GLOB_RECURSE Editor.File.Qt.GUI_HDR editor/include/editor/*.hpp)
 
 file(GLOB_RECURSE Editor.File.Qt.SRC ${Editor.Dir.SRC}*.cpp ${Editor.Dir.SRC}.c)
 

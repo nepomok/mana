@@ -17,7 +17,7 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "editor/qt/mainwindow.hpp"
+#include "editor/mainwindow.hpp"
 
 #include <QVBoxLayout>
 #include <QKeyEvent>
@@ -41,15 +41,19 @@ MainWindow::MainWindow() {
 
     rootWidget->setLayout(rootLayout);
 
-    rootLayout->addLayout(leftLayout, 1);
-    rootLayout->addLayout(rightLayout, 0);
-
     archive = std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets");
     assetManager = std::make_unique<AssetManager>(*archive);
 
-    renderWidget = new RenderWidgetQt(leftLayout->widget(), *assetManager);
+    sceneSplitter = new QSplitter(rightLayout->widget());
 
-    leftLayout->addWidget(renderWidget, 1);}
+    renderWidget = new RenderWidgetQt(leftLayout->widget(), *assetManager);
+    sceneEditWidget = new SceneEditWidget(sceneSplitter);
+
+    sceneSplitter->addWidget(renderWidget);
+    sceneSplitter->addWidget(sceneEditWidget);
+
+    rootLayout->addWidget(sceneSplitter);
+}
 
 MainWindow::~MainWindow() {
 }

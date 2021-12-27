@@ -22,6 +22,7 @@
 
 #include <map>
 #include <stdexcept>
+#include <set>
 
 #include "engine/ecs/entity.hpp"
 

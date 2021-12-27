@@ -23,11 +23,13 @@
 #include <QMainWindow>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
+#include <QSplitter>
 
 #include "engine/compat/qt/renderwidgetqt.hpp"
-
 #include "engine.hpp"
-#include "editor.hpp"
+
+#include "editor/scene/sceneeditwidget.hpp"
+#include "editor/scene/entityeditwidget.hpp"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -49,8 +51,10 @@ private:
     QVBoxLayout *leftLayout;
     QVBoxLayout *rightLayout;
 
-    QWidget *renderContainer;
+    QSplitter *sceneSplitter;
+
     engine::RenderWidgetQt *renderWidget;
+    SceneEditWidget *sceneEditWidget;
 
     std::unique_ptr<engine::Archive> archive;
     std::unique_ptr<engine::AssetManager> assetManager;
