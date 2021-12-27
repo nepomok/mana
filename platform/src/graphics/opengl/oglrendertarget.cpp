@@ -25,7 +25,7 @@
 #include "ogltexturebuffer.hpp"
 
 namespace engine {
-    opengl::OGLRenderTarget::OGLRenderTarget() : FBO(), colorRBO(), depthStencilRBO(), size(), samples() {}
+    opengl::OGLRenderTarget::OGLRenderTarget() : FBO(0), colorRBO(0), depthStencilRBO(0), size(), samples() {}
 
     opengl::OGLRenderTarget::OGLRenderTarget(Vec2i size, int samples)
             : FBO(), colorRBO(), depthStencilRBO(), size(size), samples(samples) {
@@ -55,10 +55,24 @@ namespace engine {
     }
 
     opengl::OGLRenderTarget::~OGLRenderTarget() {
-        //TODO: Delete the default renderbuffers in case the user attached textures.
-        if (FBO !=
-            0) //Check if FBO is 0 which is the case for the default framebuffer which is managed by the display manager.
+        //Check if FBO is 0 which is the default framebuffer managed by the display manager.
+        if (FBO != 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            if (colorRBO != 0)
+                glDeleteRenderbuffers(1, &colorRBO);
+            if (depthStencilRBO != 0)
+                glDeleteRenderbuffers(1, &depthStencilRBO);
+
             glDeleteFramebuffers(1, &FBO);
+
+            checkGLError();
+        }
     }
 
     Vec2i opengl::OGLRenderTarget::getSize() {

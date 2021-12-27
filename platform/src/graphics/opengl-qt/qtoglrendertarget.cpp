@@ -59,10 +59,24 @@ namespace engine {
     }
 
     opengl::QtOGLRenderTarget::~QtOGLRenderTarget() {
-        QOpenGLFunctions_4_5_Core::initializeOpenGLFunctions();
+        //Check if FBO is 0 which is the default framebuffer managed by the display manager.
+        if (FBO != 0) {
+            glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-        //TODO: Delete the default renderbuffers in case the user attached textures.
-        glDeleteFramebuffers(1, &FBO);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_RENDERBUFFER, 0);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, 0);
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            if (colorRBO != 0)
+                glDeleteRenderbuffers(1, &colorRBO);
+            if (depthStencilRBO != 0)
+                glDeleteRenderbuffers(1, &depthStencilRBO);
+
+            glDeleteFramebuffers(1, &FBO);
+
+            checkGLError();
+        }
     }
 
     Vec2i opengl::QtOGLRenderTarget::getSize() {

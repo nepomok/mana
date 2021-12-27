@@ -129,6 +129,8 @@ namespace engine {
 
         renderTarget->detachDepthStencil();
 
+        renderTarget = renderAllocator.createRenderTarget(size, samples);
+
         //Reallocate objects
         for (auto &buf: buffers) {
             TextureBuffer::Attributes attr;
@@ -138,8 +140,6 @@ namespace engine {
             attr.samples = samples;
             buf.second = renderAllocator.createTextureBuffer(attr);
         }
-
-        renderTarget = renderAllocator.createRenderTarget(size, samples);
 
         //Reattach textures
         if (!currentDepthStencil.empty())
