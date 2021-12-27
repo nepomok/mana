@@ -10,7 +10,8 @@ namespace engine {
     std::unique_ptr<RenderTarget> RenderWidgetQt::getWidgetRenderTarget() {
         return std::move(std::make_unique<opengl::QtOGLRenderTarget>(defaultFramebufferObject(),
                                                            Vec2i(frameSize().rwidth(), frameSize().rheight()),
-                                                           1));
+                                                           1,
+                                                           false));
     }
 
     std::unique_ptr<RenderDevice> RenderWidgetQt::getWidgetRenderDevice() {

@@ -24,9 +24,11 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QSplitter>
+#include <QTimer>
 
 #include "engine/compat/qt/renderwidgetqt.hpp"
 #include "engine.hpp"
+#include "platform.hpp"
 
 #include "editor/scene/sceneeditwidget.hpp"
 #include "editor/scene/entityeditwidget.hpp"
@@ -46,6 +48,10 @@ protected:
 
     void mousePressEvent(QMouseEvent *event) override;
 
+protected slots:
+
+    void onTimeout();
+
 private:
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;
@@ -57,9 +63,14 @@ private:
     SceneEditWidget *sceneEditWidget;
     FileBrowser *fileBrowser;
 
+    engine::EntityManager entityManager;
+    engine::Scene renderScene;
+
     std::unique_ptr<engine::Archive> archive;
     std::unique_ptr<engine::AssetManager> assetManager;
     std::unique_ptr<engine::AssetRenderManager> assetRenderManager;
+
+    QTimer timer;
 };
 
 #endif //MANA_MAINWINDOW_HPP

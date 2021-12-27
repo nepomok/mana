@@ -39,6 +39,7 @@ namespace engine {
 
         void setScene(const Scene &s) {
             scene = s;
+            update();
         }
 
     protected:
@@ -65,6 +66,8 @@ namespace engine {
             std::unique_ptr<RenderTarget> target = getWidgetRenderTarget();
             if (!target->isComplete())
                 return;
+            scene.camera.aspectRatio = static_cast<float>( target->getSize().x)
+                                       / static_cast<float>(target->getSize().y);
             ren->render(*target, scene);
         }
 

@@ -36,7 +36,7 @@ namespace engine {
      * A camera provides a view and projection matrix.
      */
     struct Camera {
-        Camera() : type() {}
+        Camera() {}
 
         explicit Camera(CameraType type) : type(type) {}
 
@@ -66,7 +66,7 @@ namespace engine {
             }
         }
 
-        CameraType type;
+        CameraType type = PERSPECTIVE;
 
         Transform transform;
 

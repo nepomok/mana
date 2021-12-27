@@ -57,6 +57,14 @@ MainWindow::MainWindow() {
 
     rootLayout->addWidget(sceneSplitter);
     rootWidget->setLayout(rootLayout);
+
+    renderScene.skybox.texture = {"/textures/skybox_sky.json", ""};
+
+    connect(&timer, SIGNAL(timeout()), this, SLOT(onTimeout()));
+
+    renderWidget->setScene(renderScene);
+
+    timer.start(1000 / 60);
 }
 
 MainWindow::~MainWindow() {
@@ -72,6 +80,10 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event) {
 
 void MainWindow::mousePressEvent(QMouseEvent *event) {
     QWidget::mousePressEvent(event);
+}
+
+void MainWindow::onTimeout() {
+    renderWidget->setScene(renderScene);
 }
 
 

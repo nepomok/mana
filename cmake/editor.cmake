@@ -18,3 +18,5 @@ endif ()
 
 target_include_directories(mana-editor PUBLIC ${Engine.Dir.INCLUDE} ${Editor.Dir.INCLUDE} ${Editor.Dir.SRC} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(mana-editor mana-engine Qt5::Core Qt5::Widgets)
+
+file(COPY sample/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
