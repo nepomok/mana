@@ -34,6 +34,8 @@
 
 #include "gui/debugwindow.hpp"
 
+#include <iostream>
+
 using namespace engine;
 
 class SampleApplication : public Application, InputListener {
@@ -41,7 +43,7 @@ public:
     SampleApplication(int argc, char *argv[])
             : Application(argc,
                           argv,
-                          std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets")) {
+                          std::make_unique<PackedArchive>(std::filesystem::current_path().string() + "/assets.pak")) {
         window->setSwapInterval(0);
         window->getRenderDevice().getRenderer().renderClear(window->getRenderTarget(), bgColor);
         window->swapBuffers();
@@ -230,7 +232,7 @@ private:
             auto &cmgr = ecs.getEntityManager().getComponentManager();
             auto comp = cmgr.lookup<AudioSourceComponent>(cameraEntity);
             comp.play = !comp.play;
-            cmgr.update(cameraEntity,comp);
+            cmgr.update(cameraEntity, comp);
         }
     }
 

@@ -20,4 +20,53 @@
 #ifndef MANA_PACKEDARCHIVE_HPP
 #define MANA_PACKEDARCHIVE_HPP
 
+#include <fstream>
+#include <vector>
+
+#include "common/io/archive.hpp"
+
+class AssetPack;
+
+namespace engine {
+    class PackedArchive : public Archive {
+    public:
+        struct EncryptionKey {
+            //TODO: Implement key scrambling to make binary static analysis harder
+            static inline std::string getScrambled(const std::string &string) {
+                return string;
+            }
+
+            static inline std::string getUnscrambled(const std::string &string) {
+                return string;
+            }
+
+            std::string getUnscrambled() const {
+                return getUnscrambled(value);
+            }
+
+            std::string value;
+        };
+
+        static std::vector<char> createPack(const std::string &directory,
+                                            const engine::PackedArchive::EncryptionKey &key = {});
+
+        PackedArchive() = default;
+
+        explicit PackedArchive(const std::string &packFile, const EncryptionKey &key = {});
+
+        ~PackedArchive() override;
+
+        bool exists(const std::string &path) override;
+
+        std::unique_ptr<std::iostream> open(const std::string &path) override;
+
+    private:
+        std::string packFile;
+        std::vector<char> packData;
+        EncryptionKey key;
+
+        AssetPack * pack = nullptr;
+    };
+}
+
 #endif //MANA_PACKEDARCHIVE_HPP
