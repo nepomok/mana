@@ -35,6 +35,8 @@
 #include "editor/scene/entityeditwidget.hpp"
 #include "editor/tool/filebrowser.hpp"
 
+#include "editor/dialog/projectbuilddialog.hpp"
+
 class MainWindow : public QMainWindow {
 Q_OBJECT
 public:

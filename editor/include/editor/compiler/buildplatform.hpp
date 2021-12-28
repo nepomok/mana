@@ -1,0 +1,11 @@
+#ifndef MANA_BUILDPLATFORM_HPP
+#define MANA_BUILDPLATFORM_HPP
+
+enum BuildPlatform {
+    WIN32_86,
+    WIN32_64,
+    LINUX_86,
+    LINUX_64
+};
+
+#endif //MANA_BUILDPLATFORM_HPP
