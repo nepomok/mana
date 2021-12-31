@@ -22,6 +22,7 @@
 
 #include <fstream>
 #include <vector>
+#include <mutex>
 
 #include "common/io/archive.hpp"
 
@@ -52,7 +53,7 @@ namespace engine {
 
         PackedArchive() = default;
 
-        explicit PackedArchive(std::istream &stream, const EncryptionKey &key = {});
+        explicit PackedArchive(std::unique_ptr<std::istream> stream, EncryptionKey key = {});
 
         ~PackedArchive() override;
 
@@ -61,10 +62,11 @@ namespace engine {
         std::unique_ptr<std::iostream> open(const std::string &path) override;
 
     private:
-        std::vector<char> packData;
         EncryptionKey key;
 
-        AssetPack *pack = nullptr;
+        std::mutex streamMutex;
+        std::unique_ptr<std::istream> packFileStream;
+        std::unique_ptr<AssetPack> pack;
     };
 }
 

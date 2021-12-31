@@ -51,7 +51,7 @@ public:
         ren2d = std::make_unique<Renderer2D>(window->getRenderDevice());
         drawLoadingScreen(0);
 
-        pack = std::make_unique<PackedArchive>(*archive->open("/assets.pak"));
+        pack = std::make_unique<PackedArchive>(std::move(archive->open("/assets.pak")));
     }
 
     ~SampleApplication() override = default;

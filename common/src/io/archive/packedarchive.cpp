@@ -2,34 +2,36 @@
 
 #include <filesystem>
 #include <sstream>
+#include <utility>
 
 #include "json.hpp"
 #include "base64.hpp"
 
 static const std::string PAK_HEADER_MAGIC = "#pak#";
-static const std::string DEFAULT_HEADER_SRC = PAK_HEADER_MAGIC + std::string(R"({})");
+
+//TODO: Implement pack encryption
+static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
+    return data;
+}
+
+static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
+    return data;
+}
 
 class AssetPack {
 public:
-    struct Entry {
-        char *data;
-        size_t size;
-    };
-
     AssetPack()
-            : data() {
-    }
+            : headerStr("{}") {};
 
-    explicit AssetPack(const std::vector<char> &bytes) {
-        if (bytes.empty())
-            return;
-
+    explicit AssetPack(std::istream &stream)
+            : stream(&stream) {
         int scope = -1;
-        bool readheader = true;
-        auto dataBegin = bytes.end();
-        for (auto i = PAK_HEADER_MAGIC.size(); i < bytes.size(); i++) {
-            auto c = bytes.at(i);
-            if (readheader) {
+        bool readHeader = true;
+        char c;
+        stream.seekg(static_cast<std::streamoff>(PAK_HEADER_MAGIC.size()));
+        stream.read(&c, 1);
+        while (stream.gcount() == 1) {
+            if (readHeader) {
                 headerStr += c;
                 if (c == '{')
                     if (scope == -1)
@@ -38,38 +40,55 @@ public:
                         scope++;
                 else if (c == '}')
                     scope--;
-                if (scope == 0)
-                    readheader = false;
-            } else {
-                dataBegin = bytes.begin() + i;
-                break;
+                if (scope == 0) {
+                    readHeader = false;
+                    dataBegin = stream.tellg();
+                    break;
+                }
             }
+            stream.read(&c, 1);
         }
-
-        auto dataStr = base64_decode({dataBegin, bytes.end()});
-        data = {dataStr.begin(), dataStr.end()};
 
         headerJson = nlohmann::json::parse(headerStr);
     }
 
-    const std::string &getHeaderStr() {
+    const std::string &getHeaderStr() const {
         return headerStr;
     }
 
-    const nlohmann::json &getHeaderJson() {
+    const nlohmann::json &getHeaderJson() const {
         return headerJson;
     }
 
-    std::vector<char> &getData() {
-        return data;
+    std::istream &getStream() {
+        return *stream;
     }
 
-    void append(const std::string &path, const std::vector<char> &d) {
+    bool exists(const std::string &path) {
+        return headerJson["entries"].find(path) != headerJson["entries"].end();
+    }
+
+    std::vector<char> getEntry(const std::string &path) {
+        long start = headerJson["entries"][path]["start"];
+        long end = headerJson["entries"][path]["end"];
+        std::vector<char> ret;
+        ret.resize(end - start);
+        stream->seekg(dataBegin + start);
+        stream->read(ret.data(), ret.size());
+        if (stream->gcount() != ret.size()) {
+            throw std::runtime_error("Failed to read entry " + path);
+        }
+        return decrypt(key, ret);
+    }
+
+    void append(const std::string &path, std::vector<char> d) {
         // Offset points to offset for the next asset, assets can only be appended not removed without rebuilding the structure.
         long offset = 0;
         auto it = headerJson.find("offset");
         if (it != headerJson.end())
             offset = *it;
+
+        d = encrypt(key, d);
 
         headerJson["entries"][path]["start"] = offset;
         headerJson["entries"][path]["end"] = offset + d.size();
@@ -82,22 +101,9 @@ public:
         headerStr = headerJson.dump();
     }
 
-    bool exists(const std::string &path) {
-        return headerJson["entries"].find(path) != headerJson["entries"].end();
-    }
-
-    Entry getEntry(const std::string &path) {
-        long start = headerJson["entries"][path]["start"];
-        long end = headerJson["entries"][path]["end"];
-        Entry ret{};
-        ret.size = end - start;
-        ret.data = data.data() + start;
-        return ret;
-    }
-
     std::vector<char> getCombinedData() {
         auto hdrStr = PAK_HEADER_MAGIC + headerJson.dump();
-        auto dataStr = base64_encode({data.begin(), data.end()});
+        std::string dataStr = {data.begin(), data.end()};
         std::vector<char> ret;
         ret.insert(ret.begin(), hdrStr.begin(), hdrStr.end());
         ret.insert(ret.end(), dataStr.begin(), dataStr.end());
@@ -105,9 +111,13 @@ public:
     }
 
 private:
+    engine::PackedArchive::EncryptionKey key;
     std::string headerStr;
     nlohmann::json headerJson;
-    std::vector<char> data;
+    std::istream *stream = nullptr;
+    std::streampos dataBegin;
+
+    std::vector<char> data; //Used for output
 };
 
 static std::vector<char> readFile(const std::string &path) {
@@ -131,17 +141,8 @@ static std::vector<char> readFile(const std::string &path) {
     return ret;
 }
 
-//TODO: Implement pack encryption
-static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
-    return data;
-}
-
-static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
-    return data;
-}
-
 std::vector<char> engine::PackedArchive::createPack(const std::string &directory, const EncryptionKey &key) {
-    AssetPack pack({DEFAULT_HEADER_SRC.begin(), DEFAULT_HEADER_SRC.end()});
+    AssetPack pack;
     for (auto &file: std::filesystem::recursive_directory_iterator(directory)) {
         if (file.is_regular_file()) {
             auto path = file.path().string();
@@ -154,23 +155,21 @@ std::vector<char> engine::PackedArchive::createPack(const std::string &directory
     return encrypt(key, pack.getCombinedData());
 }
 
-engine::PackedArchive::PackedArchive(std::istream &stream, const EncryptionKey &key)
-        :  key(key) {
-    packData = decrypt(key, {std::istream_iterator<char>(stream), std::istream_iterator<char>()});
-    pack = new AssetPack(packData);
+engine::PackedArchive::PackedArchive(std::unique_ptr<std::istream> stream, EncryptionKey key)
+        : key(std::move(key)), packFileStream(std::move(stream)) {
+    pack = std::make_unique<AssetPack>(*packFileStream);
 }
 
-engine::PackedArchive::~PackedArchive() {
-    delete pack;
-}
+engine::PackedArchive::~PackedArchive() = default;
 
 bool engine::PackedArchive::exists(const std::string &path) {
     return pack->exists(path);
 }
 
 std::unique_ptr<std::iostream> engine::PackedArchive::open(const std::string &path) {
+    std::lock_guard<std::mutex> guard(streamMutex);
     auto entry = pack->getEntry(path);
-    std::string str = {entry.data, entry.size};
+    auto str = std::string(entry.begin(), entry.end());
     auto ret = std::make_unique<std::stringstream>(str);
     std::noskipws(*ret);
     return std::move(ret);
