@@ -13,7 +13,8 @@ debian_11()
   	libglm-dev \
   	libbox2d-dev libbox2d2.3.0 \
   	libfreetype-dev libfreetype6 \
-  	mono-complete
+  	mono-complete \
+    libcrypto++-dev
 }
 
 #Assumes /etc/os-release is present

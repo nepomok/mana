@@ -4,47 +4,101 @@
 #include <sstream>
 #include <utility>
 
+#include "cryptopp/aes.h"
+#include "cryptopp/filters.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/gzip.h"
+
 #include "json.hpp"
 #include "base64.hpp"
 
 static const std::string PAK_HEADER_MAGIC = "#pak#";
 
-//TODO: Implement pack encryption
-static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
-    return data;
+static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
+    std::string plaintext = {data.begin(), data.end()};
+    std::string ciphertext;
+
+    CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
+
+    memset(key, 0, CryptoPP::AES::DEFAULT_KEYLENGTH);
+    memset(iv, 0, CryptoPP::AES::BLOCKSIZE);
+
+    for (auto i = 0; i < k.value.size() && i < CryptoPP::AES::DEFAULT_KEYLENGTH; i++) {
+        key[i] = k.value.at(i);
+    }
+
+    CryptoPP::AES::Encryption aesEncryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
+    CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
+
+    CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::StringSink(ciphertext));
+    stfEncryptor.Put(reinterpret_cast<const unsigned char *>(plaintext.c_str()), plaintext.length());
+    stfEncryptor.MessageEnd();
+
+    return {ciphertext.begin(), ciphertext.end()};
 }
 
-static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &key, const std::vector<char> &data) {
-    return data;
+static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
+    std::string plaintext;
+    std::string ciphertext = {data.begin(), data.end()};;
+
+    CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
+
+    memset(key, 0, CryptoPP::AES::DEFAULT_KEYLENGTH);
+    memset(iv, 0, CryptoPP::AES::BLOCKSIZE);
+
+    for (auto i = 0; i < k.value.size() && i < CryptoPP::AES::DEFAULT_KEYLENGTH; i++) {
+        key[i] = k.value.at(i);
+    }
+
+    CryptoPP::AES::Decryption aesDecryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
+    CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
+
+    CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::StringSink(plaintext));
+    stfDecryptor.Put(reinterpret_cast<const unsigned char *>(ciphertext.c_str()), ciphertext.size());
+    stfDecryptor.MessageEnd();
+
+    return {plaintext.begin(), plaintext.end()};
+}
+
+static std::vector<char> gzip(const std::vector<char> &data) {
+    std::string compressed;
+    CryptoPP::Gzip zipper(new CryptoPP::StringSink(compressed));
+    zipper.Put((CryptoPP::byte *) data.data(), data.size());
+    zipper.MessageEnd();
+    return {compressed.begin(), compressed.end()};
+}
+
+static std::vector<char> gunzip(const std::vector<char> &data) {
+    std::string decompressed;
+    CryptoPP::Gunzip unzip(new CryptoPP::StringSink(decompressed));
+    unzip.Put((CryptoPP::byte *) data.data(), data.size());
+    unzip.MessageEnd();
+    return {decompressed.begin(), decompressed.end()};
 }
 
 class AssetPack {
 public:
-    AssetPack()
-            : headerStr("{}") {};
+    explicit AssetPack(engine::PackedArchive::EncryptionKey key)
+            : key(std::move(key)), headerStr("{}") {};
 
     explicit AssetPack(std::istream &stream)
             : stream(&stream) {
         int scope = -1;
-        bool readHeader = true;
         char c;
         stream.seekg(static_cast<std::streamoff>(PAK_HEADER_MAGIC.size()));
         stream.read(&c, 1);
         while (stream.gcount() == 1) {
-            if (readHeader) {
-                headerStr += c;
-                if (c == '{')
-                    if (scope == -1)
-                        scope = 1;
-                    else
-                        scope++;
-                else if (c == '}')
-                    scope--;
-                if (scope == 0) {
-                    readHeader = false;
-                    dataBegin = stream.tellg();
-                    break;
-                }
+            headerStr += c;
+            if (c == '{')
+                if (scope == -1)
+                    scope = 1;
+                else
+                    scope++;
+            else if (c == '}')
+                scope--;
+            if (scope == 0) {
+                dataBegin = stream.tellg();
+                break;
             }
             stream.read(&c, 1);
         }
@@ -78,7 +132,8 @@ public:
         if (stream->gcount() != ret.size()) {
             throw std::runtime_error("Failed to read entry " + path);
         }
-        return decrypt(key, ret);
+        ret = decrypt(key, ret);
+        return gunzip(ret);
     }
 
     void append(const std::string &path, std::vector<char> d) {
@@ -88,6 +143,7 @@ public:
         if (it != headerJson.end())
             offset = *it;
 
+        d = gzip(d);
         d = encrypt(key, d);
 
         headerJson["entries"][path]["start"] = offset;
@@ -142,7 +198,7 @@ static std::vector<char> readFile(const std::string &path) {
 }
 
 std::vector<char> engine::PackedArchive::createPack(const std::string &directory, const EncryptionKey &key) {
-    AssetPack pack;
+    AssetPack pack(key);
     for (auto &file: std::filesystem::recursive_directory_iterator(directory)) {
         if (file.is_regular_file()) {
             auto path = file.path().string();
@@ -152,7 +208,7 @@ std::vector<char> engine::PackedArchive::createPack(const std::string &directory
             pack.append(path, data);
         }
     }
-    return encrypt(key, pack.getCombinedData());
+    return pack.getCombinedData();
 }
 
 engine::PackedArchive::PackedArchive(std::unique_ptr<std::istream> stream, EncryptionKey key)
