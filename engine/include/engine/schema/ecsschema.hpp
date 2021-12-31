@@ -80,7 +80,7 @@ namespace engine {
 
     EntityManager &operator<<(EntityManager &manager, const Message &message);
 
-    Message &operator<<(Message &message, const EntityManager &manager);
+    Message &operator<<(Message &message, EntityManager &manager);
 }
 
 #endif //MANA_ECSSCHEMA_HPP

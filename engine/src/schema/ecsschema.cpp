@@ -326,7 +326,7 @@ namespace engine {
                     AudioListenerComponent comp;
                     comp << component;
                     componentManager.create<AudioListenerComponent>(ent, comp);
-                } else if (componentType == "audio_source"){
+                } else if (componentType == "audio_source") {
                     AudioSourceComponent comp;
                     comp << component;
                     componentManager.create<AudioSourceComponent>(ent, comp);
@@ -339,36 +339,80 @@ namespace engine {
         return entityManager;
     }
 
-    Message &operator<<(Message &message, const EntityManager &manager) {
-        //TODO: Implement entity manager serialization
-        throw std::runtime_error("Not Implemented");
-        /*auto &componentManager = manager.getComponentManager();
-        for (auto &ent : manager.getEntities()) {
-            Message msg;
-            if (componentManager.check<TransformComponent>(ent)) {
+    Message &operator<<(Message &message, EntityManager &manager) {
+        message["entities"] = Message(std::map<std::string, Message>());
 
+        auto &componentManager = manager.getComponentManager();
+        for (auto &ent: manager.getEntities()) {
+            Message msg;
+            msg["components"] = Message(std::vector<Message>());
+            if (componentManager.check<TransformComponent>(ent)) {
+                auto &component = componentManager.lookup<TransformComponent>(ent);
+                Message comp;
+                comp["componentType"] = "transform";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<CameraComponent>(ent)) {
-
+                auto &component = componentManager.lookup<CameraComponent>(ent);
+                Message comp;
+                comp["componentType"] = "camera";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<LightComponent>(ent)) {
-
+                auto &component = componentManager.lookup<LightComponent>(ent);
+                Message comp;
+                comp["componentType"] = "light";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<MonoScriptComponent>(ent)) {
-
+                auto &component = componentManager.lookup<MonoScriptComponent>(ent);
+                Message comp;
+                comp["componentType"] = "script_mono";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<MonoSyncComponent>(ent)) {
-
+                auto &component = componentManager.lookup<MonoSyncComponent>(ent);
+                Message comp;
+                comp["componentType"] = "sync_mono";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<MeshRenderComponent>(ent)) {
-
+                auto &component = componentManager.lookup<MeshRenderComponent>(ent);
+                Message comp;
+                comp["componentType"] = "mesh_render";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
             if (componentManager.check<SkyboxComponent>(ent)) {
-
+                auto &component = componentManager.lookup<SkyboxComponent>(ent);
+                Message comp;
+                comp["componentType"] = "skybox";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
             }
-            message.getMap().insert("", msg);
+            if (componentManager.check<AudioListenerComponent>(ent)) {
+                auto &component = componentManager.lookup<AudioListenerComponent>(ent);
+                Message comp;
+                comp["componentType"] = "audio_listener";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
+            }
+            if (componentManager.check<AudioSourceComponent>(ent)) {
+                auto &component = componentManager.lookup<AudioSourceComponent>(ent);
+                Message comp;
+                comp["componentType"] = "audio_source";
+                comp << component;
+                msg["components"].getVector().emplace_back(comp);
+            }
+
+            message["entities"].getMap().at(manager.getName(ent)) = msg;
         }
 
-        return message;*/
+        return message;
     }
 }
