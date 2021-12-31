@@ -215,13 +215,13 @@ protected:
 
         fpsLimit = debugWindow.getFpsLimit();
 
+        wnd.swapBuffers();
+
         if (fpsLimit != 0) {
             auto delta = std::chrono::high_resolution_clock::now() - frameStart;
             auto time = std::chrono::nanoseconds(static_cast<long>(1000000000.0f / fpsLimit));
             std::this_thread::sleep_for(time - delta);
         }
-
-        wnd.swapBuffers();
     }
 
 private:
