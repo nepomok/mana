@@ -103,7 +103,7 @@ namespace engine {
             return comp;
         }
 
-        const T &lookup(const Entity &entity) {
+        const T &lookup(const Entity &entity) const {
             return components.at(entity);
         }
 
@@ -132,7 +132,7 @@ namespace engine {
             }
         }
 
-        bool check(const Entity &entity) {
+        bool check(const Entity &entity) const {
             return components.find(entity) != components.end();
         }
 

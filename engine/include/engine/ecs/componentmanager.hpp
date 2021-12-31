@@ -67,6 +67,11 @@ namespace engine {
         }
 
         template<typename T>
+        const ComponentPool<T> &getPool() const {
+            return getPool<T>();
+        }
+
+        template<typename T>
         typename std::map<Entity, T>::iterator begin() {
             return getPool<T>().begin();
         }
@@ -109,7 +114,7 @@ namespace engine {
         }
 
         template<typename T>
-        const T &lookup(const Entity &entity) {
+        const T &lookup(const Entity &entity) const {
             return getPool<T>().lookup(entity);
         }
 
