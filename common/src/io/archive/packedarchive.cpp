@@ -8,6 +8,9 @@
 #include "cryptopp/filters.h"
 #include "cryptopp/modes.h"
 #include "cryptopp/gzip.h"
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/sha.h"
+#include "cryptopp/hex.h"
 
 #include "json.hpp"
 #include "base64.hpp"
@@ -101,6 +104,18 @@ static std::vector<char> gunzip(const std::vector<char> &data) {
     return {decompressed.begin(), decompressed.end()};
 }
 
+static std::string sha256(const std::vector<char> &data) {
+    std::string tmp;
+    std::string ret;
+    CryptoPP::SHA256 hash;
+    CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(ret));
+    hash.Update((const CryptoPP::byte *) data.data(), data.size());
+    tmp.resize(hash.DigestSize());
+    hash.Final((CryptoPP::byte *) &tmp[0]);
+    CryptoPP::StringSource(tmp, true, new CryptoPP::Redirector(encoder));
+    return ret;
+}
+
 class AssetPack {
 public:
     explicit AssetPack(engine::PackedArchive::EncryptionKey key)
@@ -150,8 +165,10 @@ public:
     }
 
     std::vector<char> getEntry(const std::string &path) {
-        long start = headerJson["entries"][path]["start"];
-        long end = headerJson["entries"][path]["end"];
+        auto entry = headerJson["entries"][path];
+        long start = entry["start"];
+        long end = entry["end"];
+        std::string hash = entry["hash"];
         std::vector<char> ret;
         ret.resize(end - start);
         stream->seekg(dataBegin + start);
@@ -159,8 +176,13 @@ public:
         if (stream->gcount() != ret.size()) {
             throw std::runtime_error("Failed to read entry " + path);
         }
-        ret = decrypt(key, ret);
-        return gunzip(ret);
+        auto dHash = sha256(ret);
+        if (dHash == hash) {
+            ret = decrypt(key, ret);
+            return gunzip(ret);
+        } else {
+            throw std::runtime_error("Failed to get entry (Corrupted data: Hash Mismatch)");
+        }
     }
 
     void append(const std::string &path, std::vector<char> d) {
@@ -173,9 +195,12 @@ public:
         d = gzip(d);
         d = encrypt(key, d);
 
-        headerJson["entries"][path]["start"] = offset;
-        headerJson["entries"][path]["end"] = offset + d.size();
-        headerJson["offset"] = headerJson["entries"][path]["end"];
+        auto &entry = headerJson["entries"][path];
+        entry["start"] = offset;
+        entry["end"] = offset + d.size();
+        entry["hash"] = sha256(d);
+
+        headerJson["offset"] = entry["end"];
 
         for (auto c: d) {
             data.emplace_back(c);
