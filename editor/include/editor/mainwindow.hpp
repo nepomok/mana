@@ -59,6 +59,7 @@ private:
     void loadStateFile();
 
     void saveStateFile();
+
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;
 
