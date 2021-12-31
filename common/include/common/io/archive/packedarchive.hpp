@@ -52,7 +52,7 @@ namespace engine {
 
         PackedArchive() = default;
 
-        explicit PackedArchive(const std::string &packFile, const EncryptionKey &key = {});
+        explicit PackedArchive(std::istream &stream, const EncryptionKey &key = {});
 
         ~PackedArchive() override;
 
@@ -61,11 +61,10 @@ namespace engine {
         std::unique_ptr<std::iostream> open(const std::string &path) override;
 
     private:
-        std::string packFile;
         std::vector<char> packData;
         EncryptionKey key;
 
-        AssetPack * pack = nullptr;
+        AssetPack *pack = nullptr;
     };
 }
 

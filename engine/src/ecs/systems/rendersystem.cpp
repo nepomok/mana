@@ -29,7 +29,6 @@
 #include "engine/render/deferred/passes/forwardpass.hpp"
 #include "engine/render/deferred/passes/debugpass.hpp"
 #include "engine/render/deferred/passes/skyboxpass.hpp"
-#include "engine/render/deferred/passes/imguipass.hpp"
 
 #include "engine/asset/assetimporter.hpp"
 

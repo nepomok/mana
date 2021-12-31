@@ -33,8 +33,6 @@ namespace engine {
 
     void DeferredRenderer::render(RenderTarget &target,
                                   Scene &scene) {
-        geometryBuffer.setSize(target.getSize());
-
         for (auto &pass: passOrder) {
             passes.at(pass)->render(geometryBuffer, scene, assetRenderManager);
         }

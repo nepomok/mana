@@ -22,9 +22,7 @@
 
 #include "platform/graphics/graphicsbackend.hpp"
 #include "platform/graphics/rendertarget.hpp"
-
 #include "platform/display/displaybackend.hpp"
-
 #include "platform/display/window.hpp"
 
 namespace engine {
@@ -56,7 +54,7 @@ namespace engine {
          * @param window
          * @param target
          */
-        void DrawData(Window &window, RenderTarget &target);
+        void DrawData(Window &window, RenderTarget &target, RenderOptions options);
     }
 }
 #endif //MANA_IMGUICOMPAT_HPP

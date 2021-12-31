@@ -91,14 +91,27 @@ namespace engine {
             }
         }
 
-        void DrawData(Window &window, RenderTarget &target) {
+        void DrawData(Window &window, RenderTarget &target, RenderOptions options) {
             switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6: {
                     auto &t = dynamic_cast<opengl::OGLRenderTarget &>(target);
                     glBindFramebuffer(GL_FRAMEBUFFER, t.getFBO());
-                    glViewport(0, 0, target.getSize().x, target.getSize().y);
-                    glClearColor(0, 0, 0, 0);
-                    glClear(GL_COLOR_BUFFER_BIT);
+                    glViewport(options.viewportOffset.x,
+                               options.viewportOffset.y,
+                               options.viewportSize.x,
+                               options.viewportSize.y);
+                    glClearColor(options.clearColorValue.r(),
+                                 options.clearColorValue.g(),
+                                 options.clearColorValue.b(),
+                                 options.clearColorValue.a());
+                    GLenum clearFlags = 0;
+                    if (options.clearColor)
+                        clearFlags |= GL_COLOR_BUFFER_BIT;
+                    if (options.clearDepth)
+                        clearFlags |= GL_DEPTH_BUFFER_BIT;
+                    if (options.clearStencil)
+                        clearFlags |= GL_STENCIL_BUFFER_BIT;
+                    glClear(clearFlags);
                     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
                     glBindFramebuffer(GL_FRAMEBUFFER, 0);
                     checkGLError("ImGuiCompat");

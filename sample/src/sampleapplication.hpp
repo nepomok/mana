@@ -43,13 +43,15 @@ public:
     SampleApplication(int argc, char *argv[])
             : Application(argc,
                           argv,
-                          std::make_unique<PackedArchive>(std::filesystem::current_path().string() + "/assets.pak")) {
+                          std::make_unique<DirectoryArchive>(std::filesystem::current_path().string())) {
         window->setSwapInterval(0);
         window->getRenderDevice().getRenderer().renderClear(window->getRenderTarget(), bgColor);
         window->swapBuffers();
 
         ren2d = std::make_unique<Renderer2D>(window->getRenderDevice());
         drawLoadingScreen(0);
+
+        pack = std::make_unique<PackedArchive>(*archive->open("/assets.pak"));
     }
 
     ~SampleApplication() override = default;
@@ -57,10 +59,10 @@ public:
 protected:
     void start() override {
 
-        assetManager = std::make_unique<AssetManager>(*archive);
+        assetManager = std::make_unique<AssetManager>(*pack);
         audioDevice = AudioDevice::createDevice(engine::OpenAL);
 
-        renderSystem = new RenderSystem(*window, *archive, {}, *assetManager);
+        renderSystem = new RenderSystem(*window, *pack, {}, *assetManager);
 
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
         drawLoadingScreen(0.1);
@@ -73,8 +75,6 @@ protected:
         drawLoadingScreen(0.4);
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<DebugPass>(window->getRenderDevice())));
         drawLoadingScreen(0.5);
-        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ImGuiPass>(*window)));
-        drawLoadingScreen(0.6);
 
         //Move is required because the ECS destructor deletes the system pointers.
         ecs = std::move(ECS(
@@ -105,8 +105,7 @@ protected:
                 {"Diffuse",        PrePass::DIFFUSE,         "",             DEPTH_TEST_ALWAYS},
                 {"Ambient",        PrePass::AMBIENT,         "",             DEPTH_TEST_ALWAYS},
                 {"Specular",       PrePass::SPECULAR,        "",             DEPTH_TEST_ALWAYS},
-                {"Shininess",      PrePass::SHININESS_ID,    "",             DEPTH_TEST_ALWAYS},
-                {"ImGui",          ImGuiPass::COLOR,         "",             DEPTH_TEST_ALWAYS},
+                {"Shininess",      PrePass::SHININESS_ID,    "",             DEPTH_TEST_ALWAYS}
         };
 
         renderSystem->getRenderer().getCompositor().setLayers(layers);
@@ -131,14 +130,9 @@ protected:
         debugWindow.setLayerActive("Specular", false);
         debugWindow.setLayerActive("Shininess", false);
 
-        debugWindow.setLayerActive("ImGui", false);
-        debugWindow.setLayerPinned("ImGui", true);
-
-        renderSystem->getRenderer().getRenderPass<ImGuiPass>().setWidgets({debugWindow});
-
         auto &device = window->getRenderDevice();
 
-        auto stream = archive->open("/scene.json");
+        auto stream = pack->open("/scene.json");
         ecs.getEntityManager() << JsonProtocol().deserialize(*stream);
 
         auto &entityManager = ecs.getEntityManager();
@@ -202,15 +196,20 @@ protected:
 
         debugWindow.setDrawCalls(drawCalls);
         debugWindow.setPolyCount(renderSystem->getPolyCount());
+        debugWindow.setFrameBufferSize(wnd.getFramebufferSize());
 
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
         renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
+        renderSystem->getRenderer().getGeometryBuffer().setSize(debugWindow.getRenderResolution());
 
         wnd.setSwapInterval(debugWindow.getSwapInterval());
 
         wnd.getRenderDevice().getRenderer().debugDrawCallRecordStart();
 
         ecs.update(deltaTime);
+
+        if (showDebugWindow)
+            drawDebugWindow();
 
         drawCalls = wnd.getRenderDevice().getRenderer().debugDrawCallRecordStop();
 
@@ -228,7 +227,7 @@ protected:
 private:
     void onKeyDown(KeyboardKey key) override {
         if (key == KEY_F1) {
-            debugWindow.setLayerActive("ImGui", !debugWindow.getLayerActive("ImGui"));
+            showDebugWindow = !showDebugWindow;
         } else if (key == KEY_F2) {
             auto &cmgr = ecs.getEntityManager().getComponentManager();
             auto comp = cmgr.lookup<AudioSourceComponent>(cameraEntity);
@@ -266,7 +265,20 @@ private:
         window->swapBuffers();
     }
 
+    void drawDebugWindow() {
+        auto &wnd = *window;
+        ImGuiCompat::NewFrame(wnd);
+        ImGui::NewFrame();
+        debugWindow.draw();
+        ImGui::Render();
+        ImGuiCompat::DrawData(wnd,
+                              wnd.getRenderTarget(),
+                              RenderOptions({}, wnd.getRenderTarget().getSize(), true, {}, 1, false, false, false));
+    }
+
 private:
+    std::unique_ptr<PackedArchive> pack;
+
     ECS ecs;
 
     Entity cameraEntity;
@@ -276,6 +288,7 @@ private:
     RenderSystem *renderSystem{};
     std::unique_ptr<AudioDevice> audioDevice;
 
+    bool showDebugWindow = false;
     DebugWindow debugWindow;
 
     std::unique_ptr<AssetManager> assetManager;

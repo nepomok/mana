@@ -22,6 +22,11 @@
 namespace engine {
     GeometryBuffer::GeometryBuffer(RenderAllocator &allocator, Vec2i size, int samples)
             : renderAllocator(allocator), size(size), samples(samples) {
+        if (size.x < 1 || size.y < 1)
+            throw std::runtime_error("Invalid size");
+        if (samples < 1)
+            throw std::runtime_error("Invalid samples");
+
         renderTarget = allocator.createRenderTarget(size, samples);
 
         const Mesh quadMesh(Mesh::TRI,
@@ -44,6 +49,8 @@ namespace engine {
     void GeometryBuffer::setSize(const Vec2i &s) {
         if (size == s)
             return;
+        if (s.x < 1 || s.y < 1)
+            throw std::runtime_error("Invalid size");
         size = s;
         reallocateBuffers();
     }
@@ -55,6 +62,8 @@ namespace engine {
     void GeometryBuffer::setSamples(int value) {
         if (samples == value)
             return;
+        if (value < 1)
+            throw std::runtime_error("Invalid samples");
         samples = value;
         reallocateBuffers();
     }

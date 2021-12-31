@@ -20,16 +20,16 @@
 #ifndef MANA_DEBUGWINDOW_HPP
 #define MANA_DEBUGWINDOW_HPP
 
+#include <cmath>
+
 #include "imgui.h"
 #include "implot.h"
 
 #include "platform/display/window.hpp"
 
-#include "engine/render/deferred/passes/imguipass.hpp"
-
 #include "gui/stringformat.hpp"
 
-class DebugWindow : public ImGuiPass::Widget {
+class DebugWindow {
 public:
     struct LayerTreeItem {
         LayerTreeItem() = default;
@@ -153,7 +153,7 @@ public:
         }
     }
 
-    void draw(Scene &scene) override {
+    void draw() {
         frameRateHistory.emplace(frameRateHistory.begin(), ImGui::GetIO().Framerate);
         if (frameRateHistory.size() >= 10000)
             frameRateHistory.erase(frameRateHistory.end() - 1);
@@ -210,6 +210,18 @@ public:
 
             ImGui::Separator();
 
+            int res[2];
+
+            res[0] = frameBufferSize.x;
+            res[1] = frameBufferSize.y;
+            ImGui::InputInt2("Framebuffer Resolution", res, ImGuiInputTextFlags_ReadOnly);
+
+            res[0] = (int) ((float) frameBufferSize.x * resScale);
+            res[1] = (int) ((float) frameBufferSize.y * resScale);
+            ImGui::InputInt2("Render Resolution", res, ImGuiInputTextFlags_ReadOnly);
+
+            ImGui::SliderFloat("Resolution Scale", &resScale, 0.1, 5, "%.1f");
+
             ImGui::InputInt("MSAA Samples", &samples);
             if (samples > maxSamples)
                 samples = maxSamples;
@@ -235,8 +247,8 @@ public:
         }
 
         if (ImGui::BeginTabItem("Camera")) {
-            ImGui::InputFloat3("Position", (float *) (&scene.camera.transform.getPosition()), "%.3f");
-            auto euler = scene.camera.transform.getRotation().getEulerAngles();
+            ImGui::InputFloat3("Position", (float *) (&camera.transform.getPosition()), "%.3f");
+            auto euler = camera.transform.getRotation().getEulerAngles();
             ImGui::InputFloat3("Rotation", (float *) (&euler), "%.3f");
             ImGui::EndTabItem();
         }
@@ -357,14 +369,26 @@ public:
         return fpsLimit;
     }
 
-    void setScene(EntityManager &scene) {
-        for (auto &entity: scene.getEntities()) {
-            scene.getName(entity);
-        }
+    void setScene(EntityManager &value) {
     }
 
     void setPolyCount(size_t value) {
         polyCount = value;
+    }
+
+    void setFrameBufferSize(Vec2i size) {
+        frameBufferSize = size;
+    }
+
+    Vec2i getRenderResolution() const {
+        Vec2i ret;
+        ret.x = (int) ((float) frameBufferSize.x * resScale);
+        ret.y = (int) ((float) frameBufferSize.y * resScale);
+        return ret;
+    }
+
+    void setCamera(const Camera &val) {
+        camera = val;
     }
 
 private:
@@ -379,6 +403,9 @@ private:
     unsigned long drawCalls = 0;
     float fpsLimit = 0;
     size_t polyCount = 0;
+    float resScale = 1;
+    Vec2i frameBufferSize = {};
+    Camera camera;
 
     std::vector<float> frameRateHistory;
     std::vector<float> frameTimeHistory;

@@ -68,6 +68,7 @@ namespace engine {
                 return;
             scene.camera.aspectRatio = static_cast<float>( target->getSize().x)
                                        / static_cast<float>(target->getSize().y);
+            ren->getGeometryBuffer().setSize(target->getSize());
             ren->render(*target, scene);
         }
 

@@ -154,9 +154,9 @@ std::vector<char> engine::PackedArchive::createPack(const std::string &directory
     return encrypt(key, pack.getCombinedData());
 }
 
-engine::PackedArchive::PackedArchive(const std::string &packFile, const EncryptionKey &key)
-        : packFile(packFile), key(key) {
-    packData = decrypt(key, readFile(packFile));
+engine::PackedArchive::PackedArchive(std::istream &stream, const EncryptionKey &key)
+        :  key(key) {
+    packData = decrypt(key, {std::istream_iterator<char>(stream), std::istream_iterator<char>()});
     pack = new AssetPack(packData);
 }
 

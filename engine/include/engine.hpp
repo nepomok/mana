@@ -64,7 +64,6 @@
 #include "engine/render/deferred/passes/skyboxpass.hpp"
 #include "engine/render/deferred/passes/outlinepass.hpp"
 #include "engine/render/deferred/passes/shadowpass.hpp"
-#include "engine/render/deferred/passes/imguipass.hpp"
 #include "engine/render/deferred/passes/prepass.hpp"
 #include "engine/render/deferred/passes/debugpass.hpp"
 #include "engine/render/forward/forwardrenderer.hpp"
