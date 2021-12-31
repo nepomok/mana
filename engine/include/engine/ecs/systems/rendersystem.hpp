@@ -56,6 +56,8 @@ namespace engine {
 
         DeferredRenderer &getRenderer();
 
+        size_t getPolyCount() const { return polyCount; }
+
         template<typename T>
         T &getRenderPass() {
             return ren->getRenderPass<T>();
@@ -83,6 +85,8 @@ namespace engine {
         Archive &archive;
         AssetManager &assetManager;
         AssetRenderManager assetRenderManager;
+
+        size_t polyCount;
 
         std::unique_ptr<DeferredRenderer> ren;
     };

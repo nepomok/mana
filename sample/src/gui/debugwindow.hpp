@@ -245,10 +245,11 @@ public:
 
         ImGui::Separator();
 
-        ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls)",
+        ImGui::Text("Application average %.3f ms/frame (%.1f FPS, %ld Draw Calls, %ld Polygons)",
                     1000.0f / ImGui::GetIO().Framerate,
                     ImGui::GetIO().Framerate,
-                    drawCalls);
+                    drawCalls,
+                    polyCount);
 
         ImGui::End();
     }
@@ -362,6 +363,10 @@ public:
         }
     }
 
+    void setPolyCount(size_t value) {
+        polyCount = value;
+    }
+
 private:
     std::string appendButtonLabelId(const std::string &label, int index) {
         return label + "###" + std::to_string(index);
@@ -373,6 +378,7 @@ private:
     int swapInterval = 0;
     unsigned long drawCalls = 0;
     float fpsLimit = 0;
+    size_t polyCount = 0;
 
     std::vector<float> frameRateHistory;
     std::vector<float> frameTimeHistory;

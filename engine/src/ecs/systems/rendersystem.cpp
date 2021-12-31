@@ -66,6 +66,8 @@ namespace engine {
 
         Scene scene;
 
+        polyCount = 0;
+
         //TODO: Culling
         //Create deferred draw nodes
         for (auto &pair: componentManager.getPool<MeshRenderComponent>()) {
@@ -77,13 +79,18 @@ namespace engine {
             if (!render.enabled)
                 continue;
 
-            auto &material = assetManager.getAsset<Material>(render.material);
+            auto mesh = AssetHandle<Mesh>(render.mesh, assetManager, &assetRenderManager);
+            auto material = AssetHandle<Material>(render.material, assetManager);
+
+            polyCount += mesh.get().indexed
+                         ? mesh.get().indices.size() / mesh.get().primitive
+                         : mesh.get().vertices.size() / mesh.get().primitive;
 
             //TODO: Change transform walking / scene creation to allow model matrix caching
             scene.deferred.emplace_back(Scene::DeferredDrawNode(
                     TransformComponent::walkHierarchy(transform, entityManager),
-                    AssetHandle<Mesh>(render.mesh, assetManager, &assetRenderManager),
-                    AssetHandle<Material>(render.material, assetManager)));
+                    mesh,
+                    material));
         }
 
         //Get Skybox
@@ -93,9 +100,9 @@ namespace engine {
         }
 
         //Get Camera
-        Camera camera;
         for (auto &pair: componentManager.getPool<CameraComponent>()) {
             auto &tcomp = componentManager.lookup<TransformComponent>(pair.first);
+
             if (!tcomp.enabled)
                 continue;
 
@@ -103,8 +110,6 @@ namespace engine {
 
             scene.camera = comp.camera;
             scene.camera.transform = TransformComponent::walkHierarchy(tcomp, entityManager);
-
-            camera = scene.camera;
 
             break;
         }

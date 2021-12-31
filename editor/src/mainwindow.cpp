@@ -38,7 +38,7 @@ MainWindow::MainWindow() {
 
     rootLayout = new QHBoxLayout();
 
-    archive = std::make_unique<DirectoryArchive>(std::filesystem::current_path().string() + "/assets");
+    archive = std::make_unique<PackedArchive>(std::filesystem::current_path().string() + "/assets.pak");
     assetManager = std::make_unique<AssetManager>(*archive);
 
     renderWidget = new RenderWidgetQt(this, *assetManager);
@@ -106,13 +106,13 @@ void MainWindow::loadStateFile() {
             auto msg = jsonProtocol.deserialize(fs);
 
             std::string dec;
-            Base64::Decode(msg.at("leftSplitter").getString(), dec);
+            base64_decode(msg.at("leftSplitter").getString());
             leftSplitter->restoreState(QByteArray::fromStdString(dec));
-            Base64::Decode(msg.at("rightSplitter").getString(), dec);
+            dec = base64_decode(msg.at("rightSplitter").getString());
             rightSplitter->restoreState(QByteArray::fromStdString(dec));
-            Base64::Decode(msg.at("middleSplitter").getString(), dec);
+            dec = base64_decode(msg.at("middleSplitter").getString());
             middleSplitter->restoreState(QByteArray::fromStdString(dec));
-            Base64::Decode(msg.at("sceneEditSplitter").getString(), dec);
+            dec = base64_decode(msg.at("sceneEditSplitter").getString());
             sceneEditWidget->splitter->restoreState(QByteArray::fromStdString(dec));
         }
     } catch (const std::exception &e) {}
@@ -120,10 +120,10 @@ void MainWindow::loadStateFile() {
 
 void MainWindow::saveStateFile() {
     Message msg((std::map<std::string, Message>()));
-    msg["leftSplitter"] = Base64::Encode(leftSplitter->saveState().toStdString());
-    msg["rightSplitter"] = Base64::Encode(rightSplitter->saveState().toStdString());
-    msg["middleSplitter"] = Base64::Encode(middleSplitter->saveState().toStdString());
-    msg["sceneEditSplitter"] = Base64::Encode(sceneEditWidget->splitter->saveState().toStdString());
+    msg["leftSplitter"] = base64_encode(leftSplitter->saveState().toStdString());
+    msg["rightSplitter"] = base64_encode(rightSplitter->saveState().toStdString());
+    msg["middleSplitter"] = base64_encode(middleSplitter->saveState().toStdString());
+    msg["sceneEditSplitter"] = base64_encode(sceneEditWidget->splitter->saveState().toStdString());
 
     std::ofstream fs("mana_editor_state.json");
     JsonProtocol jsonProtocol;

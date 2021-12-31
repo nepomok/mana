@@ -29,10 +29,10 @@
 namespace engine {
     struct Mesh {
         enum Primitive {
-            POINT,
-            LINE,
-            TRI,
-            QUAD
+            POINT = 1,
+            LINE = 2,
+            TRI = 3,
+            QUAD = 4
         };
 
         bool indexed = false;
@@ -44,7 +44,9 @@ namespace engine {
 
         Mesh(bool indexed, Primitive primitive, std::vector<Vertex> vertices,
              std::vector<uint> indices) :
-                indexed(indexed), primitive(primitive), vertices(std::move(vertices)),
+                indexed(indexed),
+                primitive(primitive),
+                vertices(std::move(vertices)),
                 indices(std::move(indices)) {}
 
         Mesh(Primitive primitive, std::vector<Vertex> vertices, std::vector<uint> indices) :

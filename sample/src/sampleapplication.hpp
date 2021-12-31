@@ -201,6 +201,7 @@ protected:
         }
 
         debugWindow.setDrawCalls(drawCalls);
+        debugWindow.setPolyCount(renderSystem->getPolyCount());
 
         renderSystem->getRenderer().getCompositor().setLayers(debugWindow.getSelectedLayers());
         renderSystem->getRenderer().getGeometryBuffer().setSamples(debugWindow.getSamples());
