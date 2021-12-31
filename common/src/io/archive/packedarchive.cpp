@@ -14,8 +14,7 @@
 
 static const std::string PAK_HEADER_MAGIC = "#pak#";
 
-static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
-    std::string plaintext = {data.begin(), data.end()};
+static std::string encrypt(const engine::PackedArchive::EncryptionKey &k, const std::string &plaintext) {
     std::string ciphertext;
 
     CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
@@ -34,12 +33,11 @@ static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &k, 
     stfEncryptor.Put(reinterpret_cast<const unsigned char *>(plaintext.c_str()), plaintext.length());
     stfEncryptor.MessageEnd();
 
-    return {ciphertext.begin(), ciphertext.end()};
+    return ciphertext;
 }
 
-static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
+static std::string decrypt(const engine::PackedArchive::EncryptionKey &k, const std::string &ciphertext) {
     std::string plaintext;
-    std::string ciphertext = {data.begin(), data.end()};;
 
     CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
 
@@ -57,7 +55,33 @@ static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &k, 
     stfDecryptor.Put(reinterpret_cast<const unsigned char *>(ciphertext.c_str()), ciphertext.size());
     stfDecryptor.MessageEnd();
 
-    return {plaintext.begin(), plaintext.end()};
+    return plaintext;
+}
+
+static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
+    auto ret = encrypt(k, std::string(data.begin(), data.end()));
+    return {ret.begin(), ret.end()};
+}
+
+static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
+    auto ret = decrypt(k, std::string(data.begin(), data.end()));
+    return {ret.begin(), ret.end()};
+}
+
+static std::string gzip(const std::string &data) {
+    std::string compressed;
+    CryptoPP::Gzip zipper(new CryptoPP::StringSink(compressed));
+    zipper.Put((CryptoPP::byte *) data.data(), data.size());
+    zipper.MessageEnd();
+    return compressed;
+}
+
+static std::string gunzip(const std::string &data) {
+    std::string decompressed;
+    CryptoPP::Gunzip unzip(new CryptoPP::StringSink(decompressed));
+    unzip.Put((CryptoPP::byte *) data.data(), data.size());
+    unzip.MessageEnd();
+    return decompressed;
 }
 
 static std::vector<char> gzip(const std::vector<char> &data) {
@@ -103,6 +127,8 @@ public:
             stream.read(&c, 1);
         }
 
+        headerStr = base64_decode(static_cast<std::string>(nlohmann::json::parse(headerStr)["data"]));
+        headerStr = gunzip(decrypt(key, headerStr));
         headerJson = nlohmann::json::parse(headerStr);
     }
 
@@ -158,7 +184,10 @@ public:
     }
 
     std::vector<char> getCombinedData() {
-        auto hdrStr = PAK_HEADER_MAGIC + headerJson.dump();
+        std::string jsonDump = headerJson.dump();
+        nlohmann::json hdrWrap;
+        hdrWrap["data"] = base64_encode(encrypt(key, gzip(jsonDump)));
+        auto hdrStr = PAK_HEADER_MAGIC + hdrWrap.dump();
         std::string dataStr = {data.begin(), data.end()};
         std::vector<char> ret;
         ret.insert(ret.begin(), hdrStr.begin(), hdrStr.end());
