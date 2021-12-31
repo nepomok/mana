@@ -54,6 +54,17 @@ namespace engine {
          * @param window
          * @param target
          */
+        void DrawData(Window &window, RenderTarget &target);
+
+        /**
+         * Calls Impl*RenderDrawData and renders the imgui data into the target.
+         * The user still has to call ImGui::Render beforehand.
+         *
+         * Users can attach a texture buffer to the window render target to access the result.
+         *
+         * @param window
+         * @param target
+         */
         void DrawData(Window &window, RenderTarget &target, RenderOptions options);
     }
 }

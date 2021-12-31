@@ -91,6 +91,10 @@ namespace engine {
             }
         }
 
+        void DrawData(Window &window, RenderTarget &target) {
+            return DrawData(window, target, RenderOptions({}, target.getSize()));
+        }
+
         void DrawData(Window &window, RenderTarget &target, RenderOptions options) {
             switch (window.getGraphicsBackend()) {
                 case OPENGL_4_6: {
