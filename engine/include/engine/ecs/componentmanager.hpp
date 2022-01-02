@@ -68,7 +68,11 @@ namespace engine {
 
         template<typename T>
         const ComponentPool<T> &getPool() const {
-            return getPool<T>();
+            auto it = pools.find(typeid(T));
+            if (it == pools.end()) {
+                throw std::runtime_error("Pool does not exist");
+            }
+            return dynamic_cast<ComponentPool<T> &>(*pools.at(typeid(T)));
         }
 
         template<typename T>
