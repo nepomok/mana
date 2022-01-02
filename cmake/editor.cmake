@@ -1,10 +1,10 @@
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Widgets REQUIRED)
 
-set(Editor.Dir.INCLUDE editor/include/)
-set(Editor.Dir.SRC editor/src/)
+set(Editor.Dir.INCLUDE source/editor/include/)
+set(Editor.Dir.SRC source/editor/src/)
 
-file(GLOB_RECURSE Editor.File.Qt.GUI_HDR editor/include/editor/*.hpp)
+file(GLOB_RECURSE Editor.File.Qt.GUI_HDR source/editor/include/*.hpp)
 
 file(GLOB_RECURSE Editor.File.Qt.SRC ${Editor.Dir.SRC}*.cpp ${Editor.Dir.SRC}.c)
 
@@ -19,4 +19,4 @@ endif ()
 target_include_directories(mana-editor PUBLIC ${Engine.Dir.INCLUDE} ${Editor.Dir.INCLUDE} ${Editor.Dir.SRC} ${CMAKE_CURRENT_BINARY_DIR})
 target_link_libraries(mana-editor mana-engine Qt5::Core Qt5::Widgets)
 
-file(COPY sample/assets.pak DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY source/sample/assets.pak DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
