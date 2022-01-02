@@ -27,15 +27,13 @@
 #include <QTimer>
 #include <QTabWidget>
 
-#include "engine/compat/qt/renderwidgetqt.hpp"
 #include "engine.hpp"
 #include "platform.hpp"
 
-#include "editor/scene/sceneeditwidget.hpp"
-#include "editor/scene/entityeditwidget.hpp"
-#include "editor/tool/filebrowser.hpp"
-
-#include "editor/dialog/projectbuilddialog.hpp"
+#include "editor/gui/scene/sceneeditwidget.hpp"
+#include "editor/gui/scene/entityeditwidget.hpp"
+#include "editor/gui/tool/filebrowser.hpp"
+#include "editor/gui/dialog/projectbuilddialog.hpp"
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
