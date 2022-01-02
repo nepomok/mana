@@ -44,21 +44,24 @@ public:
 
     ~MainWindow() override;
 
-protected:
+protected slots:
+
+    void onTimeout();
+
+private:
     void keyPressEvent(QKeyEvent *event) override;
 
     void keyReleaseEvent(QKeyEvent *event) override;
 
     void mousePressEvent(QMouseEvent *event) override;
 
-protected slots:
-
-    void onTimeout();
-
-private:
     void loadStateFile();
 
     void saveStateFile();
+
+    void loadSceneFile(const std::string &path);
+
+    void saveSceneFile(const std::string &path);
 
     QWidget *rootWidget;
     QHBoxLayout *rootLayout;

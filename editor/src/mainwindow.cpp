@@ -32,6 +32,7 @@ using namespace engine;
 
 MainWindow::MainWindow() {
     menuBar()->addMenu("File");
+
     rootWidget = new QWidget(this);
 
     setCentralWidget(rootWidget);
@@ -113,7 +114,7 @@ void MainWindow::loadStateFile() {
             dec = base64_decode(msg.at("middleSplitter").getString());
             middleSplitter->restoreState(QByteArray::fromStdString(dec));
             dec = base64_decode(msg.at("sceneEditSplitter").getString());
-            sceneEditWidget->splitter->restoreState(QByteArray::fromStdString(dec));
+            sceneEditWidget->restoreSplitterState(QByteArray::fromStdString(dec));
         }
     } catch (const std::exception &e) {}
 }
@@ -123,11 +124,18 @@ void MainWindow::saveStateFile() {
     msg["leftSplitter"] = base64_encode(leftSplitter->saveState().toStdString());
     msg["rightSplitter"] = base64_encode(rightSplitter->saveState().toStdString());
     msg["middleSplitter"] = base64_encode(middleSplitter->saveState().toStdString());
-    msg["sceneEditSplitter"] = base64_encode(sceneEditWidget->splitter->saveState().toStdString());
+    msg["sceneEditSplitter"] = base64_encode(sceneEditWidget->saveSplitterState().toStdString());
 
     std::ofstream fs("mana_editor_state.json");
     JsonProtocol jsonProtocol;
     jsonProtocol.serialize(fs, msg);
 }
 
+void MainWindow::loadSceneFile(const std::string &path) {
+
+}
+
+void MainWindow::saveSceneFile(const std::string &path) {
+
+}
 

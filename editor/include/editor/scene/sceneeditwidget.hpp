@@ -5,12 +5,13 @@
 #include <QTreeWidget>
 #include <QHBoxLayout>
 #include <QSplitter>
+#include <QHeaderView>
 
-#include "editor/scene/sceneeditwidget.hpp"
 #include "editor/scene/entityeditwidget.hpp"
 #include "engine/ecs/entitymanager.hpp"
+#include "engine/ecs/components/transformcomponent.hpp"
 
-class SceneEditWidget : public QWidget {
+class SceneEditWidget : public QWidget, engine::ComponentPool<engine::TransformComponent>::Listener {
 Q_OBJECT
 public:
     //TODO: QTreeWidget entities display
@@ -28,16 +29,46 @@ public:
         layout->setMargin(0);
     }
 
-    void setEntityManager(engine::EntityManager *value) {
-        entityManager = value;
+    ~SceneEditWidget() override {
+        if (entityManager)
+            entityManager->getComponentManager().getPool<engine::TransformComponent>().removeListener(this);
     }
 
-    QSplitter *splitter;
+    void setEntityManager(engine::EntityManager &value) {
+        if (entityManager)
+            entityManager->getComponentManager().getPool<engine::TransformComponent>().removeListener(this);
+        entityManager = &value;
+        entityManager->getComponentManager().getPool<engine::TransformComponent>().addListener(this);
+    }
+
+    QByteArray saveSplitterState() const {
+        return splitter->saveState();
+    }
+
+    void restoreSplitterState(const QByteArray &state) const {
+        splitter->restoreState(state);
+    }
+
+signals:
+
+    void currentEntityChanged(engine::Entity entity);
+
 private:
+    void onComponentCreate(const engine::Entity &entity, const engine::TransformComponent &component) override {}
+
+    void onComponentDestroy(const engine::Entity &entity, const engine::TransformComponent &component) override {}
+
+    void onComponentUpdate(const engine::Entity &entity,
+                           const engine::TransformComponent &oldValue,
+                           const engine::TransformComponent &newValue) override {}
+
+    QSplitter *splitter;
     QTreeWidget *sceneTree;
     EntityEditWidget *entityEditWidget;
 
     engine::EntityManager *entityManager = nullptr;
+
+    std::map<engine::Entity, QTreeWidgetItem *> entityItems;
 };
 
 #endif //MANA_SCENEEDITWIDGET_HPP
