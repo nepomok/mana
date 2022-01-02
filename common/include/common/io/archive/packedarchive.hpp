@@ -32,6 +32,11 @@ namespace engine {
     class PackedArchive : public Archive {
     public:
         struct EncryptionKey {
+            EncryptionKey() = default;
+
+            explicit EncryptionKey(const std::string &key)
+                    : value(std::move(key)) {}
+
             //TODO: Implement key scrambling to make binary static analysis harder
             static inline std::string getScrambled(const std::string &string) {
                 return string;
@@ -45,6 +50,11 @@ namespace engine {
                 return getUnscrambled(value);
             }
 
+            const std::string &getValue() {
+                return value;
+            }
+
+        private:
             std::string value;
         };
 

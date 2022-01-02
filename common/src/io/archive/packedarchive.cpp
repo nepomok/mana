@@ -4,117 +4,15 @@
 #include <sstream>
 #include <utility>
 
-#include "cryptopp/aes.h"
-#include "cryptopp/filters.h"
-#include "cryptopp/modes.h"
-#include "cryptopp/gzip.h"
-#include "cryptopp/cryptlib.h"
-#include "cryptopp/sha.h"
-#include "cryptopp/hex.h"
+#include "common/crypto/aes.hpp"
+#include "common/crypto/sha.hpp"
+#include "common/compression/gzip.hpp"
 
 #include "json.hpp"
 #include "base64.hpp"
 
 static const std::string PAK_FORMAT_VERSION = "00";
 static const std::string PAK_HEADER_MAGIC = "\xa9pak\xff" + PAK_FORMAT_VERSION + "\xa9";
-
-static std::string encrypt(const engine::PackedArchive::EncryptionKey &k, const std::string &plaintext) {
-    std::string ciphertext;
-
-    CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
-
-    memset(key, 0, CryptoPP::AES::DEFAULT_KEYLENGTH);
-    memset(iv, 0, CryptoPP::AES::BLOCKSIZE);
-
-    for (auto i = 0; i < k.value.size() && i < CryptoPP::AES::DEFAULT_KEYLENGTH; i++) {
-        key[i] = k.value.at(i);
-    }
-
-    CryptoPP::AES::Encryption aesEncryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
-    CryptoPP::CBC_Mode_ExternalCipher::Encryption cbcEncryption(aesEncryption, iv);
-
-    CryptoPP::StreamTransformationFilter stfEncryptor(cbcEncryption, new CryptoPP::StringSink(ciphertext));
-    stfEncryptor.Put(reinterpret_cast<const unsigned char *>(plaintext.c_str()), plaintext.length());
-    stfEncryptor.MessageEnd();
-
-    return ciphertext;
-}
-
-static std::string decrypt(const engine::PackedArchive::EncryptionKey &k, const std::string &ciphertext) {
-    std::string plaintext;
-
-    CryptoPP::byte key[CryptoPP::AES::DEFAULT_KEYLENGTH], iv[CryptoPP::AES::BLOCKSIZE];
-
-    memset(key, 0, CryptoPP::AES::DEFAULT_KEYLENGTH);
-    memset(iv, 0, CryptoPP::AES::BLOCKSIZE);
-
-    for (auto i = 0; i < k.value.size() && i < CryptoPP::AES::DEFAULT_KEYLENGTH; i++) {
-        key[i] = k.value.at(i);
-    }
-
-    CryptoPP::AES::Decryption aesDecryption(key, CryptoPP::AES::DEFAULT_KEYLENGTH);
-    CryptoPP::CBC_Mode_ExternalCipher::Decryption cbcDecryption(aesDecryption, iv);
-
-    CryptoPP::StreamTransformationFilter stfDecryptor(cbcDecryption, new CryptoPP::StringSink(plaintext));
-    stfDecryptor.Put(reinterpret_cast<const unsigned char *>(ciphertext.c_str()), ciphertext.size());
-    stfDecryptor.MessageEnd();
-
-    return plaintext;
-}
-
-static std::vector<char> encrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
-    auto ret = encrypt(k, std::string(data.begin(), data.end()));
-    return {ret.begin(), ret.end()};
-}
-
-static std::vector<char> decrypt(const engine::PackedArchive::EncryptionKey &k, const std::vector<char> &data) {
-    auto ret = decrypt(k, std::string(data.begin(), data.end()));
-    return {ret.begin(), ret.end()};
-}
-
-static std::string gzip(const std::string &data) {
-    std::string compressed;
-    CryptoPP::Gzip zipper(new CryptoPP::StringSink(compressed));
-    zipper.Put((CryptoPP::byte *) data.data(), data.size());
-    zipper.MessageEnd();
-    return compressed;
-}
-
-static std::string gunzip(const std::string &data) {
-    std::string decompressed;
-    CryptoPP::Gunzip unzip(new CryptoPP::StringSink(decompressed));
-    unzip.Put((CryptoPP::byte *) data.data(), data.size());
-    unzip.MessageEnd();
-    return decompressed;
-}
-
-static std::vector<char> gzip(const std::vector<char> &data) {
-    std::string compressed;
-    CryptoPP::Gzip zipper(new CryptoPP::StringSink(compressed));
-    zipper.Put((CryptoPP::byte *) data.data(), data.size());
-    zipper.MessageEnd();
-    return {compressed.begin(), compressed.end()};
-}
-
-static std::vector<char> gunzip(const std::vector<char> &data) {
-    std::string decompressed;
-    CryptoPP::Gunzip unzip(new CryptoPP::StringSink(decompressed));
-    unzip.Put((CryptoPP::byte *) data.data(), data.size());
-    unzip.MessageEnd();
-    return {decompressed.begin(), decompressed.end()};
-}
-
-static std::string sha256(const std::vector<char> &data) {
-    std::string tmp;
-    std::string ret;
-    CryptoPP::SHA256 hash;
-    CryptoPP::HexEncoder encoder(new CryptoPP::StringSink(ret));
-    hash.Update((const CryptoPP::byte *) data.data(), data.size());
-    tmp.resize(hash.DigestSize());
-    hash.Final((CryptoPP::byte *) &tmp[0]);
-    CryptoPP::StringSource(tmp, true, new CryptoPP::Redirector(encoder));
-    return ret;
-}
 
 class AssetPack {
 public:
@@ -144,7 +42,7 @@ public:
         }
 
         headerStr = base64_decode(static_cast<std::string>(nlohmann::json::parse(headerStr)["data"]));
-        headerStr = gunzip(decrypt(key, headerStr));
+        headerStr = engine::GZip::decompress(engine::AES::decrypt(key.getValue(), {}, headerStr));
         headerJson = nlohmann::json::parse(headerStr);
     }
 
@@ -176,10 +74,10 @@ public:
         if (stream->gcount() != ret.size()) {
             throw std::runtime_error("Failed to read entry " + path);
         }
-        auto dHash = sha256(ret);
+        auto dHash = engine::SHA::sha256(ret);
         if (dHash == hash) {
-            ret = decrypt(key, ret);
-            return gunzip(ret);
+            ret = engine::AES::decrypt(key.getValue(), {}, ret);
+            return engine::GZip::decompress(ret);
         } else {
             throw std::runtime_error("Failed to get entry (Corrupted data: Hash Mismatch)");
         }
@@ -192,13 +90,13 @@ public:
         if (it != headerJson.end())
             offset = *it;
 
-        d = gzip(d);
-        d = encrypt(key, d);
+        d = engine::GZip::compress(d);
+        d = engine::AES::decrypt(key.getValue(), {}, d);
 
         auto &entry = headerJson["entries"][path];
         entry["start"] = offset;
         entry["end"] = offset + d.size();
-        entry["hash"] = sha256(d);
+        entry["hash"] = engine::SHA::sha256(d);
 
         headerJson["offset"] = entry["end"];
 
@@ -212,7 +110,7 @@ public:
     std::vector<char> getCombinedData() {
         std::string jsonDump = headerJson.dump();
         nlohmann::json hdrWrap;
-        hdrWrap["data"] = base64_encode(encrypt(key, gzip(jsonDump)));
+        hdrWrap["data"] = base64_encode(engine::AES::encrypt(key.getValue(), {}, engine::GZip::compress(jsonDump)));
         auto hdrStr = PAK_HEADER_MAGIC + hdrWrap.dump();
         std::string dataStr = {data.begin(), data.end()};
         std::vector<char> ret;
