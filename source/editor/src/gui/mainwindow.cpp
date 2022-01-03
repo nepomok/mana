@@ -16,7 +16,7 @@
  *  with this program; if not, write to the Free Software Foundation, Inc.,
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
+ 
 #include "gui/mainwindow.hpp"
 
 #include <QVBoxLayout>
@@ -39,7 +39,8 @@ MainWindow::MainWindow() {
 
     rootLayout = new QHBoxLayout();
 
-    archive = std::make_unique<PackedArchive>(std::make_unique<std::ifstream>(std::filesystem::current_path().string() + "/assets.pak"));
+    archive = std::make_unique<PackedArchive>(
+            std::make_unique<std::ifstream>(std::filesystem::current_path().string() + "/assets.pak"));
     assetManager = std::make_unique<AssetManager>(*archive);
 
     renderWidget = new RenderWidgetQt(this, *assetManager);
