@@ -40,6 +40,13 @@ namespace engine {
         std::vector<Vertex> vertices;
         std::vector<uint> indices;
 
+        size_t polyCount() const {
+            if (indexed)
+                return indices.size() / primitive;
+            else
+                return vertices.size() / primitive;
+        }
+
         Mesh() = default;
 
         Mesh(bool indexed, Primitive primitive, std::vector<Vertex> vertices,

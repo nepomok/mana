@@ -81,9 +81,7 @@ namespace engine {
             auto mesh = AssetHandle<Mesh>(render.mesh, assetManager, &assetRenderManager);
             auto material = AssetHandle<Material>(render.material, assetManager);
 
-            polyCount += mesh.get().indexed
-                         ? mesh.get().indices.size() / mesh.get().primitive
-                         : mesh.get().vertices.size() / mesh.get().primitive;
+            polyCount += mesh.get().polyCount();
 
             //TODO: Change transform walking / scene creation to allow model matrix caching
             scene.deferred.emplace_back(Scene::DeferredDrawNode(
