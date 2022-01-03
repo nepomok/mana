@@ -31,7 +31,7 @@
 #include "asset/mesh.hpp"
 
 namespace engine {
-    class RenderDevice {
+    class MANA_EXPORT RenderDevice {
     public:
         static std::unique_ptr<RenderDevice> create(GraphicsBackend backend);
 

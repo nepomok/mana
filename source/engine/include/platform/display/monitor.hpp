@@ -28,7 +28,7 @@
 #include "math/rectangle.hpp"
 
 namespace engine {
-    class Monitor {
+    class MANA_EXPORT Monitor {
     public:
         virtual ~Monitor() = default;
 

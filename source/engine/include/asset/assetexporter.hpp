@@ -27,7 +27,7 @@
 
 namespace engine {
     namespace AssetExporter {
-        void exportImage(std::ostream &stream, const Image <ColorRGBA> &image);
+        MANA_EXPORT void exportImage(std::ostream &stream, const Image <ColorRGBA> &image);
     }
 }
 

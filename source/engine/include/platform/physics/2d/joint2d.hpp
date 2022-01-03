@@ -24,7 +24,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    class Joint2D {
+    class MANA_EXPORT Joint2D {
     public:
         //TODO: Define physics joints api
     protected:

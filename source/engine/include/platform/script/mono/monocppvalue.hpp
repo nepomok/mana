@@ -23,7 +23,7 @@
 #include <stdexcept>
 
 namespace engine {
-    struct MonoCppValue {
+    struct MANA_EXPORT MonoCppValue {
         MonoCppValue() = default;
 
         MonoCppValue(void *ptr) : ptr(ptr) {}

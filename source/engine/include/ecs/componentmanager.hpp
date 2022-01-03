@@ -35,7 +35,7 @@ namespace engine {
      * The engine defines some default components which are used by provided default systems (Rendering, Physics etc.)
      * The user can define custom component types and systems which use these types.
      */
-    class ComponentManager {
+    class MANA_EXPORT ComponentManager {
     public:
         ComponentManager() = default;
 

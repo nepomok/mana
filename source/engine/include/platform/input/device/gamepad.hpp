@@ -57,7 +57,7 @@ namespace engine {
         CIRCLE = B
     };
 
-    class GamePad {
+    class MANA_EXPORT GamePad {
     public:
         double getGamepadAxis(GamePadAxis axis) const {
             return axies.at(axis);

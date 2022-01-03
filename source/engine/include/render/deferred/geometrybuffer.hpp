@@ -29,7 +29,7 @@ namespace engine {
     /**
      * TODO: Avoid unnecessary multisampled textures in deferred passes which output screen quad rasterized data and therefore do not need to have a multisampled texture.
      */
-    class GeometryBuffer {
+    class MANA_EXPORT GeometryBuffer {
     public:
         explicit GeometryBuffer(RenderAllocator &allocator, Vec2i size = {640, 320}, int samples = 4);
 

@@ -25,7 +25,7 @@
 #include "asset/skybox.hpp"
 
 namespace engine {
-    struct SkyboxComponent {
+    struct MANA_EXPORT SkyboxComponent {
         Skybox skybox;
 
         bool operator==(const SkyboxComponent &other) const {

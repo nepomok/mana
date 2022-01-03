@@ -21,7 +21,7 @@
 #define MANA_ENTITY_HPP
 
 namespace engine {
-    struct Entity {
+    struct MANA_EXPORT Entity {
         static const int INVALID_ID = -1;
 
         int id;

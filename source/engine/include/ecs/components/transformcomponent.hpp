@@ -29,7 +29,7 @@
 namespace engine {
     struct Scene;
 
-    struct TransformComponent {
+    struct MANA_EXPORT TransformComponent {
         static Transform walkHierarchy(const TransformComponent &component, EntityManager &entityManager);
 
         bool enabled = true;

@@ -26,7 +26,7 @@
 #include <utility>
 
 namespace engine {
-    struct AssetPath {
+    struct MANA_EXPORT AssetPath {
         AssetPath() = default;
 
         AssetPath(std::string bundle, std::string asset)
@@ -50,14 +50,14 @@ namespace engine {
             return std::tie(bundle, asset) == std::tie(other.bundle, other.asset);
         }
 
-        struct Hash {
+        struct MANA_EXPORT Hash {
             std::size_t operator()(const AssetPath &key) const {
                 return key.hash();
             }
         };
 
         template<int S>
-        struct HashArray {
+        struct MANA_EXPORT HashArray {
             std::size_t operator()(const std::array<AssetPath, S> &value) const {
                 std::string hashStr;
                 for (auto &item: value)

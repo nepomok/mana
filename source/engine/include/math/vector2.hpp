@@ -5,7 +5,7 @@
 
 namespace engine {
     template<typename T>
-    class Vector2 {
+    class MANA_EXPORT Vector2 {
     public:
         T x;
         T y;
@@ -97,7 +97,7 @@ namespace engine {
         }
 
         //https://en.wikipedia.org/wiki/Euclidean_distance
-        static double distance(const Vector2<T> &start, const Vector2<T> end) {
+        MANA_EXPORT static double distance(const Vector2<T> &start, const Vector2<T> end) {
             return std::sqrt(std::pow(start.x - end.x, 2) + std::pow(start.y - end.y, 2));
         }
     };

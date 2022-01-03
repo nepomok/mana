@@ -24,7 +24,7 @@
 #include "asset/assetpath.hpp"
 
 namespace engine {
-    struct Texture {
+    struct MANA_EXPORT Texture {
         std::vector<AssetPath> images;
         TextureBuffer::Attributes attributes;
     };

@@ -31,7 +31,7 @@
 #include "asset/mesh.hpp"
 
 namespace engine {
-    class RenderAllocator {
+    class MANA_EXPORT RenderAllocator {
     public:
         virtual std::unique_ptr<RenderTarget> createRenderTarget(Vec2i size, int samples) = 0;
 
@@ -54,7 +54,7 @@ namespace engine {
          *  layout (location = 8) in vec4 instanceRow3;
          *
          * HLSL:
-         *  struct VS_INPUT
+         *  struct MANA_EXPORT VS_INPUT
          *  {
          *      float3 position : POSITION0;
          *      float3 normal : NORMAL;
@@ -75,7 +75,7 @@ namespace engine {
         virtual std::unique_ptr<MeshBuffer> createInstancedMeshBuffer(const Mesh &mesh,
                                                                       const std::vector<Transform> &offsets) = 0;
 
-        struct CustomMeshDefinition {
+        struct MANA_EXPORT CustomMeshDefinition {
             enum AttributeType {
                 UNSIGNED_BYTE, // 1 Byte unsigned
                 SIGNED_BYTE, // 1 Byte signed

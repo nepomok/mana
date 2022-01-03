@@ -25,7 +25,7 @@
 
 namespace engine {
     template<typename T>
-    class AssetHandle {
+    class MANA_EXPORT AssetHandle {
     public:
         AssetHandle() = default;
 

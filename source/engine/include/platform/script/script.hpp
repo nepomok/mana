@@ -22,7 +22,7 @@
 
 //TODO: Redesign Script abstraction
 namespace engine {
-    class Script {
+    class MANA_EXPORT Script {
     public:
         virtual void onEnable() const {};
 

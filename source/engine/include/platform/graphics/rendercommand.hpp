@@ -83,7 +83,7 @@ namespace engine {
         ONE_MINUS_CONSTANT_ALPHA
     };
 
-    struct RenderProperties {
+    struct MANA_EXPORT RenderProperties {
         bool enableDepthTest = true;
         bool depthTestWrite = true;
         DepthTestMode depthTestMode = DepthTestMode::DEPTH_TEST_LESS;
@@ -106,7 +106,7 @@ namespace engine {
         BlendMode blendDestinationMode = BlendMode::ONE_MINUS_SRC_ALPHA;
     };
 
-    struct RenderCommand {
+    struct MANA_EXPORT RenderCommand {
         explicit RenderCommand(ShaderProgram &shader, MeshBuffer &mesh) : shader(shader), mesh(mesh) {}
 
         RenderCommand(const RenderCommand &other) = default;

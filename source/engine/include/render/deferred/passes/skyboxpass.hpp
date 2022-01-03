@@ -23,7 +23,7 @@
 #include "render/deferred/renderpass.hpp"
 
 namespace engine {
-    class SkyboxPass : public RenderPass {
+    class MANA_EXPORT SkyboxPass : public RenderPass {
     public:
         static const char *COLOR;
 

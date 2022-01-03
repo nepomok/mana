@@ -21,7 +21,7 @@
 #define MANA_PARTICLECOMPONENT_HPP
 
 namespace engine {
-    struct ParticleComponent {
+    struct MANA_EXPORT ParticleComponent {
     };
 }
 

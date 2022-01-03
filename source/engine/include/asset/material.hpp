@@ -26,7 +26,7 @@
 #include "asset/texture.hpp"
 
 namespace engine {
-    struct Material : public AssetBase {
+    struct MANA_EXPORT Material : public AssetBase {
         ~Material() override = default;
 
         AssetBase *clone() override{

@@ -33,9 +33,9 @@ namespace engine {
     /**
      * The collected render scene data.
      */
-    struct Scene {
+    struct MANA_EXPORT Scene {
         // A deferred draw node description with a mesh, material and drawing parameters
-        struct DeferredDrawNode {
+        struct MANA_EXPORT DeferredDrawNode {
             DeferredDrawNode() = default;
 
             DeferredDrawNode(Transform t, AssetHandle<Mesh> mesh, AssetHandle<Material> material)
@@ -51,7 +51,7 @@ namespace engine {
         };
 
         // A forward draw node description with mesh, shaders and textures
-        struct ForwardDrawNode {
+        struct MANA_EXPORT ForwardDrawNode {
             Transform transform;
             AssetHandle<Mesh> mesh;
             AssetHandle<Shader> shader;

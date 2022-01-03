@@ -35,7 +35,7 @@
 #include "asset/scene.hpp"
 
 namespace engine {
-    class DeferredRenderer {
+    class MANA_EXPORT DeferredRenderer {
     public:
         explicit DeferredRenderer(RenderDevice &device, AssetRenderManager &assetRenderManager);
 

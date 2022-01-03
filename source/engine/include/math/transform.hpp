@@ -25,7 +25,7 @@
 #include "math/matrixmath.hpp"
 
 namespace engine {
-    struct Transform {
+    struct MANA_EXPORT Transform {
         Transform() = default;
 
         Transform(Vec3f position, Vec3f rotation, Vec3f scale) : mPosition(position),

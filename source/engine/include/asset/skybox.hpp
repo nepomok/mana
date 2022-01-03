@@ -26,7 +26,7 @@
 #include "color.hpp"
 
 namespace engine {
-    struct Skybox {
+    struct MANA_EXPORT Skybox {
         ColorRGBA color = {12, 123, 123, 255}; // If texture is unassigned skybox color is drawn
         AssetPath texture; // The cube map texture
     };

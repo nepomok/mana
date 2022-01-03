@@ -25,7 +25,7 @@
 #include "monocppassembly.hpp"
 
 namespace engine {
-    class MonoCppDomain {
+    class MANA_EXPORT MonoCppDomain {
     public:
         MonoCppDomain();
 

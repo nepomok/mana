@@ -26,7 +26,7 @@
 #include <atomic>
 
 namespace engine {
-    class Task {
+    class MANA_EXPORT Task {
     public:
         Task() : work(),
                  mutex(),

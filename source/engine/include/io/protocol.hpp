@@ -25,7 +25,7 @@
 #include "message.hpp"
 
 namespace engine {
-    class Protocol {
+    class MANA_EXPORT Protocol {
     public:
         virtual void serialize(std::ostream &stream, const Message &message) = 0;
 

@@ -24,7 +24,7 @@
 #include "joint2d.hpp"
 
 namespace engine {
-    class World2D {
+    class MANA_EXPORT World2D {
     public:
         enum Backend {
             BOX2D
@@ -32,14 +32,14 @@ namespace engine {
 
         static std::unique_ptr<World2D> create(Backend backend);
 
-        struct Contact {
+        struct MANA_EXPORT Contact {
             Collider2D *colliderA;
             Collider2D *colliderB;
 
             std::vector<Vec2f> points;
         };
 
-        class ContactListener {
+        class MANA_EXPORT ContactListener {
         public:
             virtual ~ContactListener() = default;
 

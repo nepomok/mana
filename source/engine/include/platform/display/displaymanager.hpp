@@ -28,7 +28,7 @@
 
 namespace engine {
     //TODO: Add monitor gamma configuration interface
-    class DisplayManager {
+    class MANA_EXPORT DisplayManager {
     public:
         DisplayManager();
 

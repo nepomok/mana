@@ -24,7 +24,7 @@
 #include "monocppdomain.hpp"
 
 namespace engine {
-    class MonoScript : public Script {
+    class MANA_EXPORT MonoScript : public Script {
     public:
         MonoScript();
 

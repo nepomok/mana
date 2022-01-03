@@ -31,7 +31,7 @@ namespace engine {
      *
      * It optionally keeps the object pointer pinned to prevent the mono gc from moving / deleting the contained object.
      */
-    class MonoCppObject {
+    class MANA_EXPORT MonoCppObject {
     public:
         MonoCppObject();
 

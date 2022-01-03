@@ -25,7 +25,7 @@ namespace engine {
      * A render object is a dynamically allocated graphics api dependent object which can be deallocated by
      * calling the destructor.
      */
-    class RenderObject {
+    class MANA_EXPORT RenderObject {
     public:
         virtual ~RenderObject() = default;
     };

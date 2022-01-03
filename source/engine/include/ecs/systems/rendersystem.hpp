@@ -37,9 +37,9 @@ namespace engine {
 
     class DebugPass;
 
-    class RenderSystem : public System,
-                         ComponentPool<MeshRenderComponent>::Listener,
-                         ComponentPool<SkyboxComponent>::Listener {
+    class MANA_EXPORT RenderSystem : public System,
+                                     ComponentPool<MeshRenderComponent>::Listener,
+                                     ComponentPool<SkyboxComponent>::Listener {
     public:
         RenderSystem(RenderTarget &screen,
                      RenderDevice &device,

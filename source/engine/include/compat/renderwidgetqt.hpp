@@ -33,7 +33,7 @@
 #include "render/deferred/passes/phongshadepass.hpp"
 
 namespace engine {
-    class RenderWidgetQt : public QOpenGLWidget {
+    class MANA_EXPORT RenderWidgetQt : public QOpenGLWidget {
     public:
         RenderWidgetQt(QWidget *parent, AssetManager &assetManager);
 

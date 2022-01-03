@@ -26,7 +26,7 @@ namespace engine {
     /**
      * Systems provide logic.
      */
-    class System {
+    class MANA_EXPORT System {
     public:
         virtual ~System() = default;
 

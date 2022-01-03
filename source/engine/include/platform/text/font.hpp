@@ -29,7 +29,7 @@
 
 //TODO: Design text metrics / formatting abstraction
 namespace engine {
-    class Font {
+    class MANA_EXPORT Font {
     public:
         /**
          * Load the font from the stream.

@@ -34,7 +34,7 @@
 #include "math/vector2.hpp"
 
 namespace engine {
-    class Window {
+    class MANA_EXPORT Window {
     public:
         virtual ~Window() = default;
 

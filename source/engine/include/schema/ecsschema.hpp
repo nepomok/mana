@@ -30,57 +30,57 @@
 
 namespace engine {
     //TODO: Design better schema generation method
-    CameraType &operator<<(CameraType &value, const Message &message);
+    MANA_EXPORT CameraType &operator<<(CameraType &value, const Message &message);
 
-    Message &operator<<(Message &message, CameraType type);
+    MANA_EXPORT Message &operator<<(Message &message, CameraType type);
 
-    LightType &operator<<(LightType &value, const Message &message);
+    MANA_EXPORT LightType &operator<<(LightType &value, const Message &message);
 
-    Message &operator<<(Message &message, LightType type);
+    MANA_EXPORT Message &operator<<(Message &message, LightType type);
 
-    AssetPath &operator<<(AssetPath &value, const Message &message);
+    MANA_EXPORT AssetPath &operator<<(AssetPath &value, const Message &message);
 
-    Message &operator<<(Message &message, const AssetPath &path);
+    MANA_EXPORT Message &operator<<(Message &message, const AssetPath &path);
 
-    CameraComponent &operator<<(CameraComponent &component, const Message &message);
+    MANA_EXPORT CameraComponent &operator<<(CameraComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const CameraComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const CameraComponent &component);
 
-    TransformComponent &operator<<(TransformComponent &component, const Message &message);
+    MANA_EXPORT TransformComponent &operator<<(TransformComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const TransformComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const TransformComponent &component);
 
-    MeshRenderComponent &operator<<(MeshRenderComponent &component, const Message &message);
+    MANA_EXPORT MeshRenderComponent &operator<<(MeshRenderComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MeshRenderComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const MeshRenderComponent &component);
 
-    SkyboxComponent &operator<<(SkyboxComponent &component, const Message &message);
+    MANA_EXPORT SkyboxComponent &operator<<(SkyboxComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const SkyboxComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const SkyboxComponent &component);
 
-    LightComponent &operator<<(LightComponent &component, const Message &message);
+    MANA_EXPORT LightComponent &operator<<(LightComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const LightComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const LightComponent &component);
 
-    MonoScriptComponent &operator<<(MonoScriptComponent &component, const Message &message);
+    MANA_EXPORT MonoScriptComponent &operator<<(MonoScriptComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MonoScriptComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const MonoScriptComponent &component);
 
-    MonoSyncComponent &operator<<(MonoSyncComponent &component, const Message &message);
+    MANA_EXPORT MonoSyncComponent &operator<<(MonoSyncComponent &component, const Message &message);
 
-    Message &operator<<(Message &message, const MonoSyncComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const MonoSyncComponent &component);
 
-    AudioSourceComponent &operator<<(AudioSourceComponent &component, const Message &message);
+    MANA_EXPORT AudioSourceComponent &operator<<(AudioSourceComponent &component, const Message &message);
 
-    Message &operator <<(Message &message, const AudioSourceComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const AudioSourceComponent &component);
 
-    AudioListenerComponent &operator<<(AudioListenerComponent &component, const Message &message);
+    MANA_EXPORT AudioListenerComponent &operator<<(AudioListenerComponent &component, const Message &message);
 
-    Message &operator <<(Message &message, const AudioListenerComponent &component);
+    MANA_EXPORT Message &operator<<(Message &message, const AudioListenerComponent &component);
 
-    EntityManager &operator<<(EntityManager &manager, const Message &message);
+    MANA_EXPORT EntityManager &operator<<(EntityManager &manager, const Message &message);
 
-    Message &operator<<(Message &message, EntityManager &manager);
+    MANA_EXPORT Message &operator<<(Message &message, EntityManager &manager);
 }
 
 #endif //MANA_ECSSCHEMA_HPP

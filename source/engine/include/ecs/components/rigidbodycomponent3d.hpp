@@ -23,7 +23,7 @@
 #include "platform/physics/3d/rigidbody3d.hpp"
 
 namespace engine {
-    struct RigidBodyComponent3D {
+    struct MANA_EXPORT RigidBodyComponent3D {
         RigidBody3D::RigidBodyType type;
     };
 }

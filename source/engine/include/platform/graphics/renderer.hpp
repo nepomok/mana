@@ -28,7 +28,7 @@
 #include "graphicsbackend.hpp"
 
 namespace engine {
-    struct RenderOptions {
+    struct MANA_EXPORT RenderOptions {
         explicit RenderOptions(Vec2i viewportOffset,
                                Vec2i viewportSize,
                                bool multiSample = true,
@@ -55,7 +55,7 @@ namespace engine {
         bool clearStencil;
     };
 
-    class Renderer {
+    class MANA_EXPORT Renderer {
     public:
         virtual ~Renderer() = default;
 

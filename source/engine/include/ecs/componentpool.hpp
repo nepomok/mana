@@ -27,7 +27,7 @@
 #include "ecs/entity.hpp"
 
 namespace engine {
-    class ComponentPoolBase {
+    class MANA_EXPORT ComponentPoolBase {
     public:
         virtual ~ComponentPoolBase() = default;
 
@@ -39,9 +39,9 @@ namespace engine {
     };
 
     template<typename T>
-    class ComponentPool : public ComponentPoolBase {
+    class MANA_EXPORT ComponentPool : public ComponentPoolBase {
     public:
-        class Listener {
+        class MANA_EXPORT Listener {
         public:
             virtual void onComponentCreate(const Entity &entity, const T &component) = 0;
 

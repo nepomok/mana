@@ -27,7 +27,7 @@
 #include "audiosource.hpp"
 
 namespace engine {
-    class AudioContext {
+    class MANA_EXPORT AudioContext {
     public:
         virtual ~AudioContext() = default;
 

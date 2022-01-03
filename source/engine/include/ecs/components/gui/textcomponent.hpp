@@ -21,7 +21,7 @@
 #define MANA_TEXTCOMPONENT_HPP
 
 namespace engine {
-    struct Text {
+    struct MANA_EXPORT Text {
     };
 }
 

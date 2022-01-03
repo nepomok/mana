@@ -28,7 +28,7 @@ namespace engine {
      * A texture buffer.
      * The texture type, size and format is changed when calling the upload methods.
      */
-    class TextureBuffer : public RenderObject {
+    class MANA_EXPORT TextureBuffer : public RenderObject {
     public:
         enum TextureType {
             TEXTURE_2D,
@@ -138,7 +138,7 @@ namespace engine {
             LINEAR_MIPMAP_LINEAR
         };
 
-        struct Attributes {
+        struct MANA_EXPORT Attributes {
             TextureType textureType = TEXTURE_2D;
             Vec2i size = {};
             ColorFormat format = RGBA;

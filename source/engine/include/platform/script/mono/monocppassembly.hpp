@@ -29,7 +29,7 @@
 
 namespace engine {
     //TODO: Refactor mono abstraction
-    class MonoCppAssembly {
+    class MANA_EXPORT MonoCppAssembly {
     public:
         MonoCppAssembly() = default;
 

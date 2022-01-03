@@ -23,7 +23,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    struct AudioListenerComponent {
+    struct MANA_EXPORT AudioListenerComponent {
         Vec3f velocity;
     };
 }

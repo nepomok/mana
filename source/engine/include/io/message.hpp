@@ -25,9 +25,9 @@
 #include <stdexcept>
 
 namespace engine {
-    class Message;
+    class MANA_EXPORT Message;
 
-    class Message {
+    class MANA_EXPORT Message {
     public:
         enum DataType {
             INT,

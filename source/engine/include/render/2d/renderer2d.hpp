@@ -55,7 +55,7 @@ namespace engine {
      * Resources which are passed by the user (Texture buffers, shaders etc.) shall not be deallocated until
      * render finish is called.
      */
-    class Renderer2D {
+    class MANA_EXPORT Renderer2D {
     public:
         explicit Renderer2D(RenderDevice &device);
 

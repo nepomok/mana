@@ -26,12 +26,12 @@
 
 #include "io/archive.hpp"
 
-class AssetPack;
+class MANA_EXPORT AssetPack;
 
 namespace engine {
-    class PackedArchive : public Archive {
+    class MANA_EXPORT PackedArchive : public Archive {
     public:
-        struct EncryptionKey {
+        struct MANA_EXPORT EncryptionKey {
             EncryptionKey() = default;
 
             explicit EncryptionKey(const std::string &key)

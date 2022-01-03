@@ -21,7 +21,7 @@
 #define MANA_MONITORMODE_HPP
 
 namespace engine {
-    struct VideoMode {
+    struct MANA_EXPORT VideoMode {
         int width;
         int height;
         int redBits;

@@ -123,7 +123,7 @@ namespace engine {
         KEY_UNDEFINED
     };
 
-    class Keyboard {
+    class MANA_EXPORT Keyboard {
     public:
         bool getKey(KeyboardKey key) const {
             return keysDown.find(key) != keysDown.end();

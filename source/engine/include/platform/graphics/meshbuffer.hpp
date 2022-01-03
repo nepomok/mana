@@ -25,7 +25,7 @@
 #include "math/transform.hpp"
 
 namespace engine {
-    class MeshBuffer : public RenderObject {
+    class MANA_EXPORT MeshBuffer : public RenderObject {
     public:
         ~MeshBuffer() override = default;
     };

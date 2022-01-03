@@ -24,7 +24,7 @@
 #include "asset/assethandle.hpp"
 
 namespace engine {
-    struct AudioSourceComponent {
+    struct MANA_EXPORT AudioSourceComponent {
         AssetPath audioPath;
         bool play = false;
         bool loop = false;

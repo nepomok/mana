@@ -26,7 +26,7 @@
 #include "collider2d.hpp"
 
 namespace engine {
-    class RigidBody2D {
+    class MANA_EXPORT RigidBody2D {
     public:
         enum RigidBodyType {
             STATIC,

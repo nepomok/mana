@@ -29,7 +29,7 @@
 #include "io/archive.hpp"
 
 namespace engine {
-    class MonoScriptingSystem : public System, InputListener {
+    class MANA_EXPORT MonoScriptingSystem : public System, InputListener {
     public:
         MonoScriptingSystem(Input &input,
                             MonoCppDomain &domain,

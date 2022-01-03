@@ -28,7 +28,7 @@
 #include "asset/asset.hpp"
 
 namespace engine {
-    class AssetBundle {
+    class MANA_EXPORT AssetBundle {
     public:
         ~AssetBundle() {
             assets.clear();

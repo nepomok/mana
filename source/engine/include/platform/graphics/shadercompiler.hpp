@@ -63,7 +63,7 @@ namespace engine {
         /**
          * Cross compile the source by using spirv as an intermediate.
          *
-         * When compiling hlsl to glsl globals defined in the hlsl source are stored in a struct which has an instance
+         * When compiling hlsl to glsl globals defined in the hlsl source are stored in a struct MANA_EXPORT which has an instance
          * with the name "Globals". When using the render allocator to create a shader program the
          * implementation will append the prefix automatically when needed.
          *

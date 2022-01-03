@@ -23,7 +23,7 @@
 #include "render/deferred/renderpass.hpp"
 
 namespace engine {
-    class ForwardPass : public RenderPass {
+    class MANA_EXPORT ForwardPass : public RenderPass {
     public:
         static const char *COLOR;
         static const char *DEPTH;

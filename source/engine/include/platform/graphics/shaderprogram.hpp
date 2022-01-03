@@ -27,7 +27,7 @@
 #include "renderobject.hpp"
 
 namespace engine {
-    class ShaderProgram : public RenderObject {
+    class MANA_EXPORT ShaderProgram : public RenderObject {
     public:
         ~ShaderProgram() override = default;
 
@@ -84,7 +84,7 @@ namespace engine {
          * Lookup by the location directly is about twice as fast compared to looking up by name
          *
          * Note that when using the shader compiler to cross compile hlsl the
-         * implementation uses shaderc which for no reason merges global variables (But not samplers) in a struct
+         * implementation uses shaderc which for no reason merges global variables (But not samplers) in a struct MANA_EXPORT
          * and thus looses all locations.
          */
         virtual bool setTexture(int location, int slot) = 0;

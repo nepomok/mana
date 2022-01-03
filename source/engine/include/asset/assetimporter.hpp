@@ -42,7 +42,7 @@ namespace engine {
          * @param archive
          * @return
          */
-        AssetBundle import(std::istream &stream, const std::string &hint = "", Archive *archive = nullptr);
+        MANA_EXPORT AssetBundle import(std::istream &stream, const std::string &hint = "", Archive *archive = nullptr);
 
         /**
          * Import the bundle from the path.
@@ -56,7 +56,7 @@ namespace engine {
          * @param archive
          * @return
          */
-        AssetBundle import(const std::string &path, Archive &archive);
+        MANA_EXPORT AssetBundle import(const std::string &path, Archive &archive);
     }
 }
 

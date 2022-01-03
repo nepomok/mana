@@ -8,7 +8,7 @@
 #include "math/vector2.hpp"
 
 namespace engine {
-    class Grid {
+    class MANA_EXPORT Grid {
     public:
         int nCol, nRow;
         Vec2i size;

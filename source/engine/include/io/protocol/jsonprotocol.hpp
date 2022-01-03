@@ -23,7 +23,7 @@
 #include "io/protocol.hpp"
 
 namespace engine {
-    class JsonProtocol : public Protocol {
+    class MANA_EXPORT JsonProtocol : public Protocol {
     public:
         void serialize(std::ostream &stream, const Message &message) override;
 

@@ -24,7 +24,7 @@
 #include "asset/assetpath.hpp"
 
 namespace engine {
-    struct MeshRenderComponent {
+    struct MANA_EXPORT MeshRenderComponent {
         bool enabled = true;
 
         bool castShadows{};

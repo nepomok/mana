@@ -21,7 +21,7 @@
 #define MANA_CANVASCOMPONENT_HPP
 
 namespace engine {
-    struct CanvasComponent {
+    struct MANA_EXPORT CanvasComponent {
     };
 }
 

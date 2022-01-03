@@ -23,7 +23,7 @@
 #include <cstdint>
 
 namespace engine {
-    struct ColorRGB {
+    struct MANA_EXPORT ColorRGB {
         uint8_t data[3];
 
         uint8_t &r() { return data[0]; }
@@ -55,7 +55,7 @@ namespace engine {
         }
     };
 
-    struct ColorRGBA {
+    struct MANA_EXPORT ColorRGBA {
         uint8_t data[4];
 
         uint8_t &r() { return data[0]; }

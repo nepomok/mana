@@ -35,7 +35,7 @@ namespace engine {
     /**
      * A camera provides a view and projection matrix.
      */
-    struct Camera {
+    struct MANA_EXPORT Camera {
         Camera() {}
 
         explicit Camera(CameraType type) : type(type) {}

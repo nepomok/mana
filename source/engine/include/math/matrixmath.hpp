@@ -27,11 +27,11 @@
 
 namespace engine {
     namespace MatrixMath {
-        Mat4f identity();
+        MANA_EXPORT Mat4f identity();
 
-        Mat4f inverse(const Mat4f &mat);
+        MANA_EXPORT Mat4f inverse(const Mat4f &mat);
 
-        Mat4f transpose(const Mat4f &mat);
+        MANA_EXPORT Mat4f transpose(const Mat4f &mat);
 
         /**
          * Returns a matrix which can be used for multiplying with a column vector.
@@ -44,7 +44,7 @@ namespace engine {
          * @param zFar
          * @return
          */
-        Mat4f perspective(float fovy, float aspect, float zNear, float zFar);
+        MANA_EXPORT Mat4f perspective(float fovy, float aspect, float zNear, float zFar);
 
         /**
          * Returns a matrix which can be used for multiplying with a column vector.
@@ -59,13 +59,13 @@ namespace engine {
          * @param zFar
          * @return
          */
-        Mat4f ortho(float left, float right, float bottom, float top, float zNear, float zFar);
+        MANA_EXPORT Mat4f ortho(float left, float right, float bottom, float top, float zNear, float zFar);
 
-        Vec3f unProject(Vec2i windowCoordinates,
-                        Mat4f viewMatrix,
-                        Mat4f projectionMatrix,
-                        Vec2i viewportOffset,
-                        Vec2i viewportSize);
+        MANA_EXPORT Vec3f unProject(Vec2i windowCoordinates,
+                                    Mat4f viewMatrix,
+                                    Mat4f projectionMatrix,
+                                    Vec2i viewportOffset,
+                                    Vec2i viewportSize);
 
         /**
          * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
@@ -73,7 +73,7 @@ namespace engine {
          * @param translationValue
          * @return
          */
-        Mat4f translate(const Vec3f &translationValue);
+        MANA_EXPORT  Mat4f translate(const Vec3f &translationValue);
 
         /**
          * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
@@ -81,7 +81,7 @@ namespace engine {
          * @param scaleValue
          * @return
          */
-        Mat4f scale(const Vec3f &scaleValue);
+        MANA_EXPORT Mat4f scale(const Vec3f &scaleValue);
 
         /**
          * The returned matrix should be multiplied with a column vector or transposed to multiply with a row vector.
@@ -89,7 +89,7 @@ namespace engine {
          * @param rotationValue
          * @return
          */
-        Mat4f rotate(const Vec3f &rotationValue);
+        MANA_EXPORT Mat4f rotate(const Vec3f &rotationValue);
     }
 }
 

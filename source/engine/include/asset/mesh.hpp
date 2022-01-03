@@ -27,7 +27,7 @@
 #include "asset/vertex.hpp"
 
 namespace engine {
-    struct Mesh {
+    struct MANA_EXPORT Mesh {
         enum Primitive {
             POINT = 1,
             LINE = 2,

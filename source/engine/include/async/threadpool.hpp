@@ -30,7 +30,7 @@
 #include "task.hpp"
 
 namespace engine {
-    class ThreadPool {
+    class MANA_EXPORT ThreadPool {
     public:
         static ThreadPool pool;
 

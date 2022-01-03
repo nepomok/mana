@@ -21,11 +21,11 @@
 #define MANA_EVENTRECEIVER_HPP
 
 namespace engine {
-    class EventReceiverBase {
+    class MANA_EXPORT EventReceiverBase {
     };
 
     template<typename T>
-    class EventReceiver : public EventReceiverBase {
+    class MANA_EXPORT EventReceiver : public EventReceiverBase {
     public:
         /**
          * @param event

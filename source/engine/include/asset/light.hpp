@@ -31,7 +31,7 @@ namespace engine {
         LIGHT_SPOT
     };
 
-    struct Light : public AssetBase {
+    struct MANA_EXPORT Light : public AssetBase {
         Light() : type() {}
 
         explicit Light(LightType type) : type(type) {}

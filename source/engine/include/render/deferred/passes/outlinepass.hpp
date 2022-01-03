@@ -23,7 +23,7 @@
 #include "render/deferred/renderpass.hpp"
 
 namespace engine {
-    class OutlinePass : public RenderPass {
+    class MANA_EXPORT OutlinePass : public RenderPass {
     public:
         ~OutlinePass() override = default;
 

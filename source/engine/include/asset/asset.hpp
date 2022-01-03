@@ -21,7 +21,7 @@
 #define MANA_ASSET_HPP
 
 namespace engine {
-    class AssetBase {
+    class MANA_EXPORT AssetBase {
     public:
         virtual ~AssetBase() = default;
 
@@ -29,7 +29,7 @@ namespace engine {
     };
 
     template<typename T>
-    class Asset : public AssetBase {
+    class MANA_EXPORT Asset : public AssetBase {
     public:
         Asset() = default;
 

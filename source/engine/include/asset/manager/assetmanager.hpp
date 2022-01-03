@@ -30,7 +30,7 @@ namespace engine {
     /**
      * Handles loading asset bundles from disk on a thread pool
      */
-    class AssetManager {
+    class MANA_EXPORT AssetManager {
     public:
         explicit AssetManager(Archive &archive)
                 : archive(archive) {}

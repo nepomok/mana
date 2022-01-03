@@ -23,7 +23,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    struct Vertex {
+    struct MANA_EXPORT Vertex {
         float data[14];
 
         Vertex(Vec3f position, Vec3f normal, Vec2f uv, Vec3f tangent, Vec3f bitangent) : data() {

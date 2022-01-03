@@ -23,7 +23,7 @@
 #include "shadercompiler.hpp"
 
 namespace engine {
-    class ShaderSource {
+    class MANA_EXPORT ShaderSource {
     public:
         ShaderSource() = default;
 

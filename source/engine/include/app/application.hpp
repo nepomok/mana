@@ -34,7 +34,7 @@
 #include "implot.h"
 
 namespace engine {
-    class Application {
+    class MANA_EXPORT Application {
     public:
         /**
          * @param argc

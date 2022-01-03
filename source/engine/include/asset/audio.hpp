@@ -25,7 +25,7 @@
 #include "asset/asset.hpp"
 
 namespace engine {
-    class Audio : public AssetBase {
+    class MANA_EXPORT Audio : public AssetBase {
     public:
         ~Audio() override = default;
 

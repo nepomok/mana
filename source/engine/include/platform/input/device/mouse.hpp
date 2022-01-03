@@ -35,7 +35,7 @@ namespace engine {
         MOUSE_BUTTON_UNDEFINED
     };
 
-    class Mouse {
+    class MANA_EXPORT Mouse {
     public:
         bool getButton(MouseButton button) const {
             return buttonsDown.find(button) != buttonsDown.end();

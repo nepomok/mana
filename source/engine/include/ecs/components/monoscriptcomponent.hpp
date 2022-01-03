@@ -23,7 +23,7 @@
 #include "platform/script/script.hpp"
 
 namespace engine {
-    struct MonoScriptComponent {
+    struct MANA_EXPORT MonoScriptComponent {
         std::string assembly;
         std::string nameSpace;
         std::string className;

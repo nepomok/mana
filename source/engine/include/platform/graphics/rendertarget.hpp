@@ -24,7 +24,7 @@
 #include "texturebuffer.hpp"
 
 namespace engine {
-    class RenderTarget : public RenderObject {
+    class MANA_EXPORT RenderTarget : public RenderObject {
     public:
         ~RenderTarget() override = default;
 

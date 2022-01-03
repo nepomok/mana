@@ -28,7 +28,7 @@ namespace engine {
      *
      * It executes a drawCall for each deferred command in the scene and stores the data in textures.
      */
-    class PrePass : public RenderPass {
+    class MANA_EXPORT PrePass : public RenderPass {
     public:
         static const char *DEPTH;
 

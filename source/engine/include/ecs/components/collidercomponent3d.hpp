@@ -23,7 +23,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    struct ColliderComponent3D {
+    struct MANA_EXPORT ColliderComponent3D {
         std::vector<Vec3f> shape;
     };
 }

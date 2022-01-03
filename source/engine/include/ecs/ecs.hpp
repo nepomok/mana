@@ -25,7 +25,7 @@
 #include "ecs/system.hpp"
 
 namespace engine {
-    class ECS {
+    class MANA_EXPORT ECS {
     public:
         explicit ECS(std::vector<System *> systems = {});
 

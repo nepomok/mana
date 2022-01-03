@@ -23,7 +23,7 @@
 #include <memory>
 
 namespace engine {
-    class Library {
+    class MANA_EXPORT Library {
     public:
         /**
          * Load a shared library by path.

@@ -23,7 +23,7 @@
 #include "render/deferred/renderpass.hpp"
 
 namespace engine {
-    class PhongShadePass : public RenderPass {
+    class MANA_EXPORT PhongShadePass : public RenderPass {
     public:
         static const char *AMBIENT;
         static const char *DIFFUSE;

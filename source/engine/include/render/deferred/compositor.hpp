@@ -28,9 +28,9 @@ namespace engine {
     /**
      * The compositor creates the final image on the screen by combining textures from the geometry buffer.
      */
-    class Compositor {
+    class MANA_EXPORT Compositor {
     public:
-        struct Layer {
+        struct MANA_EXPORT Layer {
             Layer() = default;
 
             Layer(std::string name,

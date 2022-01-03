@@ -30,7 +30,7 @@ namespace engine {
      * A directory representing an archive.
      * Only files relative to the specified directory can be accessed by full or relative path,
      */
-    class DirectoryArchive : public Archive {
+    class MANA_EXPORT DirectoryArchive : public Archive {
     public:
         std::string directory;
 

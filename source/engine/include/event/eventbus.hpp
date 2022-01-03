@@ -28,7 +28,7 @@
 #include "event/eventreceiver.hpp"
 
 namespace engine {
-    class EventBus {
+    class MANA_EXPORT EventBus {
     public:
         template<typename T>
         void invoke(const T &event) {

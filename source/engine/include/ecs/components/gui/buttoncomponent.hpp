@@ -21,7 +21,7 @@
 #define MANA_BUTTONCOMPONENT_HPP
 
 namespace engine {
-    struct ButtonComponent {
+    struct MANA_EXPORT ButtonComponent {
     };
 }
 

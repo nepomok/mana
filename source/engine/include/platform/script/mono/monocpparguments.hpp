@@ -24,9 +24,9 @@
 #include <string>
 
 namespace engine {
-    class MonoCppObject;
+    class MANA_EXPORT MonoCppObject;
 
-    struct MonoCppArguments {
+    struct MANA_EXPORT MonoCppArguments {
         void add(int &value);
 
         void add(float &value);

@@ -21,7 +21,7 @@
 #define MANA_JOINT3D_HPP
 
 namespace engine {
-    class Joint3D {
+    class MANA_EXPORT Joint3D {
     public:
         //TODO: Define physics joints api
     protected:

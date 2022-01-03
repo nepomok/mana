@@ -25,7 +25,7 @@
 #include "platform/physics/2d/world2d.hpp"
 
 namespace engine {
-    class Physics2DSystem : public System {
+    class MANA_EXPORT Physics2DSystem : public System {
     public:
         explicit Physics2DSystem(World2D &world);
 

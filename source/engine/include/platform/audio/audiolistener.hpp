@@ -23,7 +23,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    class AudioListener {
+    class MANA_EXPORT AudioListener {
     public:
         virtual ~AudioListener() = default;
 

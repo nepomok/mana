@@ -23,7 +23,7 @@
 #include "render/deferred/renderpass.hpp"
 
 namespace engine {
-    class ShadowPass : public RenderPass {
+    class MANA_EXPORT ShadowPass : public RenderPass {
     public:
         ~ShadowPass() override = default;
 

@@ -27,7 +27,7 @@ namespace engine {
     /**
      * Archive interface, implementations may be directories or custom archive format.
      */
-    class Archive {
+    class MANA_EXPORT Archive {
     public:
         virtual ~Archive() = default;
 

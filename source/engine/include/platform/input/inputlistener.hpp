@@ -27,7 +27,7 @@
 #include "device/mouse.hpp"
 
 namespace engine {
-    class InputListener {
+    class MANA_EXPORT MANA_EXPORT InputListener {
     public:
         virtual void onKeyDown(KeyboardKey key) {};
 

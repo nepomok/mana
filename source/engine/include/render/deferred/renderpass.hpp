@@ -29,9 +29,9 @@
 
 namespace engine {
     /**
-     * Users may extend this class and create custom render passes.
+     * Users may extend this class MANA_EXPORT and create custom render passes.
      */
-    class RenderPass {
+    class MANA_EXPORT RenderPass {
     public:
         virtual ~RenderPass() = default;
 

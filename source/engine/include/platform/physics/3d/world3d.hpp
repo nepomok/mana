@@ -24,7 +24,7 @@
 #include "joint3d.hpp"
 
 namespace engine {
-    class World3D {
+    class MANA_EXPORT World3D {
     public:
         enum Backend {
             BULLET3
@@ -32,14 +32,14 @@ namespace engine {
 
         static std::unique_ptr<World3D> create(Backend backend);
 
-        struct Contact {
+        struct MANA_EXPORT Contact {
             Collider3D *colliderA;
             Collider3D *colliderB;
 
             std::vector<Vec3f> points;
         };
 
-        class ContactListener {
+        class MANA_EXPORT ContactListener {
         public:
             virtual ~ContactListener() = default;
 

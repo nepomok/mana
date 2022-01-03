@@ -27,7 +27,7 @@
 #include "math/vector3.hpp"
 
 namespace engine {
-    class AudioSource {
+    class MANA_EXPORT AudioSource {
     public:
         enum SourceType {
             UNDETERMINED,

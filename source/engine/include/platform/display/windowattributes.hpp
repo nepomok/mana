@@ -24,9 +24,9 @@ namespace engine {
     /**
      * The attributes of a window which are required for creation.
      * Some attributes may be changed for an existing window, for which
-     * individual member functions are added to the window class.
+     * individual member functions are added to the window class MANA_EXPORT.
      */
-    struct WindowAttributes {
+    struct MANA_EXPORT WindowAttributes {
         bool resizable = true;
         bool visible = true;
         bool decorated = true;

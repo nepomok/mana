@@ -32,7 +32,7 @@ namespace engine {
     /**
      * Handles allocation of render objects on the main thread.
      */
-    class AssetRenderManager {
+    class MANA_EXPORT AssetRenderManager {
     public:
         AssetRenderManager(AssetManager &assetManager, RenderAllocator &renderAllocator)
                 : assetManager(assetManager), renderAllocator(renderAllocator) {}

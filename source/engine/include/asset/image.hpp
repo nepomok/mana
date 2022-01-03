@@ -33,7 +33,7 @@ namespace engine {
      * @tparam T The type to use for a pixel
      */
     template<typename T>
-    class Image {
+    class MANA_EXPORT Image {
     public:
         Image()
                 : size(), buffer() {}
