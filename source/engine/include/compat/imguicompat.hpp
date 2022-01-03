@@ -31,19 +31,19 @@ namespace engine {
          * Calls the Impl*Init* methods and ImGui::CreateContext if it is the first call.
          * @param window
          */
-        void Init(Window &window);
+        void Init(Window &window, GraphicsBackend graphicsBackend);
 
         /**
          * Calls the Impl*Shutdown methods and ImGui::DestroyContext if it is the last call.
          * @param window
          */
-        void Shutdown(Window &window);
+        void Shutdown(Window &window, GraphicsBackend graphicsBackend);
 
         /**
          * Calls Impl*NewFrame methods, the user still has to call ImGui::NewFrame afterwards.
          * @param window
          */
-        void NewFrame(Window &window);
+        void NewFrame(Window &window, GraphicsBackend graphicsBackend);
 
         /**
          * Calls Impl*RenderDrawData and renders the imgui data into the target.
@@ -54,7 +54,7 @@ namespace engine {
          * @param window
          * @param target
          */
-        void DrawData(Window &window, RenderTarget &target);
+        void DrawData(Window &window, RenderTarget &target, GraphicsBackend graphicsBackend);
 
         /**
          * Calls Impl*RenderDrawData and renders the imgui data into the target.
@@ -65,7 +65,7 @@ namespace engine {
          * @param window
          * @param target
          */
-        void DrawData(Window &window, RenderTarget &target, RenderOptions options);
+        void DrawData(Window &window, RenderTarget &target, RenderOptions options, GraphicsBackend graphicsBackend);
     }
 }
 #endif //MANA_IMGUICOMPAT_HPP

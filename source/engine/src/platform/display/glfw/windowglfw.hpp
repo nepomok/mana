@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GLFWWINDOWGL_HPP
-#define MANA_GLFWWINDOWGL_HPP
+#ifndef MANA_WINDOWGLFW_HPP
+#define MANA_WINDOWGLFW_HPP
 
 #include <set>
 
@@ -30,34 +30,34 @@
 #include "platform/graphics/opengl/oglrenderdevice.hpp"
 #include "platform/graphics/opengl/oglrendertarget.hpp"
 
-#include "platform/display/glfw/glfwmonitor.hpp"
+#include "platform/display/glfw/monitorglfw.hpp"
 #include "platform/display/glfw/opengl/glfwrendertargetgl.hpp"
 
 #include "platform/input/glfw/glfwinput.hpp"
 
 namespace engine {
     namespace glfw {
-        class GLFWWindowGL : public Window {
+        /**
+         * Currently implemented is opengl render target support.
+         * GLFW supports vulkan window surfaces.
+         */
+        class WindowGLFW : public Window {
         public:
-            GLFWWindowGL(const std::string &title, Vec2i size, WindowAttributes attributes);
+            WindowGLFW(const std::string &title, Vec2i size, WindowAttributes attributes);
 
-            GLFWWindowGL(const std::string &title,
-                         Vec2i size,
-                         WindowAttributes attributes,
-                         GLFWMonitor &monitor,
-                         VideoMode videoMode);
+            WindowGLFW(const std::string &title,
+                       Vec2i size,
+                       WindowAttributes attributes,
+                       MonitorGLFW &monitor,
+                       VideoMode videoMode);
 
-            ~GLFWWindowGL() override;
+            ~WindowGLFW() override;
 
-            RenderDevice &getRenderDevice() override;
-
-            RenderTarget &getRenderTarget() override;
+            RenderTarget &getRenderTarget(GraphicsBackend backend) override;
 
             Input &getInput() override;
 
             DisplayBackend getDisplayBackend() override;
-
-            GraphicsBackend getGraphicsBackend() override;
 
             void makeCurrent() override;
 
@@ -147,16 +147,15 @@ namespace engine {
 
             void glfwFrameBufferSizeCallback(Vec2i size);
 
-            GLFWwindow *wndH;
+            GLFWwindow *windowHandle() { return wndH; }
+
         private:
+            GLFWwindow *wndH;
             std::unique_ptr<GLFWInput> input;
-
-            std::unique_ptr<opengl::OGLRenderDevice> renderDevice;
-            std::unique_ptr<GLFWRenderTargetGL> renderTarget;
-
+            std::unique_ptr<GLFWRenderTargetGL> renderTargetGl;
             std::set<WindowListener *> listeners;
         };
     }
 }
 
-#endif //MANA_GLFWWINDOWGL_HPP
+#endif //MANA_WINDOWGLFW_HPP

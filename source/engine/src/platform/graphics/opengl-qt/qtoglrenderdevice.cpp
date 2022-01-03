@@ -40,5 +40,9 @@ namespace engine {
         ShaderLanguage QtOGLRenderDevice::getPreferredShaderLanguage() {
             return GLSL_460;
         }
+
+        GraphicsBackend QtOGLRenderDevice::getBackend() {
+            return OPENGL_4_6_QT;
+        }
     }
 }

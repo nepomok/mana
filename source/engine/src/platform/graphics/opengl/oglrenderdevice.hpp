@@ -41,6 +41,8 @@ namespace engine {
 
             ShaderLanguage getPreferredShaderLanguage() override;
 
+            GraphicsBackend getBackend() override;
+
         private:
             OGLRenderer renderer;
             OGLRenderAllocator allocator;

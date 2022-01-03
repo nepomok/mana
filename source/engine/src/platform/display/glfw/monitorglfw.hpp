@@ -17,8 +17,8 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_GLFWMONITOR_HPP
-#define MANA_GLFWMONITOR_HPP
+#ifndef MANA_MONITORGLFW_HPP
+#define MANA_MONITORGLFW_HPP
 
 #include <GLFW/glfw3.h>
 
@@ -26,11 +26,11 @@
 
 namespace engine {
     namespace glfw {
-        class GLFWMonitor : public Monitor {
+        class MonitorGLFW : public Monitor {
         public:
-            explicit GLFWMonitor(GLFWmonitor *monitor) : monH(monitor) {}
+            explicit MonitorGLFW(GLFWmonitor *monitor) : monH(monitor) {}
 
-            ~GLFWMonitor() override = default;
+            ~MonitorGLFW() override = default;
 
             Vec2i getVirtualPosition() override {
                 int posx, posy;
@@ -99,4 +99,4 @@ namespace engine {
     }
 }
 
-#endif //MANA_GLFWMONITOR_HPP
+#endif //MANA_MONITORGLFW_HPP

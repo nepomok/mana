@@ -33,12 +33,13 @@
 #include "asset/assetimporter.hpp"
 
 namespace engine {
-    RenderSystem::RenderSystem(Window &window,
+    RenderSystem::RenderSystem(RenderTarget &screen,
+                               RenderDevice &device,
                                Archive &archive,
                                const std::set<RenderPass *> &passes,
                                AssetManager &assetManager)
-            : screenTarget(window.getRenderTarget()),
-              device(window.getRenderDevice()),
+            : screenTarget(screen),
+              device(device),
               ren(),
               archive(archive),
               assetManager(assetManager),

@@ -32,7 +32,7 @@ namespace engine {
     public:
         DisplayManager();
 
-        explicit DisplayManager(DisplayBackend displayApi);
+        explicit DisplayManager(DisplayBackend backend);
 
         ~DisplayManager();
 
@@ -40,24 +40,20 @@ namespace engine {
 
         std::set<std::unique_ptr<Monitor>> getMonitors() const;
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend) const;
+        std::unique_ptr<Window> createWindow() const;
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend,
-                                             const std::string &title,
-                                             Vec2i size,
-                                             WindowAttributes attributes) const;
+        std::unique_ptr<Window> createWindow(const std::string &title, Vec2i size, WindowAttributes attributes) const;
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend graphicsBackend,
-                                             const std::string &title,
+        std::unique_ptr<Window> createWindow(const std::string &title,
                                              Vec2i size,
                                              WindowAttributes attributes,
                                              Monitor &monitor,
                                              VideoMode mode) const;
 
-        DisplayBackend getApi() const;
+        DisplayBackend getBackend() const;
 
     private:
-        DisplayBackend displayApi;
+        DisplayBackend backend;
     };
 }
 #endif //MANA_DISPLAYMANAGER_HPP

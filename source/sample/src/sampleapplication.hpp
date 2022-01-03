@@ -43,10 +43,10 @@ public:
                           argv,
                           std::make_unique<DirectoryArchive>(std::filesystem::current_path().string())) {
         window->setSwapInterval(0);
-        window->getRenderDevice().getRenderer().renderClear(window->getRenderTarget(), bgColor);
+        renderDevice->getRenderer().renderClear(window->getRenderTarget(graphicsBackend), bgColor);
         window->swapBuffers();
 
-        ren2d = std::make_unique<Renderer2D>(window->getRenderDevice());
+        ren2d = std::make_unique<Renderer2D>(*renderDevice);
         drawLoadingScreen(0);
 
         pack = std::make_unique<PackedArchive>(std::move(archive->open("/assets.pak")));
@@ -60,18 +60,18 @@ protected:
         assetManager = std::make_unique<AssetManager>(*pack);
         audioDevice = AudioDevice::createDevice(engine::OpenAL);
 
-        renderSystem = new RenderSystem(*window, *pack, {}, *assetManager);
+        renderSystem = new RenderSystem(window->getRenderTarget(graphicsBackend), *renderDevice, *pack, {}, *assetManager);
 
-        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(*renderDevice)));
         drawLoadingScreen(0.1);
-        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<PrePass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<PrePass>(*renderDevice)));
         drawLoadingScreen(0.2);
         renderSystem->getRenderer().addRenderPass(
-                std::move(std::make_unique<PhongShadePass>(window->getRenderDevice())));
+                std::move(std::make_unique<PhongShadePass>(*renderDevice)));
         drawLoadingScreen(0.3);
-        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<SkyboxPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<SkyboxPass>(*renderDevice)));
         drawLoadingScreen(0.4);
-        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<DebugPass>(window->getRenderDevice())));
+        renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<DebugPass>(*renderDevice)));
         drawLoadingScreen(0.5);
 
         //Move is required because the ECS destructor deletes the system pointers.
@@ -110,7 +110,7 @@ protected:
 
         debugWindow.setLayers(layers);
 
-        int maxSamples = window->getRenderDevice().getMaxSampleCount();
+        int maxSamples = renderDevice->getMaxSampleCount();
         debugWindow.setMaxSamples(maxSamples);
         debugWindow.setSamples(1);
 
@@ -128,7 +128,7 @@ protected:
         debugWindow.setLayerActive("Specular", false);
         debugWindow.setLayerActive("Shininess", false);
 
-        auto &device = window->getRenderDevice();
+        auto &device = *renderDevice;
 
         auto stream = pack->open("/scene.json");
         ecs.getEntityManager() << JsonProtocol().deserialize(*stream);
@@ -202,14 +202,14 @@ protected:
 
         wnd.setSwapInterval(debugWindow.getSwapInterval());
 
-        wnd.getRenderDevice().getRenderer().debugDrawCallRecordStart();
+        renderDevice->getRenderer().debugDrawCallRecordStart();
 
         ecs.update(deltaTime);
 
         if (showDebugWindow)
             drawDebugWindow();
 
-        drawCalls = wnd.getRenderDevice().getRenderer().debugDrawCallRecordStop();
+        drawCalls = renderDevice->getRenderer().debugDrawCallRecordStop();
 
         fpsLimit = debugWindow.getFpsLimit();
 
@@ -244,7 +244,9 @@ private:
 
         window->update();
 
-        ren2d->renderBegin(window->getRenderTarget(), true, {}, window->getRenderTarget().getSize(), bgColor);
+        auto& target = window->getRenderTarget(graphicsBackend);
+
+        ren2d->renderBegin(target, true, {}, target.getSize(), bgColor);
         ren2d->setProjection({{-1, -1},
                               {1,  1}});
         float xdim = 0.5;
@@ -265,13 +267,15 @@ private:
 
     void drawDebugWindow() {
         auto &wnd = *window;
-        ImGuiCompat::NewFrame(wnd);
+        auto& target = window->getRenderTarget(graphicsBackend);
+        ImGuiCompat::NewFrame(wnd, graphicsBackend);
         ImGui::NewFrame();
         debugWindow.draw();
         ImGui::Render();
         ImGuiCompat::DrawData(wnd,
-                              wnd.getRenderTarget(),
-                              RenderOptions({}, wnd.getRenderTarget().getSize(), true, {}, 1, false, false, false));
+                              target,
+                              RenderOptions({}, target.getSize(), true, {}, 1, false, false, false),
+                              graphicsBackend);
     }
 
 private:

@@ -45,6 +45,8 @@ namespace engine {
 
             ShaderLanguage getPreferredShaderLanguage() override;
 
+            GraphicsBackend getBackend() override;
+
         private:
             QtOGLRenderer renderer;
             QtOGLRenderAllocator allocator;

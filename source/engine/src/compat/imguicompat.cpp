@@ -29,20 +29,20 @@
 
 #include "implot.h"
 
-#include "platform/display/glfw/opengl/glfwwindowgl.hpp"
+#include "platform/display/glfw/windowglfw.hpp"
 #include "platform/graphics/opengl/oglrendertarget.hpp"
 
 namespace engine {
     namespace ImGuiCompat {
-        void Init(Window &window) {
+        void Init(Window &window, GraphicsBackend graphicsBackend) {
             switch (window.getDisplayBackend()) {
                 case GLFW:
-                    ImGui_ImplGlfw_InitForOpenGL(dynamic_cast<glfw::GLFWWindowGL &>(window).wndH, true);
+                    ImGui_ImplGlfw_InitForOpenGL(dynamic_cast<glfw::WindowGLFW &>(window).windowHandle(), true);
                     break;
                 default:
                     throw std::runtime_error("Not supported");
             }
-            switch (window.getGraphicsBackend()) {
+            switch (graphicsBackend) {
                 case OPENGL_4_6:
                     ImGui_ImplOpenGL3_Init("#version 460");
                     break;
@@ -53,8 +53,8 @@ namespace engine {
             }
         }
 
-        void Shutdown(Window &window) {
-            switch (window.getGraphicsBackend()) {
+        void Shutdown(Window &window, GraphicsBackend graphicsBackend) {
+            switch (graphicsBackend) {
                 case OPENGL_4_6:
                     ImGui_ImplOpenGL3_Shutdown();
                     break;
@@ -72,8 +72,8 @@ namespace engine {
             }
         }
 
-        void NewFrame(Window &window) {
-            switch (window.getGraphicsBackend()) {
+        void NewFrame(Window &window, GraphicsBackend graphicsBackend) {
+            switch (graphicsBackend) {
                 case OPENGL_4_6:
                     ImGui_ImplOpenGL3_NewFrame();
                     break;
@@ -91,12 +91,12 @@ namespace engine {
             }
         }
 
-        void DrawData(Window &window, RenderTarget &target) {
-            return DrawData(window, target, RenderOptions({}, target.getSize()));
+        void DrawData(Window &window, RenderTarget &target, GraphicsBackend graphicsBackend) {
+            return DrawData(window, target, RenderOptions({}, target.getSize()), graphicsBackend);
         }
 
-        void DrawData(Window &window, RenderTarget &target, RenderOptions options) {
-            switch (window.getGraphicsBackend()) {
+        void DrawData(Window &window, RenderTarget &target, RenderOptions options, GraphicsBackend graphicsBackend) {
+            switch (graphicsBackend) {
                 case OPENGL_4_6: {
                     auto &t = dynamic_cast<opengl::OGLRenderTarget &>(target);
                     glBindFramebuffer(GL_FRAMEBUFFER, t.getFBO());

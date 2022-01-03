@@ -18,16 +18,13 @@
  */
 
 
-#ifdef BUILD_ENGINE_RENDERER_OPENGL
-#include "opengl/glfwwindowgl.hpp"
-#endif
-
-#include "glfwmonitor.hpp" //Has to come after glfwwindowgl because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
+#include "windowglfw.hpp"
+#include "monitorglfw.hpp" //Has to come after windowglfw because of glad include collision with glfw (Including glfw and then glad afterwards gives compiler error, the reverse is legal)
 
 namespace engine {
     namespace glfw {
         std::unique_ptr<Monitor> getPrimaryMonitor() {
-            return std::make_unique<GLFWMonitor>(glfwGetPrimaryMonitor());
+            return std::make_unique<MonitorGLFW>(glfwGetPrimaryMonitor());
         }
 
         std::set<std::unique_ptr<Monitor>> getMonitors() {
@@ -36,52 +33,32 @@ namespace engine {
             int count;
             GLFWmonitor **monitors = glfwGetMonitors(&count);
             for (int i = 0; i < count; i++) {
-                ret.insert(std::make_unique<GLFWMonitor>(monitors[i]));
+                ret.insert(std::make_unique<MonitorGLFW>(monitors[i]));
             }
 
             return ret;
         }
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend api) {
-            switch (api) {
-#ifdef BUILD_ENGINE_RENDERER_OPENGL
-                case OPENGL_4_6:
-                    return std::make_unique<GLFWWindowGL>("Window GLFW", Vec2i(600, 300), WindowAttributes());
-#endif
-                default:
-                    throw std::runtime_error("Unsupported graphics api");
-            }
+        std::unique_ptr<Window> createWindow() {
+            return std::make_unique<WindowGLFW>("Window GLFW", Vec2i(600, 300), WindowAttributes());
         }
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend api,
-                                             const std::string &title,
+        std::unique_ptr<Window> createWindow(const std::string &title,
                                              Vec2i size,
                                              WindowAttributes attributes) {
-            switch (api) {
-#ifdef BUILD_ENGINE_RENDERER_OPENGL
-                case OPENGL_4_6:
-                    return std::make_unique<GLFWWindowGL>(title, size, attributes);
-#endif
-                default:
-                    throw std::runtime_error("Unsupported graphics api");
-            }
+            return std::make_unique<WindowGLFW>(title, size, attributes);
         }
 
-        std::unique_ptr<Window> createWindow(GraphicsBackend api,
-                                             const std::string &title,
+        std::unique_ptr<Window> createWindow(const std::string &title,
                                              Vec2i size,
                                              WindowAttributes attributes,
                                              Monitor &monitor,
                                              VideoMode mode) {
-            switch (api) {
-#ifdef BUILD_ENGINE_RENDERER_OPENGL
-                case OPENGL_4_6:
-                    return std::make_unique<GLFWWindowGL>(title, size, attributes, dynamic_cast<GLFWMonitor &>(monitor),
-                                                          mode);
-#endif
-                default:
-                    throw std::runtime_error("Unsupported graphics api");
-            }
+            return std::make_unique<WindowGLFW>(title,
+                                                  size,
+                                                  attributes,
+                                                  dynamic_cast<MonitorGLFW &>(monitor),
+                                                  mode);
         }
     }
 }

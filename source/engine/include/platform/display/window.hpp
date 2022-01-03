@@ -39,26 +39,20 @@ namespace engine {
         virtual ~Window() = default;
 
         /**
-         * Return the render device associated with this window.
-         *
-         * @return
-         */
-        virtual RenderDevice &getRenderDevice() = 0;
-
-        /**
          * Return the render target associated with the window contents.
          *
          * When rendering to the returned target the results are displayed in the window.
          *
+         * @param backend The graphics backend for which to create a render target, if the window implementation
+         * does not support the backend an exception is thrown.
+         *
          * @return
          */
-        virtual RenderTarget &getRenderTarget() = 0;
+        virtual RenderTarget &getRenderTarget(GraphicsBackend backend) = 0;
 
         virtual Input &getInput() = 0;
 
         virtual DisplayBackend getDisplayBackend() = 0;
-
-        virtual GraphicsBackend getGraphicsBackend() = 0;
 
         /**
          * When using multiple windows or multiple threads call this method before using

@@ -71,11 +71,13 @@ namespace engine {
                     }
                 }
             }
-            window = display.createWindow(graphicsBackend);
+            window = display.createWindow();
             window->update();
 
+            renderDevice = RenderDevice::create(graphicsBackend);
+
             imGuiContext = ImGui::CreateContext();
-            ImGuiCompat::Init(*window);
+            ImGuiCompat::Init(*window, graphicsBackend);
 
             imPlotContext = ImPlot::CreateContext();
         }
@@ -83,7 +85,7 @@ namespace engine {
         virtual ~Application() {
             ImPlot::DestroyContext(imPlotContext);
 
-            ImGuiCompat::Shutdown(*window);
+            ImGuiCompat::Shutdown(*window, graphicsBackend);
             ImGui::DestroyContext(imGuiContext);
         }
 
@@ -186,8 +188,10 @@ namespace engine {
         DisplayBackend displayBackend;
         GraphicsBackend graphicsBackend;
 
-        std::unique_ptr<Archive> archive = nullptr;
         std::unique_ptr<Window> window = nullptr;
+        std::unique_ptr<RenderDevice> renderDevice = nullptr;
+
+        std::unique_ptr<Archive> archive = nullptr;
 
         ImGuiContext *imGuiContext;
         ImPlotContext *imPlotContext;

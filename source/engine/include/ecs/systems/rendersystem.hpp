@@ -41,9 +41,10 @@ namespace engine {
                          ComponentPool<MeshRenderComponent>::Listener,
                          ComponentPool<SkyboxComponent>::Listener {
     public:
-        RenderSystem(Window &window,
+        RenderSystem(RenderTarget &screen,
+                     RenderDevice &device,
                      Archive &archive,
-                     const std::set<RenderPass *> &renderPasses,
+                     const std::set<RenderPass *> &passes,
                      AssetManager &assetManager);
 
         ~RenderSystem() override;
@@ -80,15 +81,16 @@ namespace engine {
                                const SkyboxComponent &oldValue,
                                const SkyboxComponent &newValue) override;
 
-        RenderTarget &screenTarget;
+        std::unique_ptr<DeferredRenderer> ren;
+
         RenderDevice &device;
+        RenderTarget &screenTarget;
+
         Archive &archive;
         AssetManager &assetManager;
         AssetRenderManager assetRenderManager;
 
-        size_t polyCount;
-
-        std::unique_ptr<DeferredRenderer> ren;
+        size_t polyCount{};
     };
 }
 

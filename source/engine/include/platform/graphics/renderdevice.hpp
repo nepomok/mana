@@ -49,6 +49,8 @@ namespace engine {
         virtual int getMaxSampleCount() = 0;
 
         virtual ShaderLanguage getPreferredShaderLanguage() = 0;
+
+        virtual GraphicsBackend getBackend() = 0;
     };
 }
 

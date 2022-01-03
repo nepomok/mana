@@ -44,6 +44,10 @@ namespace engine {
         ShaderLanguage OGLRenderDevice::getPreferredShaderLanguage() {
             return GLSL_460;
         }
+
+        GraphicsBackend OGLRenderDevice::getBackend() {
+            return OPENGL_4_6;
+        }
     }
 }
 
