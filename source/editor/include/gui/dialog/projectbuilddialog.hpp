@@ -3,9 +3,12 @@
 
 #include <string>
 
+#include <QDialog>
+
 #include "compiler/projectcompiler.hpp"
 
-class ProjectBuildDialog {
+class ProjectBuildDialog : public QDialog {
+Q_OBJECT
 public:
     void setBuildSettings(const BuildSettings &settings) {
         buildSettings = settings;
