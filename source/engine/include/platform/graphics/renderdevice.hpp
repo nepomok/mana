@@ -26,8 +26,9 @@
 #include "graphicsbackend.hpp"
 #include "renderer.hpp"
 #include "renderobject.hpp"
-#include "mesh.hpp"
 #include "renderallocator.hpp"
+
+#include "asset/mesh.hpp"
 
 namespace engine {
     class RenderDevice {

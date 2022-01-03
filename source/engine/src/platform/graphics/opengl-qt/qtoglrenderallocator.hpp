@@ -20,10 +20,11 @@
 #ifndef MANA_QTOGLRENDERALLOCATOR_HPP
 #define MANA_OGLRENDERALLOCATOR_HPP
 
-#include "mesh.hpp"
 #include "platform/graphics/renderallocator.hpp"
 
 #include <QOpenGLFunctions_4_5_Core>
+
+#include "asset/mesh.hpp"
 
 namespace engine {
     namespace opengl {

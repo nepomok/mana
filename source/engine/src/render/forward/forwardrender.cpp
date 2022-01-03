@@ -1,6 +1,6 @@
 #include "render/forward/forwardrenderer.hpp"
 
-#include "rotation.hpp"
+#include "math/rotation.hpp"
 
 namespace engine {
     void ForwardRenderer::renderScene(Renderer &ren, RenderTarget &target, Scene &scene) {

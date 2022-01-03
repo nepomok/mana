@@ -22,7 +22,7 @@
 
 #include <vector>
 
-#include "vector2.hpp"
+#include "math/vector2.hpp"
 
 namespace engine {
     struct ColliderComponent2D {

@@ -20,7 +20,7 @@
 #ifndef MANA_LIGHT_HPP
 #define MANA_LIGHT_HPP
 
-#include "transform.hpp"
+#include "math/transform.hpp"
 
 #include "asset/asset.hpp"
 

@@ -20,7 +20,7 @@
 #ifndef MANA_QUATERNION_HPP
 #define MANA_QUATERNION_HPP
 
-#include "matrix.hpp"
+#include "math/matrix.hpp"
 
 namespace engine {
     class Quaternion {

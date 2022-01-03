@@ -20,9 +20,9 @@
 #ifndef MANA_SHADERPROGRAM_HPP
 #define MANA_SHADERPROGRAM_HPP
 
-#include "vector2.hpp"
-#include "vector3.hpp"
-#include "matrix.hpp"
+#include "math/vector2.hpp"
+#include "math/vector3.hpp"
+#include "math/matrix.hpp"
 
 #include "renderobject.hpp"
 

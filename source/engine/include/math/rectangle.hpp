@@ -20,7 +20,7 @@
 #ifndef RECTANGLE_HPP
 #define RECTANGLE_HPP
 
-#include "vector2.hpp"
+#include "math/vector2.hpp"
 
 namespace engine {
     /**

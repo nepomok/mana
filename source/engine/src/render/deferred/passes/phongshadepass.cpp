@@ -21,7 +21,7 @@
 #include "render/shader/shaderinclude.hpp"
 #include "render/deferred/passes/phongshadepass.hpp"
 #include "render/deferred/deferredrenderer.hpp"
-#include "rotation.hpp"
+#include "math/rotation.hpp"
 #include "async/threadpool.hpp"
 
 const char *SHADER_VERT_LIGHTING = R"###(

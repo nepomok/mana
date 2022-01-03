@@ -20,9 +20,9 @@
 #ifndef MANA_CAMERA_HPP
 #define MANA_CAMERA_HPP
 
-#include "transform.hpp"
-#include "matrix.hpp"
-#include "matrixmath.hpp"
+#include "math/transform.hpp"
+#include "math/matrix.hpp"
+#include "math/matrixmath.hpp"
 
 #include <stdexcept>
 

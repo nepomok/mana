@@ -22,9 +22,9 @@
 
 #include <vector>
 
-#include "vector3.hpp"
-#include "vector2.hpp"
-#include "vertex.hpp"
+#include "math/vector3.hpp"
+#include "math/vector2.hpp"
+#include "asset/vertex.hpp"
 
 namespace engine {
     struct Mesh {

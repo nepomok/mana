@@ -20,7 +20,7 @@
 #ifndef MANA_CHARACTER_HPP
 #define MANA_CHARACTER_HPP
 
-#include "image.hpp"
+#include "asset/image.hpp"
 
 #include <map>
 

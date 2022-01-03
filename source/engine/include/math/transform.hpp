@@ -20,9 +20,9 @@
 #ifndef MANA_TRANSFORM_HPP
 #define MANA_TRANSFORM_HPP
 
-#include "vector3.hpp"
+#include "math/vector3.hpp"
 #include "quaternion.hpp"
-#include "matrixmath.hpp"
+#include "math/matrixmath.hpp"
 
 namespace engine {
     struct Transform {

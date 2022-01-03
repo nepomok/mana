@@ -20,7 +20,7 @@
 #ifndef MANA_VERTEX_HPP
 #define MANA_VERTEX_HPP
 
-#include "vector3.hpp"
+#include "math/vector3.hpp"
 
 namespace engine {
     struct Vertex {

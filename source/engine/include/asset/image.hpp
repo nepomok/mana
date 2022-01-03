@@ -23,8 +23,8 @@
 #include <vector>
 #include <stdexcept>
 
-#include "color.hpp"
-#include "rectangle.hpp"
+#include "asset/color.hpp"
+#include "math/rectangle.hpp"
 
 namespace engine {
     /**

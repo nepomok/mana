@@ -23,7 +23,7 @@
 #include <istream>
 #include <memory>
 
-#include "vector2.hpp"
+#include "math/vector2.hpp"
 
 #include "character.hpp"
 

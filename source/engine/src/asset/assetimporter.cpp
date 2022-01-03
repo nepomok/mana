@@ -29,8 +29,9 @@
 
 #include "stb_image.h"
 #include "json.hpp"
+
 #include "async/threadpool.hpp"
-#include "mesh.hpp"
+#include "asset/mesh.hpp"
 
 #include "platform/audio/audioformat.hpp"
 

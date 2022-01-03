@@ -20,7 +20,7 @@
 #ifndef MANA_AUDIOLISTENER_HPP
 #define MANA_AUDIOLISTENER_HPP
 
-#include "vector3.hpp"
+#include "math/vector3.hpp"
 
 namespace engine {
     class AudioListener {

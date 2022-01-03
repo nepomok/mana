@@ -20,7 +20,7 @@
 #ifndef MANA_ASSETEXPORTER_HPP
 #define MANA_ASSETEXPORTER_HPP
 
-#include "image.hpp"
+#include "asset/image.hpp"
 #include "color.hpp"
 
 #include <ostream>

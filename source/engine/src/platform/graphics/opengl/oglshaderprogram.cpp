@@ -21,9 +21,8 @@
 
 #include <stdexcept>
 
-#include "rotation.hpp"
-
-#include "matrixmath.hpp"
+#include "math/rotation.hpp"
+#include "math/matrixmath.hpp"
 
 #include "oglshaderprogram.hpp"
 #include "oglcheckerror.hpp"

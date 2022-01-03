@@ -20,8 +20,8 @@
 #include <string>
 #include <set>
 
-#include "matrixmath.hpp"
-#include "rotation.hpp"
+#include "math/matrixmath.hpp"
+#include "math/rotation.hpp"
 
 #include "qtoglrenderer.hpp"
 

@@ -21,7 +21,7 @@
 #include "render/shader/shaderinclude.hpp"
 #include "render/2d/renderer2d.hpp"
 
-#include "matrixmath.hpp"
+#include "math/matrixmath.hpp"
 #include "async/threadpool.hpp"
 #include "platform/graphics/shadercompiler.hpp"
 #include "platform/graphics/shadercompiler.hpp"

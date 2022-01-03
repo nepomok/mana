@@ -24,7 +24,7 @@
 #include <vector>
 
 #include "rectangle.hpp"
-#include "vector2.hpp"
+#include "math/vector2.hpp"
 
 namespace engine {
     class Grid {

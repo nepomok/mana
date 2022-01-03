@@ -20,8 +20,9 @@
 #ifndef MANA_OGLRENDERALLOCATOR_HPP
 #define MANA_OGLRENDERALLOCATOR_HPP
 
-#include "mesh.hpp"
 #include "platform/graphics/renderallocator.hpp"
+
+#include "asset/mesh.hpp"
 
 namespace engine {
     namespace opengl {

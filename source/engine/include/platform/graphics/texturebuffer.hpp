@@ -20,7 +20,7 @@
 #ifndef MANA_TEXTUREBUFFER_HPP
 #define MANA_TEXTUREBUFFER_HPP
 
-#include "image.hpp"
+#include "asset/image.hpp"
 #include "renderobject.hpp"
 
 namespace engine {

@@ -1,7 +1,7 @@
 #ifndef MANA_TRANSFORMANIMATIONCOMPONENT_HPP
 #define MANA_TRANSFORMANIMATIONCOMPONENT_HPP
 
-#include "vector3.hpp"
+#include "math/vector3.hpp"
 
 struct TransformAnimationComponent
 {

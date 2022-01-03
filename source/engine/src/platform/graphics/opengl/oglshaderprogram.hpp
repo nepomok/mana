@@ -25,9 +25,9 @@
 #include <functional>
 
 #include "platform/graphics/shaderprogram.hpp"
-#include "vector2.hpp"
-#include "vector3.hpp"
-#include "matrix.hpp"
+#include "math/vector2.hpp"
+#include "math/vector3.hpp"
+#include "math/matrix.hpp"
 
 #include "openglinclude.hpp"
 

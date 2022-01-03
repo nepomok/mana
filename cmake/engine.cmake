@@ -16,7 +16,7 @@ target_include_directories(mana-engine PUBLIC ${Engine.Dir.INCLUDE})
 target_include_directories(mana-engine PUBLIC ${Engine.Dir.SRC})
 
 target_link_libraries(mana-engine
-        mana-common
+        mana-extern
         Threads::Threads
         freetype
         shaderc_shared
