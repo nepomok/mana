@@ -173,7 +173,7 @@ namespace engine {
                 throw std::runtime_error(error);
             }
         }
-        
+
         headerStr = engine::GZip::decompress(headerStr);
 
         auto headerJson = nlohmann::json::parse(headerStr);

@@ -163,7 +163,7 @@ protected:
 
         ecs.getEntityManager().clear();
         ecs.stop();
-        ecs = ECS();//TODO: ECS Systems clear set
+        ecs = ECS();
 
         debugWindow = {};
 
