@@ -17,28 +17,39 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AES_HPP
-#define MANA_AES_HPP
+#ifndef MANA_READFILE_HPP
+#define MANA_READFILE_HPP
 
-#include <string>
-#include <vector>
-#include <array>
+#include <cstdio>
 
 namespace engine {
-    namespace AES {
-        static const int BLOCKSIZE = 128;
+    /**
+     * Fast reading of a whole file into memory using cstdio
+     *
+     * @param path
+     * @return
+     */
+    inline std::vector<char> readFile(const std::string &path) {
+        FILE *fp;
+        fp = fopen(path.c_str(), "r");
 
-        typedef std::string Key;
-        typedef std::array<char, BLOCKSIZE> InitializationVector;
+        const size_t step = 100;
+        std::vector<char> fbuf(step);
 
-        std::string encrypt(const Key &key, const InitializationVector &iv, const std::string &plaintext);
+        auto r = fread(fbuf.data(), 1, fbuf.size(), fp);
 
-        std::string decrypt(const Key &key, const InitializationVector &iv, const std::string &ciphertext);
+        std::vector<char> ret;
+        ret.insert(ret.end(), fbuf.begin(), fbuf.begin() + static_cast<long>(r));
+        while (r == step) {
+            r = fread(fbuf.data(), 1, fbuf.size(), fp);
+            ret.insert(ret.end(), fbuf.begin(), fbuf.begin() + r);
+        }
 
-        std::vector<char> encrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &plaintext);
+        fclose(fp);
 
-        std::vector<char> decrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &ciphertext);
+        return ret;
     }
+
 }
 
-#endif //MANA_AES_HPP
+#endif //MANA_READFILE_HPP

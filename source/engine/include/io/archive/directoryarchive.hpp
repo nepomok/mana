@@ -49,7 +49,7 @@ namespace engine {
             }
         }
 
-        std::unique_ptr<std::iostream> open(const std::string &path) override {
+        std::unique_ptr<std::istream> open(const std::string &path) override {
             std::string targetPath;
 
             //Allow full paths which reference files relative to the directory

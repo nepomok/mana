@@ -49,7 +49,7 @@ public:
         ren2d = std::make_unique<Renderer2D>(*renderDevice);
         drawLoadingScreen(0);
 
-        pack = std::make_unique<PackedArchive>(std::move(archive->open("/assets.pak")));
+        pack = std::make_unique<PakArchive>(std::move(archive->open("/assets.pak")));
     }
 
     ~SampleApplication() override = default;
@@ -279,7 +279,7 @@ private:
     }
 
 private:
-    std::unique_ptr<PackedArchive> pack;
+    std::unique_ptr<PakArchive> pack;
 
     ECS ecs;
 

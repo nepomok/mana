@@ -119,7 +119,7 @@
 #include "io/archive.hpp"
 #include "io/protocol.hpp"
 #include "io/protocol/jsonprotocol.hpp"
-#include "io/archive/packedarchive.hpp"
+#include "io/archive/pakarchive.hpp"
 #include "io/archive/directoryarchive.hpp"
 #include "crypto/aes.hpp"
 #include "crypto/sha.hpp"

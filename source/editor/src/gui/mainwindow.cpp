@@ -39,7 +39,7 @@ MainWindow::MainWindow() {
 
     rootLayout = new QHBoxLayout();
 
-    archive = std::make_unique<PackedArchive>(
+    archive = std::make_unique<PakArchive>(
             std::make_unique<std::ifstream>(std::filesystem::current_path().string() + "/assets.pak"));
     assetManager = std::make_unique<AssetManager>(*archive);
 

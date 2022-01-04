@@ -17,28 +17,28 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AES_HPP
-#define MANA_AES_HPP
+#include "io/archive/pakarchive.hpp"
 
-#include <string>
-#include <vector>
-#include <array>
+#include <filesystem>
+#include <sstream>
+#include <utility>
 
 namespace engine {
-    namespace AES {
-        static const int BLOCKSIZE = 128;
+    PakArchive::PakArchive(std::unique_ptr<std::istream> stream,
+                           bool verifyHashes,
+                           const AES::Key &key,
+                           const AES::InitializationVector &iv)
+            : pak(std::move(stream), key, iv), verifyHashes(verifyHashes) {}
 
-        typedef std::string Key;
-        typedef std::array<char, BLOCKSIZE> InitializationVector;
+    bool PakArchive::exists(const std::string &path) {
+        return pak.exists(path);
+    }
 
-        std::string encrypt(const Key &key, const InitializationVector &iv, const std::string &plaintext);
-
-        std::string decrypt(const Key &key, const InitializationVector &iv, const std::string &ciphertext);
-
-        std::vector<char> encrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &plaintext);
-
-        std::vector<char> decrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &ciphertext);
+    std::unique_ptr<std::istream> PakArchive::open(const std::string &path) {
+        std::lock_guard<std::mutex> guard(mutex);
+        auto data = pak.get(path, verifyHashes);
+        auto ret = std::make_unique<std::stringstream>(std::string(data.begin(), data.end()));
+        std::noskipws(*ret);
+        return std::move(ret);
     }
 }
-
-#endif //MANA_AES_HPP

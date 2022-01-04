@@ -67,7 +67,7 @@ namespace engine {
                         [&archive, &bundleMutex, &refBundles, &bundlePath, &pool]() {
                             std::filesystem::path path(bundlePath);
 
-                            std::unique_ptr<std::iostream> stream(archive.open(bundlePath));
+                            std::unique_ptr<std::istream> stream(archive.open(bundlePath));
                             auto bundle = AssetImporter::import(*stream, path.extension(), &archive);
 
                             std::lock_guard<std::mutex> guard(bundleMutex);

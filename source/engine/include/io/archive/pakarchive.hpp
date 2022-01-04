@@ -17,28 +17,39 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef MANA_AES_HPP
-#define MANA_AES_HPP
+#ifndef MANA_PAKARCHIVE_HPP
+#define MANA_PAKARCHIVE_HPP
 
-#include <string>
+#include <fstream>
 #include <vector>
-#include <array>
+#include <mutex>
+
+#include "io/archive.hpp"
+#include "io/pak.hpp"
+
+class MANA_EXPORT AssetPack;
 
 namespace engine {
-    namespace AES {
-        static const int BLOCKSIZE = 128;
+    class MANA_EXPORT PakArchive : public Archive {
+    public:
+        PakArchive() = default;
 
-        typedef std::string Key;
-        typedef std::array<char, BLOCKSIZE> InitializationVector;
+        explicit PakArchive(std::unique_ptr<std::istream> stream,
+                            bool verifyHashes = true,
+                            const AES::Key &key = {},
+                            const AES::InitializationVector &iv = {});
 
-        std::string encrypt(const Key &key, const InitializationVector &iv, const std::string &plaintext);
+        ~PakArchive() override = default;
 
-        std::string decrypt(const Key &key, const InitializationVector &iv, const std::string &ciphertext);
+        bool exists(const std::string &path) override;
 
-        std::vector<char> encrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &plaintext);
+        std::unique_ptr<std::istream> open(const std::string &path) override;
 
-        std::vector<char> decrypt(const Key &key, const InitializationVector &iv, const std::vector<char> &ciphertext);
-    }
+    private:
+        std::mutex mutex;
+        Pak pak;
+        bool verifyHashes;
+    };
 }
 
-#endif //MANA_AES_HPP
+#endif //MANA_PAKARCHIVE_HPP
