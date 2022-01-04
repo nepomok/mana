@@ -53,8 +53,9 @@ namespace engine {
         for (auto &pair: entries) {
             auto d = GZip::compress(pair.second);
 
-            if (encrypt)
+            if (encrypt) {
                 d = AES::encrypt(key, iv, d);
+            }
 
             headerEntries[pair.first].offset = currentOffset;
             headerEntries[pair.first].size = d.size();
@@ -76,8 +77,9 @@ namespace engine {
         auto headerStr = headerJson.dump();
         headerStr = GZip::compress(headerStr);
 
-        if (encrypt)
+        if (encrypt) {
             headerStr = AES::encrypt(key, iv, headerStr);
+        }
 
         nlohmann::json outHeaderJson;
         outHeaderJson["encrypted"] = encrypt;
@@ -117,8 +119,9 @@ namespace engine {
         stream->seekg(static_cast<std::streamoff>(hEntry.offset));
         stream->read(ret.data(), static_cast<std::streamoff>(hEntry.size));
 
-        if (encrypted)
+        if (encrypted) {
             ret = AES::decrypt(key, iv, ret);
+        }
 
         ret = GZip::decompress(ret);
 
@@ -162,9 +165,15 @@ namespace engine {
 
         headerStr = base64_decode(static_cast<std::string>(headerWrap["data"]));
 
-        if (encrypted)
-            headerStr = engine::AES::decrypt(key, {}, headerStr);
-
+        if (encrypted) {
+            try {
+                headerStr = engine::AES::decrypt(key, {}, headerStr);
+            } catch (const std::exception &e) {
+                std::string error = "Failed to decrypt pak header (Wrong Key?): " + std::string(e.what());
+                throw std::runtime_error(error);
+            }
+        }
+        
         headerStr = engine::GZip::decompress(headerStr);
 
         auto headerJson = nlohmann::json::parse(headerStr);
