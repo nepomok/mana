@@ -60,7 +60,7 @@ namespace engine {
          * Load the pak entry from the stream, and optionally verify its hash.
          *
          * @param path The path of the entry
-         * @param verifyHash If true the data hash is checked against the header hash which ensures data integrity.
+         * @param verifyHash If true the hash of the returned data is checked against a hash stored in the pak header and an exception is thrown on mismatch.
          * @return The entry data
          */
         std::vector<char> get(const std::string &path, bool verifyHash = false);
