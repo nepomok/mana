@@ -52,8 +52,14 @@ public:
             Vec3f worldRot(0, rotation.y, 0);
             Vec3f localRot(rotation.x, 0, 0);
 
+            float movementScale = 1.0f;
+            if (input.getKeyboards().at(0).getKey(KeyboardKey::KEY_LSHIFT))
+                movementScale = 5.0f;
+
+            //Apply the world movement
             transform.transform.setPosition(transform.transform.getPosition()
-                                            + relativeMovement * pair.second.movementSpeed * deltaTime);
+                                            + relativeMovement * pair.second.movementSpeed * movementScale * deltaTime);
+
             //Apply the world rotation by converting it to a quaternion and using it as multiplier
             transform.transform.setRotation(transform.transform.getRotation()
                                             * Quaternion(worldRot * pair.second.rotationSpeed * deltaTime));
@@ -125,7 +131,7 @@ private:
             ret.y = 1;
 
         for (auto &pad: input.getGamePads()) {
-            ret.x += applyDeadzone(pad.second.getGamepadAxis( RIGHT_Y) * -1);
+            ret.x += applyDeadzone(pad.second.getGamepadAxis(RIGHT_Y) * -1);
             ret.y += applyDeadzone(pad.second.getGamepadAxis(RIGHT_X));
         }
         return normalize(ret);

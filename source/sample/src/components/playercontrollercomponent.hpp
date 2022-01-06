@@ -21,8 +21,8 @@
 #define MANA_PLAYERCONTROLLERCOMPONENT_HPP
 
 struct PlayerControllerComponent {
-    float movementSpeed = 10.0f;
-    float rotationSpeed = 45.0f;
+    float movementSpeed = 20.0f;
+    float rotationSpeed = 65.0f;
 };
 
 #endif //MANA_PLAYERCONTROLLERCOMPONENT_HPP
