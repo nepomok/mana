@@ -32,7 +32,7 @@
 namespace engine {
     class MANA_EXPORT ThreadPool {
     public:
-        static ThreadPool pool;
+        static ThreadPool &getPool();
 
         explicit ThreadPool(unsigned int numberOfThreads = std::thread::hardware_concurrency()) : mShutdown(false) {
             assert(numberOfThreads > 0);

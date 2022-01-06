@@ -20,5 +20,11 @@
 #include "async/threadpool.hpp"
 
 namespace engine {
-    ThreadPool ThreadPool::pool;
+    std::unique_ptr<ThreadPool> pool = nullptr;
+
+    ThreadPool &ThreadPool::getPool() {
+        if (!pool)
+            pool = std::make_unique<ThreadPool>();
+        return *pool;
+    }
 }

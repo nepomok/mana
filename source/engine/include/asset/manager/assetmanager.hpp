@@ -90,7 +90,7 @@ namespace engine {
 
     private:
         void loadBundle(const std::string &path) {
-            auto &pool = ThreadPool::pool;
+            auto &pool = ThreadPool::getPool();
             bundleTasks[path] = pool.addTask([this, path]() {
                 try {
                     auto bundle = AssetImporter::import(path, archive);

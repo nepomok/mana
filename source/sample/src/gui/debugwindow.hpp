@@ -220,7 +220,7 @@ public:
             res[1] = (int) ((float) frameBufferSize.y * resScale);
             ImGui::InputInt2("Render Resolution", res, ImGuiInputTextFlags_ReadOnly);
 
-            ImGui::SliderFloat("Resolution Scale", &resScale, 0.1, 5, "%.1f");
+            ImGui::SliderFloat("Resolution Scale", &resScale, 0.1, 3, "%.1f");
 
             ImGui::InputInt("MSAA Samples", &samples);
             if (samples > maxSamples)

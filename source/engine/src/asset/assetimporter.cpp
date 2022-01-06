@@ -497,7 +497,7 @@ namespace engine {
                 if (archive == nullptr)
                     throw std::runtime_error("Null archive while parsing json");
 
-                return readJsonBundle(stream, *archive, ThreadPool::pool);
+                return readJsonBundle(stream, *archive, ThreadPool::getPool());
             } catch (const std::exception &e) {}
 
             //Try to read source as asset
@@ -514,7 +514,7 @@ namespace engine {
         } else {
             if (hint == ".json") {
                 //Try to read source as json
-                return readJsonBundle(stream, *archive, ThreadPool::pool);
+                return readJsonBundle(stream, *archive, ThreadPool::getPool());
             } else {
                 Assimp::Importer importer;
                 if (importer.IsExtensionSupported(hint)) {

@@ -134,6 +134,10 @@ void main() {
         texNormal = normalize(texNormal * 2.0 - 1.0);
         oTexNormal = vec4(texNormal, 1);
     }
+    else
+    {
+        oTexNormal = vec4(0, 0, 0, 0);
+    }
 }
 )###";
 

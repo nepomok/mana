@@ -297,14 +297,14 @@ namespace engine {
         command.properties.enableDepthTest = false;
         command.properties.enableStencilTest = false;
         command.properties.enableFaceCulling = false;
-        command.properties.enableBlending = true;
+        command.properties.enableBlending = false;
 
         auto &ren = renderDevice.getRenderer();
 
         gBuffer.attachColor({"phong_ambient", "phong_diffuse", "phong_specular", "phong_combined"});
         gBuffer.detachDepthStencil();
 
-        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getSize(), true, {255, 0, 0, 0}));
+        ren.renderBegin(gBuffer.getRenderTarget(), RenderOptions({}, gBuffer.getSize()));
         ren.addCommand(command);
         ren.renderFinish();
     }
