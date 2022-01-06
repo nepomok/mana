@@ -137,7 +137,9 @@ namespace engine {
     }
 
     void RenderSystem::onComponentCreate(const Entity &entity, const MeshRenderComponent &component) {
+        assetManager.incrementRef(component.mesh);
         assetManager.incrementRef(component.material);
+
         auto material = assetManager.getAsset<Material>(component.material);
 
         assetRenderManager.incrementRef(component.mesh);
@@ -184,6 +186,7 @@ namespace engine {
             assetRenderManager.decrementRef<Texture>(material.normalTexture);
         }
         assetManager.decrementRef(component.material);
+        assetManager.decrementRef(component.mesh);
     }
 
     void RenderSystem::onComponentCreate(const Entity &entity, const SkyboxComponent &component) {
