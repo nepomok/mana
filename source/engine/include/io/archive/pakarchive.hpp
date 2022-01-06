@@ -34,7 +34,7 @@ namespace engine {
     public:
         PakArchive() = default;
 
-        explicit PakArchive(std::unique_ptr<std::istream> stream,
+        explicit PakArchive(std::vector<std::unique_ptr<std::istream>> stream,
                             bool verifyHashes = true,
                             const AES::Key &key = {},
                             const AES::InitializationVector &iv = {});

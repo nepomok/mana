@@ -24,11 +24,11 @@
 #include <utility>
 
 namespace engine {
-    PakArchive::PakArchive(std::unique_ptr<std::istream> stream,
+    PakArchive::PakArchive(std::vector<std::unique_ptr<std::istream>> streams,
                            bool verifyHashes,
                            const AES::Key &key,
                            const AES::InitializationVector &iv)
-            : pak(std::move(stream), key, iv), verifyHashes(verifyHashes) {}
+            : pak(std::move(streams), key, iv), verifyHashes(verifyHashes) {}
 
     bool PakArchive::exists(const std::string &path) {
         return pak.exists(path);

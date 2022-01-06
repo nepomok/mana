@@ -32,9 +32,55 @@
 
 #include "gui/debugwindow.hpp"
 
+#include "io/byte.hpp"
+
 #include <iostream>
 
 using namespace engine;
+
+// Helper function to create pak files from a specified directory, with hardcoded file name format.
+// In a real application the user would have to decide on a strategy on how / if to store split paks.
+// The pak file format retrieval complexity should not be affected by the pak file size,
+// the use of pak splitting is for example when a filesystem does not support large files or
+// cloud storage with file size limits.
+static void createPackFromDirectory(const std::string &dir, long chunkSize) {
+    auto entries = Pak::readEntries(dir);
+    auto chunks = Pak::createPak(entries, chunkSize);
+
+    auto cs = dir + ".";
+    auto ce = ".pak";
+
+    int ci = 0;
+    for (auto &c: chunks) {
+        auto fileName = cs;
+        fileName += std::to_string(ci);
+        fileName += ce;
+
+        std::ofstream fs(fileName);
+        fs.write(chunks.at(ci).data(), chunks.at(ci).size());
+        ci++;
+    }
+}
+
+static std::unique_ptr<PakArchive> loadPackArchive(const std::string &pakName, Archive &archive) {
+    std::vector<std::unique_ptr<std::istream>> streams;
+
+    auto cs = pakName + ".";
+    auto ce = ".pak";
+
+    for (int i = 0; i < 100; i++) {
+        std::string fileName = "/";
+        fileName += cs;
+        fileName += std::to_string(i);
+        fileName += ce;
+
+        if (archive.exists(fileName)) {
+            streams.emplace_back(archive.open(fileName));
+        }
+    }
+
+    return std::make_unique<PakArchive>(std::move(streams));
+}
 
 class SampleApplication : public Application, InputListener {
 public:
@@ -49,7 +95,7 @@ public:
         ren2d = std::make_unique<Renderer2D>(*renderDevice);
         drawLoadingScreen(0);
 
-        pack = std::make_unique<PakArchive>(std::move(archive->open("/assets.pak")));
+        pack = loadPackArchive("assets", *archive);
     }
 
     ~SampleApplication() override = default;
@@ -60,7 +106,8 @@ protected:
         assetManager = std::make_unique<AssetManager>(*pack);
         audioDevice = AudioDevice::createDevice(engine::OpenAL);
 
-        renderSystem = new RenderSystem(window->getRenderTarget(graphicsBackend), *renderDevice, *pack, {}, *assetManager);
+        renderSystem = new RenderSystem(window->getRenderTarget(graphicsBackend), *renderDevice, *pack, {},
+                                        *assetManager);
 
         renderSystem->getRenderer().addRenderPass(std::move(std::make_unique<ForwardPass>(*renderDevice)));
         drawLoadingScreen(0.1);
@@ -244,7 +291,7 @@ private:
 
         window->update();
 
-        auto& target = window->getRenderTarget(graphicsBackend);
+        auto &target = window->getRenderTarget(graphicsBackend);
 
         ren2d->renderBegin(target, true, {}, target.getSize(), bgColor);
         ren2d->setProjection({{-1, -1},
@@ -267,7 +314,7 @@ private:
 
     void drawDebugWindow() {
         auto &wnd = *window;
-        auto& target = window->getRenderTarget(graphicsBackend);
+        auto &target = window->getRenderTarget(graphicsBackend);
         ImGuiCompat::NewFrame(wnd, graphicsBackend);
         ImGui::NewFrame();
         debugWindow.draw();
